@@ -1386,7 +1386,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /item %i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, itemid, itemtype, itemamount , itemrefine , itemsocket ,itemstats);
         return pakGMItem( thisclient , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );
     }
- 
+
 else if (strcmp(command, "itemstat")==0)
     {
 //        if(thisclient->Session->accesslevel < 300)
@@ -1445,19 +1445,19 @@ else if (strcmp(command, "itemstat")==0)
         else
             thisclient->items[slot].gem = 0;
         thisclient->items[slot].appraised = true;
-        
+
         BEGINPACKET( pak,0x7a5 );
         ADDWORD( pak, thisclient->clientid );
         ADDWORD( pak, slot );
         ADDDWORD( pak, BuildItemShow(thisclient->items[slot])); // ITEM
         ADDWORD ( pak, thisclient->Stats->Move_Speed);
         SendToVisible( &pak, thisclient );
- 
+
         thisclient->UpdateInventory( slot );
         thisclient->SetStats( );
         return true;
     }
-    
+
    else if (strcmp(command, "job")==0) // *** Change Job *****
     {
         if(Config.Command_Job > thisclient->Session->accesslevel)
@@ -2331,7 +2331,12 @@ else if (strcmp(command, "itemstat")==0)
          else if(strcmp(tmp, "mobs")==0)
              GServer->LoadNPCData( );
          else if(strcmp(tmp, "drops")==0)
-             GServer->LoadPYDropsData( );
+         {
+             //LMA: And system.
+             //TODO: DROP SWITCH
+             GServer->LoadPYDropsDataAnd();
+             //GServer->LoadPYDropsData( );
+         }
          else if(strcmp(tmp, "cmd")==0)
              LoadConfigurations( "commands.ini" );
          else if(strcmp(tmp, "cquests")==0)

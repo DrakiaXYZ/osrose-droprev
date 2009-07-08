@@ -213,5 +213,9 @@ CDrop* CMonster::GetDrop( )
     //now requires an input value for droptype. A droptype of 1 is a normal drop while a droptype of 2 can be sent to generate a drop while the monster is still alive
     //Code for these 'side drops' is still under development and will follow soon
     //GServer->PYGetDrop( this, 1 );
-    GServer->GetPYDrop( this, 1 );
+
+    //LMA: And system
+    //TODO: DROP SWITCH
+    //GServer->GetPYDrop( this, 1 );
+    GServer->GetPYDropAnd( this, 1 );
 }
