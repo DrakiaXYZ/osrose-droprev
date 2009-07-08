@@ -1035,7 +1035,9 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     if(n == 0)
     {
         ClearClientID(newdrop->clientid);
-        MyMonsterDrops.clear();
+        //LMA: Forcing the vector to free the memory.
+        //MyMonsterDrops.clear();
+        vector<CDropInfoAnd>().swap(MyMonsterDrops);
         delete(newdrop);
         return NULL;
     }
@@ -1182,7 +1184,9 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     }
 
     newdrop->item.gem = 0;
-    MyMonsterDrops.clear();
+    //LMA: Forcing the vector freeing the memory.
+    //MyMonsterDrops.clear();
+    vector<CDropInfoAnd>().swap(MyMonsterDrops);
 
 
     //Log(MSG_INFO,"drop %i* (%i:%i)",newdrop->amount,newdrop->type,newdrop->item);
