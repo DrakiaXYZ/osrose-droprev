@@ -1,0 +1,309 @@
+# depslib dependency file v1.0
+1245170766 source:c:\documents and settings\administrator\desktop\dude rev\common\socketbase.cpp
+	"sockets.h"
+
+1247031838 c:\documents and settings\administrator\desktop\dude rev\common\sockets.h
+	<windows.h>
+	<winsock2.h>
+	<unistd.h>
+	<netinet/in.h>
+	<sys/socket.h>
+	<sys/types.h>
+	<arpa/inet.h>
+	<sys/ioctl.h>
+	<cstdarg>
+	<errno.h>
+	<mysql/mysql.h>
+	<cstdio>
+	<cstdlib>
+	<iostream>
+	<vector>
+	<string>
+	<cstdio>
+	<exception>
+	<time.h>
+	<assert.h>
+	<math.h>
+	<pthread.h>
+	<map>
+	<csignal>
+	"log.h"
+	"rosecrypt.hpp"
+	"config.h"
+	"database/database.h"
+
+1245170766 c:\documents and settings\administrator\desktop\dude rev\common\log.h
+
+1245170766 c:\documents and settings\administrator\desktop\dude rev\common\rosecrypt.hpp
+	<windows.h>
+
+1245170766 c:\documents and settings\administrator\desktop\dude rev\common\config.h
+
+1245170764 c:\documents and settings\administrator\desktop\dude rev\common\database\database.h
+	"../sockets.h"
+
+1247026244 source:c:\documents and settings\administrator\desktop\dude rev\common\socketclient.cpp
+	"sockets.h"
+
+1245170766 source:c:\documents and settings\administrator\desktop\dude rev\common\socketserver.cpp
+	"sockets.h"
+
+1245170766 source:c:\documents and settings\administrator\desktop\dude rev\common\config.cpp
+	<cstdio>
+	<cstring>
+	<cstdlib>
+	<ctype.h>
+
+1245170764 source:c:\documents and settings\administrator\desktop\dude rev\common\database\database.cpp
+	"database.h"
+	"../log.h"
+
+1245170766 source:c:\documents and settings\administrator\desktop\dude rev\common\log.cpp
+	<conio.h>
+	<windows.h>
+	<cstdio>
+	<cstdio>
+	<string>
+	<time.h>
+	"log.h"
+
+1245170766 source:c:\documents and settings\administrator\desktop\dude rev\common\rosecrypt.cpp
+	"rosecrypt.hpp"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\buff.cpp
+	"worldserver.h"
+
+1247027257 c:\documents and settings\administrator\desktop\dude rev\world server\worldserver.h
+	"datatypes.h"
+	"../common/sockets.h"
+	"worldmonster.h"
+	"worldmap.h"
+	"player.h"
+	"character.h"
+	"party.h"
+	"stbhandler.h"
+	"stlhandler.h"
+	"quest/strhashing.h"
+	"quest/CRoseArray.hpp"
+	"quest/CRoseFile.hpp"
+	"quest/CStrStb.hpp"
+	"quest/CIntStb.hpp"
+	"quest/QuestTrigger.h"
+	"ltbhandler.h"
+	"aip/Aip.h"
+
+1247032710 c:\documents and settings\administrator\desktop\dude rev\world server\datatypes.h
+	"datatypes_compat.h"
+	"../common/sockets.h"
+
+1245170780 c:\documents and settings\administrator\desktop\dude rev\world server\datatypes_compat.h
+
+1245170780 c:\documents and settings\administrator\desktop\dude rev\world server\worldmonster.h
+	"character.h"
+	"player.h"
+	"worldserver.h"
+
+1245170780 c:\documents and settings\administrator\desktop\dude rev\world server\character.h
+	"chartype.h"
+
+1245170781 c:\documents and settings\administrator\desktop\dude rev\world server\chartype.h
+	"datatypes.h"
+
+1245604576 c:\documents and settings\administrator\desktop\dude rev\world server\player.h
+	"character.h"
+
+1245170781 c:\documents and settings\administrator\desktop\dude rev\world server\worldmap.h
+	"worldserver.h"
+	"player.h"
+	"character.h"
+	"worldmonster.h"
+	"datatypes.h"
+
+1245170781 c:\documents and settings\administrator\desktop\dude rev\world server\party.h
+	"worldserver.h"
+	"datatypes.h"
+
+1245170780 c:\documents and settings\administrator\desktop\dude rev\world server\stbhandler.h
+	"worldserver.h"
+
+1245170781 c:\documents and settings\administrator\desktop\dude rev\world server\stlhandler.h
+	"worldserver.h"
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\strhashing.h
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\crosearray.hpp
+	<memory.h>
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\crosefile.hpp
+	<stdio.h>
+	<stdlib.h>
+	"CRoseArray.hpp"
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\cstrstb.hpp
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\cintstb.hpp
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\questtrigger.h
+	"QuestConditions.h"
+	"QuestActions.h"
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\questconditions.h
+
+1245170778 c:\documents and settings\administrator\desktop\dude rev\world server\quest\questactions.h
+
+1245170781 c:\documents and settings\administrator\desktop\dude rev\world server\ltbhandler.h
+	"worldserver.h"
+	<map>
+
+1245170771 c:\documents and settings\administrator\desktop\dude rev\world server\aip\aip.h
+	"AiConditions.h"
+	"AiActions.h"
+
+1245170771 c:\documents and settings\administrator\desktop\dude rev\world server\aip\aiconditions.h
+
+1245170771 c:\documents and settings\administrator\desktop\dude rev\world server\aip\aiactions.h
+
+1245613163 source:c:\documents and settings\administrator\desktop\dude rev\world server\mainprocess.cpp
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\monster.cpp
+	"worldmonster.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\monsterevents.cpp
+	"worldmonster.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\monsterstats.cpp
+	"worldmonster.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\party.cpp
+	"worldserver.h"
+
+1247033821 source:c:\documents and settings\administrator\desktop\dude rev\world server\serverfunctions.cpp
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\signal.cpp
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\worldmonster.cpp
+	"worldmonster.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\worldprocess.cpp
+	"worldserver.h"
+
+1245170771 source:c:\documents and settings\administrator\desktop\dude rev\world server\aip\aiactions.cpp
+	"../WorldServer.h"
+
+1245170771 source:c:\documents and settings\administrator\desktop\dude rev\world server\aip\aiconditions.cpp
+	"../WorldServer.h"
+
+1245603733 source:c:\documents and settings\administrator\desktop\dude rev\world server\aip\aip.cpp
+	"../WorldServer.h"
+
+1245783776 source:c:\documents and settings\administrator\desktop\dude rev\world server\battle.cpp
+	"character.h"
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\character.cpp
+	"character.h"
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\charevent.cpp
+	"character.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\charfunctions.cpp
+	"character.h"
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\charstats.cpp
+	"character.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\clan.cpp
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\console.cpp
+	"WorldServer.h"
+
+1247025902 source:c:\documents and settings\administrator\desktop\dude rev\world server\extrafunctions.cpp
+	"worldserver.h"
+
+1247025902 source:c:\documents and settings\administrator\desktop\dude rev\world server\gmcmds.cpp
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\itemdata.cpp
+	"datatypes.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\ltbhandler.cpp
+	"ltbhandler.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\main.cpp
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\mapfunctions.cpp
+	"worldmap.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\monsterfunctions.cpp
+	"worldmonster.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\partyfunctions.cpp
+	"party.h"
+
+1245604630 source:c:\documents and settings\administrator\desktop\dude rev\world server\player.cpp
+	"player.h"
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\playerdata.cpp
+	"player.h"
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\playerfunctions.cpp
+	"player.h"
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\playerquest.cpp
+	"player.h"
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\playerstats.cpp
+	"player.h"
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest.cpp
+	"worldserver.h"
+
+1245410437 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest\questactions.cpp
+	"../worldserver.h"
+
+1245170778 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest\questactionsc.cpp
+	"../worldserver.h"
+
+1245410379 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest\questconditions.cpp
+	"../worldserver.h"
+
+1245170778 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest\questconditionsc.cpp
+	"../worldserver.h"
+
+1245170778 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest\quests.cpp
+	"../worldserver.h"
+
+1245170778 source:c:\documents and settings\administrator\desktop\dude rev\world server\quest\strhashing.cpp
+	"../worldserver.h"
+	"strhashing.h"
+
+1247033195 source:c:\documents and settings\administrator\desktop\dude rev\world server\startup.cpp
+	"worldserver.h"
+
+1245170781 source:c:\documents and settings\administrator\desktop\dude rev\world server\stbhandler.cpp
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\stlhandler.cpp
+	"worldserver.h"
+
+1245170780 source:c:\documents and settings\administrator\desktop\dude rev\world server\worldmap.cpp
+	"worldmap.h"
+
+1245796257 source:c:\documents and settings\administrator\desktop\dude rev\world server\worldpackets.cpp
+	"worldserver.h"
+
+1247025902 source:c:\documents and settings\administrator\desktop\dude rev\world server\worldserver.cpp
+	"worldserver.h"
+
