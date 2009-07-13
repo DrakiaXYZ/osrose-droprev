@@ -52,10 +52,11 @@ CREATE TABLE `list_config` (
   `uwnbplayers` int(11) NOT NULL default '0',
   `uwside` int(11) NOT NULL default '0',
   `pc_drop_zuly` int(11) NOT NULL default '30',
+  `drop_rev` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0', '1', '10', '200', '700', '1', '45', '30', '0', '81.360', '1', '0', '0', '10','0','0','0','30');
+INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0', '1', '10', '200', '700', '1', '45', '30', '0', '81.360', '1', '0', '0', '10','0','0','0','30','0');

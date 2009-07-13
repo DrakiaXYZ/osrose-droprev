@@ -2333,9 +2333,15 @@ else if (strcmp(command, "itemstat")==0)
          else if(strcmp(tmp, "drops")==0)
          {
              //LMA: And system.
-             //TODO: DROP SWITCH
-             GServer->LoadPYDropsDataAnd();
-             //GServer->LoadPYDropsData( );
+            if(!Config.drop_rev)
+            {
+                GServer->LoadPYDropsData( );
+            }
+            else
+            {
+                GServer->LoadPYDropsDataAnd();
+            }
+
          }
          else if(strcmp(tmp, "cmd")==0)
              LoadConfigurations( "commands.ini" );

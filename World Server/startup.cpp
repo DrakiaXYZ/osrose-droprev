@@ -1950,7 +1950,7 @@ bool CWorldServer::LoadPYDropsDataAnd( )
         }
         else
         {
-            Log(MSG_WARNING,"No condition for Drop Record %i",newdrop->id);
+            Log(MSG_WARNING,"No condition for Drop Record %i",record_id);
             delete newdrop;
             continue;
         }
@@ -3255,7 +3255,7 @@ bool CWorldServer::LoadConfig( )
         refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
         pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode, autosave, mapdelay, \
         visualdelay, worlddelay, fairymode, fairystay, fairywait, fairytestmode, osrosever, testgrid, jrose, \
-        is_pegasus, monmax, massexport,uwnbplayers,uwside,pc_drop_zuly FROM list_config");
+        is_pegasus, monmax, massexport,uwnbplayers,uwside,pc_drop_zuly,drop_rev FROM list_config");
 
     if(result==NULL)
     {
@@ -3323,6 +3323,14 @@ bool CWorldServer::LoadConfig( )
            GServer->Config.pc_drop_zuly=30;
            Log(MSG_WARNING,"Wrong value for percentage zuly drop %i, changed to 30",atoi(row[37]),GServer->Config.pc_drop_zuly);
        }
+
+       //LMA: Using "old" or new drop system.
+       GServer->Config.drop_rev=false;
+       if(atoi(row[38])!=0)
+       {
+           Log(MSG_INFO,"We'll use the new AND drop System");
+           GServer->Config.drop_rev=true;
+        }
 
     }
 

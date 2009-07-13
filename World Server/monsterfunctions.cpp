@@ -215,7 +215,13 @@ CDrop* CMonster::GetDrop( )
     //GServer->PYGetDrop( this, 1 );
 
     //LMA: And system
-    //TODO: DROP SWITCH
-    //GServer->GetPYDrop( this, 1 );
-    GServer->GetPYDropAnd( this, 1 );
+    if(!GServer->Config.drop_rev)
+    {
+        GServer->GetPYDrop( this, 1 );
+    }
+    else
+    {
+        GServer->GetPYDropAnd( this, 1 );
+    }
+
 }

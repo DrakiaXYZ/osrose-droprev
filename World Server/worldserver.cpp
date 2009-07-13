@@ -386,10 +386,14 @@ bool CWorldServer::OnServerReady( )
     // new drops routine load
 
     //LMA: Drop And system
-    //TODO: DROP SWITCH
-    //LoadPYDropsData( );
-    LoadPYDropsDataAnd();
-
+    if(!Config.drop_rev)
+    {
+        LoadPYDropsData( );
+    }
+    else
+    {
+        LoadPYDropsDataAnd();
+    }
 
     LoadSkillBookDropsData( );
     // end of new drops data

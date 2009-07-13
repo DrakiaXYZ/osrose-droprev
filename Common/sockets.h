@@ -203,7 +203,8 @@ struct CROSEServerConfig
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
     int monmax; //for max monster gm spawning
-    int pc_drop_zuly;
+    int pc_drop_zuly;   //LMA: % of zuly drop, ONLY for new drop system,
+    bool drop_rev;  //LMA: for testing purposes, new and old drop system,
 
     //LMA: Pegasus
     int is_pegasus; //LMA: if we use Pegasus client.
