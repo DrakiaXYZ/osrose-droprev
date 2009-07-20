@@ -1794,6 +1794,17 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
         Log(MSG_INFO,"Player %s died, he has %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
     }
 
+    //LMA: cleaning buffs.
+    //and resetting stats.
+    for(int j = 0; j < 30; j++)
+    {
+        thisclient->MagicStatus[j].Duration = 0;
+        thisclient->MagicStatus[j].BuffTime = 0;
+    }
+
+    thisclient->RefreshBuff();
+    thisclient->SetStats( );
+
     if(thisrespawn!=NULL)
     {
         // geo edit for saved town warp // 29 sep 07
@@ -1809,10 +1820,12 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
         MapList.Index[2]->TeleportPlayer( thisclient, coord, false );
     }
 
+    /*
 	for(unsigned int i=0;i<30;i++)
 	{	// Clean Buffs
         thisclient->MagicStatus[i].Duration = 0;
     }
+    */
 
 
 	return true;
