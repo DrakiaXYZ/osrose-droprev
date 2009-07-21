@@ -412,13 +412,6 @@ void CCharacter::DoAttack( )
 // do normal attack
 void CCharacter::NormalAttack( CCharacter* Enemy )
 {
-
-    //LMA: test.
-    if (IsPlayer())
-    {
-        Log(MSG_INFO,"Player attacks");
-    }
-
     //LMA: Sometimes it's fired several times, no need to kill several times ;)
     bool is_already_dead=Enemy->IsDead();
 
