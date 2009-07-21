@@ -412,6 +412,13 @@ void CCharacter::DoAttack( )
 // do normal attack
 void CCharacter::NormalAttack( CCharacter* Enemy )
 {
+
+    //LMA: test.
+    if (IsPlayer())
+    {
+        Log(MSG_INFO,"Player attacks");
+    }
+
     //LMA: Sometimes it's fired several times, no need to kill several times ;)
     bool is_already_dead=Enemy->IsDead();
 
@@ -437,7 +444,8 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     //TEST
     long int hitsave=hitpower;
     hitpower+=Stats->ExtraDamage_add;
-    hitpower+=((hitpower*(Stats->ExtraDamage))/100);  //LMA: ED, Devilking / Arnold
+    //TODO: bug here, ExtraDamage is here something like a % but in fact considered somewhere else as a "slot" for buffs...
+    //hitpower+=((hitpower*(Stats->ExtraDamage))/100);  //LMA: ED, Devilking / Arnold
     //Log(MSG_INFO,"ED: before %i, after %i (extra *%i + %i)",hitsave,hitpower,Stats->ExtraDamage,Stats->ExtraDamage_add);
 
     bool critical = false;
@@ -1289,7 +1297,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     {
         //LMA: ED, Devilking / Arnold
         skillpower+=Stats->ExtraDamage_add;
-        skillpower+=((skillpower*(Stats->ExtraDamage))/100);
+        //TODO: bug here, ExtraDamage is here something like a % but in fact considered somewhere else as a "slot" for buffs...
+        //skillpower+=((skillpower*(Stats->ExtraDamage))/100);
     }
     if(!Enemy->IsSummon( ) && Enemy->IsMonster( ))
     {

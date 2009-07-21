@@ -242,6 +242,7 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     UINT j = BuffValue.Position;
 
                     //LMA: fix by sickb0y
+                    //TODO: WRONG fix!!! We need to set a value to something!!!
                     //character->Stats->ExtraDamage = thisskill->atkpower;
 
                     if(j<15)
