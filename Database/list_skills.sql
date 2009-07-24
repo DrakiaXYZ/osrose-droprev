@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: osrose
 Target Host: localhost
 Target Database: osrose
-Date: 6/23/2009 3:45:35 PM
+Date: 7/24/2009 9:35:23 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,7 +19,7 @@ CREATE TABLE `list_skills` (
   `description` varchar(50) default NULL,
   `isactive` int(11) NOT NULL default '1',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=406 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=411 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -39,7 +39,7 @@ INSERT INTO `list_skills` VALUES ('12', '121', '301', '5', 'durability assist', 
 INSERT INTO `list_skills` VALUES ('13', '121', '306', '5', 'Shield Stun', '1');
 INSERT INTO `list_skills` VALUES ('14', '121', '311', '4', 'soul wreck', '1');
 INSERT INTO `list_skills` VALUES ('15', '121', '416', '5', 'taunt', '1');
-INSERT INTO `list_skills` VALUES ('16', '121', '421', '4', 'soundles vacuum', '1');
+INSERT INTO `list_skills` VALUES ('16', '121', '421', '4', 'soundless vacuum', '1');
 INSERT INTO `list_skills` VALUES ('17', '121', '431', '9', 'Advanced Defense Training', '1');
 INSERT INTO `list_skills` VALUES ('18', '121', '441', '9', 'One-Handed Combat Mastery', '1');
 INSERT INTO `list_skills` VALUES ('19', '121', '451', '9', 'Actual Battle Training', '1');
@@ -429,3 +429,8 @@ INSERT INTO `list_skills` VALUES ('402', '221', '6100', '5', 'Restoration', '1')
 INSERT INTO `list_skills` VALUES ('403', '222', '6100', '5', 'Restoration', '1');
 INSERT INTO `list_skills` VALUES ('404', '0', '2880', '1', 'Unique-Arua\'s Fate', '1');
 INSERT INTO `list_skills` VALUES ('405', '0', '2881', '1', 'Unique-Hebarn\'s Fate', '1');
+INSERT INTO `list_skills` VALUES ('406', '0', '5507', '1', 'Mileage-Shield Blessing', '1');
+INSERT INTO `list_skills` VALUES ('407', '0', '5508', '1', 'Mileage-Protection Blessing', '1');
+INSERT INTO `list_skills` VALUES ('408', '0', '5509', '1', 'Mileage-Marksmen Blessing', '1');
+INSERT INTO `list_skills` VALUES ('409', '0', '5510', '1', 'Mileage-Intense Blessing', '1');
+INSERT INTO `list_skills` VALUES ('410', '0', '5596', '1', 'Quest-Pharaoh Stance', '1');
