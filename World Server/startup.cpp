@@ -176,7 +176,7 @@ bool CWorldServer::LoadIfoObjects( )
     newnpc->stance =0;
     newnpc->wspeed =0;
     newnpc->rspeed =0;
-    newnpc->dspeed =0;
+    //newnpc->dspeed =0; //dspeed is monster size at startup.cpp...
     newnpc->weapon =0;
     newnpc->subweapon =0;
     newnpc->level =0;
@@ -578,7 +578,7 @@ bool CWorldServer::LoadNPCData( )
         newnpc->stance = mRUNNING;  //AIP
         newnpc->wspeed = STB_NPC.rows[i][2];
         newnpc->rspeed = STB_NPC.rows[i][3];
-        newnpc->dspeed = STB_NPC.rows[i][4];
+        //newnpc->dspeed = STB_NPC.rows[i][4]; //row 4 is monster size ...
         newnpc->weapon = STB_NPC.rows[i][5];
         newnpc->subweapon = STB_NPC.rows[i][6];
         newnpc->level = STB_NPC.rows[i][7];

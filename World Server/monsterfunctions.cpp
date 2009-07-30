@@ -128,8 +128,8 @@ bool CMonster::CanMove( )
     if (Status->Stun!=0xff)
        return false;
     //LMA: bonfire case handled elsewhere...
-    //if((montype<41 || montype>45) && (montype<325 || montype>329) && montype!=659 && (montype<771 || montype>810 ) && montype!=992 && (montype<1474 || montype>1489))
-    if((montype<41 || montype>45) && (montype<325 || montype>329) && montype!=659 && montype!=992 && (montype<1474 || montype>1489))
+    //if((montype<41 || montype>45) && (montype<325 || montype>329) && montype!=659 && montype!=992 && (montype<1474 || montype>1489))
+    if (thisnpc->wspeed!=0 && thisnpc->rspeed!=0)
         return true;
     return false;
 }

@@ -2021,7 +2021,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 			tmpcount -= thisslotcount;
 			thisitem.count = thisslotcount + thisclient->items[newslot].count;
 			thisitem.refine = 0;
-			thisitem.durability = 35;
+			thisitem.durability = GServer->STB_ITEM[thisitem.itemtype-1].rows[thisitem.itemnum][29];
 			thisitem.lifespan = 100;
 			thisitem.appraised = true;
 			thisitem.socketed = false;

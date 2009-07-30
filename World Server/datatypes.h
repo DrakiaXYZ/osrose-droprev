@@ -474,7 +474,7 @@ struct CNPCData {
     UINT wspeed;
     UINT rspeed;
     BYTE stance;    //LMA: AIP?
-    UINT dspeed;
+    //UINT dspeed; //dspeed is monster size at startup.cpp...
     UINT weapon;
     UINT subweapon;
     UINT level;
