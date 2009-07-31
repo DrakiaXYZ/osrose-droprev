@@ -441,12 +441,8 @@ unsigned int CPlayer::GetAttackPower( )
                         if( cskills[i].thisskill->buff[j] == ONE_HAND_WEAP_AP ||
                             cskills[i].thisskill->buff[j] == ONE_HAND_SWORD_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -485,12 +481,8 @@ unsigned int CPlayer::GetAttackPower( )
                         if( cskills[i].thisskill->buff[j] == ONE_HAND_WEAP_AP ||
                             cskills[i].thisskill->buff[j] == ONE_HAND_MELEE_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -529,12 +521,8 @@ unsigned int CPlayer::GetAttackPower( )
                         if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP ||
                             cskills[i].thisskill->buff[j] == TWO_HAND_SWORD_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -574,12 +562,8 @@ unsigned int CPlayer::GetAttackPower( )
                         if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP ||
                             cskills[i].thisskill->buff[j] == TWO_HAND_SPEAR_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -619,12 +603,8 @@ unsigned int CPlayer::GetAttackPower( )
                         if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP ||
                             cskills[i].thisskill->buff[j] == TWO_HAND_AXE_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -664,14 +644,12 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == BOW_AP )
+
+                        if( cskills[i].thisskill->buff[j] == BOW_AP ||
+                            cskills[i].thisskill->buff[j] == BOW_WEAP_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -712,14 +690,11 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == GUN_AP )
+                        if( cskills[i].thisskill->buff[j] == GUN_AP ||
+                            cskills[i].thisskill->buff[j] == GUN_WEAP_AP  )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -763,12 +738,8 @@ unsigned int CPlayer::GetAttackPower( )
                     {
                         if( cskills[i].thisskill->buff[j] == LAUNCHER_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -805,14 +776,11 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == STAFF_POWER )
+                        if( cskills[i].thisskill->buff[j] == STAFF_POWER ||
+                            cskills[i].thisskill->buff[j] == MAGIC_WEAP_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -849,14 +817,11 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == WAND_POWER )
+                        if( cskills[i].thisskill->buff[j] == WAND_POWER ||
+                            cskills[i].thisskill->buff[j] == MAGIC_WEAP_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -893,14 +858,11 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == KATAR_AP )
+                        if( cskills[i].thisskill->buff[j] == KATAR_AP ||
+                            cskills[i].thisskill->buff[j] == COMBAT_WEAP_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 ) attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 ) attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -937,14 +899,11 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == DUALSWORD_AP )
+                        if( cskills[i].thisskill->buff[j] == DUALSWORD_AP ||
+                            cskills[i].thisskill->buff[j] == COMBAT_WEAP_AP )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                attack += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -957,6 +916,39 @@ unsigned int CPlayer::GetAttackPower( )
             if(items[132].count>0)
                 arrows = GServer->NaturalList.Index[items[132].itemnum]->quality*0.5;
             attack += (UINT)floor((((Attr->Str + Attr->Estr)+Stats->Level)*0.1) + ((Attr->Dex + Attr->Edex)*0.04 + (Attr->Sen +Attr->Esen)*0.03 + 29) * weaponatk * 0.03333334 + (Attr->Dex + Attr->Edex)*0.52 + arrows);
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == CBOW_AP ||
+                            cskills[i].thisskill->buff[j] == CBOW_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
         }
         break;
     }
@@ -981,11 +973,11 @@ unsigned int CPlayer::GetAttackPower( )
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == ATTACK_POWER)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_ATTACK)
                     {
                         attack += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == ATTACK_POWER)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_ATTACK)
                     {
                         attack += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -1232,7 +1224,177 @@ unsigned int CPlayer::GetAttackSpeed( )
     weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
     switch(weapontype)
     {
-        case 231://bow
+        case ONE_HAND_SWORD:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == ONE_HAND_SWORD_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case ONE_HAND_BUNT_SWORD:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == ONE_HAND_MELEE_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case TWO_HAND_SWORD:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == TWO_HAND_SWORD_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case SPEAR:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == TWO_HAND_SPEAR_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case TWO_HAND_AXE:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == TWO_HAND_AXE_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case BOW:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
                 /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
@@ -1260,21 +1422,16 @@ unsigned int CPlayer::GetAttackSpeed( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == BOW_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        if( cskills[i].thisskill->buff[j] == BOW_ATK_SPD || cskills[i].thisskill->buff[j] == BOW_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                aspeed += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
             }
-        break;
-        case 253:
-        case 232://Gun
+            break;
+        case GUN:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
                 /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
@@ -1302,20 +1459,53 @@ unsigned int CPlayer::GetAttackSpeed( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == GUN_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        if( cskills[i].thisskill->buff[j] == GUN_ATK_SPD || cskills[i].thisskill->buff[j] == GUN_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                aspeed += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
             }
-        break;
-        case 233://Gun
+            break;
+        case DUAL_GUN:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == DUAL_GUN_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case LAUNCHER:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
                 /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
@@ -1346,18 +1536,82 @@ unsigned int CPlayer::GetAttackSpeed( )
                     {
                         if( cskills[i].thisskill->buff[j] == LAUNCHER_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                aspeed += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
             }
-        break;
-        case 251://katar
+            break;
+        case STAFF:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == STAFF_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case WAND:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == WAND_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
+        case KATAR:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
                 /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
@@ -1385,20 +1639,16 @@ unsigned int CPlayer::GetAttackSpeed( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == KATAR_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        if( cskills[i].thisskill->buff[j] == KATAR_ATK_SPD || cskills[i].thisskill->buff[j] == COMBAT_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                aspeed += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
             }
-        break;
-        case 252://dual weapon
+            break;
+        case DOUBLE_SWORD:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
                 /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
@@ -1426,19 +1676,49 @@ unsigned int CPlayer::GetAttackSpeed( )
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == DUALSWORD_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        if( cskills[i].thisskill->buff[j] == DUALSWORD_ATK_SPD || cskills[i].thisskill->buff[j] == COMBAT_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                aspeed += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
             }
-        break;
+            break;
+        case CROSSBOW:
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
+                if( cskills[i].thisskill->type == 15 ) //Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == CBOW_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+            break;
     }
     for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
     {
@@ -1461,11 +1741,11 @@ unsigned int CPlayer::GetAttackSpeed( )
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == ATTACK_SPEED)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_HASTE)
                     {
                         aspeed += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == ATTACK_SPEED)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_HASTE)
                     {
                         aspeed += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -1539,11 +1819,11 @@ unsigned int CPlayer::GetMoveSpeed( )
                         Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                         continue;
                     }
-                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MOVE_SPEED)
+                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DASH)
                     {
                         mspeed += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
                     }
-                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MOVE_SPEED)
+                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DASH)
                     {
                        mspeed += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
                     }
@@ -1603,12 +1883,8 @@ unsigned int CPlayer::GetMoveSpeed( )
                     {
                         if( cskills[i].thisskill->buff[j] == MOV_SPEED || cskills[i].thisskill->buff[j] == A_DASH )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )
-                                mspeed += mspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )
-                            {
-                                mspeed += cskills[i].thisskill->value1[j];
-                            }
+                            if( cskills[i].thisskill->value2[j] > 0 )   mspeed += mspeed * cskills[i].thisskill->value2[j] / 100;
+                            if( cskills[i].thisskill->value1[j] > 0 )   mspeed += cskills[i].thisskill->value1[j];
                         }
                     }
                 }
@@ -2171,7 +2447,7 @@ unsigned int CPlayer::GetMaxWeight( )
         {
             for(UINT j=0;j<3;j++ )
             {
-                if( cskills[i].thisskill->buff[j] == INV_CAPACITY || cskills[i].thisskill->buff[j] == BAGPACK_CAPACITY )
+                if( cskills[i].thisskill->buff[j] == A_INVENTORY_CAPACITY || cskills[i].thisskill->buff[j] == BAGPACK_CAPACITY )
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
                         Extra += weight * cskills[i].thisskill->value2[j] / 100;
@@ -2430,21 +2706,21 @@ void CPlayer::GetExtraStats( )
                 UINT Stat2 = GServer->JemList.Index[items[i].gem]!=NULL?GServer->JemList.Index[items[i].gem]->stat2[0]:0;
                 switch(Stat1)
                 {
-                    case STRENGTH: Attr->Estr += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
-                    case DEXTERY: Attr->Edex += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
-                    case INTELIGENCE: Attr->Eint += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
-                    case CONCENTRATION: Attr->Econ += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
-                    case CHARM: Attr->Echa += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
-                    case SENSE: Attr->Esen += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
+                    case A_STR: Attr->Estr += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
+                    case A_DEX: Attr->Edex += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
+                    case A_INT: Attr->Eint += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
+                    case A_CON: Attr->Econ += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
+                    case A_CHA: Attr->Echa += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
+                    case A_SEN: Attr->Esen += GServer->JemList.Index[items[i].gem]->stat1[1]; break;
                 }
                 switch(Stat2)
                 {
-                    case STRENGTH: Attr->Estr += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
-                    case DEXTERY: Attr->Edex += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
-                    case INTELIGENCE: Attr->Eint += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
-                    case CONCENTRATION: Attr->Econ += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
-                    case CHARM: Attr->Echa += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
-                    case SENSE: Attr->Esen += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
+                    case A_STR: Attr->Estr += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
+                    case A_DEX: Attr->Edex += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
+                    case A_INT: Attr->Eint += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
+                    case A_CON: Attr->Econ += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
+                    case A_CHA: Attr->Echa += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
+                    case A_SEN: Attr->Esen += GServer->JemList.Index[items[i].gem]->stat2[1]; break;
                 }
             }
             if(items[i].stats!=0 && items[i].stats<GServer->maxStats)
@@ -2453,21 +2729,21 @@ void CPlayer::GetExtraStats( )
                 UINT Stat2 = GServer->StatsList[items[i].stats]->stat[1];
                 switch(Stat1)
                 {
-                    case STRENGTH: Attr->Estr += GServer->StatsList[items[i].stats]->value[0]; break;
-                    case DEXTERY: Attr->Edex += GServer->StatsList[items[i].stats]->value[0]; break;
-                    case INTELIGENCE: Attr->Eint += GServer->StatsList[items[i].stats]->value[0]; break;
-                    case CONCENTRATION: Attr->Econ += GServer->StatsList[items[i].stats]->value[0]; break;
-                    case CHARM: Attr->Echa += GServer->StatsList[items[i].stats]->value[0]; break;
-                    case SENSE: Attr->Esen += GServer->StatsList[items[i].stats]->value[0]; break;
+                    case A_STR: Attr->Estr += GServer->StatsList[items[i].stats]->value[0]; break;
+                    case A_DEX: Attr->Edex += GServer->StatsList[items[i].stats]->value[0]; break;
+                    case A_INT: Attr->Eint += GServer->StatsList[items[i].stats]->value[0]; break;
+                    case A_CON: Attr->Econ += GServer->StatsList[items[i].stats]->value[0]; break;
+                    case A_CHA: Attr->Echa += GServer->StatsList[items[i].stats]->value[0]; break;
+                    case A_SEN: Attr->Esen += GServer->StatsList[items[i].stats]->value[0]; break;
                 }
                 switch(Stat2)
                 {
-                    case STRENGTH: Attr->Estr += GServer->StatsList[items[i].stats]->value[1]; break;
-                    case DEXTERY: Attr->Edex += GServer->StatsList[items[i].stats]->value[1]; break;
-                    case INTELIGENCE: Attr->Eint += GServer->StatsList[items[i].stats]->value[1]; break;
-                    case CONCENTRATION: Attr->Econ += GServer->StatsList[items[i].stats]->value[1]; break;
-                    case CHARM: Attr->Echa += GServer->StatsList[items[i].stats]->value[1]; break;
-                    case SENSE: Attr->Esen += GServer->StatsList[items[i].stats]->value[1]; break;
+                    case A_STR: Attr->Estr += GServer->StatsList[items[i].stats]->value[1]; break;
+                    case A_DEX: Attr->Edex += GServer->StatsList[items[i].stats]->value[1]; break;
+                    case A_INT: Attr->Eint += GServer->StatsList[items[i].stats]->value[1]; break;
+                    case A_CON: Attr->Econ += GServer->StatsList[items[i].stats]->value[1]; break;
+                    case A_CHA: Attr->Echa += GServer->StatsList[items[i].stats]->value[1]; break;
+                    case A_SEN: Attr->Esen += GServer->StatsList[items[i].stats]->value[1]; break;
                 }
             }
         }

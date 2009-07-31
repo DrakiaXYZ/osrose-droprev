@@ -3843,7 +3843,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                         continue;
                     }
 
-                    if(thisclient->cskills[k].thisskill->costtype[j]==C_MP)
+                    if(thisclient->cskills[k].thisskill->costtype[j]==A_MP)
                     {
                         if(thisclient->Stats->MP<thisclient->cskills[k].thisskill->costamount[j])
                         {
@@ -3859,7 +3859,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 
                         thisclient->Stats->MP-=thisclient->cskills[k].thisskill->costamount[j];
                     }
-                    else if(thisclient->cskills[k].thisskill->costtype[j]==C_HP)
+                    else if(thisclient->cskills[k].thisskill->costtype[j]==A_HP)
                     {
                         if(thisclient->Stats->HP<thisclient->cskills[k].thisskill->costamount[j])
                         {

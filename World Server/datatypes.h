@@ -26,25 +26,49 @@
 
 //*upgraded status
 //#define NULL 2
-#define STRENGTH 10
-#define DEXTERY 11
-#define INTELIGENCE 12
-#define CONCENTRATION 13
-#define CHARM 14
-#define SENSE 15
-#define C_HP 16
-#define C_MP 17
-#define ATTACK_POWER 18
-#define ACCURY 20
-#define MAGIC_RESISTENCE 21
-#define DODGE 22
-#define MOVE_SPEED 23
-#define ATTACK_SPEED 24
-#define INV_CAPACITY 25
-#define CRITICAL 26
-#define EXTRA_DAMAGE 36
+//#define STRENGTH 10
+//#define DEXTERY 11
+//#define INTELIGENCE 12
+//#define CONCENTRATION 13
+//#define CHARM 14
+//#define SENSE 15
+//#define C_HP 16
+//#define C_MP 17
+//#define ATTACK_POWER 18
+//#define DEFENCE 19
+//#define ACCURY 20
+//#define MAGIC_RESISTENCE 21
+//#define DODGE 22
+//#define MOVE_SPEED 23
+//#define ATTACK_SPEED 24
+//#define INV_CAPACITY 25
+//#define CRITICAL 26
+//#define HP_REC_RATE 27         //HP Recovery Rate
+//#define MP_REC_RATE 28         //MP Recovery Rate
+//#define MP_CONSUME 29          //MP MP Consumption
+//#define EXP_RATE 30            //Experience Rate
+//#define LEVEL 31               //Level
+//#define POINT 32               //Point
+//#define TENDENCY 33            //Tendency
+//#define PK_LVL 34              //PK Level
+//#define HEAD_SIZE 35           //Head Size
+//#define BODY_SIZE 36           //Body Size TAKE CARE 36 is ATM, EXTRA_DAMAGE
+//#define SP 37                  //SP
+//#define MAX_HP 38              //Max HP
+//#define MAX_MP 39              //Max MP
+//#define MONEY 40               //Money
+//#define UNARMED_AP 41          //Unarmed AP
+//#define EXTRA_DAMAGE 36
 #define ONE_HAND_WEAP_AP 42
 #define TWO_HAND_WEAP_AP 43
+#define BOW_WEAP_AP 44         //Bow AP
+#define GUN_WEAP_AP 45         //Gun AP
+#define MAGIC_WEAP_AP 46       //Magic Weapon AP
+#define CBOW_WEAP_AP 47        //CrossBow AP
+#define COMBAT_WEAP_AP 48      //Combat Weapon AP
+#define BOW_WEAP_ASPD 49       //Bow Atk Speed
+#define GUN_WEAP_ASPD 50       //Gun Atk Speed
+#define COMBAT_WEAP_ASPD 51    //Combat Weapon Atk Speed
 #define MOV_SPEED 52
 #define DEFENSE 53
 #define MAX_HP 54
@@ -52,10 +76,23 @@
 #define HP_REC_AMONT 56
 #define MP_REC_RATE 57
 #define BAGPACK_CAPACITY 58
+//#define SALES_DISCOUNT 59      //Sales Discount
+//#define SALES_PREMIUM 60       //Sales Premium
 #define MP_COST_RED 61
 #define SUMMON_GAUGE 62
+//#define ITEM_DROP_RATE_INC 63  //Item Drop Rate Increase
+//#define PLANET_REQ 75          //Planet Requirements
+//#define STAMINA 76             //Stamina
+//#define STORAGE_FREE 94        //No Storage Charge
+//#define STORAGE_EXP 95         //Storage Expansion
+//#define SHOP_REMOD 96          //Personl Shop Remodeling
+//#define CART_GAUGE 97          //Cart Gauge
+//#define MAGIC_RESISTENCE_2 98  //Magic Resistance TAKE CARE ATM, Another MAGIC_RESISTENCE 21
 #define ATK_ACCURACY 99
+//#define CRITICAL 100           //Critical TAKE CARE ATM, Another CRITICAL 26
+//#define DODGE 101              //Dodge
 #define SHIELD_DEFENSE 102
+//#define IMMUNITY 103          //Immunity
 #define ONE_HAND_SWORD_AP 104
 #define ONE_HAND_MELEE_AP 105
 #define TWO_HAND_SWORD_AP 106
@@ -68,11 +105,25 @@
 #define WAND_POWER 114
 #define KATAR_AP 115
 #define DUALSWORD_AP 116
+#define CBOW_AP 117                  //CrossBow AP
+#define ONE_HAND_SWORD_ATK_SPD 118   //One Hand Sword Atk Speed
+#define ONE_HAND_MELEE_ATK_SPD 119   //One Hand Melee Atk Speed
+#define TWO_HAND_SWORD_ATK_SPD 120   //Tow Hand Sword Atk Speed
+#define TWO_HAND_SPEAR_ATK_SPD 121   //Tow Hand Spear Atk Speed
+#define TWO_HAND_AXE_ATK_SPD 122     //Tow Hand Axe Atk Speed
 #define BOW_ATK_SPD 123
 #define GUN_ATK_SPD 124
 #define LAUNCHER_ATK_SPD 125
+#define DUAL_GUN_ATK_SPD 126        //Dual Gun Atk Speed
+#define STAFF_ATK_SPD 127           //Staff Atk Speed
+#define WAND_ATK_SPD 128            //Wand Atk Speed*/
 #define KATAR_ATK_SPD 129
 #define DUALSWORD_ATK_SPD 130
+#define CBOW_ATK_SPD 131            //Crossbow Atk Speed
+//#define EXP_ITEM 133                //EXP Item
+//#define ITEM_DROP_RATE_INC 134      //Item Drop Rate Increase
+//#define ITEM_DROP_IMPROV 135        //Improved Monster Dropped Equipment
+//#define ITEM_DROP_GREY 136          //Item Drop from Grey Monsters
 
 //*status/condition
 #define A_STR 10
@@ -97,15 +148,15 @@
 #define A_MP_CONSUMATION 29
 #define A_STEALTH 33
 #define A_CLOAKING 34
+#define A_Shield_Damage 35
 #define A_Extra_Damage 36
 #define A_MAX_HP 38
 #define A_MAX_MP 39
 #define A_STUN 40
 #define A_MUTE 41
 #define A_POISON 42
-#define A_FLAMED 58
 #define A_SLEEP 43
-#define A_Shield_Damage 35
+#define A_FLAMED 58
 
 
 //*spawn values
@@ -272,7 +323,6 @@
 #define sHPMPRest 40
 #define sHPMPRest2 41
 #define sHPMPRest3 42
-
 #define sHPDown 43
 #define sMaxHPUp2 44
 #define sMaxMPUp2 45
