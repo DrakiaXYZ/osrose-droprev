@@ -1486,7 +1486,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 return NULL;
             }
         break;
-        case 321://Time Coupon - items 201-203, 948, 952-957
+        case 321://Time Coupon - items 199-203, 948, 952-957
         {
               //LMA: Mileage shop change
               if (useitem->itemnum>=954 && useitem->itemnum<=957)
@@ -1506,7 +1506,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
               }
 
               //LMA / Dream Rose: Medal Exp
-            if(((useitem->itemnum==948)||(useitem->itemnum>=201 && useitem->itemnum<=203))&&(thisclient->timerxp == 0))
+            if(((useitem->itemnum==948)||(useitem->itemnum>=199 && useitem->itemnum<=203))&&(thisclient->timerxp == 0))
             {
                 useitem->usescript = 1;
                 useitem->usetype =0;
