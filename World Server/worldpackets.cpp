@@ -1911,7 +1911,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 	BYTE sellcount = GETBYTE((*P), 3);
 
 	//LMA: % of rebate.
-	float pc_reb=(100-thisclient->pc_rebate)/100;
+	float pc_reb=(100-(float)thisclient->pc_rebate)/100;
 	if (pc_reb<=0)
 	{
 	    pc_reb=1;
