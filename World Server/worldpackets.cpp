@@ -1910,6 +1910,13 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 	BYTE buycount = GETBYTE((*P), 2);
 	BYTE sellcount = GETBYTE((*P), 3);
 
+	//LMA: % of rebate.
+	float pc_reb=(100-thisclient->pc_rebate)/100;
+	if (pc_reb<=0)
+	{
+	    pc_reb=1;
+	}
+
      //Clan Shop case...
      //Log(MSG_INFO,"Buying /selling from NPC %i",thisnpc->npctype);
      bool is_clanshop=false;
@@ -2072,7 +2079,8 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     //LMA: price tweak.
                     if(!is_clanshop&&!is_union)
                     {
-                        price = (float)round(price/1.25);
+                        //price = (float)round(price/1.25);
+                        price = (float)round(price*pc_reb);
                     }
                     else
                     {
@@ -2187,7 +2195,8 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         //LMA: price tweak.
                         if(!is_clanshop&&!is_union)
                         {
-                            price = (float)floor(price/1.25);
+                            //price = (float)floor(price/1.25);
+                            price = (float)floor(price*pc_reb);
                         }
                         else
                         {
@@ -2255,7 +2264,8 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 
                         if(!is_clanshop&&!is_union)
                         {
-                            price = (float)floor(price/1.25);
+                            //price = (float)floor(price/1.25);
+                            price = (float)floor(price*pc_reb);
                         }
                         else
                         {
@@ -2346,7 +2356,8 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     //LMA: price tweak.
                     if(!is_clanshop&&!is_union)
                     {
-                        price = (float)round(price/1.25);
+                        //price = (float)round(price/1.25);
+                        price = (float)round(price*pc_reb);
                     }
                     else
                     {

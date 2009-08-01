@@ -117,6 +117,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     once=false;
 
     attack_fuel=0;
+    pc_rebate=0;
 
     // SESSION
     Session = new SESSION;

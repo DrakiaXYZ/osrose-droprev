@@ -2365,7 +2365,8 @@ bool CWorldServer::LoadNaturalItem( )
         thisnatural->pricerate = STB_ITEM[11].rows[i][6];
         thisnatural->weight = STB_ITEM[11].rows[i][7];
         thisnatural->quality = STB_ITEM[11].rows[i][8];
-        thisnatural->pricevalue = STB_ITEM[11].rows[i][16];
+        //thisnatural->pricevalue = STB_ITEM[11].rows[i][16];
+        thisnatural->pricevalue = STB_ITEM[11].rows[i][15];
 
         //LMA: STL:
         thisnatural->STLId= STB_ITEM[11].rows[i][20];

@@ -98,6 +98,9 @@ class CPlayer: public CCharacter
     // skills/quickbar
     SKILLS cskills[MAX_ALL_SKILL];
 
+    //LMA: % for dealer (when buying from NPC).
+    int pc_rebate;
+
     int cur_max_skills[5];
 
     UINT quickbar[MAX_QUICKBAR];

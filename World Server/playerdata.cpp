@@ -431,6 +431,23 @@ bool CPlayer::loaddata( )
     if (do_save)
         saveskills();
 
+    //LMA: % rebate
+    pc_rebate=0;
+
+    for (int i=0;i<MAX_ALL_SKILL;i++)
+    {
+        if (cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+
+        if (cskills[i].thisskill->buff[0]==59)
+        {
+            pc_rebate+=cskills[i].thisskill->value2[0];
+        }
+
+    }
+
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem,sp_value FROM items WHERE owner=%i", CharInfo->charid);
     if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
@@ -863,6 +880,8 @@ void CPlayer::saveskills( )
 {
     if(Session->userid==0)
         return;
+
+    int pc_temp=0;
     char basic[1024];
     char drive[1024];
     char sclass[1024];
@@ -886,6 +905,16 @@ void CPlayer::saveskills( )
            sprintf(&slevel[strlen(slevel)], ",%i",cskills[i].level);
         }
 
+        //LMA: % dealer rebate.
+        if (cskills[i].thisskill!=NULL)
+        {
+            if (cskills[i].thisskill->buff[0]==59)
+            {
+                pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+        }
+
     }
 
     //unique skills.
@@ -900,6 +929,16 @@ void CPlayer::saveskills( )
         {
            sprintf(&uclass[strlen(uclass)], ",%i",cskills[i].id);
            sprintf(&ulevel[strlen(ulevel)], ",%i",cskills[i].level);
+        }
+
+        //LMA: % dealer rebate.
+        if (cskills[i].thisskill!=NULL)
+        {
+            if (cskills[i].thisskill->buff[0]==59)
+            {
+                pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
         }
 
     }
@@ -918,6 +957,16 @@ void CPlayer::saveskills( )
            sprintf(&mlevel[strlen(mlevel)], ",%i",cskills[i].level);
         }
 
+        //LMA: % dealer rebate.
+        if (cskills[i].thisskill!=NULL)
+        {
+            if (cskills[i].thisskill->buff[0]==59)
+            {
+                pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+        }
+
     }
 
     //basic skills.
@@ -927,6 +976,17 @@ void CPlayer::saveskills( )
             sprintf(&basic[0], "%i",cskills[i].id);
         else
             sprintf(&basic[strlen(basic)], ",%i",cskills[i].id);
+
+        //LMA: % dealer rebate.
+        if (cskills[i].thisskill!=NULL)
+        {
+            if (cskills[i].thisskill->buff[0]==59)
+            {
+                pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+        }
+
     }
 
     //driving skills.
@@ -936,7 +996,20 @@ void CPlayer::saveskills( )
             sprintf(&drive[0], "%i",cskills[i]);
         else
             sprintf(&drive[strlen(drive)], ",%i",cskills[i]);
+
+        //LMA: % dealer rebate.
+        if (cskills[i].thisskill!=NULL)
+        {
+            if (cskills[i].thisskill->buff[0]==59)
+            {
+                pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+        }
+
     }
+
+    pc_rebate=pc_temp;
 
     //LMA: Saving Skills Data for a player.
     GServer->DB->QExecute("UPDATE characters SET class_skills='%s',class_skills_level='%s',basic_skills='%s',driving_skills='%s',unique_skills='%s',mileage_skills='%s',unique_skills_level='%s',mileage_skills_level='%s' WHERE id=%i",
