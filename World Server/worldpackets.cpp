@@ -1910,6 +1910,10 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 	BYTE buycount = GETBYTE((*P), 2);
 	BYTE sellcount = GETBYTE((*P), 3);
 
+	//LMA: temp_price
+	long int temp_price_li;
+	long long temp_price_ll;
+
 	//LMA: % of rebate.
 	float pc_reb=(100-(float)thisclient->pc_rebate)/100;
 	if (pc_reb<=0)
@@ -2103,7 +2107,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                           Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price);
                           return true;
                         }
-                        thisclient->CharInfo->rewardpoints -= (long int) price;
+
+                        temp_price_li=thisclient->CharInfo->rewardpoints;
+                        temp_price_li -= (long int) price;
+
+                        if(temp_price_li>thisclient->CharInfo->rewardpoints)
+                        {
+                            Log(MSG_HACK, "negative reward point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price);
+                            return true;
+                        }
+
+                        thisclient->CharInfo->rewardpoints = temp_price_li;
                     }
                     else if (is_union)
                     {
@@ -2121,7 +2135,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                           Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price);
                           return true;
                         }
-                        nb_union_points -= (long int) price;
+
+                        temp_price_li=nb_union_points;
+                        temp_price_li -= (long int) price;
+
+                        if(temp_price_li>nb_union_points)
+                        {
+                            Log(MSG_HACK, "negative union point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price);
+                            return true;
+                        }
+
+                        nb_union_points = temp_price_li;
                     }
                     else
                     {
@@ -2130,7 +2154,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                           Log(MSG_HACK, "Not enough Zuly player %s, have %li, need %li",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int) price);
                           return true;
                         }
-                        thisclient->CharInfo->Zulies -= (long int)price;
+
+                        temp_price_ll=thisclient->CharInfo->Zulies;
+                        temp_price_ll -= (long int) price;
+
+                        if(temp_price_ll>thisclient->CharInfo->Zulies)
+                        {
+                            Log(MSG_HACK, "negative zuly hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int) price);
+                            return true;
+                        }
+
+                        thisclient->CharInfo->Zulies = temp_price_ll;
                     }
 
                     Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
@@ -2219,7 +2253,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                               Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
                               return true;
                             }
-                            thisclient->CharInfo->rewardpoints -= (long int) price*count;
+
+                            temp_price_li=thisclient->CharInfo->rewardpoints;
+                            temp_price_li -= (long int) price*count;
+
+                            if(temp_price_li>thisclient->CharInfo->rewardpoints)
+                            {
+                                Log(MSG_HACK, "negative reward point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
+                                return true;
+                            }
+
+                            thisclient->CharInfo->rewardpoints = temp_price_li;
                         }
                         else if (is_union)
                         {
@@ -2237,7 +2281,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                               Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
                               return true;
                             }
-                            nb_union_points -= (long int) price*count;
+
+                            temp_price_li=nb_union_points;
+                            temp_price_li -= (long int) price*count;
+
+                            if(temp_price_li>nb_union_points)
+                            {
+                                Log(MSG_HACK, "negative union point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
+                                return true;
+                            }
+
+                            nb_union_points = temp_price_li;
                         }
                         else
                         {
@@ -2246,7 +2300,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                               Log(MSG_HACK, "Not enough Zuly player %s, have %li, need %li",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int)price*count);
                               return true;
                             }
-                            thisclient->CharInfo->Zulies -= (long int)price*count;
+
+                            temp_price_ll=thisclient->CharInfo->Zulies;
+                            temp_price_ll -= (long int) price*count;
+
+                            if(temp_price_ll>thisclient->CharInfo->Zulies)
+                            {
+                                Log(MSG_HACK, "negative Zuly hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int) price*count);
+                                return true;
+                            }
+
+                            thisclient->CharInfo->Zulies = temp_price_ll;
                         }
 
                         Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
@@ -2288,7 +2352,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                               Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
                               return true;
                             }
-                            thisclient->CharInfo->rewardpoints -= (long int) price*count;
+
+                            temp_price_li=thisclient->CharInfo->rewardpoints;
+                            temp_price_li -= (long int) price*count;
+
+                            if(temp_price_li>thisclient->CharInfo->rewardpoints)
+                            {
+                                Log(MSG_HACK, "negative reward point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
+                                return true;
+                            }
+
+                            thisclient->CharInfo->rewardpoints = temp_price_li;
                         }
                         else if (is_union)
                         {
@@ -2306,7 +2380,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                               Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
                               return true;
                             }
-                            nb_union_points -= (long int) price*count;
+
+                            temp_price_li=nb_union_points;
+                            temp_price_li -= (long int) price*count;
+
+                            if(temp_price_li>nb_union_points)
+                            {
+                                Log(MSG_HACK, "negative union point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
+                                return true;
+                            }
+
+                            nb_union_points = temp_price_li;
                         }
                         else
                         {
@@ -2315,7 +2399,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                               Log(MSG_HACK, "Not enough Zuly player %s, have %li, need %li",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int)price*count);
                               return true;
                             }
-                            thisclient->CharInfo->Zulies -= (long int)price*count;
+
+                            temp_price_ll=thisclient->CharInfo->Zulies;
+                            temp_price_ll -= (long int) price*count;
+
+                            if(temp_price_ll>thisclient->CharInfo->Zulies)
+                            {
+                                Log(MSG_HACK, "negative Zuly hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int) price*count);
+                                return true;
+                            }
+
+                            thisclient->CharInfo->Zulies = temp_price_ll;
                         }
 
                         Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
@@ -2380,7 +2474,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                           Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
                           return true;
                         }
-                        thisclient->CharInfo->rewardpoints -= (long int) price*count;
+
+                        temp_price_li=thisclient->CharInfo->rewardpoints;
+                        temp_price_li -= (long int) price*count;
+
+                        if(temp_price_li>thisclient->CharInfo->rewardpoints)
+                        {
+                            Log(MSG_HACK, "negative reward point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
+                            return true;
+                        }
+
+                        thisclient->CharInfo->rewardpoints = temp_price_li;
                     }
                     else if (is_union)
                     {
@@ -2398,7 +2502,17 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                           Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
                           return true;
                         }
-                        nb_union_points -= (long int) price*count;
+
+                        temp_price_li=nb_union_points;
+                        temp_price_li -= (long int) price*count;
+
+                        if(temp_price_li>nb_union_points)
+                        {
+                            Log(MSG_HACK, "negative union point hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
+                            return true;
+                        }
+
+                        nb_union_points = temp_price_li;
                     }
                     else
                     {
@@ -2408,7 +2522,16 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                           return true;
                         }
 
-                        thisclient->CharInfo->Zulies -= (long int)price*count;
+                        temp_price_ll=thisclient->CharInfo->Zulies;
+                        temp_price_ll -= (long int) price*count;
+
+                        if(temp_price_ll>thisclient->CharInfo->Zulies)
+                        {
+                            Log(MSG_HACK, "negative zuly hack detected for player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->Zulies,(long int) price*count);
+                            return true;
+                        }
+
+                        thisclient->CharInfo->Zulies = temp_price_ll;
                     }
 
                     Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
