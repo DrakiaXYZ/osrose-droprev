@@ -116,6 +116,24 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     wait_validation=0;
     once=false;
 
+    //bonus Medal of Fortune(id.1300/type.10)_One additional drop chance for defeating a monster is added (Double Drop -> ddrop)
+    timerddrop=0;
+    bonusddrop=1;
+    wait_validation_ddrop=0;
+    once_ddrop=false;
+
+    //bonus Medal of Excellence(id.1301/type.10)_find equipment of excellence and will result in better bonus stats than normal (statdrop)
+    timerstatdrop=0;
+    bonusstatdrop=1;
+    wait_validation_statdrop=0;
+    once_statdrop=false;
+
+     //bonus Medal of Retrieval(id.1302/type.10)_you are able to retreive items from monsters that would normally not drop items for you. (graydrop)
+    timergraydrop=0;
+    bonusgraydrop=0;
+    wait_validation_graydrop=0;
+    once_graydrop=false;
+
     attack_fuel=0;
     pc_rebate=0;
 

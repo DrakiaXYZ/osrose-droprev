@@ -103,7 +103,45 @@ PVOID MapProcess( PVOID TS )
                       player->timerxp=0;
                       player->wait_validation=0;
                     }
-
+                    if(player->bonusddrop>1&&(etime>=player->timerddrop))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Medal of Fortune vanished.");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->bonusddrop=1;
+                      player->timerddrop=0;
+                      player->wait_validation_ddrop=0;
+                    }
+                    if(player->bonusstatdrop>1&&(etime>=player->timerstatdrop))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Medal of Excellence vanished.");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->bonusstatdrop=1;
+                      player->timerstatdrop=0;
+                      player->wait_validation_statdrop=0;
+                    }
+                    if(player->bonusgraydrop>0&&(etime>=player->timergraydrop))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Medal of Retrieval vanished.");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->bonusgraydrop=0;
+                      player->timergraydrop=0;
+                      player->wait_validation_graydrop=0;
+                    }
+                    if(player->Shop->ShopType>0&&(etime>=player->Shop->mil_shop_time))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Mileage shop expired !");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->Shop->ShopType=0;
+                      player->Shop->mil_shop_time=0;
+                    }
                     if(player->Shop->ShopType>0&&(etime>=player->Shop->mil_shop_time))
                     {
                       BEGINPACKET( pak, 0x702 );

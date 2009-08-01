@@ -26,7 +26,7 @@
 bool CPlayer::loaddata( )
 {
 	MYSQL_ROW row;
-	MYSQL_RES *result = GServer->DB->QStore("SELECT level,face,hairStyle,sex,classid,zuly,str,dex,_int, con,cha,sen,curHp,curMp,id,statp,skillp,exp,stamina,quickbar,basic_skills, class_skills,class_skills_level,respawnid,clanid,clan_rank,townid,rewardpoints,unionid,unionfame,union01,union02,union03,union04,union05,bonusxp,timerxp,shoptype,timershop,isGM,unique_skills,mileage_skills,driving_skills,unique_skills_level,mileage_skills_level FROM characters WHERE char_name='%s'", CharInfo->charname);
+	MYSQL_RES *result = GServer->DB->QStore("SELECT level,face,hairStyle,sex,classid,zuly,str,dex,_int, con,cha,sen,curHp,curMp,id,statp,skillp,exp,stamina,quickbar,basic_skills, class_skills,class_skills_level,respawnid,clanid,clan_rank,townid,rewardpoints,unionid,unionfame,union01,union02,union03,union04,union05,bonusxp,timerxp,bonusddrop,timerddrop,bonusstatdrop,timerstatdrop,bonusgraydrop,timergraydrop,shoptype,timershop,isGM,unique_skills,mileage_skills,driving_skills,unique_skills_level,mileage_skills_level FROM characters WHERE char_name='%s'", CharInfo->charname);
 	if(result==NULL) return false;
 	if(mysql_num_rows(result)!=1)
 	{
@@ -92,14 +92,24 @@ bool CPlayer::loaddata( )
     //LMA: mileage stuff
     bonusxp=atoi(row[35]);
     timerxp=atoi(row[36]);
+    bonusddrop=atoi(row[37]);
+    timerddrop=atoi(row[38]);
+    bonusstatdrop=atoi(row[39]);
+    timerstatdrop=atoi(row[40]);
+    bonusgraydrop=atoi(row[41]);
+    timergraydrop=atoi(row[42]);
     wait_validation=0;
+    wait_validation_ddrop=0;
+    wait_validation_statdrop=0;
+    wait_validation_graydrop=0;
+
     last_fuel=0;
 
-    Shop->ShopType=atoi(row[37]);
-    Shop->mil_shop_time=atoi(row[38]);
+    Shop->ShopType=atoi(row[43]);
+    Shop->mil_shop_time=atoi(row[44]);
 
     //GM Additional Security by PurpleYouKo
-    CharInfo->isGM=atoi(row[39]);   // GM Security
+    CharInfo->isGM=atoi(row[45]);   // GM Security
 
     //resetting some values:
     sp_hp=0;
@@ -116,18 +126,43 @@ bool CPlayer::loaddata( )
     rawtime=timerxp;
     timeinfo = localtime ( &rawtime );
     Log(MSG_INFO,"Bonus Xp %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    rawtime=timerddrop;
+    timeinfo = localtime ( &rawtime );
+    Log(MSG_INFO,"Medal of Fortune %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    rawtime=timerstatdrop;
+    timeinfo = localtime ( &rawtime );
+    Log(MSG_INFO,"Medal of Excellence %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    rawtime=timergraydrop;
+    timeinfo = localtime ( &rawtime );
+    Log(MSG_INFO,"Medal of Retrieval %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
     //End of test
 
     time_t etime=time(NULL);
-    if(bonusxp<=0)
-         bonusxp=1;
+    if(bonusxp<=0) bonusxp=1; //exp *
+    if(bonusddrop<=0) bonusddrop=1; //drop *
+    if(bonusstatdrop<=0) bonusstatdrop=1;   // %
+    if(bonusgraydrop<0) bonusgraydrop=0; //yes or no (1 or 0)?
 
     if(bonusxp>1&&(etime>=timerxp))
     {
       bonusxp=1;
       timerxp=0;
     }
-
+    if(bonusddrop>1&&(etime>=timerddrop))
+    {
+      bonusddrop=1;
+      timerddrop=0;
+    }
+    if(bonusstatdrop>1&&(etime>=timerstatdrop))
+    {
+      bonusstatdrop=1;
+      timerstatdrop=0;
+    }
+    if(bonusgraydrop>0&&(etime>=timergraydrop))
+    {
+      bonusgraydrop=0;
+      timergraydrop=0;
+    }
     if (Shop->ShopType>0&&(etime>=Shop->mil_shop_time))
     {
      Shop->ShopType=0;
@@ -813,20 +848,33 @@ void CPlayer::savedata( )
         //LMA: bonus XP (coupon)
         int temp_xp=bonusxp;
         time_t temp_timer=timerxp;
+        if(once){temp_xp=0; temp_timer=0;}
 
-        if(once)
-        {
-            temp_xp=0;
-            temp_timer=0;
-        }
+        //Medal of Fortune
+        int temp_ddrop=bonusddrop;
+        time_t temp_timer_ddrop=timerddrop;
+        if(once_ddrop)  {temp_ddrop=0; temp_timer_ddrop=0;}
+
+        //Medal of Excellence
+        int temp_statdrop=bonusstatdrop;
+        time_t temp_timer_statdrop=timerstatdrop;
+        if(once_statdrop)  {temp_statdrop=0; temp_timer_statdrop=0;}
+
+        //Medal of Retrieval
+        int temp_graydrop=bonusgraydrop;
+        time_t temp_timer_graydrop=timergraydrop;
+        if(once_graydrop)  {temp_graydrop=0; temp_timer_graydrop=0;}
 
         //LMA: new save.
         //GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
-        GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%I64i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
+        //GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%I64i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
+        GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%I64i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, bonusddrop=%i, timerddrop=%i, bonusstatdrop=%i, timerstatdrop=%i, bonusgraydrop=%i, timergraydrop=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
                     CharInfo->Job,Stats->Level, CharInfo->Zulies, (UINT) hp, (UINT) Stats->MP,
                     Attr->Str,Attr->Con,Attr->Dex,Attr->Int,Attr->Cha,Attr->Sen,
-                    (UINT) CharInfo->Exp,CharInfo->SkillPoints,CharInfo->StatPoints,CharInfo->stamina,
-                    quick,Position->respawn,Clan->clanid,Clan->clanrank,Position->saved,CharInfo->rewardpoints,temp_xp,temp_timer,Shop->ShopType,Shop->mil_shop_time,
+                    //(UINT) CharInfo->Exp,CharInfo->SkillPoints,CharInfo->StatPoints,CharInfo->stamina,
+                    //quick,Position->respawn,Clan->clanid,Clan->clanrank,Position->saved,CharInfo->rewardpoints,temp_xp,temp_timer,Shop->ShopType,Shop->mil_shop_time,
+                    (UINT) CharInfo->Exp,CharInfo->SkillPoints,CharInfo->StatPoints,CharInfo->stamina,quick,Position->respawn,Clan->clanid,Clan->clanrank,Position->saved,CharInfo->rewardpoints,
+                    temp_xp,temp_timer,temp_ddrop,temp_timer_ddrop,temp_statdrop,temp_timer_statdrop,temp_graydrop,temp_timer_graydrop,Shop->ShopType,Shop->mil_shop_time,
                     CharInfo->unionid,CharInfo->unionfame,CharInfo->union01,CharInfo->union02,CharInfo->union03,CharInfo->union04,CharInfo->union05,CharInfo->charid);
 
         //LMA: intelligent item save.

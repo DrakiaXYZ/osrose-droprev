@@ -1581,23 +1581,48 @@ bool CWorldServer::pakExpTC ( CPlayer* thisclient, CPacket* P )
     time_t rawtime;
     struct tm * timeinfo;
 
-    if (thisclient->timerxp==0||thisclient->wait_validation==0)
+    /*if (thisclient->timerxp==0||thisclient->wait_validation==0)
     {
        Log(MSG_HACK,"Bonus XP packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
        return true;
     }
-
-    //validating Xp bonus :)
+    if (thisclient->timerddrop==0||thisclient->wait_validation_ddrop==0)
+    {
+       Log(MSG_HACK,"Medal of Fortune packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+       return true;
+    }
+    if (thisclient->timerstatdrop==0||thisclient->wait_validation_statdrop==0)
+    {
+       Log(MSG_HACK,"Medal of Excellence packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+       return true;
+    }
+    if (thisclient->timergraydrop==0||thisclient->wait_validation_graydrop==0)
+    {
+       Log(MSG_HACK,"Medal of Retrieval packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+       return true;
+    }*/
+    /*//validating Xp bonus :)
     thisclient->bonusxp=thisclient->wait_validation;
     rawtime=thisclient->timerxp;
     //time ( &rawtime );
     timeinfo = localtime ( &rawtime );
-    //LMA: Don't use any "Log" function after this since it'll change the timeinfo's value.
+    //LMA: Don't use any "Log" function after this since it'll change the timeinfo's value.*/
 
     switch(action)
     {
         case 0x04: //Medal
         {
+             if (thisclient->timerxp==0||thisclient->wait_validation==0)
+             {
+                Log(MSG_HACK,"Bonus XP packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+                return true;
+             }
+             //validating Xp bonus :)
+             thisclient->bonusxp=thisclient->wait_validation;
+             rawtime=thisclient->timerxp;
+             //time ( &rawtime );
+             timeinfo = localtime ( &rawtime );
+             //LMA: Don't use any "Log" function after this since it'll change the timeinfo's value.
              BEGINPACKET( pak, 0x822 );
              ADDBYTE( pak, 0x04 );
              ADDBYTE( pak, 0x00 );
@@ -1611,6 +1636,83 @@ bool CWorldServer::pakExpTC ( CPlayer* thisclient, CPacket* P )
 
 			 thisclient->client->SendPacket( &pak );
              return true;
+        }
+        break;
+        case 0x05: //Medal of Fortune
+        {
+			if (thisclient->timerddrop==0||thisclient->wait_validation_ddrop==0)
+			{
+					Log(MSG_HACK,"Medal of Fortune packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+					return true;
+			}
+			//validating Medal of Fortune bonus :)
+            thisclient->bonusddrop=thisclient->wait_validation_ddrop;
+            rawtime=thisclient->timerddrop;
+            timeinfo = localtime ( &rawtime );
+            BEGINPACKET( pak, 0x822 );
+            ADDBYTE( pak, 0x05 );
+            ADDBYTE( pak, 0x00 );
+            ADDWORD( pak, 0x0000 );
+            ADDWORD(pak,timeinfo->tm_year+1900);   //Year
+            ADDBYTE( pak, timeinfo->tm_mon+1);  //Month
+            ADDBYTE( pak, timeinfo->tm_mday);  //Day
+            ADDBYTE( pak, timeinfo->tm_hour+1);  //hour
+            //ADDBYTE( pak, timeinfo->tm_min+1); //minutes?
+            ADDBYTE( pak, 0x00);  //minutes?
+            thisclient->client->SendPacket( &pak );
+            return true;
+        }
+        break;
+        case 0x06: //Medal of Excellence
+        {
+			if (thisclient->timerstatdrop==0||thisclient->wait_validation_statdrop==0)
+			{
+				Log(MSG_HACK,"Medal of Excellence packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+				return true;
+			}
+			//validating Medal of Excellence bonus :)
+            thisclient->bonusstatdrop=thisclient->wait_validation_statdrop;
+            rawtime=thisclient->timerstatdrop;
+			timeinfo = localtime ( &rawtime );
+            BEGINPACKET( pak, 0x822 );
+            ADDBYTE( pak, 0x06 );
+            ADDBYTE( pak, 0x00 );
+            ADDWORD( pak, 0x0000 );
+            ADDWORD(pak,timeinfo->tm_year+1900);   //Year
+            ADDBYTE( pak, timeinfo->tm_mon+1);  //Month
+            ADDBYTE( pak, timeinfo->tm_mday);  //Day
+            ADDBYTE( pak, timeinfo->tm_hour+1);  //hour
+            //ADDBYTE( pak, timeinfo->tm_min+1); //minutes?
+            ADDBYTE( pak, 0x00);  //minutes?
+            thisclient->client->SendPacket( &pak );
+            return true;
+        }
+        break;
+        case 0x07: //Medal of Retrieval
+        {
+			if (thisclient->timergraydrop==0||thisclient->wait_validation_graydrop==0)
+			{
+				Log(MSG_HACK,"Medal of Retrieval packet received from %s (shouldn't be).",thisclient->CharInfo->charname);
+				return true;
+			}
+			//validating Medal of Retrieval bonus :)
+            thisclient->bonusgraydrop=thisclient->wait_validation_graydrop;
+            rawtime=thisclient->timergraydrop;
+			time ( &rawtime );
+            timeinfo = localtime ( &rawtime );
+
+            BEGINPACKET( pak, 0x822 );
+            ADDBYTE( pak, 0x07 );
+            ADDBYTE( pak, 0x00 );
+            ADDWORD( pak, 0x0000 );
+            ADDWORD(pak,timeinfo->tm_year+1900);   //Year
+            ADDBYTE( pak, timeinfo->tm_mon+1);  //Month
+            ADDBYTE( pak, timeinfo->tm_mday);  //Day
+            ADDBYTE( pak, timeinfo->tm_hour+1);  //hour
+            //ADDBYTE( pak, timeinfo->tm_min+1); //minutes?
+            ADDBYTE( pak, 0x00);  //minutes?
+			thisclient->client->SendPacket( &pak );
+            return true;
         }
         break;
         default:

@@ -1486,7 +1486,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 return NULL;
             }
         break;
-        case 321://Time Coupon - items 199-203, 948, 952-957
+        /*case 321://Time Coupon - items 199-203, 948, 952-957
         {
               //LMA: Mileage shop change
               if (useitem->itemnum>=954 && useitem->itemnum<=957)
@@ -1567,6 +1567,134 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 
             }
 
+        }*/
+        case 321://Time Coupon - New Way to check TC
+        {
+              //Log( MSG_INFO, "TIme Coupon Number %i",UseList.Index[useitem->itemnum]->useeffect[0]);
+              switch (UseList.Index[useitem->itemnum]->useeffect[0])
+              {
+                    case 96://Special Shop Coupon, Shop A/B/C, Moldie, snowman, ....
+                    {
+                        Log(MSG_INFO,"Shop changed to %i",UseList.Index[useitem->itemnum]->quality);
+                        thisclient->Shop->ShopType=UseList.Index[useitem->itemnum]->quality;
+                        //thisclient->Shop->mil_shop_time=clock()+10*86400*1000; //10 days
+                        //thisclient->Shop->mil_shop_time=time(NULL)+10*86400; //10 days
+                        thisclient->Shop->mil_shop_time=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);     //Effective Time Duration
+                        BEGINPACKET( pak, 0x702 );
+                        ADDSTRING( pak, "[Mileage] Your Shop look has changed." );
+                        ADDBYTE( pak, 0 );
+                        thisclient->client->SendPacket(&pak);
+                        useitem->usescript = 1;
+                        useitem->usetype =0;
+                        useitem->usevalue =UseList.Index[useitem->itemnum]->quality;
+                    }
+                    break;
+                    //LMA / Dream Rose: Medal Exp
+                    //if(((useitem->itemnum==948)||(useitem->itemnum>=201 && useitem->itemnum<=203))&&(thisclient->timerxp == 0))
+                    case 133://Special Exp Time Coupon, Adventurer, Trainee, ...
+                    {
+                        if (thisclient->timerxp == 0)
+                        {
+                            useitem->usescript = 1;
+                            useitem->usetype =0;
+                            useitem->usevalue =UseList.Index[useitem->itemnum]->quality/100;
+                            thisclient->bonusxp=1;
+                            thisclient->wait_validation=UseList.Index[useitem->itemnum]->quality/100;
+                            Log(MSG_INFO,"Wait validation %i",thisclient->wait_validation);
+
+                            //Good version?
+                            if(useitem->itemnum==200||useitem->itemnum==948)
+                            {
+                                //valid until logout (limit to one hour)
+                                thisclient->once=true;
+                                //thisclient->timerxp=clock()+60*60*1000;  //1 hour
+                                thisclient->timerxp=time(NULL)+60*60;  //1 hour
+                                Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                                BEGINPACKET( pak, 0x702 );
+                                ADDSTRING( pak, "The effect will hold until you log off or you play for one hour." );
+                                ADDBYTE( pak, 0 );
+                                thisclient->client->SendPacket(&pak);
+                            }
+                            else if (useitem->itemnum==199)
+                            {
+                                //30 minutes.
+                                //valid until logout
+                                thisclient->once=true;
+                                thisclient->timerxp=time(NULL)+30*60;  //1 hour
+                                //Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                                BEGINPACKET( pak, 0x702 );
+                                ADDSTRING( pak, "The effect will hold until you log off or you play for 30 minutes." );
+                                ADDBYTE( pak, 0 );
+                                thisclient->client->SendPacket(&pak);
+                            }
+                            else if(useitem->itemnum==203)
+                            {
+                                //3 days, will "resist" to logout ;)
+                                //thisclient->timerxp=clock()+86400*1000;
+                                thisclient->timerxp=time(NULL)+86400*3;
+                                thisclient->once=false;
+                                //Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                                BEGINPACKET( pak, 0x702 );
+                                ADDSTRING( pak, "The effect will hold 3 days." );
+                                ADDBYTE( pak, 0 );
+                                thisclient->client->SendPacket(&pak);
+                            }
+                            else
+                            {
+                                //1 day, will "resist" to logout ;)
+                                //thisclient->timerxp=clock()+86400*1000;
+                                thisclient->timerxp=time(NULL)+86400;
+                                thisclient->once=false;
+                                //Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                                BEGINPACKET( pak, 0x702 );
+                                ADDSTRING( pak, "The effect will hold 24 hours." );
+                                ADDBYTE( pak, 0 );
+                                thisclient->client->SendPacket(&pak);
+                            }
+                        }
+                    }
+                    break;
+                    case 134://Medal of Fortune
+                    {
+                        if (thisclient->timerddrop == 0)
+                        {
+                            thisclient->bonusddrop=1;
+                            thisclient->wait_validation_ddrop=UseList.Index[useitem->itemnum]->quality; //quality
+                            Log(MSG_INFO,"Wait validation ddrop %i",thisclient->wait_validation_ddrop);
+                            thisclient->timerddrop=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);  //Effective Time Duration
+                            Log(MSG_INFO,"Medal of Fortune drop * %i",UseList.Index[useitem->itemnum]->quality);
+                             thisclient->once_ddrop=false;  //stay at logout
+                        }
+                    }
+                    break;
+                    case 135://Medal of Excellence
+                    {
+                        if (thisclient->timerstatdrop == 0)
+                        {
+                            thisclient->bonusstatdrop=1;
+                            thisclient->wait_validation_statdrop=UseList.Index[useitem->itemnum]->quality;
+                            Log(MSG_INFO,"Wait validation statdrop %i",thisclient->wait_validation_statdrop);
+                            thisclient->timerstatdrop=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);  //Effective time duration
+                            Log(MSG_INFO,"Medal of Excellence Drop Stat Increase by %i /100",UseList.Index[useitem->itemnum]->quality);
+                            thisclient->once_statdrop=false;    //stay at logout
+
+                        }
+                    }
+                    break;
+                    case 136://Medal of Retrieval
+                    {
+                        if (thisclient->timergraydrop == 0)
+                        {
+                            thisclient->bonusgraydrop=0;
+                            thisclient->wait_validation_graydrop=UseList.Index[useitem->itemnum]->quality;
+                            Log(MSG_INFO,"Wait validation graydrop %i",thisclient->wait_validation_graydrop);
+                            thisclient->timergraydrop=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);  //Effective time duration
+                            Log(MSG_INFO,"Medal of Retrieval All Monster Drop to %i",UseList.Index[useitem->itemnum]->quality);
+                            thisclient->once_graydrop=false;    //stay at logout
+                        }
+                    }
+                    break;
+            }
         }
         break;
         case 323://Job Skill, Unique Kill, Mileage Skill and All Skill Reset Books

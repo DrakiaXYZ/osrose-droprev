@@ -77,6 +77,24 @@ class CPlayer: public CCharacter
     int bonusxp;
     bool once;
 
+    //Medal of Fortune(id.1300/type.10)_One additional drop chance for defeating a monster is added (Double Drop -> ddrop)
+    int wait_validation_ddrop;
+    time_t timerddrop;
+    int bonusddrop;
+    bool once_ddrop;
+
+    //Medal of Excellence(id.1301/type.10)_find equipment of excellence and will result in better bonus stats than normal (statdrop)
+    int wait_validation_statdrop;
+    time_t timerstatdrop;
+    int bonusstatdrop;
+    bool once_statdrop;
+
+    //Medal of Retrieval(id.1302/type.10)_you are able to retreive items from monsters that would normally not drop items for you. (graydrop)
+    int wait_validation_graydrop;
+    time_t timergraydrop;
+    int bonusgraydrop;
+    bool once_graydrop;
+
     //Quest variables
     bool speaksLuna;
     bool canUseFlyingVessel;
