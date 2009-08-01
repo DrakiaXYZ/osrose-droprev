@@ -5612,9 +5612,11 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             int extra_offset=0;
             bool venurune=false;
             bool nepturune=false;
+            bool plutorune=false;
 
             if(thisclient->items[material].itemtype==12&&thisclient->items[material].itemnum==445)
             {
+                //venurune.
                 venurune=true;
                 extra_offset=1;//it's an offset, NOT a %!
                 needed_amount=1;
@@ -5623,10 +5625,20 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             }
             if(thisclient->items[material].itemtype==12&&thisclient->items[material].itemnum==456)
             {
+                //nepturune.
                 nepturune=true;
                 extra_offset=1;//it's an offset, NOT a %!
                 needed_amount=1;
                 needed_itemnum=456;
+                needed_itemtype=12;
+            }
+            if(thisclient->items[material].itemtype==12&&thisclient->items[material].itemnum==457)
+            {
+                //plutorune.
+                plutorune=true;
+                extra_offset=0;//it's an offset, NOT a %!
+                needed_amount=1;
+                needed_itemnum=457;
                 needed_itemtype=12;
             }
             if(needed_itemtype!=thisclient->items[material].itemtype||needed_itemnum!=thisclient->items[material].itemnum)
@@ -5757,15 +5769,15 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 else if (nextlevel<=refine_grade[grade][1])
                 {
                     //Only degrade.
-                    if(nepturune)
+                    if(nepturune||plutorune)
                     {
+                        //No degrade nor breaking
                         thisclient->items[item].refine = (nextlevel-1) * 16;
                     }
                     else if(nextlevel>1)
                     {
                         thisclient->items[item].refine = RandNumber(0,nextlevel-1) * 16;
                     }
-
                     else
                     {
                         thisclient->items[item].refine = 0;
@@ -5775,7 +5787,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 }
                 else
                 {
-                    if(!nepturune) //Ouch, break time.
+                    //Ouch, break time.
+                    if(!(nepturune||plutorune))
                     {
                         ClearItem( thisclient->items[item] );
                     }
