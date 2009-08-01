@@ -1592,6 +1592,7 @@ bool CWorldServer::pakExpTC ( CPlayer* thisclient, CPacket* P )
     rawtime=thisclient->timerxp;
     //time ( &rawtime );
     timeinfo = localtime ( &rawtime );
+    //LMA: Don't use any "Log" function after this since it'll change the timeinfo's value.
 
     switch(action)
     {

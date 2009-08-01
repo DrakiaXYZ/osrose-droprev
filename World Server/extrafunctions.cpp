@@ -1513,9 +1513,10 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usevalue =UseList.Index[useitem->itemnum]->quality/100;
                 thisclient->bonusxp=1;
                 thisclient->wait_validation=UseList.Index[useitem->itemnum]->quality/100;
+                Log(MSG_INFO,"Wait validation %i",thisclient->wait_validation);
 
                 //Good version?
-                if(useitem->itemnum==948||(useitem->itemnum>=202 && useitem->itemnum<=203))
+                if(useitem->itemnum==200||useitem->itemnum==948)
                  {
                    //valid until logout (limit to one hour)
                     thisclient->once=true;
@@ -1527,13 +1528,37 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     ADDBYTE( pak, 0 );
                     thisclient->client->SendPacket(&pak);
                  }
+                else if (useitem->itemnum==199)
+                {
+                    //30 minutes.
+                   //valid until logout
+                    thisclient->once=true;
+                    thisclient->timerxp=time(NULL)+30*60;  //1 hour
+                    //Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                    BEGINPACKET( pak, 0x702 );
+                    ADDSTRING( pak, "The effect will hold until you log off or you play for 30 minutes." );
+                    ADDBYTE( pak, 0 );
+                    thisclient->client->SendPacket(&pak);
+                }
+                else if(useitem->itemnum==203)
+                {
+                   //3 days, will "resist" to logout ;)
+                   //thisclient->timerxp=clock()+86400*1000;
+                   thisclient->timerxp=time(NULL)+86400*3;
+                   thisclient->once=false;
+                    //Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                    BEGINPACKET( pak, 0x702 );
+                    ADDSTRING( pak, "The effect will hold 3 days." );
+                    ADDBYTE( pak, 0 );
+                    thisclient->client->SendPacket(&pak);
+                }
                 else
                 {
                    //1 day, will "resist" to logout ;)
                    //thisclient->timerxp=clock()+86400*1000;
                    thisclient->timerxp=time(NULL)+86400;
                    thisclient->once=false;
-                    Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
+                    //Log(MSG_INFO,"Bonus XP to %i",thisclient->bonusxp);
                     BEGINPACKET( pak, 0x702 );
                     ADDSTRING( pak, "The effect will hold 24 hours." );
                     ADDBYTE( pak, 0 );

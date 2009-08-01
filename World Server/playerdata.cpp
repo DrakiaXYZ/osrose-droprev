@@ -115,7 +115,7 @@ bool CPlayer::loaddata( )
     //Log(MSG_INFO,"Shop %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
     rawtime=timerxp;
     timeinfo = localtime ( &rawtime );
-    //Log(MSG_INFO,"Bonus Xp %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    Log(MSG_INFO,"Bonus Xp %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
     //End of test
 
     time_t etime=time(NULL);
