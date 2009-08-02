@@ -1652,6 +1652,16 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                                 thisclient->client->SendPacket(&pak);
                             }
                         }
+                        else
+                        {
+                            //LMA: Player already has a medal exp.
+                            BEGINPACKET( pak, 0x702 );
+                            ADDSTRING( pak, "You already have an exp bonus." );
+                            ADDBYTE( pak, 0 );
+                            thisclient->client->SendPacket(&pak);
+                            return NULL;
+                        }
+
                     }
                     break;
                     case 134://Medal of Fortune
@@ -1664,6 +1674,15 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                             thisclient->timerddrop=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);  //Effective Time Duration
                             Log(MSG_INFO,"Medal of Fortune drop * %i",UseList.Index[useitem->itemnum]->quality);
                              thisclient->once_ddrop=false;  //stay at logout
+                        }
+                        else
+                        {
+                            //LMA: Player already has a medal exp.
+                            BEGINPACKET( pak, 0x702 );
+                            ADDSTRING( pak, "You already have a drop bonus." );
+                            ADDBYTE( pak, 0 );
+                            thisclient->client->SendPacket(&pak);
+                            return NULL;
                         }
                     }
                     break;
@@ -1679,6 +1698,15 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                             thisclient->once_statdrop=false;    //stay at logout
 
                         }
+                        else
+                        {
+                            //LMA: Player already has a medal exp.
+                            BEGINPACKET( pak, 0x702 );
+                            ADDSTRING( pak, "You already have a drop stat bonus." );
+                            ADDBYTE( pak, 0 );
+                            thisclient->client->SendPacket(&pak);
+                            return NULL;
+                        }
                     }
                     break;
                     case 136://Medal of Retrieval
@@ -1691,6 +1719,15 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                             thisclient->timergraydrop=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);  //Effective time duration
                             Log(MSG_INFO,"Medal of Retrieval All Monster Drop to %i",UseList.Index[useitem->itemnum]->quality);
                             thisclient->once_graydrop=false;    //stay at logout
+                        }
+                        else
+                        {
+                            //LMA: Player already has a medal exp.
+                            BEGINPACKET( pak, 0x702 );
+                            ADDSTRING( pak, "You already have a retrieval bonus." );
+                            ADDBYTE( pak, 0 );
+                            thisclient->client->SendPacket(&pak);
+                            return NULL;
                         }
                     }
                     break;

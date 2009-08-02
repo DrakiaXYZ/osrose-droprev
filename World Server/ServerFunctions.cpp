@@ -436,7 +436,15 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     // code to modify drop chance for different levels
     //float charm = 0;
     float charm = (float)thisclient->Attr->Cha / 5;
+
+    //LMA: Gray drops
     float leveldif = (float)thismon->thisnpc->level - (float)thisclient->Stats->Level;
+    if (thisclient->bonusgraydrop!=0)
+    {
+        Log(MSG_INFO,"Gray medal detected");
+        leveldif=20.0;
+    }
+
     float droprate = (float)GServer->Config.DROP_RATE + charm;  //basic server rate + extra for player charm
     float dropchance = (droprate + (droprate * 0.01 * leveldif));
     //Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
@@ -723,7 +731,18 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         if( pstats < Config.StatChance)
         {   // default 5%
             //PY stats
-            newdrop->item.stats = GetExtraStats( 0 );
+
+            //LMA: Better stats if the player has a bonus medal.
+            if (thisclient->bonusstatdrop!=1)
+            {
+                Log(MSG_INFO,"Better stats should come in this drop");
+                newdrop->item.stats = GetExtraStats( 100 );
+            }
+            else
+            {
+                newdrop->item.stats = GetExtraStats( 0 );
+            }
+
             //newdrop->item.stats = rand()%300;
         }
 
@@ -786,7 +805,15 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     // code to modify drop chance for different levels
     //float charm = 0;
     float charm = (float)thisclient->Attr->Cha / 5;
+
+    //LMA: Gray drops
     float leveldif = (float)thismon->thisnpc->level - (float)thisclient->Stats->Level;
+    if (thisclient->bonusgraydrop!=0)
+    {
+        Log(MSG_INFO,"Gray medal detected");
+        leveldif=20.0;
+    }
+
     float droprate = (float)GServer->Config.DROP_RATE + charm;  //basic server rate + extra for player charm
     float dropchance = (droprate + (droprate * 0.01 * leveldif));
     //Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
@@ -1196,7 +1223,18 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         if( pstats < Config.StatChance)
         {   // default 5%
             //PY stats
-            newdrop->item.stats = GetExtraStats( 0 );
+
+            //LMA: Extra stats (medal for example).
+            if (thisclient->bonusstatdrop!=1)
+            {
+                Log(MSG_INFO,"Better stats should come in this drop");
+                newdrop->item.stats = GetExtraStats( 100 );
+            }
+            else
+            {
+                newdrop->item.stats = GetExtraStats( 0 );
+            }
+
             //newdrop->item.stats = rand()%300;
         }
 

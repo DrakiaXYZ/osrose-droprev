@@ -535,32 +535,27 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         ADDDWORD   ( pak, 16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
         {
-            thisdrop = Enemy->GetDrop( );
-            if(thisdrop!=NULL)
+            //LMA: looping the drops (double drop medal for example).
+            int nb_drops=1;
+            if (IsPlayer())
             {
-                //LMA: unused anymore?
-                /*ADDFLOAT   ( pak, thisdrop->pos.x*100 );
-                ADDFLOAT   ( pak, thisdrop->pos.y*100 );
-                if(thisdrop->type==1)
-                {
-                    ADDDWORD( pak, 0xccccccdf );
-                    ADDDWORD( pak, thisdrop->amount );
-                    ADDDWORD( pak, 0xcccccccc );
-                    ADDWORD ( pak, 0xcccc );
-                }
-                else
-                {
-                    ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
-                    ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
-                    ADDDWORD( pak, 0x00000000 );
-                    ADDWORD ( pak, 0x0000 );
-                }
-                ADDWORD    ( pak, thisdrop->clientid );
-                ADDWORD    ( pak, thisdrop->owner );*/
-
-                CMap* map = GServer->MapList.Index[thisdrop->posMap];
-                map->AddDrop( thisdrop );
+                CPlayer* plkiller=(CPlayer*) this;
+                nb_drops=plkiller->bonusddrop;
+                Log(MSG_INFO,"Drop time, there should be %i drops",nb_drops);
             }
+
+            for (int k=0;k<nb_drops;k++)
+            {
+                thisdrop = Enemy->GetDrop( );
+                if(thisdrop!=NULL)
+                {
+                    Log(MSG_INFO,"Dropping Nb %i",k);
+                    CMap* map = GServer->MapList.Index[thisdrop->posMap];
+                    map->AddDrop( thisdrop );
+                }
+
+            }
+
         }
 
         //GServer->SendToVisible( &pak, Enemy, thisdrop );
@@ -1358,63 +1353,27 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, 16 );
 
-        /*LMA: disabling drop for now.
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
         {
-            thisdrop = Enemy->GetDrop( );
-            if(thisdrop!=NULL)
+            //LMA: looping the drops (double drop medal for example).
+            int nb_drops=1;
+            if (IsPlayer())
             {
-                ADDFLOAT   ( pak, thisdrop->pos.x*100 );
-                ADDFLOAT   ( pak, thisdrop->pos.y*100 );
-                if(thisdrop->type==1)
-                {
-                    ADDDWORD( pak, 0xccccccdf );
-                    ADDDWORD( pak, thisdrop->amount );
-                    ADDDWORD( pak, 0xcccccccc );
-                    ADDWORD ( pak, 0xcccc );
-                }
-                else
-                {
-                    ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
-                    ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
-                    ADDDWORD( pak, 0x00000000 );
-                    ADDWORD ( pak, 0x0000 );
-                }
-                ADDWORD    ( pak, thisdrop->clientid );
-                ADDWORD    ( pak, thisdrop->owner );
-                CMap* map = GServer->MapList.Index[thisdrop->posMap];
-                map->AddDrop( thisdrop );
+                CPlayer* plkiller=(CPlayer*) this;
+                nb_drops=plkiller->bonusddrop;
+                Log(MSG_INFO,"Drop time, there should be %i drops",nb_drops);
             }
-        }
 
-        GServer->SendToVisible( &pak, Enemy, thisdrop );
-        */
-
-        if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
-        {
-            thisdrop = Enemy->GetDrop( );
-            if(thisdrop!=NULL)
+            for (int k=0;k<nb_drops;k++)
             {
-                /*ADDFLOAT   ( pak, thisdrop->pos.x*100 );
-                ADDFLOAT   ( pak, thisdrop->pos.y*100 );
-                if(thisdrop->type==1)
+                thisdrop = Enemy->GetDrop( );
+                if(thisdrop!=NULL)
                 {
-                    ADDDWORD( pak, 0xccccccdf );
-                    ADDDWORD( pak, thisdrop->amount );
-                    ADDDWORD( pak, 0xcccccccc );
-                    ADDWORD ( pak, 0xcccc );
+                    Log(MSG_INFO,"Dropping Nb %i",k);
+                    CMap* map = GServer->MapList.Index[thisdrop->posMap];
+                    map->AddDrop( thisdrop );
                 }
-                else
-                {
-                    ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
-                    ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
-                    ADDDWORD( pak, 0x00000000 );
-                    ADDWORD ( pak, 0x0000 );
-                }
-                ADDWORD    ( pak, thisdrop->clientid );
-                ADDWORD    ( pak, thisdrop->owner );*/
-                CMap* map = GServer->MapList.Index[thisdrop->posMap];
-                map->AddDrop( thisdrop );
+
             }
 
         }

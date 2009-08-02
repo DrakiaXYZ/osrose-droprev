@@ -122,21 +122,41 @@ bool CPlayer::loaddata( )
     //TEST
     time_t rawtime;
     struct tm * timeinfo;
-    rawtime=Shop->mil_shop_time;
-    timeinfo = localtime ( &rawtime );
-    //Log(MSG_INFO,"Shop %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
-    rawtime=timerxp;
-    timeinfo = localtime ( &rawtime );
-    Log(MSG_INFO,"Bonus Xp %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
-    rawtime=timerddrop;
-    timeinfo = localtime ( &rawtime );
-    Log(MSG_INFO,"Medal of Fortune %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
-    rawtime=timerstatdrop;
-    timeinfo = localtime ( &rawtime );
-    Log(MSG_INFO,"Medal of Excellence %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
-    rawtime=timergraydrop;
-    timeinfo = localtime ( &rawtime );
-    Log(MSG_INFO,"Medal of Retrieval %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+
+    if (Shop->mil_shop_time>0)
+    {
+        rawtime=Shop->mil_shop_time;
+        timeinfo = localtime ( &rawtime );
+        Log(MSG_INFO,"%s:: Shop %i/%i/%i, %i:%i:%i",CharInfo->charname,timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    }
+
+    if(timerxp>0)
+    {
+        rawtime=timerxp;
+        timeinfo = localtime ( &rawtime );
+        Log(MSG_INFO,"%s:: Bonus Xp %i/%i/%i, %i:%i:%i",CharInfo->charname,timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    }
+
+    if(timerddrop>0)
+    {
+        rawtime=timerddrop;
+        timeinfo = localtime ( &rawtime );
+        Log(MSG_INFO,"%s:: Medal of Fortune %i/%i/%i, %i:%i:%i",CharInfo->charname,timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    }
+
+    if(timerstatdrop>0)
+    {
+        rawtime=timerstatdrop;
+        timeinfo = localtime ( &rawtime );
+        Log(MSG_INFO,"%s:: Medal of Excellence %i/%i/%i, %i:%i:%i",CharInfo->charname,timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    }
+
+    if(timergraydrop>0)
+    {
+        rawtime=timergraydrop;
+        timeinfo = localtime ( &rawtime );
+        Log(MSG_INFO,"%s:: Medal of Retrieval %i/%i/%i, %i:%i:%i",CharInfo->charname,timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    }
     //End of test
 
     time_t etime=time(NULL);
