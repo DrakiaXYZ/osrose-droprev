@@ -1469,7 +1469,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         break;
         */
         case 320://Automatic Consumption - HP, MP, Stamina, Clan Point
-            if (useitem->itemnum>150 && useitem->itemnum<192)
+            if ((useitem->itemnum>150 && useitem->itemnum<192)||(useitem->itemnum>61 && useitem->itemnum<70))
             {
                 useitem->usescript = 1;
                 //clan points
