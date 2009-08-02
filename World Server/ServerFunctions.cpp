@@ -1094,21 +1094,40 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         // Skillbooks & Chests
         if(newdrop->item.itemtype == 10)
         {
-            if((newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 888) ||
+             if
+            (
+               //(newdrop->item.itemnum >=70 && newdrop->item.itemnum <= 72) ||     //not in break list
+               (newdrop->item.itemnum >=75 && newdrop->item.itemnum <= 78) ||
                (newdrop->item.itemnum >=247 && newdrop->item.itemnum <= 249) ||
-               (newdrop->item.itemnum >=270 && newdrop->item.itemnum <= 275) ||
+               (newdrop->item.itemnum >=256 && newdrop->item.itemnum <= 258) ||
+               (newdrop->item.itemnum >=270 && newdrop->item.itemnum <= 276) ||
+               (newdrop->item.itemnum >=341 && newdrop->item.itemnum <= 347) ||
+               (newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 889) ||
+               //(newdrop->item.itemnum >=905 && newdrop->item.itemnum <= 907) ||   //not in break list
+               (newdrop->item.itemnum >=946) || (newdrop->item.itemnum >=996 && newdrop->item.itemnum <= 1000) ||
                (newdrop->item.itemnum >=1001 && newdrop->item.itemnum <= 1028) ||
+               (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1082) ||
                (newdrop->item.itemnum >=1110 && newdrop->item.itemnum <= 1178) ||
-               (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1090) )
-                newdrop->item.count = 1;   // just one skill book or chest per drop
+               (newdrop->item.itemnum >=1200 && newdrop->item.itemnum <= 1220)
+
+            )
+            newdrop->item.count = 1;   // just one skill book or chest per drop
+
         /*
+        70-72      Gift Box
+        75-78      Full moon Gift, Gift Box, Package of biscuits
         441-888    Skills
         247-249    Christmas Presents
-        270-275    Dirty Stones
+        256-258    Hallowwen Garb Bag, Christmas box
+        270-276    Dirty Stones
+        341-347    Eldeon Box
+        905-907    Gift Box
+        946        Christmas Gift Box
+        996-1000   Rose Treasure Chest (Mileage)
         1001-1028  Prison Chests
+        1080-1082  Event Boxes
         1110-1178  Dispensers
-        1080-1090  Event Boxes
-        1200-1201  Christmas Gift - Present Box - Mileage
+        1200-1220  Christmas Gift - Present Box - Mileage
         1202-1203  Boy and Girl Snow Suit - Mileage
         */
         }
