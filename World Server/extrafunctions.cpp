@@ -1221,7 +1221,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         {
             // scrolls [maxhp,attackpower up, ... ]
             //Arua Blessing added (944, thanks to PY)
-            if((useitem->itemnum>79 && useitem->itemnum<93) || (useitem->itemnum==145) ||(useitem->itemnum>300 && useitem->itemnum<320) || (useitem->itemnum>960 && useitem->itemnum<965) || useitem->itemnum == 944)
+            if((useitem->itemnum>79 && useitem->itemnum<93) || (useitem->itemnum==145) ||(useitem->itemnum>300 && useitem->itemnum<320) || (useitem->itemnum>960 && useitem->itemnum<965) || useitem->itemnum == 944 ||(useitem->itemnum>1040 && useitem->itemnum<1047))
             {
                 useitem->usescript = 7;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
