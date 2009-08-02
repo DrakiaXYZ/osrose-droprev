@@ -52,12 +52,6 @@ CREATE TABLE `characters` (
   `union05` int(11) NOT NULL DEFAULT '0',
   `bonusxp` int(11) NOT NULL DEFAULT '0',
   `timerxp` int(11) NOT NULL DEFAULT '0',
-  `bonusddrop` int(11) NOT NULL DEFAULT '0',
-  `timerddrop` int(11) NOT NULL DEFAULT '0',
-  `bonusstatdrop` int(11) NOT NULL DEFAULT '0',
-  `timerstatdrop` int(11) NOT NULL DEFAULT '0',
-  `bonusgraydrop` int(11) NOT NULL DEFAULT '0',
-  `timergraydrop` int(11) NOT NULL DEFAULT '0',
   `shoptype` int(11) NOT NULL DEFAULT '0',
   `timershop` int(11) NOT NULL DEFAULT '0',
   `isgm` tinyint(1) NOT NULL DEFAULT '0',
@@ -66,6 +60,12 @@ CREATE TABLE `characters` (
   `mileage_skills` varchar(1024) NOT NULL DEFAULT '0',
   `mileage_skills_level` varchar(1024) NOT NULL DEFAULT '1',
   `driving_skills` varchar(255) NOT NULL DEFAULT '0',
+  `bonusddrop` int(11) NOT NULL DEFAULT '0',
+  `timerddrop` int(11) NOT NULL DEFAULT '0',
+  `bonusstatdrop` int(11) NOT NULL DEFAULT '0',
+  `timerstatdrop` int(11) NOT NULL DEFAULT '0',
+  `bonusgraydrop` int(11) NOT NULL DEFAULT '0',
+  `timergraydrop` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=latin1;
 
