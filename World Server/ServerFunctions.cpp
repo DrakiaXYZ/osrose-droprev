@@ -1012,7 +1012,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
 
         }
 
-        for(int i=0; i<MDropList.size( ); i++)
+        /*for(int i=0; i<MDropList.size( ); i++)
         {
             isdrop = true; // start out true then eliminate drops later
 
@@ -1053,7 +1053,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                 MyMonsterDrops.push_back(ThisTempDrop);
             }
 
-        }
+        }*/
 
     }
 
