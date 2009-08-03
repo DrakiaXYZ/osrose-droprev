@@ -1987,7 +1987,9 @@ unsigned long long CPlayer::GetMaxHP( )
 {
 	if (Stats->Level<1) Stats->Level=1;
 	unsigned int hpmax = (unsigned int)floor(((sqrt(Stats->Level + 20) * (Stats->Level + 5 )) * 3.5) + ((Attr->Str + Attr->Estr) << 1));
-    switch( CharInfo->Job )
+    UINT phpmax = 0;    //Tomiz : New Way, Passive Skill % Value
+    UINT vhpmax = 0;    //Tomiz : New Way, Passive Skill Value
+    /*switch( CharInfo->Job )
     {
         case 121:case 122:
         case 221:case 222:
@@ -1995,7 +1997,7 @@ unsigned long long CPlayer::GetMaxHP( )
         case 421:case 422:
             hpmax += 300;
         break;
-    }
+    }*/
     for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
         /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
@@ -2026,13 +2028,29 @@ unsigned long long CPlayer::GetMaxHP( )
                 if( cskills[i].thisskill->buff[j] == A_MAX_HP || cskills[i].thisskill->buff[j] == A_HP || cskills[i].thisskill->buff[j] == MAX_HP)
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        hpmax += hpmax * cskills[i].thisskill->value2[j] / 100;
+                        //hpmax += hpmax * cskills[i].thisskill->value2[j] / 100;
+                        phpmax += cskills[i].thisskill->value2[j];  //Tomiz : New Way
                     if( cskills[i].thisskill->value1[j] > 0 )
-                        hpmax += cskills[i].thisskill->value1[j];
+                        //hpmax += cskills[i].thisskill->value1[j];
+                        vhpmax += cskills[i].thisskill->value1[j];  //Tomiz : New Way
                 }
             }
         }
     }
+
+    hpmax += hpmax * phpmax / 100;  //Apply Passive Skill % Value
+    hpmax += vhpmax;    //Apply Passive Skill Value
+
+    switch( CharInfo->Job ) //New Way need to be after Skill
+    {
+        case 121:case 122:
+        case 221:case 222:
+        case 321:case 322:
+        case 421:case 422:
+            hpmax += 300;
+        break;
+    }
+
     for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
     {
         if( items[i].count != 0 )
@@ -2092,6 +2110,8 @@ unsigned int CPlayer::GetMaxMP( )
     if( Stats->Level < 0 )
         Stats->Level = 1;
     UINT maxmp = 0;
+    UINT pmaxmp = 0;    //Tomiz : New Way, Passive Skill % Value
+    UINT vmaxmp = 0;    //Tomiz : New Way, Passive Skill Value
     float Mult = 0;
     int JobValue = (int)CharInfo->Job;
     switch(JobValue)
@@ -2167,13 +2187,18 @@ unsigned int CPlayer::GetMaxMP( )
                 if( cskills[i].thisskill->buff[j] == A_MAX_MP || cskills[i].thisskill->buff[j] == A_MP || cskills[i].thisskill->buff[j] == MAX_MP)
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        maxmp += maxmp * cskills[i].thisskill->value2[j] / 100;
+                        //maxmp += maxmp * cskills[i].thisskill->value2[j] / 100;
+                        pmaxmp += cskills[i].thisskill->value2[j];  //Tomiz : New Way
                     if( cskills[i].thisskill->value1[j] > 0 )
-                        maxmp += cskills[i].thisskill->value1[j];
+                        //maxmp += cskills[i].thisskill->value1[j];
+                        vmaxmp += cskills[i].thisskill->value1[j];  //Tomiz : New Way
                 }
             }
         }
     }
+
+    maxmp += maxmp * pmaxmp / 100;  //Apply Passive Skill % Value
+    maxmp += vmaxmp;    //Apply Passive Skill Value
 
     for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
     {
