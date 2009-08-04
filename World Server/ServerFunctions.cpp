@@ -911,7 +911,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         }
         // Stuff to do if the mob isn't a ghost
 
-        int randomdrop = GServer->RandNumber(1, 100);
+        //int randomdrop = GServer->RandNumber(1, 100);
         //enable the next line for debug purposes if you want to confirm a drop is working.
         //Log(MSG_INFO, "Mob type %i. Map = %i. Level = %i", thismon->montype, thismon->Position->Map,thismon->thisnpc->level);
 
@@ -928,38 +928,61 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
 
                 CMDrops* thisdrop = GServer->DropsAnd[thismon->Position->Map].at(i);
                 if(thisdrop->mob != 0 && thisdrop->mob != thismon->montype)
+                {
                     isdrop = false;
+                }
+
                 if(thisdrop->level_max > thisdrop->level_min && (thismon->thisnpc->level < thisdrop->level_min || thismon->thisnpc->level > thisdrop->level_max))
+                {
                     isdrop = false;
+                }
 
                 //testing area.
                 if (isdrop&&thisdrop->a_x!=0)
                 {
                     if (thismon->Position->current.x<isdrop&&thisdrop->a_x||thismon->Position->current.x>isdrop&&thisdrop->b_x)
+                    {
                         isdrop=false;
+                    }
+
                     if (thismon->Position->current.y>isdrop&&thisdrop->a_y||thismon->Position->current.x<isdrop&&thisdrop->b_y)
+                    {
                         isdrop=false;
+                    }
+
                 }
 
-                test = GServer->RandNumber(1, 1000);
+                //LMA: 10000 now.
+                test = GServer->RandNumber(1, 10000);
                 if(thisdrop->prob < test)
+                {
                     isdrop = false;
+                }
 
                 if(isdrop)
                 {
                     //refreshing priorities.
                     if(thisdrop->level_max>0)
+                    {
                         prio_lvl=true;
+                    }
+
                     if(thisdrop->mob>0)
+                    {
                         prio_monster=true;
+                    }
 
                     CDropInfoAnd ThisTempDrop;
                     ThisTempDrop.item=thisdrop->itemnum;
                     ThisTempDrop.type=thisdrop->itemtype;
                     ThisTempDrop.prob=thisdrop->prob;
-                    ThisTempDrop.nb_alternate=8;
 
-                    for(int k=1;k<8;k++)
+                    //We only use 7 alt drops.
+                    //for(int k=1;k<8;k++)
+                    //ThisTempDrop.nb_alternate=8;
+                    ThisTempDrop.nb_alternate=7;
+                    ThisTempDrop.alternate[7]=0;
+                    for(int k=0;k<7;k++)
                     {
                         ThisTempDrop.alternate[k]=thisdrop->alt[k];
                     }
@@ -972,6 +995,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         }
 
         //Do we need to check the single condition map?
+        //monster only or level check only.
         if(!prio_monster||!prio_lvl)
         {
             int nb_lines=DropsAnd[0].size( );
@@ -981,14 +1005,29 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                 isdrop = true; // start out true then eliminate drops later
 
                 CMDrops* thisdrop = GServer->DropsAnd[0].at(i);
-                if(prio_monster||(thisdrop->mob != 0 && thisdrop->mob != thismon->montype))
-                    isdrop = false;
-                if(thisdrop->map != 0 && thisdrop->map != thismon->Position->Map)
-                    isdrop = false;
-                if(prio_lvl||(thisdrop->level_max > thisdrop->level_min && (thismon->thisnpc->level < thisdrop->level_min || thismon->thisnpc->level > thisdrop->level_max)))
-                    isdrop = false;
 
-                test = GServer->RandNumber(1, 1000);
+                //monster drop.
+                if(prio_monster||(thisdrop->mob != 0 && thisdrop->mob != thismon->montype))
+                {
+                    isdrop = false;
+                }
+
+                //map drop (map drops changed to multiple drop check).
+                /*
+                if(thisdrop->map != 0 && thisdrop->map != thismon->Position->Map)
+                {
+                    isdrop = false;
+                }
+                */
+
+                //level drop.
+                if(prio_lvl||(thisdrop->level_max > thisdrop->level_min && (thismon->thisnpc->level < thisdrop->level_min || thismon->thisnpc->level > thisdrop->level_max)))
+                {
+                    isdrop = false;
+                }
+
+                //LMA: 10000 now/
+                test = GServer->RandNumber(1, 10000);
                 if(thisdrop->prob < test)
                     isdrop = false;
 
@@ -998,9 +1037,13 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                     ThisTempDrop.item=thisdrop->itemnum;
                     ThisTempDrop.type=thisdrop->itemtype;
                     ThisTempDrop.prob=thisdrop->prob;
-                    ThisTempDrop.nb_alternate=8;
 
-                    for(int k=1;k<8;k++)
+                    //LMA: Only 7 alternates.
+                    //ThisTempDrop.nb_alternate=8;
+                    //for(int k=1;k<8;k++)
+                    ThisTempDrop.nb_alternate=7;
+                    ThisTempDrop.alternate[7]=0;
+                    for(int k=0;k<7;k++)
                     {
                         ThisTempDrop.alternate[k]=thisdrop->alt[k];
                     }
@@ -1012,53 +1055,11 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
 
         }
 
-        /*for(int i=0; i<MDropList.size( ); i++)
-        {
-            isdrop = true; // start out true then eliminate drops later
-
-            CMDrops* thisdrop = GServer->MDropList.at(i);
-            if(thisdrop->mob != 0 && thisdrop->mob != thismon->montype)
-                isdrop = false;
-            if(thisdrop->map != 0 && thisdrop->map != thismon->Position->Map)
-                isdrop = false;
-            if(thisdrop->level_max > thisdrop->level_min && (thismon->thisnpc->level < thisdrop->level_min || thismon->thisnpc->level > thisdrop->level_max))
-                isdrop = false;
-
-            //testing area.
-            if (isdrop&&thisdrop->a_x!=0)
-            {
-                if (thismon->Position->current.x<isdrop&&thisdrop->a_x||thismon->Position->current.x>isdrop&&thisdrop->b_x)
-                    isdrop=false;
-                if (thismon->Position->current.y>isdrop&&thisdrop->a_y||thismon->Position->current.x<isdrop&&thisdrop->b_y)
-                    isdrop=false;
-            }
-
-            test = GServer->RandNumber(1, 1000);
-            if(thisdrop->prob < test)
-                isdrop = false;
-
-            if(isdrop)
-            {
-                CDropInfoAnd ThisTempDrop;
-                ThisTempDrop.item=thisdrop->itemnum;
-                ThisTempDrop.type=thisdrop->itemtype;
-                ThisTempDrop.prob=thisdrop->prob;
-                ThisTempDrop.nb_alternate=8;
-
-                for(int k=1;k<8;k++)
-                {
-                    ThisTempDrop.alternate[k]=thisdrop->alt[k];
-                }
-
-                MyMonsterDrops.push_back(ThisTempDrop);
-            }
-
-        }*/
-
     }
 
     n=MyMonsterDrops.size();
 
+    //LMA: no drops...
     if(n == 0)
     {
         ClearClientID(newdrop->clientid);
@@ -1121,46 +1122,49 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         // Skillbooks & Chests
         if(newdrop->item.itemtype == 10)
         {
-             if
-            (
-               //(newdrop->item.itemnum >=70 && newdrop->item.itemnum <= 72) ||     //not in break list
-               (newdrop->item.itemnum >=75 && newdrop->item.itemnum <= 78) ||
-               (newdrop->item.itemnum >=247 && newdrop->item.itemnum <= 249) ||
-               (newdrop->item.itemnum >=256 && newdrop->item.itemnum <= 258) ||
-               (newdrop->item.itemnum >=270 && newdrop->item.itemnum <= 276) ||
-               (newdrop->item.itemnum >=341 && newdrop->item.itemnum <= 347) ||
-               (newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 889) ||
-               //(newdrop->item.itemnum >=905 && newdrop->item.itemnum <= 907) ||   //not in break list
-               (newdrop->item.itemnum >=946) || (newdrop->item.itemnum >=996 && newdrop->item.itemnum <= 1000) ||
-               (newdrop->item.itemnum >=1001 && newdrop->item.itemnum <= 1028) ||
-               (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1082) ||
-               (newdrop->item.itemnum >=1110 && newdrop->item.itemnum <= 1178) ||
-               (newdrop->item.itemnum >=1200 && newdrop->item.itemnum <= 1220)
+             if (
+                   //(newdrop->item.itemnum >=70 && newdrop->item.itemnum <= 72) ||     //not in break list
+                   (newdrop->item.itemnum >=75 && newdrop->item.itemnum <= 78) ||
+                   (newdrop->item.itemnum >=247 && newdrop->item.itemnum <= 249) ||
+                   (newdrop->item.itemnum >=256 && newdrop->item.itemnum <= 258) ||
+                   (newdrop->item.itemnum >=270 && newdrop->item.itemnum <= 276) ||
+                   (newdrop->item.itemnum >=341 && newdrop->item.itemnum <= 347) ||
+                   (newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 889) ||
+                   //(newdrop->item.itemnum >=905 && newdrop->item.itemnum <= 907) ||   //not in break list
+                   (newdrop->item.itemnum >=946) || (newdrop->item.itemnum >=996 && newdrop->item.itemnum <= 1000) ||
+                   (newdrop->item.itemnum >=1001 && newdrop->item.itemnum <= 1028) ||
+                   (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1082) ||
+                   (newdrop->item.itemnum >=1110 && newdrop->item.itemnum <= 1178) ||
+                   (newdrop->item.itemnum >=1200 && newdrop->item.itemnum <= 1220)
+                )
+            {
+                newdrop->item.count = 1;   // just one skill book or chest per drop
+            }
 
-            )
-            newdrop->item.count = 1;   // just one skill book or chest per drop
-
-        /*
-        70-72      Gift Box
-        75-78      Full moon Gift, Gift Box, Package of biscuits
-        441-888    Skills
-        247-249    Christmas Presents
-        256-258    Hallowwen Garb Bag, Christmas box
-        270-276    Dirty Stones
-        341-347    Eldeon Box
-        905-907    Gift Box
-        946        Christmas Gift Box
-        996-1000   Rose Treasure Chest (Mileage)
-        1001-1028  Prison Chests
-        1080-1082  Event Boxes
-        1110-1178  Dispensers
-        1200-1220  Christmas Gift - Present Box - Mileage
-        1202-1203  Boy and Girl Snow Suit - Mileage
-        */
+            /*
+            70-72      Gift Box
+            75-78      Full moon Gift, Gift Box, Package of biscuits
+            441-888    Skills
+            247-249    Christmas Presents
+            256-258    Hallowwen Garb Bag, Christmas box
+            270-276    Dirty Stones
+            341-347    Eldeon Box
+            905-907    Gift Box
+            946        Christmas Gift Box
+            996-1000   Rose Treasure Chest (Mileage)
+            1001-1028  Prison Chests
+            1080-1082  Event Boxes
+            1110-1178  Dispensers
+            1200-1220  Christmas Gift - Present Box - Mileage
+            1202-1203  Boy and Girl Snow Suit - Mileage
+            */
         }
+
         // Gem Drops
         if(newdrop->item.itemtype == 11)
+        {
             newdrop->item.count = 1;   // just one gem per drop
+        }
 
         if(newdrop->item.itemtype == 12)
         {
@@ -1169,7 +1173,9 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                 newdrop->item.count *= 10;
                 newdrop->item.count += 10;
             }
+
         }
+
     }
     else if( newdrop->item.itemtype >1 && newdrop->item.itemtype !=7 && newdrop->item.itemtype < 10)
     {
@@ -1201,11 +1207,14 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         if(bluechance1 < bluechance2) // some percentage of drops will be specials or blues whenever one is available.
         {
             //Log( MSG_INFO, "Selected a blue item");
+            //LMA: 7 alt
             int p = 1;
-            while(MyMonsterDrops.at(n).alternate[p] != 0 && p < 8)
+            //while(MyMonsterDrops.at(n).alternate[p] != 0 && p < 8)
+            while(MyMonsterDrops.at(n).alternate[p-1] != 0 && p < 8)
             {
                 p++;
             }
+
             if(p > 1) // blues available for this item
             {
                 p--;
@@ -1213,11 +1222,9 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                 newdrop->item.itemnum = MyMonsterDrops.at(n).alternate[bluenum];
                 pstats = 1; //make sure we get stats for this item
             }
-            /*else
-            {
-                //Sorry blue item not available for this item
-            }*/
+
         }
+
         //Uniques count as blues.
         if(newdrop->item.itemnum > 900)pstats = 1; //make sure we get stats for this unique item
         if( pstats < Config.StatChance)

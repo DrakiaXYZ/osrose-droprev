@@ -1795,7 +1795,10 @@ bool CWorldServer::LoadPYDropsData( )
             newdrop->alt[0]=atoi(tmp);
         }
 
-        for(unsigned int i=1;i<8; i++)
+        //We only use 7 alt drops (why [8] for alt?).
+        //for(unsigned int i=1;i<8; i++)
+        newdrop->alt[7]=0;
+        for(unsigned int i=1;i<7; i++)
         {
             if((tmp = strtok( NULL , "|"))==NULL)
             {
@@ -1882,11 +1885,19 @@ bool CWorldServer::LoadPYDropsDataAnd( )
 
         nb_conditions=0;
         if(newdrop->mob>0)
+        {
             nb_conditions++;
+        }
+
         if(newdrop->level_min>0||newdrop->level_max>0)
+        {
             nb_conditions++;
+        }
+
         if(newdrop->map>0)
+        {
             nb_conditions++;
+        }
 
         //LMA: An area, only exists in a map of course.
         if(atoi(row[9])>0&&atoi(row[10])>0&&atoi(row[11])>0&&newdrop->map!=0)
@@ -1942,7 +1953,16 @@ bool CWorldServer::LoadPYDropsDataAnd( )
         //LMA: Saving drop.
         if(nb_conditions==1)
         {
-            DropsAnd[0].push_back( newdrop );
+            if(newdrop->map>0)
+            {
+                //special case, map drops are to be sent as multiple drop.
+                DropsAnd[newdrop->map].push_back( newdrop );
+            }
+            else
+            {
+                DropsAnd[0].push_back( newdrop );
+            }
+
         }
         else if (nb_conditions>1)
         {
