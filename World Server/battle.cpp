@@ -588,11 +588,26 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         else if (Enemy->IsMonster())
         {
             //LMA let's send a suicide packet so monster should be killed twice.
+            /*
             CMonster* thisMonster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
             BEGINPACKET( pak, 0x799 );
             ADDWORD    ( pak, Enemy->clientid );
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, thisMonster->thisnpc->hp*thisMonster->thisnpc->level );
+            ADDDWORD   ( pak, 16 );
+            GServer->SendToVisible( &pak, Enemy );
+            */
+
+            //Other way, setting his life to 1 and kill him.
+            BEGINPACKET( pak, 0x79f );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, 1);
+            GServer->SendToVisible( &pak, Enemy );
+
+            RESETPACKET( pak, 0x799 );
+            ADDWORD    ( pak, clientid );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, 100 );
             ADDDWORD   ( pak, 16 );
             GServer->SendToVisible( &pak, Enemy );
         }
@@ -1418,11 +1433,26 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         else if (Enemy->IsMonster())
         {
             //LMA let's send a suicide packet so monster should be killed twice.
+            /*
             CMonster* thisMonster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
             BEGINPACKET( pak, 0x799 );
             ADDWORD    ( pak, Enemy->clientid );
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, thisMonster->thisnpc->hp*thisMonster->thisnpc->level );
+            ADDDWORD   ( pak, 16 );
+            GServer->SendToVisible( &pak, Enemy );
+            */
+
+            //Other way, setting his life to 1 and kill him.
+            BEGINPACKET( pak, 0x79f );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, 1);
+            GServer->SendToVisible( &pak, Enemy );
+
+            RESETPACKET( pak, 0x799 );
+            ADDWORD    ( pak, clientid );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, 100 );
             ADDDWORD   ( pak, 16 );
             GServer->SendToVisible( &pak, Enemy );
         }
