@@ -774,6 +774,41 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 		CMap* map = MapList.Index[thisdrop->posMap];
 		map->AddDrop( thisdrop );
 	}
+    else if(strcmp(command, "testmon")==0)
+    {
+        //LMA: just a test.
+        if ((tmp = strtok(NULL, " "))==NULL)
+        {
+            //summoning monster
+            Log(MSG_INFO,"testmon time");
+            return pakGMMon( thisclient, 2, 1,0 );
+        }
+        else
+        {
+            UINT monster_clientid=atoi(tmp);
+            CCharacter* Enemy=GetMonsterByID(monster_clientid,0);
+            if(Enemy==NULL)
+            {
+                Log(MSG_INFO,"ClientID %i not found!",monster_clientid);
+                return true;
+            }
+
+            //We set his HP to 0 and kill it (yeah die you scum...)
+            BEGINPACKET( pak, 0x79f );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, 1);
+            GServer->SendToVisible( &pak, Enemy );
+
+            RESETPACKET( pak, 0x799 );
+            ADDWORD    ( pak, thisclient->clientid );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, 100 );
+            ADDDWORD   ( pak, 16 );
+            GServer->SendToVisible( &pak, Enemy );
+            Log(MSG_INFO,"is monster still there?");
+        }
+
+    }
    else if (strcmp(command, "event")==0) //==== Trigger Events (credit Welson)
     {
         if(Config.Command_Event > thisclient->Session->accesslevel)
@@ -3229,6 +3264,7 @@ bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount,int 
         if(thismonster!=NULL)
         {
             thismonster->team=monteam;
+            Log(MSG_INFO,"pakGMMon %s:: monster %i, cid %i",thisclient->CharInfo->charname,montype,thismonster->clientid);
         }
 
 	}
