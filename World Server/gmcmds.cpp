@@ -786,6 +786,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         else
         {
             UINT monster_clientid=atoi(tmp);
+            tmp = strtok(NULL, " ");
+            UINT type=atoi(tmp);
             CCharacter* Enemy=GetMonsterByID(monster_clientid,0);
             if(Enemy==NULL)
             {
@@ -794,18 +796,37 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
 
             //We set his HP to 0 and kill it (yeah die you scum...)
-            BEGINPACKET( pak, 0x79f );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, 1);
-            GServer->SendToVisible( &pak, Enemy );
+            if (type==1)
+            {
+                BEGINPACKET( pak, 0x79f );
+                ADDWORD    ( pak, Enemy->clientid );
+                ADDDWORD   ( pak, 1);
+                GServer->SendToVisible( &pak, Enemy );
 
-            RESETPACKET( pak, 0x799 );
-            ADDWORD    ( pak, thisclient->clientid );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, 100 );
-            ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );
-            Log(MSG_INFO,"is monster still there?");
+                RESETPACKET( pak, 0x799 );
+                ADDWORD    ( pak, thisclient->clientid );
+                ADDWORD    ( pak, Enemy->clientid );
+                ADDDWORD   ( pak, 2 );
+                ADDDWORD   ( pak, 16 );
+                GServer->SendToVisible( &pak, Enemy );
+                Log(MSG_INFO,"is monster still there?");
+            }
+            else
+            {
+                BEGINPACKET( pak, 0x79f );
+                ADDWORD    ( pak, Enemy->clientid );
+                ADDDWORD   ( pak, 1);
+                GServer->SendToVisible( &pak, Enemy );
+
+                RESETPACKET( pak, 0x799 );
+                ADDWORD    ( pak, 0 );
+                ADDWORD    ( pak, Enemy->clientid );
+                ADDDWORD   ( pak, 2 );
+                ADDDWORD   ( pak, 16 );
+                GServer->SendToVisible( &pak, Enemy );
+                Log(MSG_INFO,"is monster still there 2?");
+            }
+
         }
 
     }

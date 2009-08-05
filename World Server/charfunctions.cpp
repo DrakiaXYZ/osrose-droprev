@@ -621,6 +621,16 @@ void CCharacter::RefreshBuff( )
              MagicStatus[i].Duration -= 1;
              //printf("did %i poison dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
 
+            //LMA: If dead, let's the client resynch
+            if(IsDead())
+            {
+                BEGINPACKET( pak, 0x79f );
+                ADDWORD    ( pak, clientid );
+                ADDDWORD   ( pak, 1);
+                GServer->SendToVisible( &pak, this );
+                Log(MSG_INFO,"death poison for %i, amount: %i",clientid,MagicStatus[i].Status);
+            }
+
              //A bunch of messy code to send dmg packet
              BEGINPACKET( pak, 0x7b6 );
              ADDWORD    ( pak, clientid );
@@ -683,6 +693,16 @@ void CCharacter::RefreshBuff( )
              MagicStatus[i].BuffTime += 1*CLOCKS_PER_SEC;
              MagicStatus[i].Duration -= 1;
              printf("did %i flame dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
+
+            //LMA: If dead, let's the client resynch
+            if(IsDead())
+            {
+                BEGINPACKET( pak, 0x79f );
+                ADDWORD    ( pak, clientid );
+                ADDDWORD   ( pak, 1);
+                GServer->SendToVisible( &pak, this );
+                Log(MSG_INFO,"death flame for %i, amount: %i",clientid,MagicStatus[i].Status);
+            }
 
              //A bunch of messy code to send dmg packet
              BEGINPACKET( pak, 0x7b6 );

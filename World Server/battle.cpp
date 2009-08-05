@@ -495,6 +495,17 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     //printf("Target suffered %i physical damage, %i HP still remain \n", hitpower, Enemy->Stats->HP);
     //else printf("Mob did %i physical damage, %i HP still remain \n", hitpower, Enemy->Stats->HP);
     Enemy->reduceItemsLifeSpan(true);
+
+    //LMA: forcing the HP amount value, only when it's supposed to be dead side.
+    if(Enemy->IsMonster()&&Enemy->IsDead())
+    {
+        BEGINPACKET( pak, 0x79f );
+        ADDWORD    ( pak, Enemy->clientid );
+        ADDDWORD   ( pak, 1);
+        GServer->SendToVisible( &pak, Enemy );
+        Log(MSG_INFO,"death atk for %i, amount: %i",Enemy->clientid,hitpower);
+    }
+
     BEGINPACKET( pak, 0x799 );
     ADDWORD    ( pak, clientid );
     ADDWORD    ( pak, Battle->atktarget );
@@ -513,7 +524,8 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         }
 
         //LMA: TESTDEATH :: We try to force the DEATH
-        ADDDWORD   ( pak, Enemy->Stats->MaxHP );
+        //ADDDWORD   ( pak, Enemy->Stats->MaxHP );
+        ADDDWORD   ( pak, hitpower );
 
         //Logs.
         /*if(IsPlayer()&&Enemy->IsPlayer())
@@ -599,7 +611,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
             */
 
             //Other way, setting his life to 1 and kill him.
-            BEGINPACKET( pak, 0x79f );
+            /*BEGINPACKET( pak, 0x79f );
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, 1);
             GServer->SendToVisible( &pak, Enemy );
@@ -609,7 +621,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, 100 );
             ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );
+            GServer->SendToVisible( &pak, Enemy );*/
         }
 
         //LMA: We send two other packets, just to be sure...
@@ -1328,6 +1340,16 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     ADDDWORD   ( pak, skillpower );
     */
 
+    //LMA: forcing the HP amount value, only when it's supposed to be dead side.
+    if(Enemy->IsMonster()&&Enemy->IsDead())
+    {
+        BEGINPACKET( pak, 0x79f );
+        ADDWORD    ( pak, Enemy->clientid );
+        ADDDWORD   ( pak, 1);
+        GServer->SendToVisible( &pak, Enemy );
+        Log(MSG_INFO,"death skill atk for %i, amount: %i",Enemy->clientid,skillpower);
+    }
+
     unsigned short command = (skill->skilltype == 6 || skill->skilltype == 9) ? 0x799 : 0x7b6;
     BEGINPACKET( pak, command );
 
@@ -1354,7 +1376,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     if(Enemy->IsDead())
     {
         //LMA: Skillpower elsewhere.
-        ADDDWORD   ( pak, Enemy->Stats->MaxHP);
+        //ADDDWORD   ( pak, Enemy->Stats->MaxHP);
+        ADDDWORD   ( pak, skillpower);
 
         //LMA: UW handling, adding support for other quests.
         //if (!is_already_dead&&(GServer->MapList.Index[Position->Map]->QSDkilling>0||GServer->MapList.Index[Position->Map]->QSDDeath>0)&&IsPlayer()&&Enemy->IsPlayer())
@@ -1444,7 +1467,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             */
 
             //Other way, setting his life to 1 and kill him.
-            BEGINPACKET( pak, 0x79f );
+            /*BEGINPACKET( pak, 0x79f );
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, 1);
             GServer->SendToVisible( &pak, Enemy );
@@ -1454,7 +1477,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, 100 );
             ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );
+            GServer->SendToVisible( &pak, Enemy );*/
         }
 
     }
