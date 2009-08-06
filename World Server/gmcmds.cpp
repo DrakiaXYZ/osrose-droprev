@@ -1270,6 +1270,14 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	   if(Config.Command_GoToMap > thisclient->Session->accesslevel)
 	      return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned map=atoi(tmp);
+
+        //LMA: jumping qsd_zone.
+        bool no_qsd_zone=false;
+        if ((tmp = strtok(NULL, " "))!=NULL)
+        {
+            no_qsd_zone=true;
+        }
+
         // added to prevent map changes with less hp than 1/2
         if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Session->inGame == false )
         {
@@ -1277,8 +1285,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
              return true;
         }
         SendPM(thisclient, "Go to map: %i",map);
-        Log( MSG_GMACTION, " %s : /gotomap %i" , thisclient->CharInfo->charname, map);
-		return pakGMGotomap(thisclient, map);
+        Log( MSG_GMACTION, " %s : /gotomap %i %i" , thisclient->CharInfo->charname, map,no_qsd_zone);
+		return pakGMGotomap(thisclient, map,no_qsd_zone);
     }
    else if(strcmp(command, "grid")==0)
     {
@@ -4492,7 +4500,7 @@ bool CWorldServer::pakGMStat( CPlayer* thisclient, char* statname, int statvalue
 }
 
 // GM: Teleport using map id  credits to Blackie
-bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map )
+bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map, bool no_qsd_zone)
 {
     //fix by PY / ScionEyez
     if(map<=0||map>=MapList.max)
@@ -4515,6 +4523,13 @@ bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map )
         SendSysMsg( thisclient, "This map have no respawn" );
         return true;
     }
+
+    //LMA: QSD Zone jump.
+    if(no_qsd_zone)
+    {
+        thisclient->skip_qsd_zone=true;
+    }
+
     MapList.Index[map]->TeleportPlayer( thisclient, thisrespawn->dest, false );
 	return true;
 }
