@@ -537,6 +537,7 @@ struct CNPCData {
     UINT dodge;
     float atkspeed;
     UINT AI;
+    UINT AiTimer;
     //UINT exp;
     unsigned long long exp;
   	UINT dropid;

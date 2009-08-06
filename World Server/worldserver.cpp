@@ -407,15 +407,18 @@ bool CWorldServer::OnServerReady( )
     LoadQuestItemData( );
     LoadTeleGateData( );
     LoadRespawnData( );
+    LoadLTB();  //LMA: Loading LTB for AIP.
+    LoadAipData();  //LMA: loading AIP.
+    TimerForNPC();  //LMA: loading timers for NPCs and Monsters.
     LoadMobGroups( );
     LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
     LoadNPCs( );
     LoadNPCsSpecial( );  //Special NPC load
     LoadMonsters( );
     LoadUpgrade( );
-    LoadLTB();  //LMA: Loading LTB for AIP.
+    //LoadLTB();  //LMA: Loading LTB for AIP.
     LoadQuestData( );
-    LoadAipData();  //LMA: loading AIP.
+    //LoadAipData();  //LMA: loading AIP.
     CleanConnectedList( );
 
     Log(MSG_INFO, "Database Loaded                      " );

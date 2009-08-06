@@ -302,6 +302,13 @@ void CWorldServer::ReadAIP(strings path, dword index)
 				    AipListMap.insert ( pair<dword,CAip*>(script->AipID,script) );
 				}
 
+				//LMA: Timer time.
+				if(AipListTimer.find(index)==AipListTimer.end())
+				{
+				    AipListTimer[index]=script->minTime;
+				    Log(MSG_INFO,"Script %i has timer %i",index,script->minTime);
+				}
+
                 if(lma_export)
                 {
                     LogSp(MSG_INFO, "\t\t }");

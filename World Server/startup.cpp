@@ -188,6 +188,7 @@ bool CWorldServer::LoadIfoObjects( )
     newnpc->dodge =0;
     newnpc->atkspeed =0;
     newnpc->AI =0;
+    newnpc->AiTimer=0;
     newnpc->exp =0;
     newnpc->dropid =0;
     newnpc->money =0;
@@ -642,6 +643,24 @@ bool CWorldServer::LoadNPCData( )
 
     STBFreeData(&STB_NPC);
     Log( MSG_LOAD, "NPC Data loaded          STB" );
+
+
+    return true;
+}
+
+//LMA: We give a NPC his timer.
+bool CWorldServer::TimerForNPC( )
+{
+
+    for (int k=0;k<maxNPC;k++)
+    {
+        if (NPCData[k]->AI==0)
+        {
+            continue;
+        }
+
+        NPCData[k]->AiTimer=GetTimerFromAIP(NPCData[k]->AI,false);
+    }
 
 
     return true;

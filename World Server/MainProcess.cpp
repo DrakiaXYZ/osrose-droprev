@@ -266,7 +266,16 @@ PVOID MapProcess( PVOID TS )
                     if(monster->IsOnBattle( ))
                     {
                         //monster->DoAttack( );
-                        if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                        //LMA: AIP Timer.
+                        //if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+
+                        if(monster->thisnpc->AiTimer==0)
+                        {
+                            monster->thisnpc->AiTimer=6000;
+                            Log(MSG_WARNING,"Monster %i hadn't timer, file AI=%i",monster->montype,monster->thisnpc->AI);
+                        }
+
+                        if(monster->thisnpc->AiTimer<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
                             //LogDebug("DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
 
@@ -300,7 +309,16 @@ PVOID MapProcess( PVOID TS )
                     }
                     else if(!monster->IsOnBattle() && !monster->IsDead( ))
                     {
-                        if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                        //LMA: AIP Timer.
+                        //if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+
+                        if(monster->thisnpc->AiTimer==0)
+                        {
+                            monster->thisnpc->AiTimer=6000;
+                            Log(MSG_WARNING,"monster (2) %i hadn't timer, file AI=%i",monster->montype,monster->thisnpc->AI);
+                        }
+
+                        if(monster->thisnpc->AiTimer<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
                             //LogDebug("DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
                             monster->DoAi(monster->thisnpc->AI, 1);
@@ -396,7 +414,16 @@ PVOID MapProcess( PVOID TS )
                     //check every minute. Conditions seem to be based on 6 minute segments
                     //LMA: untrue for some NPCs, special case for UW...
                     bool is_time_ok=false;
+
                     int delay=60000;    //each AIP 60 seconds.
+                    //LMA: AIP Timer.
+                    delay=npc->thisnpc->AiTimer;
+
+                    if(npc->thisnpc->AiTimer==0)
+                    {
+                        npc->thisnpc->AiTimer=60000;
+                        Log(MSG_WARNING,"NPC %i hadn't timer, file AI=%i",npc->npctype,npc->thisnpc->AI);
+                    }
 
                     //Leum, for Union War.
                     if(npc->npctype==1113&&GServer->ObjVar[1113][1]>0)

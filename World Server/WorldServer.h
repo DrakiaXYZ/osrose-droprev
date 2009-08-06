@@ -209,6 +209,7 @@ class CWorldServer : public CServerSocket
         UINT getClanGrade(int clanid);    //LMA: We get the exact Clan Grade through mysql database
         UINT SummonFormula(CPlayer* thisclient,CMonster* thismonster);    //LMA: Formulas for summons.
         string EscapeMe(char* texte);  //LMA: Escaping.
+        UINT GetTimerFromAIP(dword script_id, bool is_npc); //LMA: used to get a timer from a script.
     	UINT GetNewClientID( );
     	unsigned GetNewPartyID( );  //LMA: Getting a Party ID.
     	void DisconnectAll();
@@ -447,6 +448,7 @@ class CWorldServer : public CServerSocket
         inline int round(double x) {return int(x > 0.0 ? x + 0.5 : x - 0.5);};
         //vector<CAip*> AipList;
         map<dword,CAip*> AipListMap;    //LMA: testing maps...
+        map<dword,UINT> AipListTimer;    //LMA: Timer for AIP...
 
         //map<UINT,UINT> NPC_AIP;       //LMA: NPC AIP.
         map<UINT,vector<UINT> > NPC_AIP;       //LMA: NPC AIP.
@@ -475,6 +477,7 @@ class CWorldServer : public CServerSocket
         //bool LoadLTB( );
         bool LoadChestData( );
         bool LoadSkillDataOld( );  //LMA: Old version, for debug
+        bool TimerForNPC( );    //LMA: loading timer for NPC and monsters
         bool LoadStatusData( ); //loading status.
         bool LMACheckSkills( );  //LMA: for skill debug
         bool LMACheckStuff();   //LMA: for different tests.

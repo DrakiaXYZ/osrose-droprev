@@ -2773,3 +2773,46 @@ string CWorldServer::EscapeMe(char* texte)
 
     return t;
 }
+
+
+//LMA: getting a timer from an AIP script.
+UINT CWorldServer::GetTimerFromAIP(dword script_id, bool is_npc)
+{
+    UINT my_timer=0;
+
+
+    if(AipListTimer.find(script_id)!=AipListTimer.end())
+    {
+        my_timer=AipListTimer[script_id];
+        if(my_timer==0)
+        {
+            Log(MSG_WARNING,"Timer is 0 for script %i!",script_id);
+        }
+
+    }
+    else
+    {
+        Log(MSG_WARNING,"No timer for script %i!",script_id);
+    }
+
+    if(my_timer==0)
+    {
+        //default value for monster (6 seconds, 60 for a NPC).
+        my_timer=60000;
+        if(!is_npc)
+        {
+            my_timer=6000;
+        }
+
+    }
+    else
+    {
+        //Just for test.
+        Log(MSG_INFO,"script %i has a timer %u, NPC? %i",script_id,my_timer,is_npc);
+    }
+
+
+    return my_timer;
+}
+
+
