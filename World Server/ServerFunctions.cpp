@@ -781,7 +781,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     CDrop* newdrop = new (nothrow) CDrop;
     if(newdrop==NULL)
     {
-        Log(MSG_WARNING, "Error allocing memory [getdrop]" );
+        Log(MSG_WARNING, "GetPYDropAnd:: Error allocing memory [getdrop]" );
         return NULL;
     }
 
@@ -798,7 +798,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     {
         ClearClientID(newdrop->clientid);
         delete(newdrop);
-        Log(MSG_WARNING,"GetPYDrop:: Failed to create player");
+        Log(MSG_WARNING,"GetPYDropAnd:: Failed to find player");
         return NULL;
     }
 
@@ -810,7 +810,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     float leveldif = (float)thismon->thisnpc->level - (float)thisclient->Stats->Level;
     if (thisclient->bonusgraydrop!=0)
     {
-        Log(MSG_INFO,"Gray medal detected");
+        Log(MSG_INFO,"GetPYDropAnd:: Gray medal detected");
         leveldif=20.0;
     }
 
@@ -826,7 +826,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     lma_save_rand=GServer->RandNumber(0, 100);
     if (lma_save_rand>dropchance)
     {
-        //Log(MSG_INFO,"no drop, %i > %.2f",lma_save_rand,dropchance);
+        Log(MSG_INFO,"GetPYDropAnd:: no drop, %i > %.2f",lma_save_rand,dropchance);
         ClearClientID(newdrop->clientid);
         delete(newdrop);
         return NULL; // no drop here. not this time anyway.
@@ -906,7 +906,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         {
             newdrop->type = 1; //Drop Zuly
             newdrop->amount = thismon->thisnpc->level * 5 * Config.ZULY_RATE + RandNumber( 1, 10 );
-            //Log(MSG_INFO,"zuly drop %i",newdrop->amount);
+            Log(MSG_INFO,"GetPYDropAnd:: zuly drop %u",newdrop->amount);
             return  newdrop;
         }
         // Stuff to do if the mob isn't a ghost
@@ -987,6 +987,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                         ThisTempDrop.alternate[k]=thisdrop->alt[k];
                     }
 
+                    Log(MSG_INFO,"GetPYDropAnd:: drop added to possible drop list, item %i::%i, prob: %u, prio: (%i/%i)",ThisTempDrop.type,ThisTempDrop.item,ThisTempDrop.prob, prio_lvl,prio_monster);
                     MyMonsterDrops.push_back(ThisTempDrop);
                 }
 
@@ -998,6 +999,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         //monster only or level check only.
         if(!prio_monster||!prio_lvl)
         {
+            Log(MSG_INFO,"GetPYDropAnd:: no priorities detected, going for normal drops.");
             int nb_lines=DropsAnd[0].size( );
 
             for(int i=0; i<nb_lines; i++)
@@ -1048,6 +1050,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
                         ThisTempDrop.alternate[k]=thisdrop->alt[k];
                     }
 
+                    Log(MSG_INFO,"GetPYDropAnd:: drop added (1) to possible drop list, item %i::%i, prob: %u, prio: (%i/%i)",ThisTempDrop.type,ThisTempDrop.item,ThisTempDrop.prob, prio_lvl,prio_monster);
                     MyMonsterDrops.push_back(ThisTempDrop);
                 }
 
@@ -1058,6 +1061,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     }
 
     n=MyMonsterDrops.size();
+    Log(MSG_INFO,"GetPYDropAnd:: %i possible drops",n);
 
     //LMA: no drops...
     if(n == 0)
@@ -1075,9 +1079,17 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
 
     // randomize the item from the shortlist. items get equal chance
     n = GServer->RandNumber(0, maxitems);
+    if(n>=maxitems)
+    {
+        Log(MSG_WARNING,"GetPYDropAnd:: overflow detected");
+        n=0;
+    }
+
     newdrop->item.itemnum = MyMonsterDrops.at(n).item;
     newdrop->item.itemtype = MyMonsterDrops.at(n).type;
     newdrop->type = 2;
+
+    Log(MSG_INFO,"GetPYDropAnd:: chosen item is offset %i, %i::%i",n,newdrop->item.itemtype,newdrop->item.itemnum);
 
     newdrop->item.lifespan = 10 + rand()%80;
     float dmod = 0; //random number from 0 to 100 made up of 4 sub numbers to keep
@@ -1210,7 +1222,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
             //LMA: 7 alt
             int p = 1;
             //while(MyMonsterDrops.at(n).alternate[p] != 0 && p < 8)
-            while(MyMonsterDrops.at(n).alternate[p-1] != 0 && p < 8)
+            while(p < 8 && MyMonsterDrops.at(n).alternate[p-1] != 0)
             {
                 p++;
             }
@@ -1218,8 +1230,16 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
             if(p > 1) // blues available for this item
             {
                 p--;
-                int bluenum = RandNumber( 1, p);
+                //int bluenum = RandNumber( 1, p);
+                int bluenum = RandNumber( 0, p);
+                if(bluenum>=p)
+                {
+                    bluenum=0;
+                    Log(MSG_WARNING,"GetPYDropAnd:: overflow trapped in blue");
+                }
+
                 newdrop->item.itemnum = MyMonsterDrops.at(n).alternate[bluenum];
+                Log(MSG_INFO,"GetPYDropAnd:: Alt drop offset %i, %i::%i",bluenum,newdrop->item.itemtype,newdrop->item.itemnum);
                 pstats = 1; //make sure we get stats for this item
             }
 
@@ -1234,7 +1254,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
             //LMA: Extra stats (medal for example).
             if (thisclient->bonusstatdrop!=1)
             {
-                Log(MSG_INFO,"Better stats should come in this drop");
+                Log(MSG_INFO,"GetPYDropAnd:: Better stats (medal) should come in this drop");
                 newdrop->item.stats = GetExtraStats( 100 );
             }
             else
