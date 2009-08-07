@@ -2804,6 +2804,7 @@ UINT CWorldServer::GetTimerFromAIP(dword script_id, bool is_npc)
             my_timer=6000;
         }
 
+        Log(MSG_INFO,"script %i has NOW a timer %u, NPC? %i",script_id,my_timer,is_npc);
     }
     else
     {

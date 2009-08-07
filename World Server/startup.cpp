@@ -1953,7 +1953,7 @@ bool CWorldServer::LoadPYDropsDataAnd( )
 
         }
 
-        Log(MSG_INFO,"record_id %i, alt: %i, %i, %i, %i, %i, %i, %i, %i",record_id,newdrop->alt[0],newdrop->alt[1],newdrop->alt[2],newdrop->alt[3],newdrop->alt[4],newdrop->alt[5],newdrop->alt[6],newdrop->alt[7]);
+        //Log(MSG_INFO,"record_id %i, alt: %i, %i, %i, %i, %i, %i, %i, %i",record_id,newdrop->alt[0],newdrop->alt[1],newdrop->alt[2],newdrop->alt[3],newdrop->alt[4],newdrop->alt[5],newdrop->alt[6],newdrop->alt[7]);
 
         //LMA: checking stupid drops...
         if(newdrop->itemtype<=0||newdrop->itemtype==13||newdrop->itemtype>14)

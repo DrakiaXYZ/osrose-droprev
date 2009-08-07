@@ -305,8 +305,8 @@ void CWorldServer::ReadAIP(strings path, dword index)
 				//LMA: Timer time.
 				if(AipListTimer.find(index)==AipListTimer.end())
 				{
-				    AipListTimer[index]=script->minTime;
-				    Log(MSG_INFO,"Script %i has timer %i",index,script->minTime);
+				    AipListTimer[index]=script->minTime*1000;
+				    //Log(MSG_INFO,"Script %i has timer %i",index,script->minTime);
 				}
 
                 if(lma_export)
