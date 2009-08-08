@@ -45,7 +45,7 @@
 //#define CRITICAL 26
 //#define HP_REC_RATE 27         //HP Recovery Rate
 //#define MP_REC_RATE 28         //MP Recovery Rate
-//#define MP_CONSUME 29          //MP MP Consumption
+#define MP_CONSUME 29          //MP MP Consumption
 //#define EXP_RATE 30            //Experience Rate
 //#define LEVEL 31               //Level
 //#define POINT 32               //Point
@@ -87,10 +87,10 @@
 //#define STORAGE_EXP 95         //Storage Expansion
 //#define SHOP_REMOD 96          //Personl Shop Remodeling
 //#define CART_GAUGE 97          //Cart Gauge
-//#define MAGIC_RESISTENCE_2 98  //Magic Resistance TAKE CARE ATM, Another MAGIC_RESISTENCE 21
+#define MAGIC_RESISTENCE_2 98    //Magic Resistance
 #define ATK_ACCURACY 99
-//#define CRITICAL 100           //Critical TAKE CARE ATM, Another CRITICAL 26
-//#define DODGE 101              //Dodge
+#define CRITICAL 100           //Critical
+#define DODGE 101              //Dodge
 #define SHIELD_DEFENSE 102
 //#define IMMUNITY 103          //Immunity
 #define ONE_HAND_SWORD_AP 104

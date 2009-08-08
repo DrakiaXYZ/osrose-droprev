@@ -21,20 +21,44 @@
 #include "player.h"
 #include "worldserver.h"
 
-// Return Dodge
+//CREDIT TO Kirk, lmame, Tomiz and the Other's :)
+
+// Return Dodge     //A_DODGE(22) / DODGE(101)
 unsigned int CPlayer::GetDodge( )
 {
     UINT Dodge = 0;
+    UINT pDodge = 0;//Passive Skill % Value
+    UINT vDodge = 0;//Passive Skill Value
+    UINT ClothDodge = 0;//Dodge from Cloth
+    UINT shieldDodge = 0;//Dodge from shield
+
+    //Refine to Match Client Value with item around 50 dura
+    UINT extra_refine_dr[10] = {0, 8, 15, 25, 30, 39, 45, 53, 59, 66};
+
+    //Test Refine to Match Cloth Value
+    //UINT extra_refine_dr[10] = {0, 2, 7, 17, 27, 53, 68, 86, 93, 120};
+
     Dodge = (UINT)floor(( ((Stats->Level * 0.3) + ((Attr->Dex + Attr->Edex) * 1.9)) + 10 ) * 0.4);
-    UINT ClothDodge = 0;
-    for(UINT i=1;i<7;i++)
+
+    for(UINT i=1;i<7;i++)//Dodge From Cloth
     {
         if( items[i].count != 0 )
-            ClothDodge += items[i].durability;
+            ClothDodge += (UINT)floor(items[i].durability * 0.3);
     }
-    Dodge += (UINT)floor(ClothDodge*0.3);
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+    if(items[8].count>0)//Dodge From Shield
     {
+        shieldDodge += (UINT)floor(items[8].durability * 0.3);
+    }
+
+    Dodge += (UINT)floor(shieldDodge + ClothDodge);
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
+    {
+        if(i==7)//Weapon Don't Add Dodge
+        {
+            continue;
+        }
+
         if( items[i].count != 0 )
         {
             if(items[i].itemtype>9)
@@ -43,58 +67,128 @@ unsigned int CPlayer::GetDodge( )
                 continue;
             }
 
+            if(items[i].refine>0)//Refine Add Dodge
+            {
+                UINT refine = (UINT)floor(items[i].refine/16);
+
+                if(refine<10)
+                {
+                    Dodge += (UINT)floor(extra_refine_dr[refine] * 0.01 * (items[i].durability * 0.3));
+                }
+            }
+
             //LMA: Adding gem support
             if(items[i].gem!=0)
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DODGE)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DODGE || GServer->JemList.Index[items[i].gem]->stat1[0] == DODGE)
                     {
                         Dodge += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DODGE)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DODGE || GServer->JemList.Index[items[i].gem]->stat2[0] == DODGE)
                     {
                         Dodge += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
                 }
             }
             //End gem
-
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DODGE)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DODGE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == DODGE)
             {
                 Dodge += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DODGE)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DODGE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == DODGE)
             {
                 Dodge += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_DODGE)
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_DODGE || GServer->StatsList[items[i].stats]->stat[0] == DODGE)
+                {
                     Dodge += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_DODGE)
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_DODGE || GServer->StatsList[items[i].stats]->stat[1] == DODGE)
+                {
                     Dodge += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
+
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Dodge From Pasive Skills
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+        if( cskills[i].thisskill->type == 15 )//Passive SKill
+        {
+            for( UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == DODGE || cskills[i].thisskill->buff[j] == A_DODGE )
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                        pDodge += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                        vDodge += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
+
+    Dodge += Dodge * pDodge / 100;//Apply Passive Skill % Value
+    Dodge += vDodge;//Apply Passive Skill Value
+
     if(Status->Dodge_up!=0xff)
+    {
         Dodge += MagicStatus[Status->Dodge_up].Value;
+    }
     if(Status->Dodge_down!=0xff)
+    {
         Dodge -= MagicStatus[Status->Dodge_down].Value;
+    }
     if(Dodge<30)
+    {
         Dodge=30;
+    }
     return Dodge;
 }
 
-// Return Accury
+// Return Accury    //A_ACCUR(20) / ATK_ACCURACY(99)
 unsigned int CPlayer::GetAccury( )
 {
     UINT Accury = 0;
-    if(items[7].count==0 )
-        Accury = (UINT)floor( (((Attr->Con + Attr->Econ )+10)*0.5) + 15 );
-    else
-        Accury = (UINT)floor( ((Attr->Con+Attr->Econ+10)*0.8) + ((GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality*0.6) + (items[7].durability*0.8)) );
+    UINT pAccury = 0;//Passive Skill % Value
+    UINT vAccury = 0;//Passive Skill Value
     UINT extra_refine[10] = { 0, 4, 7, 10, 14, 20, 26, 33, 40, 50};
+
+    if(items[7].count==0 )
+    {
+        Accury = (UINT)floor( (((Attr->Con + Attr->Econ )+10)*0.5) + 15 );
+    }
+    else
+    {
+        Accury = (UINT)floor( ((Attr->Con+Attr->Econ+10)*0.8) + ((GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality*0.6) + (items[7].durability*0.8)));
+    }
     if( items[7].refine>0 )
     {
         UINT refine = (UINT)floor(items[7].refine/16);
@@ -103,49 +197,8 @@ unsigned int CPlayer::GetAccury( )
             Accury += extra_refine[refine];
         }
     }
-    UINT Extra = 0;
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
-    {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
 
-        //Some skills are not worthy to search in
-        if(cskills[i].id==0&&i<60)
-        {
-            i=89;
-            continue;
-        }
-
-        if(cskills[i].id==0&&(i>60&&i<120))
-        {
-            i=119;
-            continue;
-        }
-
-        if(cskills[i].id==0&&i>=120)
-            break;
-
-        if(cskills[i].thisskill==NULL)
-            continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
-        {
-            for(UINT j=0;j<3;j++ )
-            {
-                if( cskills[i].thisskill->buff[j] == ATK_ACCURACY || cskills[i].thisskill->buff[j] ==  A_ACCUR )
-                {
-                    if( cskills[i].thisskill->value2[j] > 0 )
-                        Extra += Accury * cskills[i].thisskill->value2[j] / 100;
-                    if( cskills[i].thisskill->value1[j] > 0 )
-                    {
-                        Extra += cskills[i].thisskill->value1[j];
-                    }
-                }
-            }
-        }
-    }
-    Accury += Extra;
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -154,17 +207,16 @@ unsigned int CPlayer::GetAccury( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
-
-             //LMA: Adding gem support
+            //LMA: Adding gem support
             if(items[i].gem!=0)
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_ACCUR)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_ACCUR || GServer->JemList.Index[items[i].gem]->stat1[0] == ATK_ACCURACY)
                     {
                         Accury += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_ACCUR)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_ACCUR || GServer->JemList.Index[items[i].gem]->stat2[0] == ATK_ACCURACY)
                     {
                         Accury += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -172,75 +224,96 @@ unsigned int CPlayer::GetAccury( )
             }
             //End gem
 
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_ACCUR)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_ACCUR || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == ATK_ACCURACY)
             {
                 Accury += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_ACCUR)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_ACCUR || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == ATK_ACCURACY)
             {
                 Accury += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_ACCUR)
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_ACCUR || GServer->StatsList[items[i].stats]->stat[0] == ATK_ACCURACY)
+                {
                     Accury += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_ACCUR)
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_ACCUR || GServer->StatsList[items[i].stats]->stat[1] == ATK_ACCURACY)
+                {
                     Accury += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    if(Status->Accury_up!=0xff)
-        Accury += MagicStatus[Status->Dodge_up].Value;
-    if(Status->Accury_down!=0xff)
-        Accury -= MagicStatus[Status->Accury_down].Value;
-    if(Accury<30)
-        Accury=30;
-    return Accury;
-}
 
-// Return Critical
-unsigned int CPlayer::GetCritical( )
-{
-    UINT Critical = 0;
-    Critical = (UINT)floor(((Attr->Con + Attr->Econ + 20)*0.2) + Attr->Sen + Attr->Esen );
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
     {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
         //Some skills are not worthy to search in
         if(cskills[i].id==0&&i<60)
         {
             i=89;
             continue;
         }
-
         if(cskills[i].id==0&&(i>60&&i<120))
         {
             i=119;
             continue;
         }
-
         if(cskills[i].id==0&&i>=120)
+        {
             break;
-
+        }
         if(cskills[i].thisskill==NULL)
+        {
             continue;
-
-    	if( cskills[i].thisskill->type == 15 ) //Pasive
-        {   // Passive skill fixed by tomiz
-            for( UINT j=0;j<3;j++ )
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for(UINT j=0;j<3;j++ )
             {
-                if( cskills[i].thisskill->buff[j] == A_CRITICAL )
+                if( cskills[i].thisskill->buff[j] == ATK_ACCURACY || cskills[i].thisskill->buff[j] ==  A_ACCUR )
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        Critical += Critical * cskills[i].thisskill->value2[j] / 100;
+                    {
+                        pAccury += cskills[i].thisskill->value2[j];
+                    }
                     if( cskills[i].thisskill->value1[j] > 0 )
-                        Critical += cskills[i].thisskill->value1[j];
+                    {
+                        vAccury += cskills[i].thisskill->value1[j];
+                    }
                 }
             }
         }
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    Accury += vAccury;//Apply Passive Skill Value
+    Accury += Accury * pAccury / 100;//Apply Passive Skill % Value
+
+    if(Status->Accury_up!=0xff)
+    {
+        Accury += MagicStatus[Status->Dodge_up].Value;
+    }
+    if(Status->Accury_down!=0xff)
+    {
+        Accury -= MagicStatus[Status->Accury_down].Value;
+    }
+    if(Accury<30)
+    {
+        Accury=30;
+    }
+    return Accury;
+}
+
+// Return Critical  //A_CRITICAL(26) / CRITICAL(100)
+unsigned int CPlayer::GetCritical( )
+{
+    UINT Critical = 0;
+    UINT pCritical = 0;//Passive Skill % Value
+    UINT vCritical = 0;//Passive Skill Value
+
+    Critical = (UINT)floor(((Attr->Con + Attr->Econ + 20)*0.2) + Attr->Sen + Attr->Esen );
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0)
         {
@@ -250,17 +323,16 @@ unsigned int CPlayer::GetCritical( )
                 continue;
             }
 
-
             //LMA: Adding Gem support
             if(items[i].gem!=0)
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_CRITICAL)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_CRITICAL || GServer->JemList.Index[items[i].gem]->stat1[0] == CRITICAL)
                     {
                         Critical += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_CRITICAL)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_CRITICAL || GServer->JemList.Index[items[i].gem]->stat2[0] == CRITICAL)
                     {
                         Critical += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -268,49 +340,100 @@ unsigned int CPlayer::GetCritical( )
             }
             //End Gem
 
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_CRITICAL)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_CRITICAL || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == CRITICAL)
             {
                 Critical += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_CRITICAL)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_CRITICAL || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == CRITICAL)
             {
                 Critical += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_CRITICAL)
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_CRITICAL || GServer->StatsList[items[i].stats]->stat[0] == CRITICAL)
+                {
                     Critical += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_CRITICAL)
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_CRITICAL || GServer->StatsList[items[i].stats]->stat[1] == CRITICAL)
+                {
                     Critical += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    if(Fairy)Critical = (unsigned int)floor(Critical*1.2);
+
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+    	if( cskills[i].thisskill->type == 15 )//Passive Skill
+        {
+            for( UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == A_CRITICAL || cskills[i].thisskill->buff[j] == CRITICAL)
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                        pCritical += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                        vCritical += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
+
+    Critical += vCritical;//Apply Passive Skill Value
+    Critical += Critical * pCritical / 100;//Apply Passive Skill % Value
+
+    if(Fairy)
+    {
+        Critical = (unsigned int)floor(Critical*1.2);
+    }
     if(Status->Critical_up!=0xff)
+    {
         Critical += MagicStatus[Status->Critical_up].Value;
+    }
     if(Status->Critical_down!=0xff)
+    {
         Critical -= MagicStatus[Status->Critical_down].Value;
+    }
     if(Critical<10)
+    {
         Critical=10;
+    }
     return Critical;
 }
 
-
-// Return Magic Defense
+// Return Magic Defense     //A_MRESIST(21) / MAGIC_RESISTENCE_2(98)  //Client Don't Match, he add 1 mdef each refine :(
 unsigned int CPlayer::GetMagicDefense( )
 {
     UINT MagicDefense = 0;
-    switch( CharInfo->Job )
-    {
-        case 121:case 122:
-        case 221:case 222:
-        case 321:case 322:
-        case 421:case 422:
-            MagicDefense += 20;
-        break;
-    }
+    UINT pMagicDefense = 0;//Passive Skill % Value
+    UINT vMagicDefense = 0;//Passive Skill Value
+
     MagicDefense += (UINT)floor(((Attr->Int + Attr->Eint+5)*0.6) + ((Stats->Level+15)*0.8));
-    for(UINT i=1;i<9;i++)
+
+    for(UINT i=1;i<10;i++)
     {
         if(items[i].itemtype>9)
         {
@@ -318,10 +441,177 @@ unsigned int CPlayer::GetMagicDefense( )
             continue;
         }
         if(items[i].itemtype==WEAPON || items[i].count<1 )
+        {
             continue;
+        }
+
         MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence;
+
+        if(items[i].refine>0)
+            {
+                UINT extra_refine_mdef[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+                switch(GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade)// % / Item Grade
+                {
+                    case 0://[TODO]Extra Refine % for Item Grade 0 / Mileage Item
+                    {
+                        extra_refine_mdef[1] += 6;      //Refine 1
+                        extra_refine_mdef[2] += 13;
+                        extra_refine_mdef[3] += 20;
+                        extra_refine_mdef[4] += 30;
+                        extra_refine_mdef[5] += 40;
+                        extra_refine_mdef[6] += 50;
+                        extra_refine_mdef[7] += 65;
+                        extra_refine_mdef[8] += 80;
+                        extra_refine_mdef[9] += 96;    //Refine 9
+                    }
+                    case 1://Extra Refine % for Item Grade 1
+                    {
+                        extra_refine_mdef[1] += 10;     //ok Refine 1
+                        extra_refine_mdef[2] += 20;     //ok
+                        extra_refine_mdef[3] += 40;     //ok
+                        extra_refine_mdef[4] += 55;     //ok
+                        extra_refine_mdef[5] += 90;     //ok
+                        extra_refine_mdef[6] += 110;    //ok
+                        extra_refine_mdef[7] += 150;    //ok
+                        extra_refine_mdef[8] += 190;    //ok
+                        extra_refine_mdef[9] += 240;    //ok Refine 9
+                    }
+                    break;
+                    case 2://Extra Refine % for Item Grade 2
+                    {
+                        extra_refine_mdef[1] += 7;      //ok Refine 1
+                        extra_refine_mdef[2] += 16;
+                        extra_refine_mdef[3] += 26;     //ok
+                        extra_refine_mdef[4] += 42;     //ok
+                        extra_refine_mdef[5] += 56;     //ok
+                        extra_refine_mdef[6] += 72;     //ok
+                        extra_refine_mdef[7] += 95;     //ok
+                        extra_refine_mdef[8] += 115;    //ok
+                        extra_refine_mdef[9] += 140;    //ok Refine 9
+                    }
+                    break;
+                    case 3://Extra Refine % for Item Grade 3
+                    {
+                        extra_refine_mdef[1] += 7;      //ok Refine 1
+                        extra_refine_mdef[2] += 15;     //ok
+                        extra_refine_mdef[3] += 24;     //ok
+                        extra_refine_mdef[4] += 38;     //ok
+                        extra_refine_mdef[5] += 50;     //ok
+                        extra_refine_mdef[6] += 65;     //ok
+                        extra_refine_mdef[7] += 84;     //ok
+                        extra_refine_mdef[8] += 103;    //ok
+                        extra_refine_mdef[9] += 125;    //ok Refine 9
+                    }
+                    break;
+                    case 4://Extra Refine % for Item Grade 4
+                    {
+                        extra_refine_mdef[1] += 7;      //Refine 1
+                        extra_refine_mdef[2] += 14;
+                        extra_refine_mdef[3] += 22;
+                        extra_refine_mdef[4] += 33;
+                        extra_refine_mdef[5] += 45;
+                        extra_refine_mdef[6] += 57;
+                        extra_refine_mdef[7] += 73;
+                        extra_refine_mdef[8] += 91;
+                        extra_refine_mdef[9] += 109;    //Refine 9
+                    }
+                    break;
+                    case 5://[TODO]Extra Refine % for Item Grade 5
+                    {
+                        extra_refine_mdef[1] += 8;      //ok Refine 1
+                        extra_refine_mdef[2] += 14;     //ok
+                        extra_refine_mdef[3] += 21;     //ok
+                        extra_refine_mdef[4] += 33;     //ok
+                        extra_refine_mdef[5] += 44;     //ok
+                        extra_refine_mdef[6] += 55;     //ok
+                        extra_refine_mdef[7] += 70;     //ok
+                        extra_refine_mdef[8] += 85;
+                        extra_refine_mdef[9] += 105;    //Refine 9
+                    }
+                    break;
+                    case 6://[TODO]Extra Refine % for Item Grade 6
+                    {
+                        extra_refine_mdef[1] += 7;      //Refine 1
+                        extra_refine_mdef[2] += 13;
+                        extra_refine_mdef[3] += 20;
+                        extra_refine_mdef[4] += 30;
+                        extra_refine_mdef[5] += 40;
+                        extra_refine_mdef[6] += 50;
+                        extra_refine_mdef[7] += 65;
+                        extra_refine_mdef[8] += 80;
+                        extra_refine_mdef[9] += 100;    //Refine 9
+                    }
+                    break;
+                    case 7://[TODO]Extra Refine % for Item Grade 7
+                    {
+                        extra_refine_mdef[1] += 7;      //Refine 1
+                        extra_refine_mdef[2] += 13;
+                        extra_refine_mdef[3] += 20;
+                        extra_refine_mdef[4] += 30;
+                        extra_refine_mdef[5] += 40;
+                        extra_refine_mdef[6] += 50;
+                        extra_refine_mdef[7] += 65;
+                        extra_refine_mdef[8] += 80;
+                        extra_refine_mdef[9] += 97;    //Refine 9
+                    }
+                    break;
+                    case 8://Extra Refine % for Item Grade 8
+                    {
+                        extra_refine_mdef[1] += 7;      //Refine 1
+                        extra_refine_mdef[2] += 13;
+                        extra_refine_mdef[3] += 20;
+                        extra_refine_mdef[4] += 30;
+                        extra_refine_mdef[5] += 40;
+                        extra_refine_mdef[6] += 50;
+                        extra_refine_mdef[7] += 65;
+                        extra_refine_mdef[8] += 80;
+                        extra_refine_mdef[9] += 96;    //Refine 9
+                    }
+                    break;
+                    case 9://[TODO] Not Ingame Yet : Extra Refine % for Item Grade 9
+                    {
+                        extra_refine_mdef[1] += 6;      //Refine 1
+                        extra_refine_mdef[2] += 13;
+                        extra_refine_mdef[3] += 20;
+                        extra_refine_mdef[4] += 30;
+                        extra_refine_mdef[5] += 40;
+                        extra_refine_mdef[6] += 50;
+                        extra_refine_mdef[7] += 65;
+                        extra_refine_mdef[8] += 80;
+                        extra_refine_mdef[9] += 96;    //Refine 9
+                    }
+                    break;
+                    case 15://Extra Refine % for Item Grade 15 /GM Clothes
+                    {
+                        extra_refine_mdef[1] += 6;      //Refine 1
+                        extra_refine_mdef[2] += 13;
+                        extra_refine_mdef[3] += 20;
+                        extra_refine_mdef[4] += 30;
+                        extra_refine_mdef[5] += 40;
+                        extra_refine_mdef[6] += 50;
+                        extra_refine_mdef[7] += 65;
+                        extra_refine_mdef[8] += 80;
+                        extra_refine_mdef[9] += 96;    //Refine 9
+                    }
+                    break;
+                    default:
+                    {
+                        Log(MSG_WARNING,"Weird itemgrade value: %i:",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
+                    }
+                    break;
+                }
+
+                UINT refine = (UINT)floor(items[i].refine/16);
+
+                if(refine<10)
+                {
+                    MagicDefense += (UINT)floor(extra_refine_mdef[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence);
+                }
+            }
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -330,72 +620,131 @@ unsigned int CPlayer::GetMagicDefense( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
-
             //LMA: Adding Gem support
             if(items[i].gem!=0)
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MRESIST)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MRESIST || GServer->JemList.Index[items[i].gem]->stat1[0] == MAGIC_RESISTENCE_2)
                     {
                         MagicDefense += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MRESIST)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MRESIST || GServer->JemList.Index[items[i].gem]->stat2[0] == MAGIC_RESISTENCE_2)
                     {
                         MagicDefense += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
                 }
             }
             //End Gem
-
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MRESIST)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MRESIST || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MAGIC_RESISTENCE_2)
             {
                 MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MRESIST)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MRESIST || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MAGIC_RESISTENCE_2)
             {
                 MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_MRESIST)
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_MRESIST || GServer->StatsList[items[i].stats]->stat[0] == MAGIC_RESISTENCE_2)
+                {
                     MagicDefense += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_MRESIST)
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_MRESIST || GServer->StatsList[items[i].stats]->stat[1] == MAGIC_RESISTENCE_2)
+                {
                     MagicDefense += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    if(Status->Magic_Defense_up!=0xff)
-        MagicDefense += MagicStatus[Status->Magic_Defense_up].Value;
-    if(Status->Magic_Defense_down!=0xff)
-        MagicDefense -= MagicStatus[Status->Magic_Defense_down].Value;
-    return MagicDefense;
-}
 
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skill
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for(UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == A_MRESIST || cskills[i].thisskill->buff[j] == MAGIC_RESISTENCE_2 )
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                         pMagicDefense += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                         vMagicDefense += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
 
-// Return Attack
-unsigned int CPlayer::GetAttackPower( )
-{
-    UINT attack = 0;
-    UINT weapontype = 0;
-    UINT weaponatk = 0;
-    switch(CharInfo->Job)
+    MagicDefense += vMagicDefense;//Apply Passive Skill Value
+    MagicDefense += MagicDefense * pMagicDefense / 100;//Apply Passive Skill % Value
+
+    switch( CharInfo->Job )
     {
         case 121:case 122:
         case 221:case 222:
         case 321:case 322:
         case 421:case 422:
-            attack += 30;
+        {
+            MagicDefense += 20;
+        }
         break;
     }
+
+    if(Status->Magic_Defense_up!=0xff)
+    {
+        MagicDefense += MagicStatus[Status->Magic_Defense_up].Value;
+    }
+    if(Status->Magic_Defense_down!=0xff)
+    {
+        MagicDefense -= MagicStatus[Status->Magic_Defense_down].Value;
+    }
+    return MagicDefense;
+}
+
+// Return Attack            //A_ATTACK(18) and the other for weapon type (104-117) (42-48)
+unsigned int CPlayer::GetAttackPower( )
+{
+    UINT attack = 0;
+    UINT weapontype = 0;
+    UINT weaponatk = 0;
+    UINT pattack = 0;//Passive Skill % Value
+    UINT vattack = 0;//Passive Skill Value
+
+
 	if( items[7].itemnum!=0 && items[7].count > 0 && items[7].durability>0 )
     {
         UINT extra_refine[10] = {0, 7, 14, 21, 31, 41, 51, 65, 80 , 100};
+
         weaponatk = GServer->EquipList[WEAPON].Index[items[7].itemnum]->attackpower;
         weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
+
         if( items[7].refine>0 )
         {
             UINT refine = (UINT)floor(items[7].refine/16);
+
             if(refine>0 && refine<10)
             {
                 weaponatk += (UINT)floor(extra_refine[refine] * 0.01 * weaponatk);
@@ -406,553 +755,8 @@ unsigned int CPlayer::GetAttackPower( )
     {
         attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.5 + (Attr->Dex + Attr->Edex)*0.3 );
     }
-    switch( weapontype )
-    {
-        case ONE_HAND_SWORD://one hand sword
-        {
-            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
 
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == ONE_HAND_WEAP_AP ||
-                            cskills[i].thisskill->buff[j] == ONE_HAND_SWORD_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case ONE_HAND_BUNT_SWORD://one hand blunt sword
-            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == ONE_HAND_WEAP_AP ||
-                            cskills[i].thisskill->buff[j] == ONE_HAND_MELEE_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        break;
-        case TWO_HAND_SWORD://two hand sword
-        {
-            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP ||
-                            cskills[i].thisskill->buff[j] == TWO_HAND_SWORD_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case SPEAR://spear
-        {
-            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP ||
-                            cskills[i].thisskill->buff[j] == TWO_HAND_SPEAR_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case TWO_HAND_AXE://two hand axe
-        {
-            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-            //Some skills are not worthy to search in
-            if(cskills[i].id==0&&i<60)
-            {
-                i=89;
-                continue;
-            }
-
-            if(cskills[i].id==0&&(i>60&&i<120))
-            {
-                i=119;
-                continue;
-            }
-
-            if(cskills[i].id==0&&i>=120)
-                break;
-
-            if(cskills[i].thisskill==NULL)
-                continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP ||
-                            cskills[i].thisskill->buff[j] == TWO_HAND_AXE_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case BOW://bow
-        {
-            float arrows = 0;
-            if(items[132].count>0)
-                arrows = GServer->NaturalList.Index[items[132].itemnum]->quality*0.5;
-            attack += (UINT)floor((((Attr->Str + Attr->Estr) + Stats->Level)*0.1) + ((Attr->Dex + Attr->Edex)*0.04 + (Attr->Sen + Attr->Esen)*0.03 + 29) * weaponatk * 0.03333334 + (Attr->Dex+Attr->Edex)*0.52 + arrows);
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-
-                        if( cskills[i].thisskill->buff[j] == BOW_AP ||
-                            cskills[i].thisskill->buff[j] == BOW_WEAP_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case GUN://gun
-        case DUAL_GUN://dual guns
-        {
-            float bullets = 0;
-            if(items[133].count>1)
-                bullets = GServer->NaturalList.Index[items[133].itemnum]->quality * 0.8;
-            attack += (UINT)floor( (Attr->Con + Attr->Econ)*0.47 + bullets + Stats->Level*0.1 + (Attr->Dex + Attr->Edex)*0.3 + ((Attr->Con + Attr->Econ)*0.04 + (Attr->Sen + Attr->Esen)*0.05 + 29) * weaponatk * 0.03333334);
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == GUN_AP ||
-                            cskills[i].thisskill->buff[j] == GUN_WEAP_AP  )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case LAUNCHER://launcher
-        {
-            float cannons = 0;
-            if(items[134].count>0)
-            {
-                cannons = GServer->NaturalList.Index[items[134].itemnum]->quality;
-            }
-            attack += (UINT)floor( cannons*0.8 + Stats->Level*0.1 + (Attr->Str + Attr->Estr)*0.32 + (Attr->Con + Attr->Econ)*0.45 + ((Attr->Con + Attr->Econ)*0.04 + (Attr->Sen + Attr->Esen)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == LAUNCHER_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case STAFF://staff
-        {
-            attack += (UINT)floor( Stats->Level*0.2 + ((Attr->Int + Attr->Eint)+(Attr->Str + Attr->Estr))*0.4 + ((Attr->Int + Attr-> Eint)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == STAFF_POWER ||
-                            cskills[i].thisskill->buff[j] == MAGIC_WEAP_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case WAND://wand
-        {
-            attack += (UINT)floor( Stats->Level*0.2 + (Attr->Int + Attr->Eint)*0.6 + ( ((Attr->Sen + Attr->Esen)*0.1 +26) * 0.03703704 * weaponatk )  );
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == WAND_POWER ||
-                            cskills[i].thisskill->buff[j] == MAGIC_WEAP_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case KATAR://katar
-        {
-            attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.42 + (Attr->Dex + Attr->Edex)*0.55 + ((Attr->Dex + Attr->Edex)*0.05 + 20) * weaponatk * 0.0476190);
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == KATAR_AP ||
-                            cskills[i].thisskill->buff[j] == COMBAT_WEAP_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 ) attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 ) attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case DOUBLE_SWORD://double sword
-        {
-            attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.63 + (Attr->Dex + Attr->Edex)*0.45 + ((Attr->Dex + Attr->Edex)*0.05 + 25) * weaponatk * 0.03846154);
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-                //Some skills are not worthy to search in
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == DUALSWORD_AP ||
-                            cskills[i].thisskill->buff[j] == COMBAT_WEAP_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-        case CROSSBOW://crossbow
-        {
-            float arrows = 0;
-            if(items[132].count>0)
-                arrows = GServer->NaturalList.Index[items[132].itemnum]->quality*0.5;
-            attack += (UINT)floor((((Attr->Str + Attr->Estr)+Stats->Level)*0.1) + ((Attr->Dex + Attr->Edex)*0.04 + (Attr->Sen +Attr->Esen)*0.03 + 29) * weaponatk * 0.03333334 + (Attr->Dex + Attr->Edex)*0.52 + arrows);
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
-            {
-                if(cskills[i].id==0&&i<60)
-                {
-                    i=89;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&(i>60&&i<120))
-                {
-                    i=119;
-                    continue;
-                }
-
-                if(cskills[i].id==0&&i>=120)
-                    break;
-
-                if(cskills[i].thisskill==NULL)
-                    continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
-                {
-                    for( UINT j=0;j<3;j++ )
-                    {
-                        if( cskills[i].thisskill->buff[j] == CBOW_AP ||
-                            cskills[i].thisskill->buff[j] == CBOW_WEAP_AP )
-                        {
-                            if( cskills[i].thisskill->value2[j] > 0 )   attack += attack * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   attack += cskills[i].thisskill->value1[j];
-                        }
-                    }
-                }
-            }
-        }
-        break;
-    }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -986,26 +790,997 @@ unsigned int CPlayer::GetAttackPower( )
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
                 if(GServer->StatsList[items[i].stats]->stat[0] == A_ATTACK)
+                {
                     attack += GServer->StatsList[items[i].stats]->value[0];
+                }
                 if(GServer->StatsList[items[i].stats]->stat[1] == A_ATTACK)
+                {
                     attack += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    if(Fairy)attack = (unsigned int)floor(attack*1.2);
+
+    switch( weapontype )//AP By Weapon Type And Passive Skills
+    {
+
+        Log(MSG_INFO,"Weapon Type : %i", weapontype);
+
+        case ONE_HAND_SWORD://one hand sword
+        {
+            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Passive Skill
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == ONE_HAND_WEAP_AP || cskills[i].thisskill->buff[j] == ONE_HAND_SWORD_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case ONE_HAND_BUNT_SWORD://one hand blunt sword
+        {
+            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == ONE_HAND_WEAP_AP || cskills[i].thisskill->buff[j] == ONE_HAND_MELEE_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case TWO_HAND_SWORD://two hand sword
+        {
+            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP || cskills[i].thisskill->buff[j] == TWO_HAND_SWORD_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case SPEAR://spear
+        {
+            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP || cskills[i].thisskill->buff[j] == TWO_HAND_SPEAR_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case TWO_HAND_AXE://two hand axe
+        {
+            attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == TWO_HAND_WEAP_AP || cskills[i].thisskill->buff[j] == TWO_HAND_AXE_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case BOW://bow
+        {
+            float arrows = 0;
+
+            if(items[132].count>0)
+            {
+                arrows = GServer->NaturalList.Index[items[132].itemnum]->quality*0.5;
+            }
+
+            attack += (UINT)floor((((Attr->Str + Attr->Estr) + Stats->Level)*0.1) + ((Attr->Dex + Attr->Edex)*0.04 + (Attr->Sen + Attr->Esen)*0.03 + 29) * weaponatk * 0.03333334 + (Attr->Dex+Attr->Edex)*0.52 + arrows);
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+
+                        if( cskills[i].thisskill->buff[j] == BOW_AP || cskills[i].thisskill->buff[j] == BOW_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case GUN://gun
+        case DUAL_GUN://dual guns
+        {
+            float bullets = 0;
+
+            if(items[133].count>1)
+            {
+                bullets = GServer->NaturalList.Index[items[133].itemnum]->quality * 0.8;
+            }
+
+            attack += (UINT)floor( (Attr->Con + Attr->Econ)*0.47 + bullets + Stats->Level*0.1 + (Attr->Dex + Attr->Edex)*0.3 + ((Attr->Con + Attr->Econ)*0.04 + (Attr->Sen + Attr->Esen)*0.05 + 29) * weaponatk * 0.03333334);
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == GUN_AP || cskills[i].thisskill->buff[j] == GUN_WEAP_AP  )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case LAUNCHER://launcher
+        {
+            float cannons = 0;
+            if(items[134].count>0)
+            {
+                cannons = GServer->NaturalList.Index[items[134].itemnum]->quality;
+            }
+
+            attack += (UINT)floor( cannons*0.8 + Stats->Level*0.1 + (Attr->Str + Attr->Estr)*0.32 + (Attr->Con + Attr->Econ)*0.45 + ((Attr->Con + Attr->Econ)*0.04 + (Attr->Sen + Attr->Esen)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == LAUNCHER_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case STAFF://staff
+        {
+            attack += (UINT)floor( Stats->Level*0.2 + ((Attr->Int + Attr->Eint)+(Attr->Str + Attr->Estr))*0.4 + ((Attr->Int + Attr-> Eint)*0.05 + 29) * weaponatk * 0.03333334 );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == STAFF_POWER || cskills[i].thisskill->buff[j] == MAGIC_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case WAND://wand
+        {
+            attack += (UINT)floor( Stats->Level*0.2 + (Attr->Int + Attr->Eint)*0.6 + ( ((Attr->Sen + Attr->Esen)*0.1 +26) * 0.03703704 * weaponatk )  );
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == WAND_POWER || cskills[i].thisskill->buff[j] == MAGIC_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        break;
+        case KATAR://katar
+        {
+            attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.42 + (Attr->Dex + Attr->Edex)*0.55 + ((Attr->Dex + Attr->Edex)*0.05 + 20) * weaponatk * 0.0476190);
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == KATAR_AP || cskills[i].thisskill->buff[j] == COMBAT_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case DOUBLE_SWORD://double sword
+        {
+            attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.63 + (Attr->Dex + Attr->Edex)*0.45 + ((Attr->Dex + Attr->Edex)*0.05 + 25) * weaponatk * 0.03846154);
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == DUALSWORD_AP || cskills[i].thisskill->buff[j] == COMBAT_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case CROSSBOW://crossbow
+        {
+            float arrows = 0;
+
+            if(items[132].count>0)
+            {
+                arrows = GServer->NaturalList.Index[items[132].itemnum]->quality*0.5;
+            }
+
+            attack += (UINT)floor((((Attr->Str + Attr->Estr)+Stats->Level)*0.1) + ((Attr->Dex + Attr->Edex)*0.04 + (Attr->Sen +Attr->Esen)*0.03 + 29) * weaponatk * 0.03333334 + (Attr->Dex + Attr->Edex)*0.52 + arrows);
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+            {
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
+                    continue;
+                }
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+                if(cskills[i].id==0&&i>=120)
+                {
+                    break;
+                }
+                if(cskills[i].thisskill==NULL)
+                {
+                    continue;
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
+                {
+                    for( UINT j=0;j<3;j++ )
+                    {
+                        if( cskills[i].thisskill->buff[j] == CBOW_AP || cskills[i].thisskill->buff[j] == CBOW_WEAP_AP )
+                        {
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pattack += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vattack += cskills[i].thisskill->value1[j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        break;
+    }
+
+    attack += attack * pattack / 100;//Apply Passive Skill % Value
+    attack += vattack;//Apply Passive Skill Value
+
+    switch(CharInfo->Job)
+    {
+        case 121:case 122:
+        case 221:case 222:
+        case 321:case 322:
+        case 421:case 422:
+            attack += 30;
+        break;
+    }
+
+    if(Fairy)
+    {
+        attack = (unsigned int)floor(attack*1.2);
+    }
     if(Status->Attack_up!=0xff)
+    {
         attack += MagicStatus[Status->Attack_up].Value;
+    }
     if(Status->Attack_down!=0xff)
+    {
         attack -= MagicStatus[Status->Attack_down].Value;
+    }
     if(attack<30)
+    {
         attack = 30;
+    }
 	return attack;
 }
 
-// Return Defense
+// Return Defense           //A_DEFENSE(19) / DEFENSE(53) / SHIELD_DEFENSE(102)
 unsigned int CPlayer::GetDefense( )
 {
     UINT defense = 0;
+    UINT pdefense = 0;//Passive Skill % Value
+    UINT vdefense = 0;//Passive Skill Value
+    UINT spdefense = 0;//Passive Skill % Value Shield
+    UINT svdefense = 0;//Passive Skill Value Shield
+
+    defense += (UINT)floor( ((Attr->Str + Attr->Estr)+5) * 0.35 );
+
+    for(UINT i=1;i<10;i++)
+    {
+        if(i==7)
+        {
+            continue;
+        }
+        if( items[i].count != 0 )
+        {
+            if(items[i].itemtype>9)
+            {
+                Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
+                continue;
+            }
+
+            defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense;
+
+            if(items[i].refine>0)//Def From Refine
+            {
+                UINT extra_refine[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+                switch(GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade)// % / Item Grade
+                {
+                    case 0://[TODO]Extra Refine % for Item Grade 0 / Mileage Item
+                    {
+                        extra_refine[1] += 6;       //Refine 1
+                        extra_refine[2] += 13;
+                        extra_refine[3] += 20;
+                        extra_refine[4] += 30;
+                        extra_refine[5] += 40;
+                        extra_refine[6] += 50;
+                        extra_refine[7] += 65;
+                        extra_refine[8] += 80;
+                        extra_refine[9] += 96;      //Refine 9
+                    }
+                    case 1://Extra Refine % for Item Grade 1
+                    {
+                        extra_refine[1] += 15;      //ok Refine 1
+                        extra_refine[2] += 20;      //ok
+                        extra_refine[3] += 30;      //ok
+                        extra_refine[4] += 50;      //ok
+                        extra_refine[5] += 65;      //ok
+                        extra_refine[6] += 85;      //ok
+                        extra_refine[7] += 110;     //ok
+                        extra_refine[8] += 140;     //ok
+                        extra_refine[9] += 170;     //ok Refine 9
+                    }
+                    break;
+                    case 2://Extra Refine % for Item Grade 2
+                    {
+                        extra_refine[1] += 10;      //ok Refine 1
+                        extra_refine[2] += 18;      //ok
+                        extra_refine[3] += 25;      //ok
+                        extra_refine[4] += 35;      //ok
+                        extra_refine[5] += 50;      //ok
+                        extra_refine[6] += 65;      //ok
+                        extra_refine[7] += 85;      //ok
+                        extra_refine[8] += 105;     //ok
+                        extra_refine[9] += 125;     //ok Refine 9
+                    }
+                    break;
+                    case 3://Extra Refine % for Item Grade 3
+                    {
+                        extra_refine[1] += 10;      //ok Refine 1
+                        extra_refine[2] += 15;      //ok
+                        extra_refine[3] += 25;      //ok
+                        extra_refine[4] += 35;      //ok
+                        extra_refine[5] += 48;      //ok
+                        extra_refine[6] += 60;      //ok
+                        extra_refine[7] += 80;      //ok
+                        extra_refine[8] += 95;      //ok
+                        extra_refine[9] += 115;     //ok Refine 9
+                    }
+                    break;
+                    case 4://Extra Refine % for Item Grade 4
+                    {
+                        extra_refine[1] += 8;       //ok Refine 1
+                        extra_refine[2] += 13;      //ok
+                        extra_refine[3] += 20;      //ok
+                        extra_refine[4] += 32;      //ok
+                        extra_refine[5] += 43;      //ok
+                        extra_refine[6] += 55;      //ok
+                        extra_refine[7] += 70;      //ok
+                        extra_refine[8] += 85;      //ok
+                        extra_refine[9] += 103;     //ok Refine 9
+                    }
+                    break;
+                    case 5://Extra Refine % for Item Grade 5
+                    {
+                        extra_refine[1] += 6;       //ok Refine 1
+                        extra_refine[2] += 13;      //ok
+                        extra_refine[3] += 20;      //ok
+                        extra_refine[4] += 30;      //ok
+                        extra_refine[5] += 42;      //ok
+                        extra_refine[6] += 52;      //ok
+                        extra_refine[7] += 67;      //ok
+                        extra_refine[8] += 82;      //ok
+                        extra_refine[9] += 100;     //ok Refine 9
+                    }
+                    break;
+                    case 6://Extra Refine % for Item Grade 6
+                    {
+                        extra_refine[1] += 6;       //ok Refine 1
+                        extra_refine[2] += 13;      //ok
+                        extra_refine[3] += 20;      //ok
+                        extra_refine[4] += 30;      //ok
+                        extra_refine[5] += 40;      //ok
+                        extra_refine[6] += 50;      //ok
+                        extra_refine[7] += 65;      //ok
+                        extra_refine[8] += 80;      //ok
+                        extra_refine[9] += 96;      //ok Refine 9
+                    }
+                    break;
+                    case 7://Extra Refine % for Item Grade 7
+                    {
+                        extra_refine[1] += 6;       //ok Refine 1
+                        extra_refine[2] += 13;      //ok
+                        extra_refine[3] += 20;      //ok
+                        extra_refine[4] += 30;      //ok
+                        extra_refine[5] += 40;      //ok
+                        extra_refine[6] += 50;      //ok
+                        extra_refine[7] += 65;      //ok
+                        extra_refine[8] += 80;      //ok
+                        extra_refine[9] += 96;      //ok Refine 9
+                    }
+                    break;
+                    case 8://Extra Refine % for Item Grade 8
+                    {
+                        extra_refine[1] += 6;       //ok Refine 1
+                        extra_refine[2] += 13;      //ok
+                        extra_refine[3] += 20;      //ok
+                        extra_refine[4] += 30;      //ok
+                        extra_refine[5] += 40;      //ok
+                        extra_refine[6] += 50;      //ok
+                        extra_refine[7] += 63;      //ok
+                        extra_refine[8] += 78;      //ok
+                        extra_refine[9] += 95;      //ok Refine 9
+                    }
+                    break;
+                    case 9://[TODO]Not Ingame Yet : Extra Refine % for Item Grade 9
+                    {
+                        extra_refine[1] += 6;       //Refine 1
+                        extra_refine[2] += 13;
+                        extra_refine[3] += 20;
+                        extra_refine[4] += 30;
+                        extra_refine[5] += 40;
+                        extra_refine[6] += 50;
+                        extra_refine[7] += 60;
+                        extra_refine[8] += 75;
+                        extra_refine[9] += 95;      //Refine 9
+                    }
+                    break;
+                    case 15://[TODO]Extra Refine % for Item Grade 15 //GM Cloths
+                    {
+                        extra_refine[1] += 6;       //Refine 1
+                        extra_refine[2] += 13;      //
+                        extra_refine[3] += 20;      //
+                        extra_refine[4] += 30;      //
+                        extra_refine[5] += 40;      //
+                        extra_refine[6] += 50;      //
+                        extra_refine[7] += 63;      //
+                        extra_refine[8] += 78;      //
+                        extra_refine[9] += 95;      //Refine 9
+                    }
+                    break;
+                    default:
+                    {
+                        Log(MSG_WARNING,"Weird itemgrade value: %i:",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
+                    }
+                    break;
+                }
+
+                UINT refine = (UINT)floor(items[i].refine/16);
+
+                if(refine<10)
+                {
+                    defense += (UINT)floor(extra_refine[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );
+                }
+            }
+        }
+    }
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
+    {
+        if( items[i].count != 0 )
+        {
+            if(items[i].itemtype>9)
+            {
+                Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
+                continue;
+            }
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DEFENSE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == DEFENSE)
+            {
+                defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
+            }
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DEFENSE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == DEFENSE)
+            {
+                defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
+            }
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DEFENSE || GServer->JemList.Index[items[i].gem]->stat1[0] == DEFENSE)
+                    {
+                        defense += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DEFENSE || GServer->JemList.Index[items[i].gem]->stat2[0] == DEFENSE)
+                    {
+                        defense += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            if(items[i].stats>0 && items[i].stats<GServer->maxStats)
+            {
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_DEFENSE || GServer->StatsList[items[i].stats]->stat[0] == DEFENSE)
+                {
+                    defense += GServer->StatsList[items[i].stats]->value[0];
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_DEFENSE || GServer->StatsList[items[i].stats]->stat[1] == DEFENSE)
+                {
+                    defense += GServer->StatsList[items[i].stats]->value[1];
+                }
+            }
+        }
+    }
+
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Defense From Pasive Skills
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for( UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == DEFENSE || cskills[i].thisskill->buff[j] == A_DEFENSE )
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                        pdefense += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                         vdefense += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
+
+    defense += defense * pdefense / 100;//Apply Passive Skill % Value
+    defense += vdefense;//Apply Passive Skill Value
+
+    if(items[8].count>0)//Defense From Shield Pasive Skill
+    {
+        for(UINT i=0;i<MAX_ALL_SKILL;i++)
+        {
+            //Some skills are not worthy to search in
+            if(cskills[i].id==0&&i<60)
+            {
+                i=89;
+                continue;
+            }
+            if(cskills[i].id==0&&(i>60&&i<120))
+            {
+                i=119;
+                continue;
+            }
+            if(cskills[i].id==0&&i>=120)
+            {
+                break;
+            }
+            if(cskills[i].thisskill==NULL)
+            {
+                continue;
+            }
+            if( cskills[i].thisskill->type == 15 )//Pasive
+            {
+                for( UINT j=0;j<3;j++ )
+                {
+                    if( cskills[i].thisskill->buff[j] == SHIELD_DEFENSE )
+                    {
+                        if( cskills[i].thisskill->value2[j] > 0 )
+                        {
+                            spdefense += cskills[i].thisskill->value2[j];
+                        }
+                        if( cskills[i].thisskill->value1[j] > 0 )
+                        {
+                            svdefense += cskills[i].thisskill->value1[j];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    defense += defense * spdefense / 100;//Apply Passive Skill Shield % Value
+    defense += svdefense;//Apply Passive Skill Shield Value
+
     switch( CharInfo->Job )
     {
         case 121:case 122:
@@ -1015,169 +1790,39 @@ unsigned int CPlayer::GetDefense( )
             defense += 25;
         break;
     }
-    defense += (UINT)floor( ((Attr->Str + Attr->Estr)+5) * 0.35 );
-    UINT extra_refine[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70 , 85};
-    for(UINT i=1;i<9;i++)
+
+    if(Fairy)
     {
-        if(i==7)
-            continue;
-        if( items[i].count != 0 )
-        {
-            if(items[i].itemtype>9)
-            {
-                Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
-                continue;
-            }
-            defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense;
-            if(items[i].refine>0)
-            {
-                UINT refine = (UINT)floor(items[i].refine/16);
-                if(refine<10)
-                {
-                    defense += (UINT)floor(extra_refine[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense);
-                }
-            }
-
-        }
+        defense = (unsigned int)floor(defense*1.2);
     }
-    if(items[8].count>0)//Defense from shield (pasive skill)
-    {
-        for(UINT i=0;i<MAX_ALL_SKILL;i++)
-        {
-            /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                continue;*/
-            //Some skills are not worthy to search in
-            if(cskills[i].id==0&&i<60)
-            {
-                i=89;
-                continue;
-            }
-
-            if(cskills[i].id==0&&(i>60&&i<120))
-            {
-                i=119;
-                continue;
-            }
-
-            if(cskills[i].id==0&&i>=120)
-                break;
-
-            if(cskills[i].thisskill==NULL)
-                continue;
-
-            if( cskills[i].thisskill->type == 15 ) //Pasive
-            {
-                for( UINT j=0;j<3;j++ )
-                {
-                    if( cskills[i].thisskill->buff[j] == SHIELD_DEFENSE )
-                    {
-                        if( cskills[i].thisskill->value2[j] > 0 )
-                            defense += defense * cskills[i].thisskill->value2[j] / 100;
-                        if( cskills[i].thisskill->value1[j] > 0 )
-                            defense += cskills[i].thisskill->value1[j];
-                    }
-                }
-            }
-        }
-    }
-
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Defense from pasive skills
-    {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
-        //Some skills are not worthy to search in
-        if(cskills[i].id==0&&i<60)
-        {
-            i=89;
-            continue;
-        }
-
-        if(cskills[i].id==0&&(i>60&&i<120))
-        {
-            i=119;
-            continue;
-        }
-
-        if(cskills[i].id==0&&i>=120)
-            break;
-
-        if(cskills[i].thisskill==NULL)
-            continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
-        {
-            for( UINT j=0;j<3;j++ )
-            {
-                if( cskills[i].thisskill->buff[j] == DEFENSE || cskills[i].thisskill->buff[j] == A_DEFENSE )
-                {
-                    if( cskills[i].thisskill->value2[j] > 0 )
-                        defense += defense * cskills[i].thisskill->value2[j] / 100;
-                    if( cskills[i].thisskill->value1[j] > 0 )
-                    {
-                        defense += cskills[i].thisskill->value1[j];
-                    }
-                }
-            }
-        }
-    }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
-    {
-        if( items[i].count != 0 )
-        {
-            if(items[i].itemtype>9)
-            {
-                Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
-                continue;
-            }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DEFENSE)
-            {
-                defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
-            }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DEFENSE)
-            {
-                defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
-            }
-            if(items[i].gem!=0)
-            {
-                if(GServer->JemList.Index[items[i].gem]!=NULL)
-                {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DEFENSE)
-                    {
-                        defense += GServer->JemList.Index[items[i].gem]->stat1[1];
-                    }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DEFENSE)
-                    {
-                        defense += GServer->JemList.Index[items[i].gem]->stat2[1];
-                    }
-                }
-            }
-            if(items[i].stats>0 && items[i].stats<GServer->maxStats)
-            {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_DEFENSE)
-                    defense += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_DEFENSE)
-                    defense += GServer->StatsList[items[i].stats]->value[1];
-            }
-        }
-    }
-    if(Fairy) defense = (unsigned int)floor(defense*1.2);
     if(Status->Defense_up!=0xff)
+    {
         defense += MagicStatus[Status->Defense_up].Value;
+    }
     if(Status->Defense_down!=0xff)
+    {
         defense -= MagicStatus[Status->Defense_down].Value;
+    }
     if(defense<30)
+    {
         defense=30;
+    }
     return defense;
 }
 
-// Return Attack Speed
+// Return Attack Speed      //A_HASTE(24) and the other for weapon type (118-131) (49-51)
 unsigned int CPlayer::GetAttackSpeed( )
 {
     UINT aspeed = 0;
+	UINT paspeed = 0;//Passive Skill % Value
+    UINT vaspeed = 0;//Passive Skill Value
+
 	if( items[7].itemnum!=0 && items[7].count > 0 )
     {
         UINT wpnspd = 0;
+
         wpnspd = GServer->EquipList[WEAPON].Index[items[7].itemnum]->attackspeed;
+
         switch(wpnspd)
         {
             case 20:
@@ -1219,10 +1864,14 @@ unsigned int CPlayer::GetAttackSpeed( )
         }
     }
     else
+    {
         aspeed = 115;
+    }
     UINT weapontype = 0;
+
     weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
-    switch(weapontype)
+
+    switch(weapontype)//Aspeed By Weapon Type And Passive Skills
     {
         case ONE_HAND_SWORD:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
@@ -1232,27 +1881,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == ONE_HAND_SWORD_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1266,27 +1921,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == ONE_HAND_MELEE_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1300,27 +1961,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == TWO_HAND_SWORD_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1334,27 +2001,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == TWO_HAND_SPEAR_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1368,27 +2041,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == TWO_HAND_AXE_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1397,35 +2076,39 @@ unsigned int CPlayer::GetAttackSpeed( )
         case BOW:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == BOW_ATK_SPD || cskills[i].thisskill->buff[j] == BOW_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1434,35 +2117,39 @@ unsigned int CPlayer::GetAttackSpeed( )
         case GUN:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == GUN_ATK_SPD || cskills[i].thisskill->buff[j] == GUN_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1471,35 +2158,39 @@ unsigned int CPlayer::GetAttackSpeed( )
         case DUAL_GUN:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
-                        if( cskills[i].thisskill->buff[j] == DUAL_GUN_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
+                        if( cskills[i].thisskill->buff[j] == GUN_ATK_SPD || cskills[i].thisskill->buff[j] == DUAL_GUN_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1508,36 +2199,39 @@ unsigned int CPlayer::GetAttackSpeed( )
         case LAUNCHER:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
-
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == LAUNCHER_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1551,27 +2245,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == STAFF_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1585,27 +2285,33 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == WAND_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1614,35 +2320,39 @@ unsigned int CPlayer::GetAttackSpeed( )
         case KATAR:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == KATAR_ATK_SPD || cskills[i].thisskill->buff[j] == COMBAT_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1651,35 +2361,39 @@ unsigned int CPlayer::GetAttackSpeed( )
         case DOUBLE_SWORD:
             for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == DUALSWORD_ATK_SPD || cskills[i].thisskill->buff[j] == COMBAT_WEAP_ASPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
@@ -1693,34 +2407,44 @@ unsigned int CPlayer::GetAttackSpeed( )
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == CBOW_ATK_SPD || cskills[i].thisskill->buff[j] == A_HASTE )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   aspeed += aspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   aspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                paspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vaspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
             }
             break;
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    aspeed += aspeed * paspeed / 100;//Apply Passive Skill % Value
+    aspeed += vaspeed;//Apply Passive Skill Value
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -1754,16 +2478,25 @@ unsigned int CPlayer::GetAttackSpeed( )
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
                 if(GServer->StatsList[items[i].stats]->stat[0] == A_HASTE)
+                {
                     aspeed += GServer->StatsList[items[i].stats]->value[0];
+                }
                 if(GServer->StatsList[items[i].stats]->stat[1] == A_HASTE)
+                {
                     aspeed += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
+
     if(Status->Haste_up!=0xff)
+    {
         aspeed += MagicStatus[Status->Haste_up].Value;
+    }
     if(Status->Haste_down!=0xff)
+    {
         aspeed -= MagicStatus[Status->Haste_down].Value;
+    }
     return aspeed;
 }
 
@@ -1775,7 +2508,6 @@ unsigned int CPlayer::GetCartSpeed( )
         UINT nb_parts=0;
         float lma_speed;
 
-
         //returns a value only if cart is complete.
         if (items[135].itemnum==0||items[136].itemnum==0||items[137].itemnum==0)
            return 0;
@@ -1786,21 +2518,24 @@ unsigned int CPlayer::GetCartSpeed( )
         for (int k=135;k<138;k++)
           mspeed+=GServer->PatList.Index[items[k].itemnum]->speed;
 
-
     return mspeed;
 }
 
-// Return Movement Speed
+// Return Movement Speed    //MOV_SPEED(52) / A_DASH(23)
 unsigned int CPlayer::GetMoveSpeed( )
 {
 	UINT mspeed = 425;
+    UINT pmspeed = 0;//Passive Skill % Value
+    UINT vmspeed = 0;//Passive Skill Value
 
     if(!Status->CanRun)
         Status->Stance = WALKING;
     switch(Status->Stance)
     {
         case WALKING: //walking
+        {
             mspeed = 200;
+        }
         break;
         case 1:
         case RUNNING: // running
@@ -1810,7 +2545,8 @@ unsigned int CPlayer::GetMoveSpeed( )
                 UINT tspeed = GServer->EquipList[SHOE].Index[items[6].itemnum]->movespeed;
         		 mspeed += ( tspeed - 65 ) * 5;
             }
-            for(UINT i=0;i<12;i++)//cloth stats [from tomiz]
+
+            for(UINT i=0;i<12;i++)//Cloth Stats
             {
                 if( items[i].count != 0 )
                 {
@@ -1819,11 +2555,11 @@ unsigned int CPlayer::GetMoveSpeed( )
                         Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                         continue;
                     }
-                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DASH)
+                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DASH || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MOV_SPEED)
                     {
                         mspeed += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
                     }
-                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DASH)
+                    if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_DASH || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MOV_SPEED)
                     {
                        mspeed += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
                     }
@@ -1834,11 +2570,11 @@ unsigned int CPlayer::GetMoveSpeed( )
                 {
                     if(GServer->JemList.Index[items[i].gem]!=NULL)
                     {
-                        if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DASH)
+                        if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DASH || GServer->JemList.Index[items[i].gem]->stat1[0] == MOV_SPEED)
                         {
                             mspeed += GServer->JemList.Index[items[i].gem]->stat1[1];
                         }
-                        if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DASH)
+                        if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DASH || GServer->JemList.Index[items[i].gem]->stat2[0] == MOV_SPEED)
                         {
                             mspeed += GServer->JemList.Index[items[i].gem]->stat2[1];
                         }
@@ -1848,56 +2584,75 @@ unsigned int CPlayer::GetMoveSpeed( )
 
                 if(items[i].stats>0 && items[i].stats<GServer->maxStats)
                 {
-                    if(GServer->StatsList[items[i].stats]->stat[0] == A_DASH)
+                    if(GServer->StatsList[items[i].stats]->stat[0] == A_DASH || GServer->StatsList[items[i].stats]->stat[0] == MOV_SPEED)
+                    {
                         mspeed += GServer->StatsList[items[i].stats]->value[0];
-                    if(GServer->StatsList[items[i].stats]->stat[1] == A_DASH)
+                    }
+                    if(GServer->StatsList[items[i].stats]->stat[1] == A_DASH || GServer->StatsList[items[i].stats]->stat[1] == MOV_SPEED)
+                    {
                         mspeed += GServer->StatsList[items[i].stats]->value[1];
+                    }
                 }
             }
-            for(UINT i=0;i<MAX_ALL_SKILL;i++)
+
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
             {
-                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;*/
                 //Some skills are not worthy to search in
                 if(cskills[i].id==0&&i<60)
                 {
                     i=89;
                     continue;
                 }
-
                 if(cskills[i].id==0&&(i>60&&i<120))
                 {
                     i=119;
                     continue;
                 }
-
                 if(cskills[i].id==0&&i>=120)
+                {
                     break;
-
+                }
                 if(cskills[i].thisskill==NULL)
+                {
                     continue;
-
-                if( cskills[i].thisskill->type == 15 ) //Pasive
+                }
+                if( cskills[i].thisskill->type == 15 )//Pasive
                 {
                     for( UINT j=0;j<3;j++ )
                     {
                         if( cskills[i].thisskill->buff[j] == MOV_SPEED || cskills[i].thisskill->buff[j] == A_DASH )
                         {
-                            if( cskills[i].thisskill->value2[j] > 0 )   mspeed += mspeed * cskills[i].thisskill->value2[j] / 100;
-                            if( cskills[i].thisskill->value1[j] > 0 )   mspeed += cskills[i].thisskill->value1[j];
+                            if( cskills[i].thisskill->value2[j] > 0 )
+                            {
+                                pmspeed += cskills[i].thisskill->value2[j];
+                            }
+                            if( cskills[i].thisskill->value1[j] > 0 )
+                            {
+                                vmspeed += cskills[i].thisskill->value1[j];
+                            }
                         }
                     }
                 }
             }
 
+            mspeed += mspeed * pmspeed / 100;//Apply Passive Skill % Value
+            mspeed += vmspeed;//Apply Passive Skill Value
+
             //LMA: Base Speed.
             Stats->Base_Speed=mspeed;
 
-            if(Fairy)  mspeed = (unsigned int)floor(mspeed*1.2);
+            if(Fairy)
+            {
+                mspeed = (unsigned int)floor(mspeed*1.2);
+            }
             if(Status->Dash_up!=0xff)
+            {
                 mspeed += MagicStatus[Status->Dash_up].Value;
+            }
             if(Status->Dash_down!=0xff)
+            {
                 mspeed -= MagicStatus[Status->Dash_down].Value;
+            }
         }
         break;
         case DRIVING: //cart
@@ -1970,10 +2725,13 @@ unsigned int CPlayer::GetMoveSpeed( )
             }
 
             if(Status->Dash_up!=0xff)
+            {
                 mspeed += MagicStatus[Status->Dash_up].Value;
+            }
             if(Status->Dash_down!=0xff)
+            {
                 mspeed -= MagicStatus[Status->Dash_down].Value;
-
+            }
         }
         break;
     }
@@ -1981,77 +2739,15 @@ unsigned int CPlayer::GetMoveSpeed( )
     return mspeed;
 }
 
-// Return Max HP
-//unsigned int CPlayer::GetMaxHP( )
+// Return Max HP            //A_MAX_HP(38) / A_HP(16) / MAX_HP(54)
 unsigned long long CPlayer::GetMaxHP( )
 {
 	if (Stats->Level<1) Stats->Level=1;
 	unsigned int hpmax = (unsigned int)floor(((sqrt(Stats->Level + 20) * (Stats->Level + 5 )) * 3.5) + ((Attr->Str + Attr->Estr) << 1));
-    UINT phpmax = 0;    //Tomiz : New Way, Passive Skill % Value
-    UINT vhpmax = 0;    //Tomiz : New Way, Passive Skill Value
-    /*switch( CharInfo->Job )
-    {
-        case 121:case 122:
-        case 221:case 222:
-        case 321:case 322:
-        case 421:case 422:
-            hpmax += 300;
-        break;
-    }*/
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
-    {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
-        //Some skills are not worthy to search in
-        if(cskills[i].id==0&&i<60)
-        {
-            i=89;
-            continue;
-        }
+    UINT phpmax = 0;//Passive Skill % Value
+    UINT vhpmax = 0;//Passive Skill Value
 
-        if(cskills[i].id==0&&(i>60&&i<120))
-        {
-            i=119;
-            continue;
-        }
-
-        if(cskills[i].id==0&&i>=120)
-            break;
-
-        if(cskills[i].thisskill==NULL)
-            continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
-        {
-            for(UINT j=0;j<3;j++ )
-            {   // Passive skill fixed by Kirk
-                if( cskills[i].thisskill->buff[j] == A_MAX_HP || cskills[i].thisskill->buff[j] == A_HP || cskills[i].thisskill->buff[j] == MAX_HP)
-                {
-                    if( cskills[i].thisskill->value2[j] > 0 )
-                        //hpmax += hpmax * cskills[i].thisskill->value2[j] / 100;
-                        phpmax += cskills[i].thisskill->value2[j];  //Tomiz : New Way
-                    if( cskills[i].thisskill->value1[j] > 0 )
-                        //hpmax += cskills[i].thisskill->value1[j];
-                        vhpmax += cskills[i].thisskill->value1[j];  //Tomiz : New Way
-                }
-            }
-        }
-    }
-
-    hpmax += hpmax * phpmax / 100;  //Apply Passive Skill % Value
-    hpmax += vhpmax;    //Apply Passive Skill Value
-
-    switch( CharInfo->Job ) //New Way need to be after Skill
-    {
-        case 121:case 122:
-        case 221:case 222:
-        case 321:case 322:
-        case 421:case 422:
-            hpmax += 300;
-        break;
-    }
-
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -2078,42 +2774,114 @@ unsigned long long CPlayer::GetMaxHP( )
             }
             //End Amethyst
 
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MAX_HP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_HP )
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MAX_HP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_HP ||
+                GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MAX_HP)
             {
                 hpmax += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MAX_HP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_HP )
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MAX_HP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_HP ||
+                GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MAX_HP)
             {
                 hpmax += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_MAX_HP || GServer->StatsList[items[i].stats]->stat[0] == A_HP)
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_MAX_HP || GServer->StatsList[items[i].stats]->stat[0] == A_HP || GServer->StatsList[items[i].stats]->stat[0] == MAX_HP)
+                {
                     hpmax += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_MAX_HP || GServer->StatsList[items[i].stats]->stat[0] == A_HP)
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_MAX_HP || GServer->StatsList[items[i].stats]->stat[1] == A_HP || GServer->StatsList[items[i].stats]->stat[1] == MAX_HP)
+                {
                     hpmax += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    if(Fairy) hpmax = (unsigned int)floor(hpmax*1.2);
+
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for(UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == A_MAX_HP || cskills[i].thisskill->buff[j] == A_HP || cskills[i].thisskill->buff[j] == MAX_HP)
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                        phpmax += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                        vhpmax += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
+
+    hpmax += hpmax * phpmax / 100;//Apply Passive Skill % Value
+    hpmax += vhpmax;//Apply Passive Skill Value
+
+    switch( CharInfo->Job )
+    {
+        case 121:case 122:
+        case 221:case 222:
+        case 321:case 322:
+        case 421:case 422:
+            hpmax += 300;
+        break;
+    }
+
+    if(Fairy)
+    {
+        hpmax = (unsigned int)floor(hpmax*1.2);
+    }
     if(Status->HP_up!=0xff)
+    {
         hpmax += MagicStatus[Status->HP_up].Value;
+    }
     if(Status->HP_down!=0xff)
+    {
         hpmax -= MagicStatus[Status->HP_down].Value;
+    }
 
     return hpmax;
 }
-// Return Max MP  [fixed by Tomiz] TODO: add cloth stat
+
+// Return Max MP            //A_MAX_MP(39) / A_MP(17) / MAX_MP(55)
 unsigned int CPlayer::GetMaxMP( )
 {
 
     if( Stats->Level < 0 )
+    {
         Stats->Level = 1;
+    }
     UINT maxmp = 0;
-    UINT pmaxmp = 0;    //Tomiz : New Way, Passive Skill % Value
-    UINT vmaxmp = 0;    //Tomiz : New Way, Passive Skill Value
+    UINT pmaxmp = 0;//Passive Skill % Value
+    UINT vmaxmp = 0;//Passive Skill Value
+
     float Mult = 0;
     int JobValue = (int)CharInfo->Job;
+
     switch(JobValue)
     {
         case 111:
@@ -2154,53 +2922,10 @@ unsigned int CPlayer::GetMaxMP( )
             JobValue = 4;
         break;
     }
+
     maxmp = (UINT)floor((Stats->Level + JobValue) * Mult + ((Attr->Int + Attr->Eint) << 2));
 
-
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
-    {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
-        //Some skills are not worthy to search in
-        if(cskills[i].id==0&&i<60)
-        {
-            i=89;
-            continue;
-        }
-
-        if(cskills[i].id==0&&(i>60&&i<120))
-        {
-            i=119;
-            continue;
-        }
-
-        if(cskills[i].id==0&&i>=120)
-            break;
-
-        if(cskills[i].thisskill==NULL)
-            continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
-        {
-            for(UINT j=0;j<3;j++ )
-            {   // Passive skill fixed by Kirk
-                if( cskills[i].thisskill->buff[j] == A_MAX_MP || cskills[i].thisskill->buff[j] == A_MP || cskills[i].thisskill->buff[j] == MAX_MP)
-                {
-                    if( cskills[i].thisskill->value2[j] > 0 )
-                        //maxmp += maxmp * cskills[i].thisskill->value2[j] / 100;
-                        pmaxmp += cskills[i].thisskill->value2[j];  //Tomiz : New Way
-                    if( cskills[i].thisskill->value1[j] > 0 )
-                        //maxmp += cskills[i].thisskill->value1[j];
-                        vmaxmp += cskills[i].thisskill->value1[j];  //Tomiz : New Way
-                }
-            }
-        }
-    }
-
-    maxmp += maxmp * pmaxmp / 100;  //Apply Passive Skill % Value
-    maxmp += vmaxmp;    //Apply Passive Skill Value
-
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -2215,11 +2940,13 @@ unsigned int CPlayer::GetMaxMP( )
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MAX_MP)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MAX_MP || GServer->JemList.Index[items[i].gem]->stat1[0] == A_MP ||
+                        GServer->JemList.Index[items[i].gem]->stat1[0] == MAX_MP)
                     {
                         maxmp += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MAX_MP)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MAX_MP || GServer->JemList.Index[items[i].gem]->stat2[0] == A_MP ||
+                        GServer->JemList.Index[items[i].gem]->stat2[0] == MAX_MP)
                     {
                         maxmp += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -2227,79 +2954,101 @@ unsigned int CPlayer::GetMaxMP( )
             }
             //End Turquoise
 
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MAX_MP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MP )
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MAX_MP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MP ||
+                GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MAX_MP)
             {
                 maxmp += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MAX_MP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MP )
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MAX_MP || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MP ||
+                GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MAX_MP)
             {
                 maxmp += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_MAX_MP || GServer->StatsList[items[i].stats]->stat[0] == A_MP)
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_MAX_MP || GServer->StatsList[items[i].stats]->stat[0] == A_MP || GServer->StatsList[items[i].stats]->stat[0] == MAX_MP)
+                {
                     maxmp += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_MAX_MP || GServer->StatsList[items[i].stats]->stat[0] == A_MP)
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_MAX_MP || GServer->StatsList[items[i].stats]->stat[1] == A_MP || GServer->StatsList[items[i].stats]->stat[1] == MAX_MP)
+                {
                     maxmp += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
 
-
-    if(Fairy) maxmp = (unsigned int)floor(maxmp*1.2);
-    if(Status->MP_up!=0xff)
-        maxmp += MagicStatus[Status->MP_up].Value;
-    if(Status->MP_down!=0xff)
-        maxmp -= MagicStatus[Status->MP_down].Value;
-
-	return maxmp;
-}
-
-// Get HP Regeneration Amount
-unsigned int CPlayer::GetHPRegenAmount( )
-{
-    UINT amount = (UINT)ceil ( Stats->MaxHP * 0.02 );
-    /*LMA: handled elsewhere.
-    if( Status->Stance == 1 )
-        amount *= 4;*/
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
     {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
         //Some skills are not worthy to search in
         if(cskills[i].id==0&&i<60)
         {
             i=89;
             continue;
         }
-
         if(cskills[i].id==0&&(i>60&&i<120))
         {
             i=119;
             continue;
         }
-
         if(cskills[i].id==0&&i>=120)
+        {
             break;
-
+        }
         if(cskills[i].thisskill==NULL)
+        {
             continue;
-
+        }
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
-            {   // Passive skill fixed by Kirk
-                if( cskills[i].thisskill->buff[j] == A_HP_REC_RATE || cskills[i].thisskill->buff[j] == HP_REC_AMONT)
+            {
+                if( cskills[i].thisskill->buff[j] == A_MAX_MP || cskills[i].thisskill->buff[j] == A_MP || cskills[i].thisskill->buff[j] == MAX_MP)
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        amount += amount * cskills[i].thisskill->value2[j] / 100;
+                    {
+                        pmaxmp += cskills[i].thisskill->value2[j];
+                    }
                     if( cskills[i].thisskill->value1[j] > 0 )
-                        amount += cskills[i].thisskill->value1[j];
+                    {
+                        vmaxmp += cskills[i].thisskill->value1[j];
+                    }
                 }
             }
         }
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    maxmp += maxmp * pmaxmp / 100;//Apply Passive Skill % Value
+    maxmp += vmaxmp;//Apply Passive Skill Value
+
+    if(Fairy)
+    {
+        maxmp = (unsigned int)floor(maxmp*1.2);
+    }
+    if(Status->MP_up!=0xff)
+    {
+        maxmp += MagicStatus[Status->MP_up].Value;
+    }
+    if(Status->MP_down!=0xff)
+    {
+        maxmp -= MagicStatus[Status->MP_down].Value;
+    }
+
+	return maxmp;
+}
+
+// Get HP Regeneration Amount           //A_HP_REC_RATE(27) / HP_REC_AMONT5(56)
+unsigned int CPlayer::GetHPRegenAmount( )
+{
+    UINT amount = (UINT)ceil ( Stats->MaxHP * 0.02 );
+    UINT pamount = 0;//Passive Skill % Value
+    UINT vamount = 0;//Passive Skill Value
+
+    /*LMA: handled elsewhere.
+    if( Status->Stance == 1 )
+        amount *= 4;*/
+
+    for(UINT i=1;i<12;i++)              //Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -2314,11 +3063,11 @@ unsigned int CPlayer::GetHPRegenAmount( )
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_HP_REC_RATE)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_HP_REC_RATE || GServer->JemList.Index[items[i].gem]->stat1[0] == HP_REC_AMONT)
                     {
                         amount += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_HP_REC_RATE)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_HP_REC_RATE || GServer->JemList.Index[items[i].gem]->stat2[0] == HP_REC_AMONT)
                     {
                         amount += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -2326,73 +3075,89 @@ unsigned int CPlayer::GetHPRegenAmount( )
             }
             //End gem
 
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_HP_REC_RATE)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_HP_REC_RATE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == HP_REC_AMONT)
             {
                 amount += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_HP_REC_RATE)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_HP_REC_RATE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == HP_REC_AMONT)
             {
                 amount += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_HP_REC_RATE )
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_HP_REC_RATE || GServer->StatsList[items[i].stats]->stat[0] == HP_REC_AMONT)
+                {
                     amount += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_HP_REC_RATE )
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_HP_REC_RATE || GServer->StatsList[items[i].stats]->stat[1] == HP_REC_AMONT)
+                {
                     amount += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
 
-    return amount;
-}
-
-// Get MP Regeneration Amount
-unsigned int CPlayer::GetMPRegenAmount( )
-{
-    UINT amount = (UINT)ceil ( Stats->MaxMP * 0.02 );
-    /*LMA: Taken elsewhere
-    if( Status->Stance == 1 )
-        amount *= 4;
-    */
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
     {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
         //Some skills are not worthy to search in
         if(cskills[i].id==0&&i<60)
         {
             i=89;
             continue;
         }
-
         if(cskills[i].id==0&&(i>60&&i<120))
         {
             i=119;
             continue;
         }
-
         if(cskills[i].id==0&&i>=120)
+        {
             break;
-
+        }
         if(cskills[i].thisskill==NULL)
+        {
             continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
         {
             for(UINT j=0;j<3;j++ )
-            {   // Passive skill fixed by Kirk
-                if( cskills[i].thisskill->buff[j] == A_MP_REC_RATE || cskills[i].thisskill->buff[j] == MP_REC_RATE )
+            {
+                if( cskills[i].thisskill->buff[j] == A_HP_REC_RATE || cskills[i].thisskill->buff[j] == HP_REC_AMONT)
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        amount += amount * cskills[i].thisskill->value2[j] / 100;
+                    {
+                        pamount += cskills[i].thisskill->value2[j];
+                    }
                     if( cskills[i].thisskill->value1[j] > 0 )
-                        amount += cskills[i].thisskill->value1[j];
+                    {
+                        vamount += cskills[i].thisskill->value2[j];
+                    }
                 }
             }
         }
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    amount += vamount;//Apply Passive Skill Value
+    amount += amount * pamount / 100;//Apply Passive Skill % Value
+
+    Log(MSG_INFO,"HPRegenAmount : %i", amount);
+
+    return amount;
+}
+
+// Get MP Regeneration Amount           //A_MP_REC_RATE(28) / MP_REC_RATE(57)
+unsigned int CPlayer::GetMPRegenAmount( )
+{
+    UINT amount = (UINT)ceil ( Stats->MaxMP * 0.02 );
+    UINT pamount = 0;//Passive Skill % Value
+    UINT vamount = 0;//Passive Skill Value
+
+    /*LMA: Taken elsewhere
+    if( Status->Stance == 1 )
+        amount *= 4;
+    */
+
+    for(UINT i=1;i<12;i++)              //Cloth Stats
     {
         if( items[i].count != 0)
         {
@@ -2407,11 +3172,11 @@ unsigned int CPlayer::GetMPRegenAmount( )
             {
                 if(GServer->JemList.Index[items[i].gem]!=NULL)
                 {
-                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MP_REC_RATE)
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MP_REC_RATE || GServer->JemList.Index[items[i].gem]->stat1[0] == MP_REC_RATE)
                     {
                         amount += GServer->JemList.Index[items[i].gem]->stat1[1];
                     }
-                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MP_REC_RATE)
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MP_REC_RATE || GServer->JemList.Index[items[i].gem]->stat2[0] == MP_REC_RATE)
                     {
                         amount += GServer->JemList.Index[items[i].gem]->stat2[1];
                     }
@@ -2419,72 +3184,86 @@ unsigned int CPlayer::GetMPRegenAmount( )
             }
             //End gem
 
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MP_REC_RATE)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MP_REC_RATE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MP_REC_RATE)
             {
-                amount += amount * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1] / 100;
+                amount += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MP_REC_RATE)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_MP_REC_RATE || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MP_REC_RATE)
             {
-                amount += amount * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1] / 100;
+                amount += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_MP_REC_RATE )
-                    amount += amount * GServer->StatsList[items[i].stats]->value[0] / 100;
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_MP_REC_RATE )
-                    amount += amount * GServer->StatsList[items[i].stats]->value[1] / 100;
+                if(GServer->StatsList[items[i].stats]->stat[0] == A_MP_REC_RATE || GServer->StatsList[items[i].stats]->stat[0] == MP_REC_RATE)
+                {
+                    amount += GServer->StatsList[items[i].stats]->value[0];
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == A_MP_REC_RATE || GServer->StatsList[items[i].stats]->stat[1] == MP_REC_RATE)
+                {
+                    amount += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    return amount;
-}
 
-// max weight supported
-unsigned int CPlayer::GetMaxWeight( )
-{
-    UINT weight = 0;
-    weight = ((Attr->Str + Attr->Estr) + (Attr->Str + Attr->Estr)*2) * 2 + Stats->Level+220 + (Stats->Level+220)*4;
-    UINT Extra = 0;
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)   //Passive Skills
     {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
         //Some skills are not worthy to search in
         if(cskills[i].id==0&&i<60)
         {
             i=89;
             continue;
         }
-
         if(cskills[i].id==0&&(i>60&&i<120))
         {
             i=119;
             continue;
         }
-
         if(cskills[i].id==0&&i>=120)
+        {
             break;
-
+        }
         if(cskills[i].thisskill==NULL)
+        {
             continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
         {
             for(UINT j=0;j<3;j++ )
             {
-                if( cskills[i].thisskill->buff[j] == A_INVENTORY_CAPACITY || cskills[i].thisskill->buff[j] == BAGPACK_CAPACITY )
+                if( cskills[i].thisskill->buff[j] == A_MP_REC_RATE || cskills[i].thisskill->buff[j] == MP_REC_RATE )
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        Extra += weight * cskills[i].thisskill->value2[j] / 100;
+                    {
+                        pamount += cskills[i].thisskill->value2[j];
+                    }
                     if( cskills[i].thisskill->value1[j] > 0 )
                     {
-                        Extra += cskills[i].thisskill->value1[j];
+                        vamount += cskills[i].thisskill->value1[j];
                     }
                 }
             }
         }
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    amount += vamount;//Apply Passive Skill Value
+    amount += amount * pamount / 100;//Apply Passive Skill % Value
+
+    //Log(MSG_INFO,"MPRegenAmount : %i", amount);
+
+    return amount;
+}
+
+// max weight supported                 //A_INVENTORY_CAPACITY(25) / BAGPACK_CAPACITY(58)
+unsigned int CPlayer::GetMaxWeight( )
+{
+    UINT weight = 0;
+    UINT pweight = 0;//Passive Skill % Value
+    UINT vweight = 0;//Passive Skill Value
+
+    weight = ((Attr->Str + Attr->Estr) + (Attr->Str + Attr->Estr)*2) * 2 + Stats->Level+220 + (Stats->Level+220)*4;
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count != 0 )
         {
@@ -2493,24 +3272,91 @@ unsigned int CPlayer::GetMaxWeight( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_INVENTORY_CAPACITY)
+
+            //LMA: Adding gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_INVENTORY_CAPACITY || GServer->JemList.Index[items[i].gem]->stat1[0] == BAGPACK_CAPACITY)
+                    {
+                        weight += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_INVENTORY_CAPACITY || GServer->JemList.Index[items[i].gem]->stat2[0] == BAGPACK_CAPACITY)
+                    {
+                        weight += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End gem
+
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_INVENTORY_CAPACITY || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == BAGPACK_CAPACITY)
             {
                 weight += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_INVENTORY_CAPACITY)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == A_INVENTORY_CAPACITY || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == BAGPACK_CAPACITY)
             {
                 weight += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == A_INVENTORY_CAPACITY )
+                if( GServer->StatsList[items[i].stats]->stat[0] == A_INVENTORY_CAPACITY || GServer->StatsList[items[i].stats]->stat[0] == BAGPACK_CAPACITY)
+                 {
                     weight += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == A_INVENTORY_CAPACITY )
+                 }
+                if( GServer->StatsList[items[i].stats]->stat[1] == A_INVENTORY_CAPACITY || GServer->StatsList[items[i].stats]->stat[1] == BAGPACK_CAPACITY)
+                {
                     weight += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    weight += Extra;
+
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for(UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == A_INVENTORY_CAPACITY || cskills[i].thisskill->buff[j] == BAGPACK_CAPACITY )
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                        pweight += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                        vweight += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
+
+    weight += vweight;//Apply Passive Skill Value
+    weight += weight * pweight / 100;//Apply Passive Skill % Value
+
+    //Log(MSG_INFO,"Max Weight Supported: %i", weight);
+
     return weight;
 }
 
@@ -2518,13 +3364,13 @@ unsigned int CPlayer::GetMaxWeight( )
 unsigned int CPlayer::GetCurrentWeight( )
 {
     UINT weight = 0;
+
     for(UINT i=0;i<MAX_INVENTORY;i++)
     {
         if(items[i].itemtype==0||items[i].itemnum==0)
         {
             continue;
         }
-
         if(items[i].itemtype<10)
         {
             weight += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->weight;
@@ -2548,122 +3394,122 @@ unsigned int CPlayer::GetCurrentWeight( )
             }
         }
     }
+
     return weight;
 }
 
-// MP Reduction
+// MP Reduction         //MP_COST_RED(61) / MP_CONSUME(29)
 unsigned int CPlayer::GetMPReduction( )
 {
     UINT mpreduction = 0;
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
-    {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
+    UINT pmpreduction = 0;//Passive Skill % Value
+    UINT vmpreduction = 0;//Passive Skill Value
 
-        //Some skills are not worthy to search in
-        if(cskills[i].id==0&&i<60)
-        {
-            i=89;
-            continue;
-        }
-
-        if(cskills[i].id==0&&(i>60&&i<120))
-        {
-            i=119;
-            continue;
-        }
-
-        if(cskills[i].id==0&&i>=120)
-            break;
-
-        if(cskills[i].thisskill==NULL)
-            continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
-        {
-            for(UINT j=0;j<3;j++ )
-            {
-                if( cskills[i].thisskill->buff[j] == MP_COST_RED )
-                {
-                    if( cskills[i].thisskill->value2[j] > 0 )
-                        mpreduction += cskills[i].thisskill->value2[j];
-                    if( cskills[i].thisskill->value1[j] > 0 )
-                        mpreduction += cskills[i].thisskill->value1[j];
-                }
-            }
-        }
-    }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if(items[i].itemtype>9)
         {
             Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
             continue;
         }
+
+        //LMA: Adding gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == MP_COST_RED || GServer->JemList.Index[items[i].gem]->stat1[0] == MP_CONSUME)
+                    {
+                        mpreduction += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == MP_COST_RED || GServer->JemList.Index[items[i].gem]->stat2[0] == MP_CONSUME)
+                    {
+                        mpreduction += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End gem
+
         if(items[i].count>0)
         {
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MP_COST_RED)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MP_COST_RED || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == MP_CONSUME)
             {
                 mpreduction += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
             }
-            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MP_COST_RED)
+            if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MP_COST_RED || GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[0] == MP_CONSUME)
             {
                 mpreduction += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == MP_COST_RED )
+                if(GServer->StatsList[items[i].stats]->stat[0] == MP_COST_RED || GServer->StatsList[items[i].stats]->stat[0] == MP_CONSUME)
+                {
                     mpreduction += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == MP_COST_RED )
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == MP_COST_RED || GServer->StatsList[items[i].stats]->stat[1] == MP_CONSUME)
+                {
                     mpreduction += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
-    return mpreduction;
-}
 
-// Max summon capacity
-unsigned int CPlayer::GetMaxSummonGauge( )
-{
-    UINT gauge = 50;
-    for(UINT i=0;i<MAX_ALL_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
     {
-        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-            continue;*/
         //Some skills are not worthy to search in
         if(cskills[i].id==0&&i<60)
         {
             i=89;
             continue;
         }
-
         if(cskills[i].id==0&&(i>60&&i<120))
         {
             i=119;
             continue;
         }
-
         if(cskills[i].id==0&&i>=120)
+        {
             break;
-
+        }
         if(cskills[i].thisskill==NULL)
+        {
             continue;
-
-        if( cskills[i].thisskill->type == 15 ) //Pasive
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
         {
             for(UINT j=0;j<3;j++ )
             {
-                if( cskills[i].thisskill->buff[j] == SUMMON_GAUGE )
+                if( cskills[i].thisskill->buff[j] == MP_COST_RED || cskills[i].thisskill->buff[j] == MP_CONSUME)
                 {
                     if( cskills[i].thisskill->value2[j] > 0 )
-                        gauge += cskills[i].thisskill->value2[j];
+                    {
+                        pmpreduction += cskills[i].thisskill->value2[j];
+                    }
                     if( cskills[i].thisskill->value1[j] > 0 )
-                        gauge += cskills[i].thisskill->value1[j];
+                    {
+                        vmpreduction += cskills[i].thisskill->value1[j];
+                    }
                 }
             }
         }
     }
-    for(UINT i=1;i<12;i++)//cloth stats [from tomiz]
+
+    mpreduction += vmpreduction;//Apply Passive Skill Value
+    mpreduction += mpreduction * pmpreduction / 100;//Apply Passive Skill % Value
+
+    //Log(MSG_INFO,"MPReduction : %i", mpreduction);
+
+    return mpreduction;
+}
+
+// Max summon capacity          //SUMMON_GAUGE(62)
+unsigned int CPlayer::GetMaxSummonGauge( )
+{
+    UINT gauge = 50;
+    UINT pgauge = 0;//Passive Skill % Value
+    UINT vgauge = 0;//Passive Skill Value
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if(items[i].itemtype>9)
         {
@@ -2682,17 +3528,67 @@ unsigned int CPlayer::GetMaxSummonGauge( )
             }
             if(items[i].stats>0 && items[i].stats<GServer->maxStats)
             {
-                if(GServer->StatsList[items[i].stats]->stat[0] == MP_COST_RED )
+                if(GServer->StatsList[items[i].stats]->stat[0] == SUMMON_GAUGE)
+                {
                     gauge += GServer->StatsList[items[i].stats]->value[0];
-                if(GServer->StatsList[items[i].stats]->stat[1] == MP_COST_RED )
+                }
+                if(GServer->StatsList[items[i].stats]->stat[1] == SUMMON_GAUGE)
+                {
                     gauge += GServer->StatsList[items[i].stats]->value[1];
+                }
             }
         }
     }
+
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Passive Skills
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+        if(cskills[i].id==0&&i>=120)
+        {
+            break;
+        }
+        if(cskills[i].thisskill==NULL)
+        {
+            continue;
+        }
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for(UINT j=0;j<3;j++ )
+            {
+                if( cskills[i].thisskill->buff[j] == SUMMON_GAUGE )
+                {
+                    if( cskills[i].thisskill->value2[j] > 0 )
+                    {
+                        pgauge += cskills[i].thisskill->value2[j];
+                    }
+                    if( cskills[i].thisskill->value1[j] > 0 )
+                    {
+                        vgauge += cskills[i].thisskill->value1[j];
+                    }
+                }
+            }
+        }
+    }
+
+    gauge += vgauge;//Apply Passive Skill Value
+    gauge += gauge * pgauge / 100;//Apply Passive Skill % Value
+
+    //Log(MSG_INFO,"Summon Gauge Capacity : %i", gauge);
+
     return gauge;
 }
 
-// Extra attributes [str/dex/con/cha/sen/int]
+// Extra attributes [str/dex/con/cha/sen/int] From Cloths, Weapon, Gem
 void CPlayer::GetExtraStats( )
 {
     Attr->Estr = 0;
@@ -2701,7 +3597,7 @@ void CPlayer::GetExtraStats( )
     Attr->Econ = 0;
     Attr->Esen = 0;
     Attr->Echa = 0;
-    for(UINT i=1;i<12;i++)//cloth stats
+    for(UINT i=1;i<12;i++)//Cloth Stats
     {
         if( items[i].count > 0 )
         {
@@ -2775,6 +3671,140 @@ void CPlayer::GetExtraStats( )
     }
 }
 
+// Extra attributes [str/dex/con/cha/sen/int] From Passive Skill
+void CPlayer::GetExtraStatsSkills( )
+{
+	UINT Extra[6] = {0,0,0,0,0,0};
+
+
+	for(UINT i=0;i<MAX_ALL_SKILL;i++)
+    {
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
+            continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
+        if(cskills[i].thisskill==NULL)
+            continue;
+
+        if( cskills[i].thisskill->type == 15 )//Pasive
+        {
+            for(UINT j=0;j<3;j++ )
+            {
+		            switch(cskills[i].thisskill->buff[j])
+		            {
+		                case A_STR:
+		                	{
+				                if( cskills[i].thisskill->value2[j] > 0 )
+				                {
+				                	 //Estr or STR?
+				                   Extra[0] += Attr->Estr * cskills[i].thisskill->value2[j] / 100;
+				                }
+				                if( cskills[i].thisskill->value1[j] > 0 )
+				                {
+				                  	Extra[0] += cskills[i].thisskill->value1[j];
+				                }
+
+		                	}
+		                	break;
+		                case A_DEX:
+		                	{
+				                if( cskills[i].thisskill->value2[j] > 0 )
+				                {
+				                	 //Edex or DEX?
+				                   Extra[1] += Attr->Edex * cskills[i].thisskill->value2[j] / 100;
+				                }
+				                if( cskills[i].thisskill->value1[j] > 0 )
+				                {
+				                  	Extra[1] += cskills[i].thisskill->value1[j];
+				                }
+
+		                	}
+		                	break;
+		                case A_INT:
+		                	{
+				                if( cskills[i].thisskill->value2[j] > 0 )
+				                {
+				                	 //Eint or INT?
+				                   Extra[2] += Attr->Eint * cskills[i].thisskill->value2[j] / 100;
+				                }
+				                if( cskills[i].thisskill->value1[j] > 0 )
+				                {
+				                  	Extra[2] += cskills[i].thisskill->value1[j];
+				                }
+
+		                	}
+		                	break;
+		                case A_CON:
+		                	{
+				                if( cskills[i].thisskill->value2[j] > 0 )
+				                {
+				                	 //Econ or CON?
+				                   Extra[3] += Attr->Econ * cskills[i].thisskill->value2[j] / 100;
+				                }
+				                if( cskills[i].thisskill->value1[j] > 0 )
+				                {
+				                  	Extra[3] += cskills[i].thisskill->value1[j];
+				                }
+
+		                	}
+		                	break;
+		                case A_CHA:
+		                	{
+				                if( cskills[i].thisskill->value2[j] > 0 )
+				                {
+				                	 //Echa or CHA?
+				                   Extra[4] += Attr->Echa * cskills[i].thisskill->value2[j] / 100;
+				                }
+				                if( cskills[i].thisskill->value1[j] > 0 )
+				                {
+				                  	Extra[4] += cskills[i].thisskill->value1[j];
+				                }
+
+		                	}
+		                	break;
+		                case A_SEN:
+		                	{
+				                if( cskills[i].thisskill->value2[j] > 0 )
+				                {
+				                	 //Esen or SEN?
+				                   Extra[5] += Attr->Esen * cskills[i].thisskill->value2[j] / 100;
+				                }
+				                if( cskills[i].thisskill->value1[j] > 0 )
+				                {
+				                  	Extra[5] += cskills[i].thisskill->value1[j];
+				                }
+
+		                	}
+		                	break;
+		            }
+            }
+        }
+    }
+
+  //setting final stats.
+  Attr->Estr += Extra[0];
+  Attr->Edex += Extra[1];
+  Attr->Eint += Extra[2];
+  Attr->Econ += Extra[3];
+  Attr->Echa += Extra[4];
+  Attr->Esen += Extra[5];
+
+  return;
+}
+
+// Return Attack Distance
 float CPlayer::GetAttackDistance( )
 {
     if(items[7].count==0) return (float)1;
@@ -2783,11 +3813,11 @@ float CPlayer::GetAttackDistance( )
     return AttackDistance;
 }
 
-
-// calculate player stats
+// calculate Player Stats
 void CPlayer::SetStats( )
 {
     GetExtraStats( );
+    GetExtraStatsSkills( );
     Stats->MaxHP = GetMaxHP( );
     Stats->MaxMP = GetMaxMP( );
     Stats->Attack_Power = GetAttackPower( );

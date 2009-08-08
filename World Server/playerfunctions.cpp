@@ -94,7 +94,7 @@ bool CPlayer::GetPlayerInfo( )
 	ADDSTRING( pak, text );
 	ADDBYTE( pak, 0 );
 	client->SendPacket(&pak);
-    sprintf(text,"HP: %i/%i , MP: %i/%i",Stats->HP,Stats->MaxHP,Stats->MP,Stats->MaxMP);
+    sprintf(text,"HP: %I64i/%I64i | MP: %I64i/%I64i",Stats->HP,Stats->MaxHP,Stats->MP,Stats->MaxMP);
 	RESETPACKET( pak, 0x0784 );
 	ADDSTRING( pak, "[GM]PlayerInfo" );
 	ADDBYTE( pak, 0 );

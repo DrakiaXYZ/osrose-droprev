@@ -2605,12 +2605,11 @@ else if (strcmp(command, "itemstat")==0)
         	thisclient->items[5].gem = 0;
         	thisclient->items[5].sp_value=0;
         	thisclient->items[5].last_sp_value=0;
-
-            thisclient->UpdateInventory( 4 );
+            thisclient->UpdateInventory( 5 );
 
     	    RESETPACKET( pak, 0x7a5);
      	    ADDWORD( pak, thisclient->clientid );
-	        ADDWORD( pak, 5);
+	        ADDWORD( pak, 0x0005);
     	    ADDWORD( pak, id);	// ITEM NUM
     	    ADDWORD( pak, BuildItemRefine( thisclient->items[5] ));	// REFINE
     	    ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE 2602
@@ -2630,12 +2629,11 @@ else if (strcmp(command, "itemstat")==0)
         	thisclient->items[6].gem = 0;
         	thisclient->items[6].sp_value=0;
         	thisclient->items[6].last_sp_value=0;
-
             thisclient->UpdateInventory( 6 );
 
     	    RESETPACKET( pak, 0x7a5);
     	    ADDWORD( pak, thisclient->clientid );
-    	    ADDWORD( pak, 6);
+    	    ADDWORD( pak, 0x0006);
     	    ADDWORD( pak, id);	// ITEM NUM
     	    ADDWORD( pak, BuildItemRefine( thisclient->items[6] ));	// REFINE
     	    ADDWORD( pak, thisclient->Stats->Move_Speed);	// REFINE
@@ -3334,11 +3332,11 @@ bool CWorldServer::pakGMMute( CPlayer* thisclient, char* name, int time)
 }
 
 // GM: Item   - Modified by Hiei (added refine/socket/stats)
-bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, UINT itemamount, UINT itemrefine, UINT itemls, UINT itemstats, UINT itemsocket )
+bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, UINT itemamount, UINT itemrefine, UINT itemdura, UINT itemstats, UINT itemsocket )
 {
     CItem item;
     item.count            = itemamount;
-    item.durability        = 40;
+    item.durability        = itemdura;
     item.itemnum        = itemid;
     item.itemtype        = itemtype;
     item.lifespan        = 100;  // changed from itemls to 100, no need for lifespan on a item that is spawned - rl2171

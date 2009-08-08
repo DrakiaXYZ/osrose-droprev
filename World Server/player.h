@@ -240,6 +240,7 @@ class CPlayer: public CCharacter
     unsigned int GetMPReduction( );
     unsigned int GetMaxSummonGauge( );
     void GetExtraStats( );
+    void GetExtraStatsSkills( );
     unsigned int GetLevelEXP( );
     unsigned int GetInt( );
     unsigned getWeaponType();
