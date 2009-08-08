@@ -374,6 +374,7 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
 {
     CMap* map = GServer->MapList.Index[Position->Map];
     float distance = GServer->distance( Position->current, Enemy->Position->current );
+
     if(skill==NULL)
     {
         if(distance<=Stats->Attack_Distance)
@@ -384,6 +385,14 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
         if(distance<=skill->range)
             return true;
     }
+
+    //LMA: log
+    if(Enemy->IsMonster())
+    {
+        Log(MSG_INFO,"Player is at distance %.2f of the monster, and needs to be in range of %.2f",distance,Stats->Attack_Distance);
+    }
+
+
     return false;
 }
 

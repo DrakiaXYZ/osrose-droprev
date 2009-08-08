@@ -116,6 +116,15 @@ void CCharacter::DoAttack( )
 
             if(IsTargetReached( Enemy ) && CanAttack( ))
             {
+                if(IsMonster())
+                {
+                    Log(MSG_INFO,"monster Doing a normal attack");
+                }
+                else
+                {
+                    Log(MSG_INFO,"player Doing a normal attack");
+                }
+
                 NormalAttack( Enemy );
 
                 if (Enemy->IsMonster()) // do monster AI script when monster is attacked.
@@ -123,7 +132,30 @@ void CCharacter::DoAttack( )
                     CMonster* monster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
 
                     if(monster!=NULL)
-                        monster->DoAi(monster->thisnpc->AI, 3);
+                    {
+                        if(!monster->IsDead())
+                        {
+                            Log(MSG_INFO,"Monster %i is attacked, doing his AI 3, HP: %I64i",monster->clientid,monster->Stats->HP);
+                            monster->DoAi(monster->thisnpc->AI, 3);
+                        }
+
+                    }
+
+                }
+
+            }
+            else
+            {
+
+                if(IsPlayer())
+                {
+                    if(!IsTargetReached( Enemy ))
+                        Log(MSG_INFO,"Player %i hasn't reached his enemy (%i) yet (%.2f,%.2f) (%.2f,%.2f)",this->clientid,this->Battle->atktarget,this->Position->current.x,this->Position->current.y,this->Position->destiny.x,this->Position->destiny.y);
+                }
+                else
+                {
+                    if(!IsTargetReached( Enemy ))
+                        Log(MSG_INFO,"Monster %i hasn't reached his enemy (%i) yet (%.2f,%.2f) (%.2f,%.2f)",this->clientid,this->Battle->atktarget,this->Position->current.x,this->Position->current.y,this->Position->destiny.x,this->Position->destiny.y);
                 }
 
             }
@@ -416,6 +448,12 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     bool is_already_dead=Enemy->IsDead();
 
     Position->destiny = Position->current;
+
+    //LMA: Log
+    if(IsPlayer())
+        Log(MSG_INFO,"Forcing destiny to current (%.2f,%.2f), (%.2f,%.2f)",Position->current.x,Position->current.y,Position->destiny .x,Position->destiny .y);
+
+
     reduceItemsLifeSpan( false );
     Enemy->OnBeAttacked( this );
     float attack = (float)Stats->Attack_Power - ((Enemy->Stats->Magic_Defense+Enemy->Stats->Defense )/2);
@@ -478,12 +516,10 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     }
     //End of logs.
 
-    /*
     if (Enemy->IsMonster())
         Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
     else
         Log(MSG_INFO,"Normal Attack, Player HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
-    */
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update

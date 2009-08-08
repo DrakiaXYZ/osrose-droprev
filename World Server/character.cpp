@@ -297,7 +297,20 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
         }
         else
         {
-            Position->destiny=Target->Position->current;
+            //LMA: Don't need to move if the target is reached.
+            if (Battle->atktype==NORMAL_ATTACK)
+            {
+                if(!IsTargetReached( Target ))
+                {
+                    Position->destiny=Target->Position->current;
+                }
+
+            }
+            else
+            {
+                Position->destiny=Target->Position->current;
+            }
+
         }
 
     }

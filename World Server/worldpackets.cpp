@@ -3762,12 +3762,22 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
                 return true;
 
             //let's delete some skills...
+            int nb_skills_points=0;
             for (int k=l_b;k<l_e;k++)
             {
+                //How many skill points we had to spend to learn this one?
+                if (thisclient->cskills[k].thisskill!=NULL)
+                {
+                    nb_skills_points+=thisclient->cskills[k].thisskill->sp;
+                }
+
                 thisclient->cskills[k].id=0;
                 thisclient->cskills[k].level=1;
                 thisclient->cskills[k].thisskill=NULL;
             }
+
+            Log(MSG_INFO,"Skill reset, we get %i skills points back",nb_skills_points);
+            thisclient->CharInfo->SkillPoints+=nb_skills_points;
 
             //LMA: for tests.
             thisclient->saveskills();

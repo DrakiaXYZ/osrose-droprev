@@ -83,7 +83,9 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                     if( thisparty->thisparty == thisclient->Party->party )
                     {
                         thisparty->exp += exp;
-                        thisparty->exp += exp * (unsigned long long) ((thisclient->Party->party->PartyLevel*2) / 100);
+                        //LMA: bug...
+                        //thisparty->exp += exp * (unsigned long long) ((thisclient->Party->party->PartyLevel*2) / 100);
+                        thisparty->exp += (unsigned long long) ((exp*thisclient->Party->party->PartyLevel*2) / 100);
                         pflag = true;
                     }
                 }
@@ -94,7 +96,9 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                     thisparty->thisparty = thisclient->Party->party;
                     thisparty->exp = exp;
                     thisparty->flag = false;
-                    thisparty->exp += exp * (unsigned long long) ((thisclient->Party->party->PartyLevel*2) / 100);
+                    //LMA: bug
+                    //thisparty->exp += exp * (unsigned long long) ((thisclient->Party->party->PartyLevel*2) / 100);
+                    thisparty->exp += (unsigned long long) ((exp*thisclient->Party->party->PartyLevel*2) / 100);
                     thisparty->num = 1;
                     thisparty->partymember[0] = thisclient->CharInfo->charid;
                     thisparty->maxlevel = thisclient->Stats->Level;
