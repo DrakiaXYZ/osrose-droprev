@@ -3766,9 +3766,9 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             for (int k=l_b;k<l_e;k++)
             {
                 //How many skill points we had to spend to learn this one?
-                if (thisclient->cskills[k].thisskill!=NULL)
+                if (thisclient->cskills[k].thisskill!=NULL&&thisclient->cskills[k].thisskill->sp>0)
                 {
-                    nb_skills_points+=thisclient->cskills[k].thisskill->sp;
+                    nb_skills_points+=thisclient->cskills[k].level;
                 }
 
                 thisclient->cskills[k].id=0;
