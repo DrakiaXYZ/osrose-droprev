@@ -803,9 +803,6 @@ unsigned int CPlayer::GetAttackPower( )
 
     switch( weapontype )//AP By Weapon Type And Passive Skills
     {
-
-        Log(MSG_INFO,"Weapon Type : %i", weapontype);
-
         case ONE_HAND_SWORD://one hand sword
         {
             attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
@@ -3140,7 +3137,7 @@ unsigned int CPlayer::GetHPRegenAmount( )
     amount += vamount;//Apply Passive Skill Value
     amount += amount * pamount / 100;//Apply Passive Skill % Value
 
-    Log(MSG_INFO,"HPRegenAmount : %i", amount);
+    //Log(MSG_INFO,"HPRegenAmount : %i", amount);
 
     return amount;
 }

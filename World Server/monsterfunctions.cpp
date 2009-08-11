@@ -101,7 +101,7 @@ CPlayer* CMonster::GetNearPlayer( UINT mdist )
 bool CMonster::IsGhost( )
 {
     // candle host, elec ghost, yigore ghost
-    if((montype>710 && montype<751) || (montype>679 && montype<693))
+    if((montype>710 && montype<751) || (montype>679 && montype<694) || (montype>697 && montype<700))
         return true;
     return false;
 }
