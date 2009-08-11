@@ -62,7 +62,15 @@ CDrop* CCharacter::GetDrop( )
 // start action [attack]
 void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, bool restart, CCharacter* receiver )
 {
-    //Log(MSG_INFO,"Someone does an action %i, skill %i",action,skillid);
+    if(IsPlayer())
+    {
+        Log(MSG_INFO,"A Player does an action %i, skill %i",action,skillid);
+    }
+    else
+    {
+        Log(MSG_INFO,"A Monster does an action %i, skill %i",action,skillid);
+    }
+
     BEGINPACKET( pak, 0 );
     if (restart)
     {
@@ -104,7 +112,6 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
         }
 
     }
-
 
     switch(action)
     {

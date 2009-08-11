@@ -328,7 +328,7 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
         }
         else
         {
-            //Log(MSG_INFO,"Monster HP %I64i, (%.2f:%.2f)->(%.2f:%.2f)=%.2f speed %u",Stats->HP,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y,tempdist,Stats->Move_Speed);
+            Log(MSG_INFO,"Monster HP %I64i, (%.2f:%.2f)->(%.2f:%.2f)=%.2f speed %u",Stats->HP,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y,tempdist,Stats->Move_Speed);
             //Log(MSG_LOAD,"Monster (%.2f:%.2f)->(%.2f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
         }
 

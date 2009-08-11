@@ -677,7 +677,12 @@ AIACT(015)
         LogDebug( "AIACT(015) returned false as monster has no aggression");
         return AI_FAILURE; //monster has no agression value so cannot attack a player
     }
-    if(monster->IsOnBattle())
+
+    //LMA: Bad idea.
+    //-> it's causing zombie monsters.
+    //if a monster is in battle mode and player skills it, it goes into "is attacked" mode but has already the player as target
+    //since he was in battle mode. So the refresh isn't done client side...
+    /*if(monster->IsOnBattle())
     {
         //already in battle so we don't want it switching all the time. maybe 75% of the time it will do nothing?
         int myrand=GServer->RandNumber(0,100);
@@ -692,7 +697,8 @@ AIACT(015)
             LogDebug( "AIACT(015) returned false as monster is already in combat with this player %i",monster->Battle->target);
             return AI_FAILURE; //no need to initiate combat. I am already fighting this player
         }
-    }
+    }*/
+
     // otherwise change target to the person who just hit me
     monster->thisnpc->stance = 1;
     monster->SetStats();

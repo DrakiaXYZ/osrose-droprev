@@ -809,14 +809,15 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
     bool lma_debug=false;
     int nb_turns=0;
 
-    /*
-    if(ainumber==1249||ainumber==1830)
+
+    if(ainumber==25||ainumber==499)
     {
+        Log(MSG_INFO,"a monster does AIP index %i, type %i",type);
         lma_debug=true;
         LogDebugPriority(3);
     }
 
-    if (Position->Map==2&&ainumber==1805)
+    /*if (Position->Map==2&&ainumber==1805)
     {
         lma_debug=true;
         LogDebugPriority(3);

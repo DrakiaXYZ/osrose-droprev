@@ -782,6 +782,7 @@ bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
     if(Stats->MP<0) Stats->MP=0;
     if(Battle->contatk)
     {
+        Log(MSG_INFO,"after skill, going to normal_attack");
         Battle->atktype = NORMAL_ATTACK;
         Battle->skilltarget = 0;
         Battle->atktarget = Battle->target;
@@ -791,6 +792,7 @@ bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
     {
         //osprose
         //ClearBattle( Battle );
+        Log(MSG_INFO,"after skill, nothing special...");
     }
     GServer->DoSkillScript( this, skill );       //So far only used for summons
     Battle->lastAtkTime = clock( );
@@ -1552,7 +1554,13 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     RESETPACKET( pak, 0x7b9);
     ADDWORD    ( pak, clientid);
     ADDWORD    ( pak, Battle->skillid);
-    ADDWORD    ( pak, 1);
+
+    //LMA: Is it really used?
+    if(command != 0x799)
+    {
+        ADDWORD    ( pak, 1);
+    }
+
     GServer->SendToVisible( &pak, this );
 
     //osprose
