@@ -108,6 +108,7 @@ CCharacter::CCharacter( )
     //Status->Spoisoned = 0xff;
     //Status->Muted = 0xff;
     //Status->ExtraDamage = 0xff;  //LMA: Devilking/Arnold (was not quoted before)
+    Status->Weary = 0xff;   //Stealth(hawker skill. 1626-1629) 2nd deBuff (can't skill)
     Status->Stealth = 0xff;
     Status->Cloaking = 0xff;
     Status->CanAttack = true;

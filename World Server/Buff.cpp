@@ -563,20 +563,41 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             case 33: //Stealth
             {
                 //Log( MSG_INFO, "checkabuffs: Stealth Status detected %i", thisskill->status[i] );
-                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff,
-                                                    character->Status->Stealth, true );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Stealth, true );
                 if(BuffValue.Position != 0xff)
                 {
                     UINT j = BuffValue.Position;
                     if(j>14)
                     {
                         character->Status->Stealth = j;
-                        character->MagicStatus[j].Buff = thisskill->buff[i];
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
-                        character->MagicStatus[j].Value = BuffValue.Value;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
                         character->MagicStatus[j].Status = thisskill->status[i];
-                        //Log( MSG_INFO, "Stealth Status applied");
+                        //Log( MSG_INFO, "Stealth Status %i applied for %is", character->MagicStatus[j].Buff, thisskill->duration);
+                        bflag = true;
+                    }
+                }
+            }
+            break;
+            case 86: //Weary (Stealth Skill Raider)
+            {
+                //Log( MSG_INFO, "checkabuffs: Weary Status detected %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Weary, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        character->Status->Weary = j;
+                        character->Status->CanCastSkill = false;
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        //Log( MSG_INFO, "Weary Status %i applied for %is", character->MagicStatus[j].Buff, thisskill->duration);
                         bflag = true;
                     }
                 }
@@ -585,20 +606,19 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             case 34: //Cloak
             {
                 //Log( MSG_INFO, "checkabuffs: Cloak Status detected %i", thisskill->status[i] );
-                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff,
-                                                    character->Status->Cloaking, true );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Cloaking, true );
                 if(BuffValue.Position != 0xff)
                 {
                     UINT j = BuffValue.Position;
                     if(j>14)
                     {
                         character->Status->Cloaking = j;
-                        character->MagicStatus[j].Buff = thisskill->buff[i];
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
-                        character->MagicStatus[j].Value = BuffValue.Value;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
                         character->MagicStatus[j].Status = thisskill->status[i];
-                        //Log( MSG_INFO, "Cloak Status applied");
+                        //Log( MSG_INFO, "Cloak Status %i applied for %is",character->MagicStatus[j].Buff, thisskill->duration);
                         bflag = true;
                     }
                 }
@@ -627,7 +647,7 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
     //LMA: removing 13 (max mp) from debuff to buff
     switch(thisskill->status[i])
     {
-        case 12: case 13: case 14: case 16: case 18: case 20: case 22: case 24: case 26: case 28: case 35: case 36: case 53:
+        /*case 12: case 13: case 14: case 16: case 18: case 20: case 22: case 24: case 26: case 28: case 35: case 36: case 53:
         case 54: case 83:
              Buff = true;
         break;
@@ -638,7 +658,32 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         break;
         default:
              Buff = true;
+        break;*/
+
+        case 12: case 13: case 14: case 16: case 18:
+        case 20: case 22: case 24: case 26: case 28:
+        case 35: case 36:
+        case 40: case 41: case 42: case 44: case 45: case 46: case 47: case 48: case 49:
+        case 50: case 51: case 52: case 53: case 54: case 57:
+        case 83:
+            Buff = true;
         break;
+
+        case 7: case 8: case 9:
+        case 10: case 11: case 15: case 17: case 19:
+        case 21: case 23: case 25: case 27: case 29:
+        case 30: case 31: case 32: case 33: case 34: case 37: case 38: case 39:
+        case 43:
+        case 55: case 56: case 58: case 59:
+        case 60: case 61: case 62: case 63: case 64: case 65: case 66:  case 67: case 68: case 69:
+        case 70: case 71: case 72: case 73: case 74: case 75: case 76: case 77: case 78: case 79:
+        case 80: case 86:
+            Buff = false;
+        break;
+        default:
+             Buff = true;
+        break;
+
     }
     //Log(MSG_INFO, "Current Buff boolean status %i Skill status = %i up: %i down: %i", Buff,thisskill->status[i],up,down);
     //PY end
@@ -838,6 +883,8 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff1+= FLAMED;
     if(character->Status->Stealth != 0xff)//A_STEALTH
                 buff4 += STEALTH;
+    if(character->Status->Weary != 0xff)//A_STEALTH
+                buff3 += WEARY;
     if(character->Status->Cloaking != 0xff)//A_CLOAKING
                 buff4 += CLOAKING;
 
@@ -918,6 +965,8 @@ unsigned int CWorldServer::BuildDeBuffs( CCharacter* character )
                 buff1+= FLAMED;
     if(character->Status->Stealth != 0xff)//A_STEALTH
                 buff4 += STEALTH;
+    if(character->Status->Weary != 0xff)//A_STEALTH
+                buff3 += WEARY;
     if(character->Status->Cloaking != 0xff)//A_CLOAKING
                 buff4 += CLOAKING;
 

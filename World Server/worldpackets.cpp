@@ -2899,7 +2899,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 // Attack skill
 bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 {
-    if( thisclient->Shop->open || thisclient->Status->Stance==DRIVING || thisclient->Status->Mute !=0xff )
+    if( thisclient->Shop->open || thisclient->Status->Stance==DRIVING || thisclient->Status->Mute !=0xff || !thisclient->Status->CanCastSkill)
         return true;
     fPoint thispoint;
     UINT targetid = GETWORD( (*P), 0 );

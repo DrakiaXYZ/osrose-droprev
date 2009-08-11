@@ -331,7 +331,7 @@ bool CCharacter::CanAttack( ) // updated by Core
     if (0 == Stats->Attack_Speed) return false;
     //MZ
 
-    if ( weapontype == 231 || weapontype == 232 || weapontype == 233 )
+    if ( weapontype == BOW || weapontype == GUN || weapontype == LAUNCHER || weapontype == CROSSBOW)
     {
        if( (etime < CLOCKS_PER_SEC * (GServer->ATTK_SPEED_MODIF*4/3) / Stats->Attack_Speed) || Status->Stun != 0xff )
        {
@@ -346,7 +346,6 @@ bool CCharacter::CanAttack( ) // updated by Core
 
            return false;
        }
-
     }
     else
     {
@@ -363,9 +362,7 @@ bool CCharacter::CanAttack( ) // updated by Core
 
            return false;
        }
-
     }
-
     return true;
 }
 
@@ -460,6 +457,9 @@ void CCharacter::RefreshBuff( )
         clock_t etime = clock() - MagicStatus[i].BuffTime;
         if( etime >= MagicStatus[i].Duration * CLOCKS_PER_SEC )
         {
+
+        Log(MSG_INFO,"Magic Status %i, vanish after: %i", MagicStatus[i].Status, MagicStatus[i].Duration);
+
             switch(MagicStatus[i].Status)
             {
                 case 18: // attack power up
@@ -591,15 +591,21 @@ void CCharacter::RefreshBuff( )
                      Status->Flamed = 0xff;
                 break;
                 case 33://Stealth,Camoflauge
-                     if(i<15)
-                        Status->Stealth = 0xff;
                      if(IsAttacking( ))
+                     {
                         MagicStatus[i].Duration = 0;
-                     else
-                        0xff;
+                     }
+                     Status->Stealth = 0xff;
+                     //printf("removing Stealth\n");
+                break;
+                case 86://Stealth,Weary
+                    Status->Weary = 0xff;
+                    Status->CanCastSkill = true;
+                    //printf("removing Weary\n");
                 break;
                 case 34://Cloaking
                      Status->Cloaking = 0xff;
+                    //printf("removing Cloaking\n");
                 break;
                 case 35: //ShieldDamage:
                      if(i<15)

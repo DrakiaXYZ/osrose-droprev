@@ -169,6 +169,7 @@
 //#define UNK2 0x08
 #define MP_UP 0x10//revizar
 #define HP_UP 0x20//revizar
+//#define MP_UP_HP_UP 0x30
 #define DASH_UP 0x40
 #define DASH_DOWN 0x80
 //BYTE2
@@ -188,10 +189,10 @@
 #define DODGE_UP 0x10
 #define SUMMON 0x20
 #define MUTED 0x40
+#define WEARY 0x40      //Stealth(hawker skill. 1626-1629) 2nd deBuff (can't skill)
 #define SLEEPING 0x80
 //BYTE4
 #define STUN 0x01
-
 //Invisible (Devilking)
 #define STEALTH 0x02
 #define CLOAKING 0x04

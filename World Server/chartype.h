@@ -154,6 +154,7 @@ struct STATUS
     BYTE ExtraDamage_up;
     BYTE ExtraDamage_down;
     BYTE Taunt;
+    BYTE Weary; //Stealth(hawker skill. 1626-1629) 2nd deBuff (can't skill)
 
     //Status
     //BYTE Sleep;
