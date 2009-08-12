@@ -1326,6 +1326,21 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //LMA: Sometimes it's fired several times, no need to kill several times ;)
     bool is_already_dead=Enemy->IsDead();
 
+    //We Check if The Skill need a Bow, Gun, Launcher or Crossbow and reduce the number of Arrow, Bullet or Canon the player have by 1 (Client is Buged)
+    bool need_arrows=false;
+    if(skill->weapon[0]==BOW || skill->weapon[0] == GUN || skill->weapon[0] == LAUNCHER || skill->weapon[0] == CROSSBOW)
+    {
+        need_arrows=true;
+    }
+    if(skill->weapon[1]==BOW || skill->weapon[1] == GUN || skill->weapon[1] == LAUNCHER || skill->weapon[1] == CROSSBOW)
+    {
+        need_arrows=true;
+    }
+    if (need_arrows)
+    {
+        ReduceABC(1,false); //We Reduce by 1 because Client is Buged, and we set the flag do_packet to false
+    }
+
     reduceItemsLifeSpan( false );
     Enemy->reduceItemsLifeSpan(true);
     //Skill power calculations

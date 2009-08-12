@@ -697,77 +697,151 @@ bool CPlayer::PlayerHeal()
     return true;
 }
 
-void CPlayer::ReduceABC( )
+//Reduce the number of arrows, bullets...
+void CPlayer::ReduceABC( int amount, bool do_packet )
 {
     unsigned int weapontype = 0;
     weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
     int slot=0;
+    int reload=0;
     //printf("Reducing ABC item count /n");
+
     switch(weapontype)
     {
-        case 231:
+        case BOW:
             if (items[132].count==0)
                 return;
             items[132].count--;
             slot=132;
             //Log(MSG_INFO,"%u Arrows remain.",items[132].count);
-
             if(items[132].count<=0)
             {
+                reload=SearchABC(slot);
                 //ClearBattle( Battle );
                 ClearItem( items[132] );
             }
-
         break;
-        case 232:
+        case GUN:
             if (items[133].count==0)
                 return;
             items[133].count--;
             slot=133;
+            //Log(MSG_INFO,"%u Bullets remain.",items[133].count);
             if(items[133].count<=0)
             {
+                reload=SearchABC(slot);
                 //ClearBattle( Battle );
                 ClearItem( items[133] );
             }
         break;
-        case 233:
+        case LAUNCHER:
             if (items[134].count==0)
                 return;
             items[134].count--;
             slot=134;
+            //Log(MSG_INFO,"%u Cannons remain.",items[134].count);
             if(items[134].count<=0)
             {
+                reload=SearchABC(slot);
                 //ClearBattle( Battle );
                 ClearItem( items[134] );
             }
         break;
-        case 271:
-            if (items[135].count==0)
+        case CROSSBOW:
+            if (items[132].count==0)
                 return;
-            items[135].count--;
-            slot=135;
-            if(items[135].count<=0)
+            items[132].count--;
+            slot=132;
+            //Log(MSG_INFO,"%u Arrows remain.",items[132].count);
+            if(items[132].count<=0)
             {
+                reload=SearchABC(slot);
                 //ClearBattle( Battle );
-                ClearItem( items[135] );
+                ClearItem( items[132] );
             }
         break;
     }
 
     if(slot>0)
     {
-        BEGINPACKET( pak, 0x718 );
-        ADDBYTE( pak, 1 );
-        ADDBYTE    ( pak, slot);
-        ADDDWORD   ( pak, GServer->BuildItemHead( items[slot] ) );
-        ADDDWORD   ( pak, GServer->BuildItemData( items[slot] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
-        client->SendPacket( &pak );
+    	 if(do_packet||items[slot].count==0)
+    	 	{
+	        BEGINPACKET( pak, 0x718 );
+	        ADDBYTE( pak, 1 );
+	        ADDBYTE    ( pak, slot);
+	        ADDDWORD   ( pak, GServer->BuildItemHead( items[slot] ) );
+	        ADDDWORD   ( pak, GServer->BuildItemData( items[slot] ) );
+	        ADDDWORD( pak, 0x00000000 );
+	        ADDWORD ( pak, 0x0000 );
+	        client->SendPacket( &pak );
+
+    	 		if(items[slot].count==0)
+  	 			{
+                    BEGINPACKET( pak, 0x7ab );
+                    ADDWORD( pak, clientid );
+                    ADDWORD ( pak, 0x0000 );
+                    client->SendPacket( &pak );
+
+                    if(reload!=0)
+                    {
+                       //let's try to reload.
+                       items[slot].itemnum=items[reload].itemnum;
+                       items[slot].itemtype=items[reload].itemtype;
+                       items[slot].count=items[reload].count;
+                       items[slot].appraised=items[reload].appraised;
+                       items[slot].durability=items[reload].durability;
+                       items[slot].gem=items[reload].gem;
+                       items[slot].last_sp_value=items[reload].last_sp_value;
+                       items[slot].lifespan=items[reload].lifespan;
+                       items[slot].refine=items[reload].refine;
+                       items[slot].socketed=items[reload].socketed;
+                       items[slot].sp_value=items[reload].sp_value;
+                       items[slot].stats=items[reload].stats;
+                       ClearItem(items[reload]);
+
+                       UpdateInventory(slot,reload);
+
+                        BEGINPACKET( pak, 0x7ab );
+                        ADDWORD    ( pak, clientid );
+                        unsigned int effect = items[slot].itemnum * 32 ;
+                        ADDWORD    ( pak, effect );
+                        GServer->SendToVisible( &pak, this );
+                    }
+                    else
+                    {
+                        //Stop attack.
+                       RESETPACKET( pak, 0x796 );
+                       ADDWORD    ( pak, clientid );
+                       ADDFLOAT   ( pak, Position->current.x*100 );
+                       ADDFLOAT   ( pak, Position->current.y*100 );
+                       ADDWORD    ( pak, 0xDC0C );
+                       GServer->SendToVisible(&pak,this);
+                    }
+  	 			}
+	      }
+    }
+    return;
+}
+
+//LMA: Searching for replacement arrows, bullets...
+int CPlayer::SearchABC ( int slot )
+{
+    if (slot<132||slot>134)
+    {
+        return 0;
     }
 
+    for (int k=12;k<132;k++)
+    {
+        if (items[k].count<=0)
+            continue;
 
-    return;
+        if (items[k].itemnum==items[slot].itemnum&&items[k].itemtype==items[slot].itemtype)
+        {
+            return k;
+        }
+    }
+    return 0;
 }
 
 // return party pointer

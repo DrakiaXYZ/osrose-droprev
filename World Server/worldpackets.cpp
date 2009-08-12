@@ -1312,16 +1312,16 @@ bool CWorldServer::pakStartAttack( CPlayer* thisclient, CPacket* P )
     if ( thisclient->Battle->target == clientid ) return true;
 
     int weapontype = EquipList[WEAPON].Index[thisclient->items[7].itemnum]->type;
-    if( weapontype == 231 && thisclient->items[132].count<1 )
+    if( weapontype == BOW && thisclient->items[132].count<1 )
         return true;
     else
-    if( weapontype == 232 && thisclient->items[133].count<1 )
+    if( weapontype == GUN && thisclient->items[133].count<1 )
         return true;
     else
-    if( weapontype == 233 && thisclient->items[134].count<1 )
+    if( weapontype == LAUNCHER && thisclient->items[134].count<1 )
         return true;
     else
-    if( weapontype == 271 && thisclient->items[132].count<1 )
+    if( weapontype == CROSSBOW && thisclient->items[132].count<1 )
         return true;
 
     CMap* map = MapList.Index[thisclient->Position->Map];
@@ -2945,6 +2945,41 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 	   thisclient->client->SendPacket( &pak );
     }
 	CSkills* thisskill = GetSkillByID( skillid );
+
+    //We Check if The Skill need a Bow, Gun, Launcher or Crossbow and check the number of Arrow, Bullet or Canon the player have is < 1
+    bool need_arrows=false;
+    if(thisskill->weapon[0]==BOW || thisskill->weapon[0] == GUN || thisskill->weapon[0] == LAUNCHER || thisskill->weapon[0] == CROSSBOW)
+    {
+        need_arrows=true;
+    }
+    if(thisskill->weapon[1]==BOW || thisskill->weapon[1] == GUN || thisskill->weapon[1] == LAUNCHER || thisskill->weapon[1] == CROSSBOW)
+    {
+        need_arrows=true;
+    }
+    if(need_arrows)
+    {
+        int weapontype = EquipList[WEAPON].Index[thisclient->items[7].itemnum]->type;
+        if (weapontype == BOW || weapontype == GUN || weapontype == LAUNCHER || weapontype == CROSSBOW)
+        {
+            if( weapontype == BOW && thisclient->items[132].count<1 )
+                return true;
+            else
+            if( weapontype == GUN && thisclient->items[133].count<1 )
+                return true;
+            else
+            if( weapontype == LAUNCHER && thisclient->items[134].count<1)
+                return true;
+            else
+            if( weapontype == CROSSBOW && thisclient->items[132].count<1 )
+                return true;
+        }
+        else
+        {
+            //Player not equipped, failure
+            return true;
+        }
+    }
+
 	if(thisskill==NULL)
 	   return true;
 	if(thisskill->target==9 && !character->IsDead())

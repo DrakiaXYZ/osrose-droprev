@@ -104,7 +104,8 @@ class CCharacter
         virtual void AddDamage( CCharacter* enemy, long long hitpower);
         virtual void UpdatePosition( bool monster_stay_still);       //LMA: changed for some monsters.
         virtual bool UpdateValues( );
-        virtual void ReduceABC( );
+        virtual void ReduceABC( int amount=1,bool do_packet=true );
+        virtual int SearchABC ( int slot ); //LMA: Searching for replacement arrows, bullets...
         virtual int GetEVBuff( );
         void RefreshBuff( );
         virtual CParty* GetParty( );

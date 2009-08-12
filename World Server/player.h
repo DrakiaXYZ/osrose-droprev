@@ -194,7 +194,8 @@ class CPlayer: public CCharacter
     int ReturnPvp( CPlayer* player, CPlayer* otherclient );    //LMA: for PVP.
     bool UpdateValues( );
     bool RefreshHPMP();  //LMA HP / MP Jumping
-    void ReduceABC( );
+    void ReduceABC(int amount=1,bool do_packet=true);
+    int SearchABC ( int slot ); //LMA: Searching for replacement arrows, bullets...
     CParty* GetParty( );
     CLAN* GetClan( );
     unsigned int AddItem( CItem item );

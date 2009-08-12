@@ -437,7 +437,13 @@ CCharacter* CCharacter::GetCharBuffTarget( )
 }
 
 // VIRTUAL [reduce ammon/bullets/cannons]
-void CCharacter::ReduceABC( )
+void CCharacter::ReduceABC( int amount, bool do_packet )
+{
+
+}
+
+// VIRTUAL //LMA: Searching for replacement arrows, bullets...
+int CCharacter::SearchABC ( int slot )
 {
 
 }
