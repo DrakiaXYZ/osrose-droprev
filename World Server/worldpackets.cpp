@@ -3936,6 +3936,7 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
 }
 
 
+
 // Equip bullets arrows and cannons
 bool CWorldServer::pakEquipABC ( CPlayer* thisclient, CPacket* P )
 {
@@ -6046,7 +6047,24 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     }
                     else if(nextlevel>1)
                     {
-                        thisclient->items[item].refine = RandNumber(0,nextlevel-1) * 16;
+                        //LMA: 5% chance to degrade from 2 levels.
+                        if(RandNumber(0,100)<=5)
+                        {
+                            if((nextlevel-3)<=0)
+                            {
+                                thisclient->items[item].refine = 0;
+                            }
+                            else
+                            {
+                                thisclient->items[item].refine = (nextlevel-3) * 16;
+                            }
+
+                        }
+                        else
+                        {
+                            thisclient->items[item].refine = (nextlevel-2) * 16;
+                        }
+
                     }
                     else
                     {
