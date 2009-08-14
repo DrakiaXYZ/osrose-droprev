@@ -1221,7 +1221,13 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         {
             // scrolls [maxhp,attackpower up, ... ]
             //Arua Blessing added (944, thanks to PY)
-            if((useitem->itemnum>79 && useitem->itemnum<93) || (useitem->itemnum==145) ||(useitem->itemnum>300 && useitem->itemnum<320) || (useitem->itemnum>960 && useitem->itemnum<965) || useitem->itemnum == 944 ||(useitem->itemnum>1040 && useitem->itemnum<1047))
+            if( (useitem->itemnum>79 && useitem->itemnum<93) ||
+                (useitem->itemnum>300 && useitem->itemnum<320) ||
+                (useitem->itemnum>330 && useitem->itemnum<340) ||
+                 useitem->itemnum == 944 ||
+                (useitem->itemnum>960 && useitem->itemnum<967) ||
+                (useitem->itemnum>1040 && useitem->itemnum<1047) ||
+                 useitem->itemnum == 1305 )
             {
                 useitem->usescript = 7;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
@@ -1229,7 +1235,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             }
 
             else // cherry berrys
-            if((useitem->itemnum >= 981 && useitem->itemnum <= 988) || (useitem->itemnum >= 1035 && useitem->itemnum <= 1039))
+            if( (useitem->itemnum >= 981 && useitem->itemnum <= 988) ||
+                (useitem->itemnum >= 1035 && useitem->itemnum <= 1039))
             {
                 useitem->usescript = 0;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0]; // don't really need this as it is zero
@@ -1373,7 +1380,11 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
             }
             else // Summons
-            if( (useitem->itemnum>400 && useitem->itemnum<440) || (useitem->itemnum==496) || (useitem->itemnum==594) || (useitem->itemnum>915 && useitem->itemnum<918) || (useitem->itemnum>939 && useitem->itemnum<943) || (useitem->itemnum==1055) )
+            if( (useitem->itemnum>400 && useitem->itemnum<440) ||
+                (useitem->itemnum==496) || (useitem->itemnum==594) ||
+                (useitem->itemnum>915 && useitem->itemnum<918) ||
+                (useitem->itemnum>939 && useitem->itemnum<943) ||
+                (useitem->itemnum==1055) )
             {
                 if( thisclient->CharInfo->stamina<101 )
                     return NULL;
