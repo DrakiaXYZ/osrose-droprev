@@ -145,7 +145,7 @@ struct STATUS
     BYTE Invis;
     BYTE Shield;
     BYTE Curse;
-    BYTE Recover;
+    BYTE Recover;//Purify
     BYTE Dispell;
     BYTE Detect;
     BYTE Invinc;

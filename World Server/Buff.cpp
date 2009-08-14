@@ -624,6 +624,69 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 }
             }
             break;
+            case 55: //Detect
+            {
+                //Log( MSG_INFO, "checkabuffs: Detect Status detected : %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Detect, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        character->Status->Detect = j;
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        //Log( MSG_INFO, "Detect Status %i applied for to %i",character->MagicStatus[j].Status, character->clientid);
+                        bflag = true;
+                    }
+                }
+            }
+            break;
+            case 56: //Taunt
+            {
+                //Log( MSG_INFO, "checkabuffs: Taunt Status detected : %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Taunt, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        character->Status->Taunt = j;
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        //Log( MSG_INFO, "Taunt Status %i applied for to %i",character->MagicStatus[j].Status, character->clientid);
+                        bflag = true;
+                    }
+                }
+            }
+            break;
+            case 38: //Purify
+            {
+                //Log( MSG_INFO, "checkabuffs: Purify Status detected : %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Recover, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        character->Status->Recover = j;
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        //Log( MSG_INFO, "Purify Status %i applied for to %i",character->MagicStatus[j].Status, character->clientid);
+                        bflag = true;
+                    }
+                }
+            }
+            break;
         }
     }
     return bflag;

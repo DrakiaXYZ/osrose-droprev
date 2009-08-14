@@ -120,6 +120,9 @@ CCharacter::CCharacter( )
     //Status->Flame = 0xff;
     Status->Flamed = 0xff;
     Status->Sleep = 0xff;
+    Status->Detect = 0xff;
+    Status->Taunt = 0xff;
+    Status->Recover = 0xff;//Purify
 
     //LMA: ospRose.
     Status->Stuned = 0xff;

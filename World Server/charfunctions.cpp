@@ -597,8 +597,9 @@ void CCharacter::RefreshBuff( )
                      }
 
                 break;
-                case 56: // Taunt
+                case 56: //Taunt
                      Status->Taunt = 0xff;
+                     //printf("removing Taunt\n");
                 break;
                 case 58: case 61: case 71: case 77:  case 78: case 79: case 80://flame
                      Status->Flamed = 0xff;
@@ -631,7 +632,45 @@ void CCharacter::RefreshBuff( )
                          Status->ShieldDamage_down = 0xff;
 //                         Stats->ShieldDamage = 0xff;
 //                     }
-
+                break;
+                case 55://Detect
+                    Status->Detect = 0xff;
+                    Status->Cloaking = 0xff;
+                    Status->Stealth = 0xff;
+                    //printf("Detect Done\n");
+                break;
+                case 38://Purify
+                    //Buff_Down
+                    Status->Attack_down = 0xff;
+                    Status->Defense_down = 0xff;
+                    Status->Accury_down = 0xff;
+                    Status->Magic_Defense_down = 0xff;
+                    Status->Dodge_down = 0xff;
+                    Status->Dash_down = 0xff;
+                    Status->Haste_down = 0xff;
+                    Status->Critical_down = 0xff;
+                    Status->HP_down = 0xff;
+                    Status->MP_down = 0xff;
+                    Status->ExtraDamage_down = 0xff;
+                    Status->ShieldDamage_down = 0xff;
+                    //Bad Status
+                    Status->Stuned = 0xff;
+                    Status->Poisoned = 0xff;
+                    Status->Muted = 0xff;
+                    Status->Sleep = 0xff;
+                    Status->Flamed = 0xff;
+                    //Stats
+                    Stats->Attack_Power = GetAttackPower( );
+                    Stats->Defense = GetDefense( );
+                    Stats->Accury = GetAccury( );
+                    Stats->Magic_Defense = GetMagicDefense( );
+                    Stats->Dodge = GetDodge( );
+                    Stats->Move_Speed = GetMoveSpeed( );
+                    Stats->Attack_Speed = GetAttackSpeed( );
+                    Stats->Critical = GetCritical( );
+                    Stats->MaxHP = GetMaxHP( );
+                    Stats->MaxMP = GetMaxMP( );
+                    //printf("Purify Done\n");
                 break;
             }
 

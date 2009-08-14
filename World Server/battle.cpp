@@ -369,14 +369,25 @@ void CCharacter::DoAttack( )
             {
                 if(Enemy==NULL)
                 {
-                   Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for enemy NULL ", clientid,Battle->atktype,AOE_TARGET,skill->id);
+                    Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for enemy NULL ", clientid,Battle->atktype,AOE_TARGET,skill->id);
+
+                    if (skill->atkpower == 0)//Like Howl Skill soldier (AOE Def down) or Detect skill have 0 atkpower
+                    {
+                        Log(MSG_INFO,"[DoAttack] AoeDebuff");
+                        AoeDebuff( skill, NULL );
+                    }
+                    else
+                    {
+                        AoeSkill( skill, Enemy );
+                    }
                 }
                 else
                 {
                    Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for enemy %i ", clientid,Battle->atktype,AOE_TARGET,skill->id,Enemy->clientid);
+                    AoeSkill( skill, Enemy );
                 }
 
-                AoeSkill( skill, Enemy );
+                //AoeSkill( skill, Enemy );
             }
         }
         break;
@@ -1307,6 +1318,7 @@ bool CCharacter::AoeDebuff( CSkills* skill, CCharacter* Enemy )
             if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
             {
                 Log(MSG_INFO,"AOE Debuff (2) player %s",player->CharInfo->charname);
+                //UseDebuffSkillTest( (CCharacter*) player, skill );
                 UseDebuffSkill( (CCharacter*) player, skill );
             }
 
@@ -1346,6 +1358,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //Skill power calculations
     long int skillpower = skill->atkpower + (long int)floor(GetInt( )/2);
     long int level_diff = Stats->Level - Enemy->Stats->Level;
+    //Log(MSG_INFO,"Attack power %u, skillpower %li, MD %u, level diff %li",skill->atkpower,skillpower,Enemy->Stats->Magic_Defense,level_diff);
     skillpower -= Enemy->Stats->Magic_Defense;
     if(Enemy->IsMonster()){
         if(level_diff >= 1){
@@ -1364,7 +1377,9 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     if(IsPlayer())
     {
         //LMA: ED, Devilking / Arnold
+        //Log(MSG_INFO,"Skill power %li, extradamage %li",skillpower,Stats->ExtraDamage_add);
         skillpower+=Stats->ExtraDamage_add;
+        //Log(MSG_INFO,"Skill power %li, extradamage %li",skillpower,Stats->ExtraDamage_add);
         //TODO: bug here, ExtraDamage is here something like a % but in fact considered somewhere else as a "slot" for buffs...
         //skillpower+=((skillpower*(Stats->ExtraDamage))/100);
     }
@@ -1648,6 +1663,7 @@ void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
 {
     bool bflag = false;
     bflag = GServer->AddBuffs( skill, Enemy, GetInt( ) );
+    Log(MSG_INFO,"debufskill %i, %i",clientid,Enemy->clientid);
     if(skill->nbuffs>0 && bflag == true)
     {
         BEGINPACKET( pak, 0x7b5 );
@@ -1661,7 +1677,7 @@ void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
     BEGINPACKET( pak, 0x7b9);
     ADDWORD    ( pak, clientid);
     ADDWORD    ( pak, Battle->skillid);
-    ADDWORD    ( pak, 1);
+    //ADDWORD    ( pak, 1);
     GServer->SendToVisible( &pak, (CCharacter*)this );
 }
 
