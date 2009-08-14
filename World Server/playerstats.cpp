@@ -29,52 +29,63 @@ unsigned int CPlayer::GetDodge( )
     UINT Dodge = 0;
     UINT pDodge = 0;//Passive Skill % Value
     UINT vDodge = 0;//Passive Skill Value
-    UINT ClothDodge = 0;//Dodge from Cloth
-    UINT shieldDodge = 0;//Dodge from shield
-
-    //Refine to Match Client Value with item around 50 dura
-    UINT extra_refine_dr[10] = {0, 8, 15, 25, 30, 39, 45, 53, 59, 66};
-
-    //Test Refine to Match Cloth Value
-    //UINT extra_refine_dr[10] = {0, 2, 7, 17, 27, 53, 68, 86, 93, 120};
 
     Dodge = (UINT)floor(( ((Stats->Level * 0.3) + ((Attr->Dex + Attr->Edex) * 1.9)) + 10 ) * 0.4);
 
-    for(UINT i=1;i<7;i++)//Dodge From Cloth
+    for(UINT i=1;i<9;i++)//Refine
     {
-        if( items[i].count != 0 )
-            ClothDodge += (UINT)floor(items[i].durability * 0.3);
-    }
-    if(items[8].count>0)//Dodge From Shield
-    {
-        shieldDodge += (UINT)floor(items[8].durability * 0.3);
-    }
-
-    Dodge += (UINT)floor(shieldDodge + ClothDodge);
-
-    for(UINT i=1;i<12;i++)//Cloth Stats
-    {
-        if(i==7)//Weapon Don't Add Dodge
+        if(i==7)//Weapon
         {
             continue;
         }
+        if( items[i].count != 0 )
+        {
+            if(items[i].itemtype>9)
+            {
+                Log(MSG_WARNING, "Char %s have equipped invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
+                continue;
+            }
 
+            if(items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
+            {
+                Log(MSG_WARNING, "Char %s have equip some item who shouldn't add dodge in slot %i", CharInfo->charname, i );
+                continue;
+            }
+
+            Dodge += (UINT)floor(items[i].durability * 0.3);
+
+            /*if(items[i].refine>0)//Old Way : Refine Add Dodge For Match with Stats on Cloth
+            {
+                UINT refine = (UINT)floor(items[i].refine/16);
+
+                if(refine<10)
+                {
+                    UINT extra_refine_dr[10] = {0, 2, 7, 17, 27, 53, 68, 86, 93, 120};
+                    Dodge += (UINT)floor(extra_refine_dr[refine] * 0.01 * (items[i].durability * 0.3));
+                }
+            }*/
+
+            if(items[i].refine>0)//New Way : Refine Add Dodge For Match with Client Value
+            {
+                UINT refine = (UINT)floor(items[i].refine/16);
+
+                if(refine<10)
+                {
+                    UINT extra_refine_dr[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+                    Dodge += (UINT)floor(extra_refine_dr[refine]);
+                }
+            }
+        }
+    }
+
+    for(UINT i=1;i<12;i++)//Cloth Stats
+    {
         if( items[i].count != 0 )
         {
             if(items[i].itemtype>9)
             {
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
-            }
-
-            if(items[i].refine>0)//Refine Add Dodge
-            {
-                UINT refine = (UINT)floor(items[i].refine/16);
-
-                if(refine<10)
-                {
-                    Dodge += (UINT)floor(extra_refine_dr[refine] * 0.01 * (items[i].durability * 0.3));
-                }
             }
 
             //LMA: Adding gem support
@@ -433,21 +444,30 @@ unsigned int CPlayer::GetMagicDefense( )
 
     MagicDefense += (UINT)floor(((Attr->Int + Attr->Eint+5)*0.6) + ((Stats->Level+15)*0.8));
 
-    for(UINT i=1;i<10;i++)
+    for(UINT i=1;i<9;i++)//Refine
     {
-        if(items[i].itemtype>9)
-        {
-            Log(MSG_WARNING, "Char %i have equipped invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
-            continue;
-        }
-        if(items[i].itemtype==WEAPON || items[i].count<1 )
+        if(i==7)//Weapon
         {
             continue;
         }
+        if( items[i].count != 0 )
+        {
+            if(items[i].itemtype>9)
+            {
+                Log(MSG_WARNING, "Char %s have equipped invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
+                continue;
+            }
 
-        MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence;
+            if(items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
+            {
+                Log(MSG_WARNING, "Char %s have equip some item who shouldn't add mdeff in slot %i", CharInfo->charname, i );
+                continue;
+            }
 
-        if(items[i].refine>0)
+            MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence;
+
+            //Refine : Way to match stat Value of Equipement
+            /*if(items[i].refine>0)
             {
                 UINT extra_refine_mdef[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -608,7 +628,20 @@ unsigned int CPlayer::GetMagicDefense( )
                 {
                     MagicDefense += (UINT)floor(extra_refine_mdef[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence);
                 }
+            }*/
+
+            //Refine : Way to match Client Value
+            if(items[i].refine>0)
+            {
+                UINT refine = (UINT)floor(items[i].refine/16);
+
+                if(refine<10)
+                {
+                    UINT extra_refine_mdef[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18}; //For Match with Client Value
+                    MagicDefense += (UINT)floor(extra_refine_mdef[refine]); //For Match with Client Value
+                }
             }
+        }
     }
 
     for(UINT i=1;i<12;i++)//Cloth Stats
@@ -698,8 +731,8 @@ unsigned int CPlayer::GetMagicDefense( )
         }
     }
 
-    MagicDefense += vMagicDefense;//Apply Passive Skill Value
     MagicDefense += MagicDefense * pMagicDefense / 100;//Apply Passive Skill % Value
+    MagicDefense += vMagicDefense;//Apply Passive Skill Value
 
     switch( CharInfo->Job )
     {
@@ -1463,9 +1496,9 @@ unsigned int CPlayer::GetDefense( )
 
     defense += (UINT)floor( ((Attr->Str + Attr->Estr)+5) * 0.35 );
 
-    for(UINT i=1;i<10;i++)
+    for(UINT i=1;i<9;i++)//Refine
     {
-        if(i==7)
+        if(i==7)//Weapon
         {
             continue;
         }
@@ -1474,6 +1507,12 @@ unsigned int CPlayer::GetDefense( )
             if(items[i].itemtype>9)
             {
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
+                continue;
+            }
+
+            if(items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
+            {
+                Log(MSG_WARNING, "Char %s have equip some item who shouldn't add deff in slot %i", CharInfo->charname, i );
                 continue;
             }
 

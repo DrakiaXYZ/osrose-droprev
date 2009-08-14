@@ -1355,7 +1355,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
 
     reduceItemsLifeSpan( false );
     Enemy->reduceItemsLifeSpan(true);
-    //Skill power calculations
+    /*
+    //Skill power calculations Old Way
     long int skillpower = skill->atkpower + (long int)floor(GetInt( )/2);
     long int level_diff = Stats->Level - Enemy->Stats->Level;
     //Log(MSG_INFO,"Attack power %u, skillpower %li, MD %u, level diff %li",skill->atkpower,skillpower,Enemy->Stats->Magic_Defense,level_diff);
@@ -1367,9 +1368,48 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             skillpower += Stats->Attack_Power - (level_diff / 2);
         }
     }
+    //Skill power calculations END of Old Way
+    */
+
+    //Skill power calculations LMA/Tomiz : New Way
+    long int skillpower=0;
+    long int level_diff = Stats->Level - Enemy->Stats->Level;
+
+    if(Enemy->IsMonster())
+    {
+        if(level_diff >= 1)
+        {
+            skillpower += Stats->Attack_Power * (level_diff / 5) + (level_diff*2);
+        }
+        else
+        {
+            skillpower += Stats->Attack_Power - (level_diff / 2);
+        }
+
+    }
+    else if(Enemy->IsPlayer())
+    {
+        if(level_diff >= 1)
+        {
+            skillpower += Stats->Attack_Power * (level_diff / 5) + (level_diff*2);
+        }
+        else
+        {
+            skillpower += Stats->Attack_Power - (level_diff / 2);
+        }
+
+    }
+
+    skillpower+=skill->atkpower +(long int)floor(GetInt( )/2);
+    skillpower+=skillpower*GetInt( )/10000;
+    skillpower-=skillpower*Stats->Magic_Defense / 10000;
+    skillpower-= Stats->Magic_Defense * 5 / 100;
+    Log(MSG_INFO,"%i cast Skill, Attack power %u, skillpower %li, MD %u, level diff %li, to %i",clientid,skill->atkpower,skillpower,Enemy->Stats->Magic_Defense,level_diff,Enemy->clientid);
+    //Skill power calculations LMA/Tomiz : New Way
+
     //Tell enemy he's attacked & add damage & send the dmg packet
 
-    Log(MSG_INFO,"Atk Skill damage %li, monster HP before %li",skillpower,Enemy->Stats->HP);
+    Log(MSG_INFO,"Atk Skill damage %li, Enemy HP before %li",skillpower,Enemy->Stats->HP);
 
     bool bflag = false;
     Enemy->OnBeAttacked( this );
@@ -1389,7 +1429,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         Enemy->damagecounter+= (long long) skillpower;// is for AI
     }
     Enemy->Stats->HP -=  (long long) skillpower;
-    Log(MSG_INFO,"Atk Skill damage %li, monster HP after %li",skillpower,Enemy->Stats->HP);
+    Log(MSG_INFO,"Atk Skill damage %li, Enemy HP after %li",skillpower,Enemy->Stats->HP);
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update
