@@ -1051,7 +1051,10 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     else if (strcmp(command, "gmskills")==0)
     {
         if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+        {
            Log( MSG_GMACTION, " %s : /gmskills NOT ALLOWED" , thisclient->CharInfo->charname);
+           return true;
+        }
            /*
            char buffer[200];
            sprintf ( buffer, "gmskills NOT ALLOWED");
