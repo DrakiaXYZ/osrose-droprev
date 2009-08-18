@@ -984,6 +984,91 @@ bool CWorldServer::pakPickDrop( CPlayer* thisclient, CPacket* P )
                 ADDWORD    ( pak, thisdrop->item.itemnum );
                 SendToVisible( &pak, dropowner );
                 flag = true;
+
+                //LMA: Adding the auto consumme stuff (most of credits to PY :) ).
+                switch (UseList.Index[thisdrop->item.itemnum]->useeffect[0])
+                {
+                       case 16:
+                       {
+                            dropowner->Stats->HP += (UseList.Index[thisdrop->item.itemnum]->useeffect[1]);
+                            if(dropowner->Stats->HP > dropowner->Stats->MaxHP )
+                               dropowner->Stats->HP = dropowner->Stats->MaxHP;
+                       }
+                        break;
+                       case 17:
+                       {
+                            dropowner->Stats->MP += (UseList.Index[thisdrop->item.itemnum]->useeffect[1]);
+                            if(dropowner->Stats->MP > dropowner->Stats->MaxMP )
+                               dropowner->Stats->MP = dropowner->Stats->MaxMP;
+                       }
+                        break;
+                       case 76:
+                       {
+                            dropowner->CharInfo->stamina += (UseList.Index[thisdrop->item.itemnum]->useeffect[1]);
+                            if(dropowner->CharInfo->stamina > 5000)
+                               dropowner->CharInfo->stamina = 5000;
+                       }
+                        break;
+                       case 92:
+                       {
+                            if(dropowner->Clan->clanid>0)
+                            {
+                                //dropowner->Clan->CP += (UseList.Index[thisdrop->item.itemnum]->useeffect[1]);
+                                UINT points=UseList.Index[thisdrop->item.itemnum]->useeffect[1];
+                                dropowner->Clan->CP=GServer->getClanPoints(dropowner->Clan->clanid);
+                                dropowner->Clan->CP+=points;
+
+                                char buffer[200];
+                                sprintf( buffer, "You received %i Clan Points !!", points);
+                                BEGINPACKET ( pak, 0x702 );
+                                ADDSTRING( pak, buffer );
+                                ADDBYTE( pak, 0 );
+                                dropowner->client->SendPacket( &pak );
+
+                                RESETPACKET( pak, 0x7e0 );
+                                ADDBYTE    ( pak, 0xfe );
+                                ADDWORD    ( pak, dropowner->CharInfo->charid);  //charid
+                                ADDDWORD    ( pak, points);  //Clan points (to be added)
+                                cryptPacket( (char*)&pak, GServer->cct );
+                                send( csock, (char*)&pak, pak.Size, 0 );
+
+                                RESETPACKET( pak, 0x7e0 );
+                                ADDBYTE    ( pak, 0x35 );
+                                ADDWORD    ( pak, dropowner->clientid );
+                                ADDWORD    ( pak, dropowner->Clan->clanid );
+                                ADDWORD    ( pak, 0x0000 );
+                                ADDWORD    ( pak, dropowner->Clan->back );
+                                ADDWORD    ( pak, dropowner->Clan->logo );
+                                ADDBYTE    ( pak, dropowner->Clan->grade );
+                                ADDBYTE    ( pak, dropowner->Clan->clanrank);
+                                ADDSTRING  ( pak, dropowner->Clan->clanname );
+                                ADDBYTE    ( pak, 0x00 );
+                                dropowner->client->SendPacket(&pak);
+
+                                /*DB->QExecute( "UPDATE list_clan set cp=%i where id=%i", dropowner->Clan->CP,dropowner->Clan->clanid);
+
+                                BEGINPACKET( pak, 0x7e0 );
+                                ADDBYTE    ( pak, 0x5C ); //action to update clan points (charserver)
+                                ADDWORD    ( pak, dropowner->Clan->clanid);
+                                ADDWORD    ( pak, dropowner->clientid );
+                                ADDDWORD    ( pak, dropowner->Clan->CP );
+                                ADDWORD    ( pak, 0x00);
+                                SendISCPacket( &pak );*/
+                            }
+                            else
+                            {
+                                //Log( MSG_WARNING, "Player %s collected clanpoints but is not in a clan",dropowner->CharInfo->charname);
+                            }
+
+                       }
+                        break;
+                       default:
+                       {
+                            //Log( MSG_WARNING, "Unknown autoconsume type: %i %i",(UseList.Index[thisdrop->item.itemnum]->usecondition[0]),(UseList.Index[thisdrop->item.itemnum]->usecondition[1]));
+                        }
+                            break;
+                }
+
             }
             else
             {

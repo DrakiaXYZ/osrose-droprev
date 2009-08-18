@@ -713,6 +713,10 @@ void CWorldServer::LoadCommandLevels( void )
 // Incoming packet
 bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
 {
+    //Maxxon
+    pthread_mutex_lock( &GServer->PlayerMutex );
+    pthread_mutex_lock( &GServer->MapMutex );
+
 	switch( P->Command )
 	{
         case 0x0500: return pakCSReady          ( (CPlayer*)thisclient->player, P );
@@ -785,5 +789,11 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
     		Log( MSG_WARNING, "(SID:%i) Received unknown packet. Command:%04x Size:%04x", thisclient->sock, P->Command, P->Size );
 		break;
 	}
+
+	//Maxxon
+    pthread_mutex_unlock( &GServer->MapMutex );
+    pthread_mutex_unlock( &GServer->PlayerMutex );
+
+
 	return true;
 }
