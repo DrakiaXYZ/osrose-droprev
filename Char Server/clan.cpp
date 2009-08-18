@@ -1187,8 +1187,10 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
              {
                   //LMA: adding clan points (bogus command)
                   //We have to reload player's information...
-                  int lma_id = GETWORD((*P),1); // client ID
-                  long int lma_points = GETDWORD((*P),3); // clan points (TOTAL)
+                  /*int lma_id = GETWORD((*P),1); // client ID
+                  long int lma_points = GETDWORD((*P),3); // clan points (TOTAL)*/
+                  int lma_id = GETDWORD((*P),1); // client ID
+                  long int lma_points = GETDWORD((*P),5); // clan points (TOTAL)
                 CCharClient* otherclient = GetClientByID( lma_id );
 
                 if(otherclient!=NULL)

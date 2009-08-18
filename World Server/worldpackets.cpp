@@ -1027,7 +1027,8 @@ bool CWorldServer::pakPickDrop( CPlayer* thisclient, CPacket* P )
 
                                 RESETPACKET( pak, 0x7e0 );
                                 ADDBYTE    ( pak, 0xfe );
-                                ADDWORD    ( pak, dropowner->CharInfo->charid);  //charid
+                                //ADDWORD    ( pak, dropowner->CharInfo->charid);  //charid
+                                ADDDWORD    ( pak, dropowner->CharInfo->charid);  //charid
                                 ADDDWORD    ( pak, points);  //Clan points (to be added)
                                 cryptPacket( (char*)&pak, GServer->cct );
                                 send( csock, (char*)&pak, pak.Size, 0 );

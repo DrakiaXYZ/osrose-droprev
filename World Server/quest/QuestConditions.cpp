@@ -791,7 +791,8 @@ QUESTCOND(027){
              //LMA: temp version...
             BEGINPACKET( pak, 0x7e0 );
             ADDBYTE    ( pak, 0xfe );
-            ADDWORD    ( pak, client->CharInfo->charid);  //charid
+            //ADDWORD    ( pak, client->CharInfo->charid);  //charid
+            ADDDWORD    ( pak, client->CharInfo->charid);  //charid
             ADDDWORD    ( pak, 0);  //Clan points (to be added)
             cryptPacket( (char*)&pak, GServer->cct );
             send( GServer->csock, (char*)&pak, pak.Size, 0 );
