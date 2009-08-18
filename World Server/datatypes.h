@@ -157,7 +157,7 @@
 #define A_POISON 42
 #define A_SLEEP 43
 #define A_FLAMED 58
-
+#define A_ADDDMG 83
 
 //*spawn values
 //BYTE1

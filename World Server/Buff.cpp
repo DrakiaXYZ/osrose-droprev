@@ -942,26 +942,61 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         //Log(MSG_INFO, "Number buff = %i",Value);*/
 
         //Tomiz : Bonus from int. for buffs
-        if(thisskill->buff[i] == A_DASH || thisskill->buff[i] == MOV_SPEED) Value += (Evalue - 15) / 15;//MOV_SPEED(52) / A_DASH(23)
-        if(thisskill->buff[i] == A_ATTACK ) Value += (int)((Evalue - 15) / 3.45);//A_ATTACK(18)
-        if(thisskill->buff[i] == A_HASTE ) Value += (int)((Evalue - 15) / 28);//A_HASTE(24)
-        if(thisskill->buff[i] == A_CRITICAL || thisskill->buff[i] == CRITICAL) Value += (int)((Evalue - 15) / 18);//A_CRITICAL(26) / CRITICAL(100)
-        if(thisskill->buff[i] == A_ACCUR || thisskill->buff[i] == ATK_ACCURACY) Value += (int)((Evalue - 15) / 18);//A_ACCUR(20) / ATK_ACCURACY(99)
-        if(thisskill->buff[i] == A_DODGE || thisskill->buff[i] == DODGE) Value += (int)((Evalue - 15) / 8);//A_DODGE(22) / DODGE(101)
-        if(thisskill->buff[i] == A_DEFENSE || thisskill->buff[i] == DEFENSE) Value += (int)((Evalue - 15) / 10);//A_DEFENSE(19) / DEFENSE(53)
-        if(thisskill->buff[i] == A_HP ) Value += (int)((Evalue - 15) / 1.5);//A_HP(16) (like staminal assist soldier skill (id.241-249))
-        if(thisskill->buff[i] == A_MP ) Value += (int)((Evalue - 15) / 0.315);//A_MP(17) (like spirit boost mage skill (id.901-909))
-        //A_MRESIST(21) / MAGIC_RESISTENCE_2(98)
-        //A_MAX_HP(38) /  MAX_HP(54)
-        //A_MAX_MP(39) /
-        //A_HP_REC_RATE(27) / HP_REC_AMONT5(56)
-        //A_MP_REC_RATE(28) / MP_REC_RATE(57)
-        //A_INVENTORY_CAPACITY(25) / BAGPACK_CAPACITY(58)
-        //MP_COST_RED(61) / MP_CONSUME(29)
-        //SUMMON_GAUGE(62)
-        else Value += (Evalue-15)/32;
+        switch (thisskill->buff[i])
+        {
+            case A_DASH:
+            case MOV_SPEED://MOV_SPEED(52) / A_DASH(23)
+                Value += (int)((Evalue - 15) / 10.3);
+            break;
+            case A_ATTACK://A_ATTACK(18)
+            {
+                if (thisskill-> id >985 && thisskill->id < 995)//Wallop Charm
+                    Value += (int)((Evalue - 15) / 30);
+                else
+                    Value += (int)((Evalue - 15) / 3.15);
+            }
+            break;
+            case A_HASTE://A_HASTE(24)
+                Value += (int)((Evalue - 15) / 15.8);
+            break;
+            case A_CRITICAL:
+            case CRITICAL://A_CRITICAL(26) / CRITICAL(100)
+                Value += (int)((Evalue - 15) / 12.8);
+            break;
+            case A_ACCUR:
+            case ATK_ACCURACY://A_ACCUR(20) / ATK_ACCURACY(99)
+                Value += (int)((Evalue - 15) / 12.8);
+            break;
+            case A_DODGE:
+            case DODGE://A_DODGE(22) / DODGE(101)
+                Value += (int)((Evalue - 15) / 6.25);
+            break;
+            case A_DEFENSE:
+            case DEFENSE://A_DEFENSE(19) / DEFENSE(53)
+            {
+                if (thisskill-> id >300 && thisskill->id < 306)//Durability Assist (id.301-305)
+                    Value += (int)((Evalue - 15) / 6.2);
+                else
+                    Value += (int)((Evalue - 15) / 12);
+            }
+            break;
+            case A_HP://A_HP(16) (like staminal assist soldier skill (id.241-249))
+                Value += (int)((Evalue - 15) / 1.42);
+            break;
+            case A_MP://A_MP(17) (like spirit boost mage skill (id.901-909))
+                Value += (int)((Evalue - 15) / 0.315);
+            break;
+            case A_ADDDMG:
+                Log(MSG_INFO, "Add Dmg (%i) Skill Int bonus value is not coded yet!",thisskill->buff[i]);//Add dmg
+            break;
+            default:
+                (MSG_INFO, " (%i) Skill Int bonus value is not coded yet!",thisskill->buff[i]);
+            break;
+        }
+
         Log(MSG_INFO, "Buff = %i , Buff Value = %i With %i int give %i bonus", thisskill->buff[i],thisskill->value1[i], Evalue, Value);
         //Tomiz : END Bonus from int. for buffs
+
     }
     if(Buff)
     {
