@@ -859,7 +859,8 @@ CLAN* CPlayer::GetClan( )
 // return intelligence
 unsigned int CPlayer::GetInt( )
 {
-    return Attr->Int;
+    //return Attr->Int;
+    return (Attr->Int + Attr->Eint); //Tomiz : We need to take int from cloth,gem,ect into consideration(ExtraInt/Eint)
 }
 
 // add item [return item slot [0xffff if couldn't add it]]

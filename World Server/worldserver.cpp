@@ -713,9 +713,9 @@ void CWorldServer::LoadCommandLevels( void )
 // Incoming packet
 bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
 {
-    //Maxxon
+    /*//Maxxon
     pthread_mutex_lock( &GServer->PlayerMutex );
-    pthread_mutex_lock( &GServer->MapMutex );
+    pthread_mutex_lock( &GServer->MapMutex );*/
 
 	switch( P->Command )
 	{
@@ -790,10 +790,9 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
 		break;
 	}
 
-	//Maxxon
+	/*//Maxxon
     pthread_mutex_unlock( &GServer->MapMutex );
-    pthread_mutex_unlock( &GServer->PlayerMutex );
-
+    pthread_mutex_unlock( &GServer->PlayerMutex );*/
 
 	return true;
 }

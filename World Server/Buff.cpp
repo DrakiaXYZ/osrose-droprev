@@ -54,12 +54,51 @@ bool CWorldServer::InstantBuff( CSkills* thisskill, CCharacter* character, int E
             {
                 if(character->Stats->HP <= 0) //character is dead
                     return true;
-                //Log(MSG_INFO,"Character %i HP is initially %I64i", character->clientid, character->Stats->HP);
-                character->Stats->HP += (long int)thisskill->value1[i]; //apparently there is no buff here. // + Evalue - 8;
+                Log(MSG_INFO,"Character %i HP is initially %I64i", character->clientid, character->Stats->HP);
+                //character->Stats->HP += (long int)thisskill->value1[i]; //apparently there is no buff here. // + Evalue - 8;
                 //Log(MSG_INFO,"Character %i healed by %i points",character->clientid, thisskill->value1[i]);
+                if (thisskill->id>920 && thisskill->id<926)//Cure (id.921-925)
+                {
+                    long int healpoint = (long int)(thisskill->value1[i] + ((Evalue - 15) * 1.5863));
+                    character->Stats->HP += thisskill->value1[i] + healpoint;
+                    Log(MSG_INFO,"Character %i Cure healed by %i points with %i int",character->clientid, healpoint, Evalue);
+                }
+                if (thisskill->id>980 && thisskill->id<986)//Recovery (id.981-985)
+                {
+                    long int healpoint = (long int)(thisskill->value1[i] + ((Evalue - 15) * 3.6493));
+                    character->Stats->HP += thisskill->value1[i] + healpoint;
+                    Log(MSG_INFO,"Character %i Recovery healed by %i points with %i int",character->clientid, healpoint, Evalue);
+                }
+                if (thisskill->id>1030 && thisskill->id<1036)//Party Heal (id.1031-1035)
+                {
+                    long int healpoint = (long int)(thisskill->value1[i] + ((Evalue - 15) * 1.7608));
+                    character->Stats->HP += thisskill->value1[i] + healpoint;
+                    Log(MSG_INFO,"Character %i Party Heal healed by %i points with %i int",character->clientid, healpoint, Evalue);
+                }
+                if (thisskill->id>1040 && thisskill->id<1046)//Intergrity (id.1041-1045)
+                {
+                    long int healpoint = (long int)(thisskill->value1[i] + ((Evalue - 15) * 3.3663));
+                    character->Stats->HP += thisskill->value1[i] + healpoint;
+                    Log(MSG_INFO,"Character %i Integrity healed by %i points with %i int",character->clientid, healpoint, Evalue);
+                }
+                if (thisskill->id>1240 && thisskill->id<1246)//Heavently Grace (id.1241-1245)
+                {
+                    long int healpoint = (long int)(thisskill->value1[i] + ((Evalue - 15) * 9.2050));
+                    character->Stats->HP += thisskill->value1[i] + healpoint;
+                    Log(MSG_INFO,"Character %i Heavently Grace healed by %i points with %i int",character->clientid, healpoint, Evalue);
+
+                }
+                if (thisskill->id>6099 && thisskill->id<6105)//Restoration (id.6100-6104)
+                {
+                    long int healpoint = (long int)(thisskill->value1[i] + ((Evalue - 15) * 4.1259));
+                    character->Stats->HP += thisskill->value1[i] + healpoint;
+                    Log(MSG_INFO,"Character %i Restoration healed by %i points with %i int",character->clientid, healpoint, Evalue);
+                }
                 if(character->Stats->HP > character->Stats->MaxHP )
+                {
                     character->Stats->HP = character->Stats->MaxHP;
-                //Log(MSG_INFO,"Character %i HP is now %I64i", character->clientid, character->Stats->HP);
+                }
+                Log(MSG_INFO,"Character %i HP is now %I64i", character->clientid, character->Stats->HP);
                 return true;
             }
         }
@@ -71,7 +110,9 @@ bool CWorldServer::InstantBuff( CSkills* thisskill, CCharacter* character, int E
                 //Log(MSG_INFO,"Character %i MP was %I64i", character->clientid, character->Stats->MP);
                 character->Stats->MP += (long int)thisskill->value1[i];
                 if(character->Stats->MP > character->Stats->MaxMP)
+                {
                     character->Stats->MP = character->Stats->MaxMP;
+                }
                 //Log(MSG_INFO,"Character %i MP is now %I64i", character->clientid, character->Stats->MP);
                 return true;
             }
@@ -87,7 +128,9 @@ bool CWorldServer::InstantBuff( CSkills* thisskill, CCharacter* character, int E
                     if(thisclient == NULL)return false;
                     thisclient->CharInfo->stamina += (long int)thisskill->value1[i];
                     if(thisclient->CharInfo->stamina > 5000)
+                    {
                         thisclient->CharInfo->stamina = 5000;
+                    }
                     //Log(MSG_INFO,"Character %i Stamina is now %i", character->clientid, thisclient->CharInfo->stamina);
                     return true;
                 }
@@ -293,11 +336,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Attack_Power;
+
                     character->Stats->Attack_Power = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Attack_up = j;
                     else
                         character->Status->Attack_down = j;
+                    Log( MSG_INFO, "Attack Power buff position %i. Atk(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -319,11 +367,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Defense;
+
                     character->Stats->Defense = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Defense_up = j;
                     else
                         character->Status->Defense_down = j;
+                    Log( MSG_INFO, "Deffence buff position %i. Deff(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -344,11 +397,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Accury;
+
                     character->Stats->Accury = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Accury_up = j;
                     else
                         character->Status->Accury_down = j;
+                    Log( MSG_INFO, "Accuracy buff position %i. Acc(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -369,11 +427,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Magic_Defense;
+
                     character->Stats->Magic_Defense = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Magic_Defense_up = j;
                     else
                         character->Status->Magic_Defense_down = j;
+                    Log( MSG_INFO, "Magic Resistance buff position %i. MDef(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -394,11 +457,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Dodge;
+
                     character->Stats->Dodge = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Dodge_up = j;
                     else
                         character->Status->Dodge_down = j;
+                    Log( MSG_INFO, "Dodge buff position %i. Dr(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -452,11 +520,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Attack_Speed;
+
                     character->Stats->Attack_Speed = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Haste_up = j;
                     else
                         character->Status->Haste_down = j;
+                    Log( MSG_INFO, "Attack Speed buff position %i. ASpeed(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -477,11 +550,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue != 0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->Critical;
+
                     character->Stats->Critical = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Critical_up = j;
                     else
                         character->Status->Critical_down = j;
+                    Log( MSG_INFO, "Critical buff position %i. Crit(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
@@ -853,14 +931,37 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
     if( thisskill->value2[i] > 0 )
     {
         Value = NormalValue * thisskill->value2[i] / 100;
+        //Log(MSG_INFO, "Percentage Buff Value = %i %",thisskill->value2[i]);
         //Log(MSG_INFO, "Percentage buff = %i",Value);
     }
     if( thisskill->value1[i] > 0 )
     {
         Value += thisskill->value1[i];
-        if(thisskill->buff[i] == A_DASH || thisskill->buff[i] == MOV_SPEED) Value += (Evalue - 15) / 10;
+        /*if(thisskill->buff[i] == A_DASH || thisskill->buff[i] == MOV_SPEED) Value += (Evalue - 15) / 10;
         else Value += (Evalue-15)/32;
-        //Log(MSG_INFO, "Number buff = %i",Value);
+        //Log(MSG_INFO, "Number buff = %i",Value);*/
+
+        //Tomiz : Bonus from int. for buffs
+        if(thisskill->buff[i] == A_DASH || thisskill->buff[i] == MOV_SPEED) Value += (Evalue - 15) / 15;//MOV_SPEED(52) / A_DASH(23)
+        if(thisskill->buff[i] == A_ATTACK ) Value += (int)((Evalue - 15) / 3.45);//A_ATTACK(18)
+        if(thisskill->buff[i] == A_HASTE ) Value += (int)((Evalue - 15) / 28);//A_HASTE(24)
+        if(thisskill->buff[i] == A_CRITICAL || thisskill->buff[i] == CRITICAL) Value += (int)((Evalue - 15) / 18);//A_CRITICAL(26) / CRITICAL(100)
+        if(thisskill->buff[i] == A_ACCUR || thisskill->buff[i] == ATK_ACCURACY) Value += (int)((Evalue - 15) / 18);//A_ACCUR(20) / ATK_ACCURACY(99)
+        if(thisskill->buff[i] == A_DODGE || thisskill->buff[i] == DODGE) Value += (int)((Evalue - 15) / 8);//A_DODGE(22) / DODGE(101)
+        if(thisskill->buff[i] == A_DEFENSE || thisskill->buff[i] == DEFENSE) Value += (int)((Evalue - 15) / 10);//A_DEFENSE(19) / DEFENSE(53)
+        if(thisskill->buff[i] == A_HP ) Value += (int)((Evalue - 15) / 1.5);//A_HP(16) (like staminal assist soldier skill (id.241-249))
+        if(thisskill->buff[i] == A_MP ) Value += (int)((Evalue - 15) / 0.315);//A_MP(17) (like spirit boost mage skill (id.901-909))
+        //A_MRESIST(21) / MAGIC_RESISTENCE_2(98)
+        //A_MAX_HP(38) /  MAX_HP(54)
+        //A_MAX_MP(39) /
+        //A_HP_REC_RATE(27) / HP_REC_AMONT5(56)
+        //A_MP_REC_RATE(28) / MP_REC_RATE(57)
+        //A_INVENTORY_CAPACITY(25) / BAGPACK_CAPACITY(58)
+        //MP_COST_RED(61) / MP_CONSUME(29)
+        //SUMMON_GAUGE(62)
+        else Value += (Evalue-15)/10;
+        Log(MSG_INFO, "Buff Value = %i With %i int give %i bonus", thisskill->value1[i], Evalue, Value);
+        //Tomiz : END Bonus from int. for buffs
     }
     if(Buff)
     {
@@ -929,9 +1030,11 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
     if(character->Status->Haste_down != 0xff)//A_HASTE:
                 buff2 += HASTE_DOWN;
     if(character->Status->HP_down != 0xff)//A_HP:
-                buff1 += 0;
+                //buff1 += 0;
+                buff1 += HP_UP;
     if(character->Status->MP_down != 0xff)//A_MP:
-                buff1 += 0;
+                //buff1 += 0;
+                buff1 += MP_UP;
     if(character->Status->Critical_down != 0xff)//A_CRITICAL:
                 buff3 += CRITICAL_DOWN;
     if(character->IsSummon( ))
@@ -1011,9 +1114,11 @@ unsigned int CWorldServer::BuildDeBuffs( CCharacter* character )
     if(character->Status->Haste_down != 0xff)//A_HASTE:
                 buff2 += HASTE_DOWN;
     if(character->Status->HP_down != 0xff)//A_HP:
-                buff1 += 0;
+                //buff1 += 0;
+                buff1 += HP_UP;
     if(character->Status->MP_down != 0xff)//A_MP:
-                buff1 += 0;
+                //buff1 += 0;
+                buff1 += MP_UP;
     if(character->Status->Critical_down != 0xff)//A_CRITICAL:
                 buff3 += CRITICAL_DOWN;
     if(character->IsSummon( ))

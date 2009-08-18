@@ -34,7 +34,7 @@ unsigned int CPlayer::GetDodge( )
 
     for(UINT i=1;i<9;i++)//Refine
     {
-        if(i==7)//Weapon
+        if(i==7 || i==1)//Weapon, Mask
         {
             continue;
         }
@@ -46,7 +46,7 @@ unsigned int CPlayer::GetDodge( )
                 continue;
             }
 
-            if(items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
+            if(items[i].itemtype== MASK || items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
             {
                 Log(MSG_WARNING, "Char %s have equip some item who shouldn't add dodge in slot %i", CharInfo->charname, i );
                 continue;
@@ -446,7 +446,7 @@ unsigned int CPlayer::GetMagicDefense( )
 
     for(UINT i=1;i<9;i++)//Refine
     {
-        if(i==7)//Weapon
+        if(i==7 || i==1)//Weapon, Mask
         {
             continue;
         }
@@ -458,7 +458,7 @@ unsigned int CPlayer::GetMagicDefense( )
                 continue;
             }
 
-            if(items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
+            if(items[i].itemtype== MASK || items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
             {
                 Log(MSG_WARNING, "Char %s have equip some item who shouldn't add mdeff in slot %i", CharInfo->charname, i );
                 continue;
@@ -475,16 +475,9 @@ unsigned int CPlayer::GetMagicDefense( )
                 {
                     case 0://[TODO]Extra Refine % for Item Grade 0 / Mileage Item
                     {
-                        extra_refine_mdef[1] += 6;      //Refine 1
-                        extra_refine_mdef[2] += 13;
-                        extra_refine_mdef[3] += 20;
-                        extra_refine_mdef[4] += 30;
-                        extra_refine_mdef[5] += 40;
-                        extra_refine_mdef[6] += 50;
-                        extra_refine_mdef[7] += 65;
-                        extra_refine_mdef[8] += 80;
-                        extra_refine_mdef[9] += 96;    //Refine 9
+                        Log(MSG_INFO,"Item Grade 0 Mileage M_Defence Refine Is not coded yet");
                     }
+                    break;
                     case 1://Extra Refine % for Item Grade 1
                     {
                         extra_refine_mdef[1] += 10;     //ok Refine 1
@@ -589,35 +582,24 @@ unsigned int CPlayer::GetMagicDefense( )
                         extra_refine_mdef[9] += 96;    //Refine 9
                     }
                     break;
-                    case 9://[TODO] Not Ingame Yet : Extra Refine % for Item Grade 9
+                    case 9://[TODO]Not Ingame Yet : Extra Refine % for Item Grade 9
                     {
-                        extra_refine_mdef[1] += 6;      //Refine 1
-                        extra_refine_mdef[2] += 13;
-                        extra_refine_mdef[3] += 20;
-                        extra_refine_mdef[4] += 30;
-                        extra_refine_mdef[5] += 40;
-                        extra_refine_mdef[6] += 50;
-                        extra_refine_mdef[7] += 65;
-                        extra_refine_mdef[8] += 80;
-                        extra_refine_mdef[9] += 96;    //Refine 9
+                        Log(MSG_INFO,"Item Grade 9 M_Defence Refine Is not coded yet");
                     }
                     break;
-                    case 15://Extra Refine % for Item Grade 15 /GM Clothes
+                    case 14://[TODO]Extra Refine % for Item Grade 14 //Event Item
                     {
-                        extra_refine_mdef[1] += 6;      //Refine 1
-                        extra_refine_mdef[2] += 13;
-                        extra_refine_mdef[3] += 20;
-                        extra_refine_mdef[4] += 30;
-                        extra_refine_mdef[5] += 40;
-                        extra_refine_mdef[6] += 50;
-                        extra_refine_mdef[7] += 65;
-                        extra_refine_mdef[8] += 80;
-                        extra_refine_mdef[9] += 96;    //Refine 9
+                        Log(MSG_INFO,"Event Item M_Defence Refine Is not coded yet");
+                    }
+                    break;
+                    case 15://[TODO]Extra Refine % for Item Grade 15 /GM Clothes
+                    {
+                        Log(MSG_INFO,"GM CLoth M_Defence Refine Is not coded yet");
                     }
                     break;
                     default:
                     {
-                        Log(MSG_WARNING,"Weird itemgrade value: %i:",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
+                        Log(MSG_WARNING,"Weird itemgrade value: %i : M_Defence Refine Is not coded yet",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
                     }
                     break;
                 }
@@ -1498,7 +1480,7 @@ unsigned int CPlayer::GetDefense( )
 
     for(UINT i=1;i<9;i++)//Refine
     {
-        if(i==7)//Weapon
+        if(i==7 || i==1)//Weapon, Mask
         {
             continue;
         }
@@ -1510,7 +1492,7 @@ unsigned int CPlayer::GetDefense( )
                 continue;
             }
 
-            if(items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
+            if( items[i].itemtype== MASK || items[i].itemtype==JEWEL || items[i].itemtype==WEAPON || items[i].count<1 )
             {
                 Log(MSG_WARNING, "Char %s have equip some item who shouldn't add deff in slot %i", CharInfo->charname, i );
                 continue;
@@ -1526,16 +1508,9 @@ unsigned int CPlayer::GetDefense( )
                 {
                     case 0://[TODO]Extra Refine % for Item Grade 0 / Mileage Item
                     {
-                        extra_refine[1] += 6;       //Refine 1
-                        extra_refine[2] += 13;
-                        extra_refine[3] += 20;
-                        extra_refine[4] += 30;
-                        extra_refine[5] += 40;
-                        extra_refine[6] += 50;
-                        extra_refine[7] += 65;
-                        extra_refine[8] += 80;
-                        extra_refine[9] += 96;      //Refine 9
+                        Log(MSG_INFO,"Item Grade 0 Mileage Defence Refine Is not coded yet");
                     }
+                    break;
                     case 1://Extra Refine % for Item Grade 1
                     {
                         extra_refine[1] += 15;      //ok Refine 1
@@ -1642,33 +1617,22 @@ unsigned int CPlayer::GetDefense( )
                     break;
                     case 9://[TODO]Not Ingame Yet : Extra Refine % for Item Grade 9
                     {
-                        extra_refine[1] += 6;       //Refine 1
-                        extra_refine[2] += 13;
-                        extra_refine[3] += 20;
-                        extra_refine[4] += 30;
-                        extra_refine[5] += 40;
-                        extra_refine[6] += 50;
-                        extra_refine[7] += 60;
-                        extra_refine[8] += 75;
-                        extra_refine[9] += 95;      //Refine 9
+                        Log(MSG_INFO,"Item Grade 9 Defence Refine Is not coded yet");
+                    }
+                    break;
+                    case 14://[TODO]Extra Refine % for Item Grade 14 //Event Item
+                    {
+                        Log(MSG_INFO,"Event Item Defence Refine Is not coded yet");
                     }
                     break;
                     case 15://[TODO]Extra Refine % for Item Grade 15 //GM Cloths
                     {
-                        extra_refine[1] += 6;       //Refine 1
-                        extra_refine[2] += 13;      //
-                        extra_refine[3] += 20;      //
-                        extra_refine[4] += 30;      //
-                        extra_refine[5] += 40;      //
-                        extra_refine[6] += 50;      //
-                        extra_refine[7] += 63;      //
-                        extra_refine[8] += 78;      //
-                        extra_refine[9] += 95;      //Refine 9
+                        Log(MSG_INFO,"GM CLoth Defence Refine Is not coded yet");
                     }
                     break;
                     default:
                     {
-                        Log(MSG_WARNING,"Weird itemgrade value: %i:",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
+                        Log(MSG_WARNING,"Weird itemgrade value: %i : Defence Refine Is not coded yet",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
                     }
                     break;
                 }
