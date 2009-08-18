@@ -959,8 +959,8 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         //A_INVENTORY_CAPACITY(25) / BAGPACK_CAPACITY(58)
         //MP_COST_RED(61) / MP_CONSUME(29)
         //SUMMON_GAUGE(62)
-        else Value += (Evalue-15)/10;
-        Log(MSG_INFO, "Buff Value = %i With %i int give %i bonus", thisskill->value1[i], Evalue, Value);
+        else Value += (Evalue-15)/32;
+        Log(MSG_INFO, "Buff = %i , Buff Value = %i With %i int give %i bonus", thisskill->buff[i],thisskill->value1[i], Evalue, Value);
         //Tomiz : END Bonus from int. for buffs
     }
     if(Buff)
