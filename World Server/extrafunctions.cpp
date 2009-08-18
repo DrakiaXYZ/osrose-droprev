@@ -1410,8 +1410,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 //                else if(useitem->itemnum==944){useitem->usevalue = 172;} // Arua's Blessing
                 else{ useitem->usevalue = useitem->itemnum + 500; }
             }
-            else // Snowball & Rock
-            if( ( useitem->itemnum==326 ) || ( useitem->itemnum==327 ) )
+            else // Snowball & Rock & Throwing Ball
+            if( ( useitem->itemnum==326 ) || ( useitem->itemnum==327 ) || ( useitem->itemnum==937 ) )
             {
                 useitem->usescript = 6;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
