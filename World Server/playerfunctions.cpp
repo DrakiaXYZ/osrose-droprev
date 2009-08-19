@@ -863,6 +863,12 @@ unsigned int CPlayer::GetInt( )
     return (Attr->Int + Attr->Eint); //Tomiz : We need to take int from cloth,gem,ect into consideration(ExtraInt/Eint)
 }
 
+// return Sensibility
+unsigned int CPlayer::GetSen( )
+{
+    return (Attr->Sen + Attr->Esen); //Tomiz : We need to take sen from cloth,gem,ect into consideration(ExtraSen/Esen)
+}
+
 // add item [return item slot [0xffff if couldn't add it]]
 unsigned int CPlayer::AddItem( CItem item )
 {

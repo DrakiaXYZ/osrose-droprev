@@ -1399,13 +1399,33 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         }
 
     }
-
-    skillpower+=skill->atkpower +(long int)floor(GetInt( )/2);
-    skillpower+=skillpower*GetInt( )/10000;
-    skillpower-=skillpower*Stats->Magic_Defense / 10000;
-    skillpower-= Stats->Magic_Defense * 5 / 100;
-    Log(MSG_INFO,"%i cast Skill, Attack power %u, skillpower %li, MD %u, level diff %li, to %i",clientid,skill->atkpower,skillpower,Enemy->Stats->Magic_Defense,level_diff,Enemy->clientid);
-    //Skill power calculations LMA/Tomiz : New Way
+    switch(skill->formula)//Magical Or Weapon Type Skill?
+    {
+        case 1://Weapon type dmg
+        {
+            skillpower+=skill->atkpower +(long int)floor(GetSen( )/2);
+            skillpower+=skillpower*GetSen( )/10000;
+            skillpower-=skillpower*Stats->Defense / 10000;
+            skillpower-= Stats->Defense * 5 / 100;
+            Log(MSG_INFO,"%i cast Weapon Dmg Skill with %i sen, Attack power %u, skillpower %li, Deff %u, level diff %li, to %i",clientid,GetSen( ),skill->atkpower,skillpower,Enemy->Stats->Defense,level_diff,Enemy->clientid);
+        }
+        break;
+        case 2://Magical type dmg
+        {
+            skillpower+=skill->atkpower +(long int)floor(GetInt( )/2);
+            skillpower+=skillpower*GetInt( )/10000;
+            skillpower-=skillpower*Stats->Magic_Defense / 10000;
+            skillpower-= Stats->Magic_Defense * 5 / 100;
+            Log(MSG_INFO,"%i cast Magical Dmg Skill with %i int, Attack power %u, skillpower %li, MDeff %u, level diff %li, to %i",clientid,GetInt( ),skill->atkpower,skillpower,Enemy->Stats->Magic_Defense,level_diff,Enemy->clientid);
+        }
+        break;
+        default:
+        {
+            Log(MSG_INFO,"%i cast Unknow Formula Skill (%i), Attack power %u, skillpower %li, Deff %u,MDeff %u, level diff %li, to %i",clientid,skill->formula,skill->atkpower,skillpower,Enemy->Stats->Defense,Enemy->Stats->Magic_Defense,level_diff,Enemy->clientid);
+        }
+        break;
+    }
+    //END Skill power calculations LMA/Tomiz : New Way
 
     //Tell enemy he's attacked & add damage & send the dmg packet
 

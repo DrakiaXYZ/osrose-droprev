@@ -767,6 +767,7 @@ bool CWorldServer::LoadSkillData( )
         }
 
         newskill->duration = STB_SKILL.rows[i][14];   // Duration
+        newskill->formula = STB_SKILL.rows[i][15];   //skill type magical or weapon
         newskill->costtype[0] = STB_SKILL.rows[i][16];   //not all costs are in MP
         newskill->costamount[0] = STB_SKILL.rows[i][17]; //some are in HP or Stamina
         newskill->mp = STB_SKILL.rows[i][17];

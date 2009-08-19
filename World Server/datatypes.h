@@ -801,6 +801,7 @@ struct CSkills {
     UINT costtype[2]; // New
     UINT costamount[2]; // New
     UINT duration;
+    UINT formula;//skill type magical or weapon
     UINT atkpower;
     UINT mp;
     UINT costtype2; // New

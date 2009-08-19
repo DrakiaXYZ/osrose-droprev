@@ -244,6 +244,7 @@ class CPlayer: public CCharacter
     void GetExtraStatsSkills( );
     unsigned int GetLevelEXP( );
     unsigned int GetInt( );
+    unsigned int GetSen( );
     unsigned getWeaponType();
     bool AddClanPoints(unsigned int count);
     void RebuildItemMall(); //LMA: Rebuild player's itemmall.

@@ -460,6 +460,11 @@ unsigned int CCharacter::GetInt( )
     return 15;
 }
 
+// VIRTUAL [return Sensibility]
+unsigned int CCharacter::GetSen( )
+{
+    return 15;
+}
 
 void CCharacter::RefreshBuff( )
 {
@@ -654,7 +659,7 @@ void CCharacter::RefreshBuff( )
                     Status->ExtraDamage_down = 0xff;
                     Status->ShieldDamage_down = 0xff;
                     //Bad Status
-                    Status->Stuned = 0xff;
+                    Status->Stun = 0xff;
                     Status->Poisoned = 0xff;
                     Status->Muted = 0xff;
                     Status->Sleep = 0xff;
