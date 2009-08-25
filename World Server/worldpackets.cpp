@@ -768,8 +768,7 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
         SendToVisible( &pak, thisclient );
         */
    }
-
-
+    thisclient->SetStats( );
 	return true;
 }
 
@@ -1369,6 +1368,7 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 
     //thisclient->UpdateInventory( srcslot, destslot );
 	//thisclient->Stats->Move_Speed = thisclient->GetMoveSpeed( );
+	thisclient->SetStats( );
 	return true;
 }
 
