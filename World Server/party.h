@@ -30,6 +30,7 @@ class CParty
         ~CParty( );
 
         UINT PartyId;
+        void RefreshMax();
         CPlayer* GetMember( UINT id );
         CPlayer* GetMemberByCharID( UINT charid );
         void SendToMembers( CPacket* pak, CPlayer* exclient=NULL );
@@ -46,7 +47,7 @@ class CParty
         UINT LastZulies;
         UINT Capacity;
         vector<CPlayer*> Members;
-        CPartyExp* PartyExp;
+        //CPartyExp* PartyExp;
 };
 
 #endif

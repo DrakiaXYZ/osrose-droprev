@@ -82,7 +82,9 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                     CPartyExp* thisparty = PartyExp.at( i );
                     if( thisparty->thisparty == thisclient->Party->party )
                     {
-                        thisparty->exp += exp;
+                        //LMA: We get exp only if we deserve it.
+                        //thisparty->exp += exp;
+                        thisparty->exp += GetColorExp( thisclient->Stats->Level, thismon->thisnpc->level + special_lvl, exp );
                         //LMA: bug...
                         //thisparty->exp += exp * (unsigned long long) ((thisclient->Party->party->PartyLevel*2) / 100);
                         thisparty->exp += (unsigned long long) ((exp*thisclient->Party->party->PartyLevel*2) / 100);
@@ -94,7 +96,9 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                 {
                     CPartyExp* thisparty = new CPartyExp;
                     thisparty->thisparty = thisclient->Party->party;
+                    //LMA: We get exp only if we deserve it.
                     thisparty->exp = exp;
+                    thisparty->exp = GetColorExp( thisclient->Stats->Level, thismon->thisnpc->level + special_lvl, exp );
                     thisparty->flag = false;
                     //LMA: bug
                     //thisparty->exp += exp * (unsigned long long) ((thisclient->Party->party->PartyLevel*2) / 100);
