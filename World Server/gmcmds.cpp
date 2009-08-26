@@ -1055,6 +1055,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
            Log( MSG_GMACTION, " %s : /gmskills NOT ALLOWED" , thisclient->CharInfo->charname);
            return true;
         }
+
            /*
            char buffer[200];
            sprintf ( buffer, "gmskills NOT ALLOWED");

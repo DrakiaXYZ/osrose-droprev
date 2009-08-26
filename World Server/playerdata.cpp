@@ -107,11 +107,12 @@ bool CPlayer::loaddata( )
 
     last_fuel=0;
 
-    Shop->ShopType=atoi(row[43]);
-    Shop->mil_shop_time=atoi(row[44]);
+    Shop->ShopType=atoi(row[37]);
+    Shop->mil_shop_time=atoi(row[38]);
 
     //GM Additional Security by PurpleYouKo
-    CharInfo->isGM=atoi(row[45]);   // GM Security
+    //CharInfo->isGM=atoi(row[45]);   // GM Security
+    CharInfo->isGM=atoi(row[39]);   // GM Security
 
     //resetting some values:
     sp_hp=0;
