@@ -3586,8 +3586,20 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             //    ClearItem( thisclient->items[slot] );
             flag = true;
         break;
-        case 1: // Food
+        case 1: // Food and mana jam
         {
+            //LMA: Skill points (Mana Jam)
+            if(thisuse->usetype==37)
+            {
+                thisclient->CharInfo->SkillPoints+=thisuse->usevalue;
+                BEGINPACKET( pak,0x7a3 );
+                ADDWORD    ( pak, thisclient->clientid );
+                ADDWORD    ( pak, thisuse->itemnum );
+                SendToVisible( &pak, thisclient );
+                flag = true;
+                break;
+            }
+
             thisclient->UsedItem->usevalue = thisuse->usevalue;
             thisclient->UsedItem->usetype = thisuse->usetype;
             thisclient->UsedItem->userate = 15;
