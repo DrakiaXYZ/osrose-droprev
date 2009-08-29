@@ -54,25 +54,18 @@ unsigned int CPlayer::GetDodge( )
 
             Dodge += (UINT)floor(items[i].durability * 0.3);
 
-            /*if(items[i].refine>0)//Old Way : Refine Add Dodge For Match with Stats on Cloth
+            if(items[i].refine>0)
             {
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine<10)
+                if(refine>0 && refine<10)//Dr From Refine
                 {
-                    UINT extra_refine_dr[10] = {0, 2, 7, 17, 27, 53, 68, 86, 93, 120};
-                    Dodge += (UINT)floor(extra_refine_dr[refine] * 0.01 * (items[i].durability * 0.3));
-                }
-            }*/
+                    UINT extra_refine_drv[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};//uncomment this line and comment the other listed below for match client value
+                    //UINT extra_refine_drv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value : don't Match with Client Value you need to comment this line to match client value
+                    //UINT extra_refine_drp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//% : don't Match with Client Value you need to comment this line to match client value
 
-            if(items[i].refine>0)//New Way : Refine Add Dodge For Match with Client Value
-            {
-                UINT refine = (UINT)floor(items[i].refine/16);
-
-                if(refine<10)
-                {
-                    UINT extra_refine_dr[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-                    Dodge += (UINT)floor(extra_refine_dr[refine]);
+                    Dodge += (UINT)floor(extra_refine_drv[refine]);
+                    //Dodge += (UINT)floor(extra_refine_drp[refine] * 0.01 * (items[i].durability * 0.3) );//don't Match with Client Value you need to comment this line to match client value
                 }
             }
         }
@@ -780,161 +773,17 @@ unsigned int CPlayer::GetMagicDefense( )
 
             MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence;
 
-            //Refine : Way to match stat Value of Equipement
-            /*if(items[i].refine>0)
-            {
-                UINT extra_refine_mdef[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-                switch(GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade)// % / Item Grade
-                {
-                    case 0://[TODO]Extra Refine % for Item Grade 0 / Mileage Item
-                    {
-                        Log(MSG_INFO,"Item Grade 0 Mileage M_Defence Refine Is not coded yet");
-                    }
-                    break;
-                    case 1://Extra Refine % for Item Grade 1
-                    {
-                        extra_refine_mdef[1] += 10;     //ok Refine 1
-                        extra_refine_mdef[2] += 20;     //ok
-                        extra_refine_mdef[3] += 40;     //ok
-                        extra_refine_mdef[4] += 55;     //ok
-                        extra_refine_mdef[5] += 90;     //ok
-                        extra_refine_mdef[6] += 110;    //ok
-                        extra_refine_mdef[7] += 150;    //ok
-                        extra_refine_mdef[8] += 190;    //ok
-                        extra_refine_mdef[9] += 240;    //ok Refine 9
-                    }
-                    break;
-                    case 2://Extra Refine % for Item Grade 2
-                    {
-                        extra_refine_mdef[1] += 7;      //ok Refine 1
-                        extra_refine_mdef[2] += 16;
-                        extra_refine_mdef[3] += 26;     //ok
-                        extra_refine_mdef[4] += 42;     //ok
-                        extra_refine_mdef[5] += 56;     //ok
-                        extra_refine_mdef[6] += 72;     //ok
-                        extra_refine_mdef[7] += 95;     //ok
-                        extra_refine_mdef[8] += 115;    //ok
-                        extra_refine_mdef[9] += 140;    //ok Refine 9
-                    }
-                    break;
-                    case 3://Extra Refine % for Item Grade 3
-                    {
-                        extra_refine_mdef[1] += 7;      //ok Refine 1
-                        extra_refine_mdef[2] += 15;     //ok
-                        extra_refine_mdef[3] += 24;     //ok
-                        extra_refine_mdef[4] += 38;     //ok
-                        extra_refine_mdef[5] += 50;     //ok
-                        extra_refine_mdef[6] += 65;     //ok
-                        extra_refine_mdef[7] += 84;     //ok
-                        extra_refine_mdef[8] += 103;    //ok
-                        extra_refine_mdef[9] += 125;    //ok Refine 9
-                    }
-                    break;
-                    case 4://Extra Refine % for Item Grade 4
-                    {
-                        extra_refine_mdef[1] += 7;      //Refine 1
-                        extra_refine_mdef[2] += 14;
-                        extra_refine_mdef[3] += 22;
-                        extra_refine_mdef[4] += 33;
-                        extra_refine_mdef[5] += 45;
-                        extra_refine_mdef[6] += 57;
-                        extra_refine_mdef[7] += 73;
-                        extra_refine_mdef[8] += 91;
-                        extra_refine_mdef[9] += 109;    //Refine 9
-                    }
-                    break;
-                    case 5://[TODO]Extra Refine % for Item Grade 5
-                    {
-                        extra_refine_mdef[1] += 8;      //ok Refine 1
-                        extra_refine_mdef[2] += 14;     //ok
-                        extra_refine_mdef[3] += 21;     //ok
-                        extra_refine_mdef[4] += 33;     //ok
-                        extra_refine_mdef[5] += 44;     //ok
-                        extra_refine_mdef[6] += 55;     //ok
-                        extra_refine_mdef[7] += 70;     //ok
-                        extra_refine_mdef[8] += 85;
-                        extra_refine_mdef[9] += 105;    //Refine 9
-                    }
-                    break;
-                    case 6://[TODO]Extra Refine % for Item Grade 6
-                    {
-                        extra_refine_mdef[1] += 7;      //Refine 1
-                        extra_refine_mdef[2] += 13;
-                        extra_refine_mdef[3] += 20;
-                        extra_refine_mdef[4] += 30;
-                        extra_refine_mdef[5] += 40;
-                        extra_refine_mdef[6] += 50;
-                        extra_refine_mdef[7] += 65;
-                        extra_refine_mdef[8] += 80;
-                        extra_refine_mdef[9] += 100;    //Refine 9
-                    }
-                    break;
-                    case 7://[TODO]Extra Refine % for Item Grade 7
-                    {
-                        extra_refine_mdef[1] += 7;      //Refine 1
-                        extra_refine_mdef[2] += 13;
-                        extra_refine_mdef[3] += 20;
-                        extra_refine_mdef[4] += 30;
-                        extra_refine_mdef[5] += 40;
-                        extra_refine_mdef[6] += 50;
-                        extra_refine_mdef[7] += 65;
-                        extra_refine_mdef[8] += 80;
-                        extra_refine_mdef[9] += 97;    //Refine 9
-                    }
-                    break;
-                    case 8://Extra Refine % for Item Grade 8
-                    {
-                        extra_refine_mdef[1] += 7;      //Refine 1
-                        extra_refine_mdef[2] += 13;
-                        extra_refine_mdef[3] += 20;
-                        extra_refine_mdef[4] += 30;
-                        extra_refine_mdef[5] += 40;
-                        extra_refine_mdef[6] += 50;
-                        extra_refine_mdef[7] += 65;
-                        extra_refine_mdef[8] += 80;
-                        extra_refine_mdef[9] += 96;    //Refine 9
-                    }
-                    break;
-                    case 9://[TODO]Not Ingame Yet : Extra Refine % for Item Grade 9
-                    {
-                        Log(MSG_INFO,"Item Grade 9 M_Defence Refine Is not coded yet");
-                    }
-                    break;
-                    case 14://[TODO]Extra Refine % for Item Grade 14 //Event Item
-                    {
-                        Log(MSG_INFO,"Event Item M_Defence Refine Is not coded yet");
-                    }
-                    break;
-                    case 15://[TODO]Extra Refine % for Item Grade 15 /GM Clothes
-                    {
-                        Log(MSG_INFO,"GM CLoth M_Defence Refine Is not coded yet");
-                    }
-                    break;
-                    default:
-                    {
-                        Log(MSG_WARNING,"Weird itemgrade value: %i : M_Defence Refine Is not coded yet",GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
-                    }
-                    break;
-                }
-
-                UINT refine = (UINT)floor(items[i].refine/16);
-
-                if(refine<10)
-                {
-                    MagicDefense += (UINT)floor(extra_refine_mdef[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence);
-                }
-            }*/
-
-            //Refine : Way to match Client Value
-            if(items[i].refine>0)
+            if(items[i].refine>0)//MDeff From Refine
             {
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine<10)
+                if(refine>0 && refine<10)
                 {
-                    UINT extra_refine_mdef[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18}; //For Match with Client Value
-                    MagicDefense += (UINT)floor(extra_refine_mdef[refine]); //For Match with Client Value
+                    UINT extra_refine_mdefv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value : For Match with Client Value you need this line
+                    //UINT extra_refine_mdefp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//% : don't match with client but should be good value, comment this line to match client
+
+                    MagicDefense += (UINT)floor(extra_refine_mdefv[refine]);//Value : For Match with Client Value you need this line
+                    //MagicDefense += (UINT)floor(extra_refine_mdefp[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence );//% : don't match with client but should be good value, comment this line to match client
                 }
             }
         }
@@ -2345,148 +2194,17 @@ unsigned int CPlayer::GetDefense( )
 
             defense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense;
 
-            if(items[i].refine>0)//Def From Refine
+            if(items[i].refine>0)//Deff From Refine
             {
-                UINT extra_refine[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-                switch(GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade)// % / Item Grade
-                {
-                    case 0://[TODO]Extra Refine % for Item Grade 0 / Mileage Item
-                    {
-                        Log(MSG_INFO,"Char %s have equipped Item Grade 0 Mileage, Defence Refine Is not coded yet",CharInfo->charname);
-                    }
-                    break;
-                    case 1://Extra Refine % for Item Grade 1
-                    {
-                        extra_refine[1] += 15;      //ok Refine 1
-                        extra_refine[2] += 20;      //ok
-                        extra_refine[3] += 30;      //ok
-                        extra_refine[4] += 50;      //ok
-                        extra_refine[5] += 65;      //ok
-                        extra_refine[6] += 85;      //ok
-                        extra_refine[7] += 110;     //ok
-                        extra_refine[8] += 140;     //ok
-                        extra_refine[9] += 170;     //ok Refine 9
-                    }
-                    break;
-                    case 2://Extra Refine % for Item Grade 2
-                    {
-                        extra_refine[1] += 10;      //ok Refine 1
-                        extra_refine[2] += 18;      //ok
-                        extra_refine[3] += 25;      //ok
-                        extra_refine[4] += 35;      //ok
-                        extra_refine[5] += 50;      //ok
-                        extra_refine[6] += 65;      //ok
-                        extra_refine[7] += 85;      //ok
-                        extra_refine[8] += 105;     //ok
-                        extra_refine[9] += 125;     //ok Refine 9
-                    }
-                    break;
-                    case 3://Extra Refine % for Item Grade 3
-                    {
-                        extra_refine[1] += 10;      //ok Refine 1
-                        extra_refine[2] += 15;      //ok
-                        extra_refine[3] += 25;      //ok
-                        extra_refine[4] += 35;      //ok
-                        extra_refine[5] += 48;      //ok
-                        extra_refine[6] += 60;      //ok
-                        extra_refine[7] += 80;      //ok
-                        extra_refine[8] += 95;      //ok
-                        extra_refine[9] += 115;     //ok Refine 9
-                    }
-                    break;
-                    case 4://Extra Refine % for Item Grade 4
-                    {
-                        extra_refine[1] += 8;       //ok Refine 1
-                        extra_refine[2] += 13;      //ok
-                        extra_refine[3] += 20;      //ok
-                        extra_refine[4] += 32;      //ok
-                        extra_refine[5] += 43;      //ok
-                        extra_refine[6] += 55;      //ok
-                        extra_refine[7] += 70;      //ok
-                        extra_refine[8] += 85;      //ok
-                        extra_refine[9] += 103;     //ok Refine 9
-                    }
-                    break;
-                    case 5://Extra Refine % for Item Grade 5
-                    {
-                        extra_refine[1] += 6;       //ok Refine 1
-                        extra_refine[2] += 13;      //ok
-                        extra_refine[3] += 20;      //ok
-                        extra_refine[4] += 30;      //ok
-                        extra_refine[5] += 42;      //ok
-                        extra_refine[6] += 52;      //ok
-                        extra_refine[7] += 67;      //ok
-                        extra_refine[8] += 82;      //ok
-                        extra_refine[9] += 100;     //ok Refine 9
-                    }
-                    break;
-                    case 6://Extra Refine % for Item Grade 6
-                    {
-                        extra_refine[1] += 6;       //ok Refine 1
-                        extra_refine[2] += 13;      //ok
-                        extra_refine[3] += 20;      //ok
-                        extra_refine[4] += 30;      //ok
-                        extra_refine[5] += 40;      //ok
-                        extra_refine[6] += 50;      //ok
-                        extra_refine[7] += 65;      //ok
-                        extra_refine[8] += 80;      //ok
-                        extra_refine[9] += 96;      //ok Refine 9
-                    }
-                    break;
-                    case 7://Extra Refine % for Item Grade 7
-                    {
-                        extra_refine[1] += 6;       //ok Refine 1
-                        extra_refine[2] += 13;      //ok
-                        extra_refine[3] += 20;      //ok
-                        extra_refine[4] += 30;      //ok
-                        extra_refine[5] += 40;      //ok
-                        extra_refine[6] += 50;      //ok
-                        extra_refine[7] += 65;      //ok
-                        extra_refine[8] += 80;      //ok
-                        extra_refine[9] += 96;      //ok Refine 9
-                    }
-                    break;
-                    case 8://Extra Refine % for Item Grade 8
-                    {
-                        extra_refine[1] += 6;       //ok Refine 1
-                        extra_refine[2] += 13;      //ok
-                        extra_refine[3] += 20;      //ok
-                        extra_refine[4] += 30;      //ok
-                        extra_refine[5] += 40;      //ok
-                        extra_refine[6] += 50;      //ok
-                        extra_refine[7] += 63;      //ok
-                        extra_refine[8] += 78;      //ok
-                        extra_refine[9] += 95;      //ok Refine 9
-                    }
-                    break;
-                    case 9://[TODO]Not Ingame Yet : Extra Refine % for Item Grade 9
-                    {
-                        Log(MSG_INFO,"Char %s have equipped Item Grade 9 Defence Refine Is not coded yet",CharInfo->charname);
-                    }
-                    break;
-                    case 14://[TODO]Extra Refine % for Item Grade 14 //Event Item
-                    {
-                        Log(MSG_INFO,"Char %s have equipped Event Item, Defence Refine Is not coded yet",CharInfo->charname);
-                    }
-                    break;
-                    case 15://[TODO]Extra Refine % for Item Grade 15 //GM Cloths
-                    {
-                        Log(MSG_INFO,"Char %s have equipped GM CLoth, Defence Refine Is not coded yet",CharInfo->charname);
-                    }
-                    break;
-                    default:
-                    {
-                        Log(MSG_WARNING,"Char %s have equipped Weird itemgrade value: %i, Defence Refine Is not coded yet",CharInfo->charname, GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->itemgrade);
-                    }
-                    break;
-                }
+                UINT extra_refinev[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
+                UINT extra_refinep[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
 
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine<10)
+                if(refine>0 && refine<10)
                 {
-                    defense += (UINT)floor(extra_refine[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );
+                    defense += (UINT)floor(extra_refinev[refine]);
+                    defense += (UINT)floor(extra_refinep[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );
                 }
             }
         }
