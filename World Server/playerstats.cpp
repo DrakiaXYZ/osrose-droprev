@@ -146,7 +146,7 @@ unsigned int CPlayer::GetDodge( )
                     if(GServer->PatList.Index[items[i].itemnum]->options[j] == A_DODGE || GServer->PatList.Index[items[i].itemnum]->options[j] == DODGE)
                     {
                         Dodge += GServer->PatList.Index[items[i].itemnum]->val_options[j];
-                        Log(MSG_INFO, "Char %s have equipped  PAT item: %i,%i in slot %i who give %i Dodge", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j]);
+                        //Log(MSG_INFO, "Char %s have equipped  PAT item: %i,%i in slot %i who give %i Dodge", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j]);
                     }
                 }
             }
@@ -476,10 +476,9 @@ unsigned int CPlayer::GetAccury( )
                         break;
                     }
 
-                    //Accury = (UINT)floor(((Attr->Con+10)*0.8) + ((GServer->PatList.Index[items[i].itemnum]->quality*0.6) + (items[i].durability*0.8)));
-                    Accury = (UINT)floor(((Attr->Con+10)*0.8) + ((GServer->PatList.Index[items[i].itemnum]->quality*0.6) + 80));//seem in osrose dura is not taked in consideration, NA take it...packet problem?
+                    Accury = (UINT)floor(((Attr->Con+10)*0.8) + ((GServer->PatList.Index[items[i].itemnum]->quality*0.6) + 80));
                     Accury += bonusPAT + (Stats->Level/2);
-                    Log(MSG_INFO, "Char %s have equipped Weapon PAT item: %i,%i in slot %i who give %i Accury", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, Accury);
+                    //Log(MSG_INFO, "Char %s have equipped Weapon PAT item: %i,%i in slot %i who give %i Accury", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, Accury);
                 }
 
                 for (int j=0;j<2;j++)
@@ -677,7 +676,7 @@ unsigned int CPlayer::GetCritical( )
                     if(GServer->PatList.Index[items[i].itemnum]->options[j] == A_CRITICAL || GServer->PatList.Index[items[i].itemnum]->options[j] == CRITICAL)
                     {
                         Critical += GServer->PatList.Index[items[i].itemnum]->val_options[j];
-                        Log(MSG_INFO, "Char %s have equipped PAT item: %i,%i in slot %i who give %i Critical", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j] );
+                        //Log(MSG_INFO, "Char %s have equipped PAT item: %i,%i in slot %i who give %i Critical", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j] );
                     }
                 }
             }
@@ -1009,7 +1008,7 @@ unsigned int CPlayer::GetMagicDefense( )
                     if(GServer->PatList.Index[items[i].itemnum]->options[j] == A_MRESIST || GServer->PatList.Index[items[i].itemnum]->options[j] == MAGIC_RESISTENCE_2)
                     {
                         MagicDefense += GServer->PatList.Index[items[i].itemnum]->val_options[j];
-                        Log(MSG_INFO, "Char %s have equipped PAT item: %i,%i in slot %i who give %i M_Deff", CharInfo->charname, items[i].itemtype, items[i].itemnum, i,GServer->PatList.Index[items[i].itemnum]->val_options[j] );
+                        //Log(MSG_INFO, "Char %s have equipped PAT item: %i,%i in slot %i who give %i M_Deff", CharInfo->charname, items[i].itemtype, items[i].itemnum, i,GServer->PatList.Index[items[i].itemnum]->val_options[j] );
                     }
                 }
             }
@@ -1084,7 +1083,7 @@ unsigned int CPlayer::GetMagicDefense( )
     return MagicDefense;
 }
 
-// Return Attack with and without PAT (PAT: client don't match perfectly)       //A_ATTACK(18) and the other for weapon type (104-117) (42-48)
+// Return Attack with and without PAT [TODO] : Cart Weapon       //A_ATTACK(18) and the other for weapon type (104-117) (42-48)
 unsigned int CPlayer::GetAttackPower( )
 {
     UINT attack = 0;
@@ -1810,370 +1809,462 @@ unsigned int CPlayer::GetAttackPower( )
                     continue;
                 }
 
-                if(GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count == 0)       //If not equipped with Weapon AND Weapon PAT
+                //If equipped without Weapon AND Weapon PAT OR If equipped with Weapon Grade 1 like short sword AND Weapon PAT
+                if(  GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count == 0 ||
+                    (GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0 && GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->itemgrade == 1))
                 {
                     attack += (UINT)floor( Stats->Level*0.2 + Attr->Str*0.5 + Attr->Dex*0.3 );
-                    attack += (GServer->PatList.Index[items[i].itemnum]->attackpower / 2);
-                    Log(MSG_INFO, "Char %s have equipped a Weapon PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower / 2);
-                }
-                else if(GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0)   //If equipped with Weapon AND Weapon PAT
-                {
-                    if(GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->itemgrade == 1)       //If equipped with Weapon Grade 1 like short sword (not PAT Weapon)
+
+                    //CG
+                    if( GServer->PatList.Index[items[i].itemnum]->type == 611 || GServer->PatList.Index[items[i].itemnum]->type == 612 || GServer->PatList.Index[items[i].itemnum]->type == 613 ||
+                        GServer->PatList.Index[items[i].itemnum]->type == 614 || GServer->PatList.Index[items[i].itemnum]->type == 615 || GServer->PatList.Index[items[i].itemnum]->type == 616 )
                     {
-                        attack += (UINT)floor( Stats->Level*0.2 + Attr->Str*0.5 + Attr->Dex*0.3 );
-                        attack += (GServer->PatList.Index[items[i].itemnum]->attackpower / 2);
-                        Log(MSG_INFO, "Char %s have equipped a Weapon PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower / 2);
+                        attack += GServer->PatList.Index[items[i].itemnum]->attackpower / 2;
+                        Log(MSG_INFO, "Char %s have equipped a CG Weapon PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower / 2);
                     }
-                    else if(GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->itemgrade > 1)   //If equipped with Weapon Grade > 1 (not PAT Weapon)
+
+                    //Cart
+                    if( GServer->PatList.Index[items[i].itemnum]->type == 571 || GServer->PatList.Index[items[i].itemnum]->type == 572 || GServer->PatList.Index[items[i].itemnum]->type == 573 ||
+                        GServer->PatList.Index[items[i].itemnum]->type == 574 || GServer->PatList.Index[items[i].itemnum]->type == 575 )
                     {
-                        switch (GServer->PatList.Index[items[i].itemnum]->type)//We check the type of the PAT Weapon because some Weapon can be painted and we will not need to add each id for each color
+                        attack += GServer->PatList.Index[items[i].itemnum]->attackpower;
+                        Log(MSG_INFO, "Char %s have equipped a Cart Weapon PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
+                    }
+                }
+                //If equipped with Weapon Grade > 1 AND Weapon PAT
+                else if(GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0 && GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->itemgrade > 1)
+                {
+                    UINT bonusjob = 0;
+                    double bonuslvl = 0;
+                    double bonusstr = 0;
+                    double bonusdex = 0;
+
+                    switch(CharInfo->Job)//bonuslvl, bonusstr and bonusdex for each class for CG Weapon AP Formula
+                    {
+                        case KNIGHT:
                         {
-                            case 611://TODO:Punch Arms/ normal one : id.331
-                            {
-                                UINT bonusjob = 0;
-
-                                switch(CharInfo->Job)
-                                {
-                                    case 222://Cleric
-                                        bonusjob += 0;
-                                    break;
-                                    case 221://Mage
-                                    case 321://raider
-                                        bonusjob += 90;
-                                    break;
-                                    case 422://Artisant ok
-                                        bonusjob -= 650;
-                                    break;
-                                    case 121://Knight
-                                        bonusjob += 80;
-                                    break;
-                                    case 122://champion
-                                        bonusjob += 0;
-                                    break;
-                                    case 322://scout
-                                        bonusjob += 0;
-                                    break;
-                                    case 421://Bourgeois
-                                        bonusjob += 0;
-                                    break;
-                                }
-
-                                attack += (UINT)floor(( bonusjob + (GServer->PatList.Index[items[i].itemnum]->attackpower / 5.96774194 )+ Stats->Level*0.32 + (Attr->Str)*0.8 + (Attr->Dex)*0.48) + GServer->PatList.Index[items[i].itemnum]->attackpower);
-                                Log(MSG_INFO, "Char %s have equipped Punch Arms PAT item: %i,%i in slot %i who give %i AP + Weapon", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
-
-                            }
-                            break;
-                            case 612://TODO:Drill Arms/ normal one : id.332
-                            {
-                                UINT bonusjob = 0;
-
-                                switch(CharInfo->Job)
-                                {
-                                    case 222://Cleric
-                                        bonusjob += 0;
-                                    break;
-                                    case 221://Mage
-                                    case 421://Bourgeois
-                                        bonusjob -= 0;
-                                    break;
-                                    case 422://Artisant
-                                        bonusjob -= 0;
-                                    break;
-                                    case 121://Knight
-                                        bonusjob += 0;
-                                    break;
-                                    case 122://champion
-                                        bonusjob += 0;
-                                    break;
-                                    case 322://scout
-                                        bonusjob -= 0;
-                                    break;
-                                    case 321://raider
-                                        bonusjob -= 0;
-                                    break;
-                                }
-
-                                attack += (UINT)floor(( bonusjob + (GServer->PatList.Index[items[i].itemnum]->attackpower / 4.49275362 )+ Stats->Level*0.48192771 + (Attr->Str)*1.3 + (Attr->Dex)*0.78) + GServer->PatList.Index[items[i].itemnum]->attackpower);
-                                Log(MSG_INFO, "Char %s have equipped Drill Arms PAT item: %i,%i in slot %i who give %i AP + Weapon", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
-
-                            }
-                            break;
-                            case 613://TODO:Sword Whell Arms/ normal one : id.333
-                            {
-                                UINT bonusjob = 0;
-
-                                switch(CharInfo->Job)
-                                {
-                                    case 222://Cleric
-                                        bonusjob += 0;
-                                    break;
-                                    case 221://Mage
-                                    case 421://Bourgeois
-                                        bonusjob += 0;
-                                    break;
-                                    case 422://Artisant
-                                        bonusjob += 0;
-                                    break;
-                                    case 121://Knight
-                                        bonusjob += 0;
-                                    break;
-                                    case 122://champion
-                                        bonusjob += 0;
-                                    break;
-                                    case 322://scout
-                                        bonusjob += 0;
-                                    break;
-                                    case 321://raider
-                                        bonusjob += 0;
-                                    break;
-                                }
-
-                                attack += (UINT)floor(( bonusjob + (GServer->PatList.Index[items[i].itemnum]->attackpower / 4.49275362 )+ Stats->Level*0.48192771 + (Attr->Str)*1.3 + (Attr->Dex)*0.78) + GServer->PatList.Index[items[i].itemnum]->attackpower);
-                                Log(MSG_INFO, "Char %s have equipped Sword Whell Arms PAT item: %i,%i in slot %i who give %i AP + Weapon", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
-
-                            }
-                            break;
-                            case 614://Cannon Arms/ normal one : id.334 should be ok
-                            {
-                                UINT bonusjob = 0;
-
-                                switch(CharInfo->Job)
-                                {
-                                    case 222://Cleric
-                                        bonusjob += 0;
-                                    break;
-                                    case 221://Mage
-                                    case 421://Bourgeois
-                                        bonusjob -= 40;
-                                    break;
-                                    case 422://Artisant
-                                        bonusjob -= 1280;
-                                    break;
-                                    case 121://Knight
-                                        bonusjob += 70;
-                                    break;
-                                    case 122://champion
-                                        bonusjob += 290;
-                                    break;
-                                    case 322://scout
-                                        bonusjob -= 70;
-                                    break;
-                                    case 321://raider
-                                        bonusjob -= 350;
-                                    break;
-                                }
-
-                                attack += (UINT)floor(( bonusjob + (GServer->PatList.Index[items[i].itemnum]->attackpower / 4.49275362 )+ Stats->Level*0.48192771 + (Attr->Str)*1.3 + (Attr->Dex)*0.78) + GServer->PatList.Index[items[i].itemnum]->attackpower);
-                                Log(MSG_INFO, "Char %s have equipped Cannon Arms PAT item: %i,%i in slot %i who give %i AP + Weapon", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
-
-                            }
-                            break;
-                            case 615://TODO:Spear Arms/ normal one : id.335
-                            {
-                                UINT bonusjob = 0;
-
-                                switch(CharInfo->Job)
-                                {
-                                    case 222://Cleric
-                                        bonusjob += 0;
-                                    break;
-                                    case 221://Mage
-                                    case 421://Bourgeois
-                                        bonusjob += 0;
-                                    break;
-                                    case 422://Artisant
-                                        bonusjob += 0;
-                                    break;
-                                    case 121://Knight
-                                        bonusjob += 0;
-                                    break;
-                                    case 122://champion
-                                        bonusjob += 0;
-                                    break;
-                                    case 322://scout
-                                        bonusjob += 0;
-                                    break;
-                                    case 321://raider
-                                        bonusjob += 0;
-                                    break;
-                                }
-
-                                attack += (UINT)floor(( bonusjob + (GServer->PatList.Index[items[i].itemnum]->attackpower / 4.49275362 )+ Stats->Level*0.48192771 + (Attr->Str)*1.3 + (Attr->Dex)*0.78) + GServer->PatList.Index[items[i].itemnum]->attackpower);
-                                Log(MSG_INFO, "Char %s have equipped Spear Arms PAT item: %i,%i in slot %i who give %i AP + Weapon", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
-
-                            }
-                            break;
-                            case 616://TODO:Reinforced Push Arms/ normal one : id.336
-                            {
-                                UINT bonusjob = 0;
-
-                                switch(CharInfo->Job)
-                                {
-                                    case 222://Cleric
-                                        bonusjob += 0;
-                                    break;
-                                    case 221://Mage
-                                    case 421://Bourgeois
-                                        bonusjob += 0;
-                                    break;
-                                    case 422://Artisant
-                                        bonusjob += 0;
-                                    break;
-                                    case 121://Knight
-                                        bonusjob += 0;
-                                    break;
-                                    case 122://champion
-                                        bonusjob += 0;
-                                    break;
-                                    case 322://scout
-                                        bonusjob += 0;
-                                    break;
-                                    case 321://raider
-                                        bonusjob += 0;
-                                    break;
-                                }
-
-                                attack += (UINT)floor(( bonusjob + (GServer->PatList.Index[items[i].itemnum]->attackpower / 4.49275362 )+ Stats->Level*0.48192771 + (Attr->Str)*1.3 + (Attr->Dex)*0.78) + GServer->PatList.Index[items[i].itemnum]->attackpower);
-                                Log(MSG_INFO, "Char %s have equipped Reinforced Push Arms PAT item: %i,%i in slot %i who give %i AP + Weapon", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->attackpower);
-
-                            }
-                            break;
-                            case 571://TODO:Stone Hammer, Doom Hammer
-                            {
-                                /*UINT bonusjob = 0;
-
-                                switch(GServer->PatList.Index[items[i].itemnum]->id)
-                                {
-                                    case 700://Stone Hammer
-                                    {
-                                        bonusjob -= 48;
-                                    }
-                                    break;
-                                    case 701://Doom Hammer
-                                    {
-                                        bonusjob -= 44;
-                                    }
-                                    break;
-                                    default://Good Type, New Item?
-                                    {
-                                        Log(MSG_INFO, "Char %s have equipped PAT Weapon type(%i) id(%i), ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type,GServer->PatList.Index[items[i].itemnum]->id);
-                                    }
-                                    break;
-                                }*/
-
-                                Log(MSG_INFO, "Char %s have equipped Stone Hammer or Doom Hammer PAT Weapon type(%i) ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
-                            }
-                            break;
-                            case 572://TODO:Battle Mirror, Battle Crystal
-                            {
-                                /*UINT bonusjob = 0;
-
-                                switch(GServer->PatList.Index[items[i].itemnum]->id)
-                                {
-                                    case 706://Battle Mirror
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    case 707://Battle Crystal
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    default://Good Type, New Item?
-                                    {
-                                        Log(MSG_INFO, "Char %s have equipped PAT Weapon type(%i) id(%i), ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type,GServer->PatList.Index[items[i].itemnum]->id);
-                                    }
-                                    break;
-                                }*/
-
-                                Log(MSG_INFO, "Char %s have equipped Battle Mirror or Battle Crystal PAT Weapon type(%i) ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
-                            }
-                            break;
-                            case 573://TODO:Battle Bow, Tarkion Bow
-                            {
-                                /*UINT bonusjob = 0;
-
-                                switch(GServer->PatList.Index[items[i].itemnum]->id)
-                                {
-                                    case 702://Battle Bow
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    case 703://Tarkion Bow
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    default://Good Type, New Item?
-                                    {
-                                        Log(MSG_INFO, "Char %s have equipped PAT Weapon type(%i) id(%i), ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type,GServer->PatList.Index[items[i].itemnum]->id);
-                                    }
-                                    break;
-                                }*/
-
-                                Log(MSG_INFO, "Char %s have equipped Battle Bow or Tarkion Bow PAT Weapon type(%i) ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
-                            }
-                            break;
-                            case 574://TODO:Battle Katar, Battle Spear
-                            {
-                                /*UINT bonusjob = 0;
-
-                                switch(GServer->PatList.Index[items[i].itemnum]->id)
-                                {
-                                    case 704://Battle Katar
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    case 705://Battle Spear
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    default://Good Type, New Item?
-                                    {
-                                        Log(MSG_INFO, "Char %s have equipped PAT Weapon type(%i) id(%i), ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type,GServer->PatList.Index[items[i].itemnum]->id);
-                                    }
-                                    break;
-                                }*/
-
-                                Log(MSG_INFO, "Char %s have equipped Battle Katar or Battle Spear PAT Weapon type(%i) ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
-                            }
-                            break;
-                            case 575://TODO:Battle Machine Gun, Battle Launcher
-                            {
-                                /*UINT bonusjob = 0;
-
-                                switch(GServer->PatList.Index[items[i].itemnum]->id)
-                                {
-                                    case 708://Battle Machine Gun
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    case 709://Battle Launcher
-                                    {
-                                        bonusjob += 0;
-                                    }
-                                    break;
-                                    default://Good Type, New Item?
-                                    {
-                                        Log(MSG_INFO, "Char %s have equipped PAT Weapon type(%i) id(%i), ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type,GServer->PatList.Index[items[i].itemnum]->id);
-                                    }
-                                    break;
-                                }*/
-
-                                Log(MSG_INFO, "Char %s have equipped Battle Machine Gun or Battle Launcher PAT Weapon type(%i) ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
-                            }
-                            break;
-                            default://Other PAT Weapon
-                            {
-                                Log(MSG_INFO, "Char %s have equipped a PAT Weapon type %i ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
-                            }
-                            break;
+                            bonuslvl += 0.48;
+                            bonusstr += 1.2;
+                            bonusdex += 0.72;
                         }
+                        break;
+                        case CHAMPION:
+                        {
+                            bonuslvl += 0.52;
+                            bonusstr += 1.3;
+                            bonusdex += 0.78;
+                        }
+                        break;
+                        case CLERIC:
+                        {
+                            bonuslvl += 0.48;
+                            bonusstr += 1.2;
+                            bonusdex += 0.72;
+                        }
+                        break;
+                        case MAGE:
+                        {
+                            bonuslvl += 0.48;
+                            bonusstr += 1.2;
+                            bonusdex += 0.72;
+                        }
+                        break;
+                        case RAIDER:
+                        {
+                            bonuslvl += 0.44;
+                            bonusstr += 1.1;
+                            bonusdex += 0.66;
+                        }
+                        break;
+                        case SCOUT:
+                        {
+                            bonuslvl += 0.48;
+                            bonusstr += 1.2;
+                            bonusdex += 0.72;
+                        }
+                        break;
+                        case BOURGEOIS:
+                        {
+                            bonuslvl += 0.48;
+                            bonusstr += 1.2;
+                            bonusdex += 0.72;
+                        }
+                        break;
+                        case ARTISAN:
+                        {
+                            bonuslvl += 0.32;
+                            bonusstr += 0.8;
+                            bonusdex += 0.48;
+                        }
+                        break;
+                        default://TODO: other class and visitor // for now, they got the same value of artisan
+                        {
+                            bonuslvl += 0.32;
+                            bonusstr += 0.8;
+                            bonusdex += 0.48;
+                        }
+                        break;
+                    }
+
+                    switch (GServer->PatList.Index[items[i].itemnum]->type)//We check the type of the PAT Weapon because some Weapon can be painted and we will not need to add each id for each color
+                    {
+                        case 611://Punch Arms// normal one : id.331
+                        {
+                            switch(CharInfo->Job)
+                            {
+                                case KNIGHT:
+                                {
+                                    bonusjob += 390;
+                                }
+                                break;
+                                case CHAMPION:
+                                {
+                                    bonusjob += 605;
+                                }
+                                break;
+                                case CLERIC:
+                                {
+                                    bonusjob += 440;
+                                }
+                                break;
+                                case MAGE:
+                                {
+                                    bonusjob += 400;
+                                }
+                                break;
+                                case RAIDER:
+                                {
+                                    bonusjob += 215;
+                                }
+                                break;
+                                case SCOUT:
+                                {
+                                    bonusjob += 370;
+                                }
+                                break;
+                                case BOURGEOIS:
+                                {
+                                    bonusjob += 400;
+                                }
+                                break;
+                                case ARTISAN:
+                                {
+                                    bonusjob -= 340;
+                                }
+                                break;
+                                default://TODO: other class and visitor // for now, they got the same value of artisan
+                                {
+                                    bonusjob -= 340;
+                                }
+                                break;
+
+                            }
+
+                            attack += (UINT)floor( bonusjob + (Stats->Level * bonuslvl) + (Attr->Str * bonusstr) + (Attr->Dex * bonusdex) + GServer->PatList.Index[items[i].itemnum]->attackpower);
+                            //Log(MSG_INFO, "Char %s have equipped Punch Arms PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, attack);
+
+                        }
+                        break;
+                        case 612://Drill Arms// normal one : id.332
+                        {
+                            switch(CharInfo->Job)
+                            {
+                                case KNIGHT:
+                                {
+                                    bonusjob += 510;
+                                }
+                                break;
+                                case CHAMPION:
+                                {
+                                    bonusjob += 785;
+                                }
+                                break;
+                                case CLERIC:
+                                {
+                                    bonusjob += 560;
+                                }
+                                break;
+                                case MAGE:
+                                {
+                                    bonusjob += 520;
+                                }
+                                break;
+                                case RAIDER:
+                                {
+                                    bonusjob += 275;
+                                }
+                                break;
+                                case SCOUT:
+                                {
+                                    bonusjob += 490;
+                                }
+                                break;
+                                case BOURGEOIS:
+                                {
+                                    bonusjob += 520;
+                                }
+                                break;
+                                case ARTISAN:
+                                {
+                                    bonusjob -= 460;
+                                }
+                                break;
+                                default://TODO: other class and visitor // for now, they got the same value of artisan
+                                {
+                                    bonusjob -= 460;
+                                }
+                                break;
+
+                            }
+
+                            attack += (UINT)floor( bonusjob + (Stats->Level * bonuslvl) + (Attr->Str * bonusstr) + (Attr->Dex * bonusdex) + GServer->PatList.Index[items[i].itemnum]->attackpower);
+                            //Log(MSG_INFO, "Char %s have equipped Drill Arms PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, attack);
+
+                        }
+                        break;
+                        case 613://Sword Whell Arms// normal one : id.333
+                        {
+                            switch(CharInfo->Job)
+                            {
+                                case KNIGHT:
+                                {
+                                    bonusjob += 540;
+                                }
+                                break;
+                                case CHAMPION:
+                                {
+                                    bonusjob += 830;
+                                }
+                                break;
+                                case CLERIC:
+                                {
+                                    bonusjob += 590;
+                                }
+                                break;
+                                case MAGE:
+                                {
+                                    bonusjob += 550;
+                                }
+                                break;
+                                case RAIDER:
+                                {
+                                    bonusjob += 290;
+                                }
+                                break;
+                                case SCOUT:
+                                {
+                                    bonusjob += 520;
+                                }
+                                break;
+                                case BOURGEOIS:
+                                {
+                                    bonusjob += 550;
+                                }
+                                break;
+                                case ARTISAN:
+                                {
+                                    bonusjob -= 490;
+                                }
+                                break;
+                                default://TODO: other class and visitor // for now, they got the same value of artisan
+                                {
+                                    bonusjob -= 490;
+                                }
+                                break;
+
+                            }
+
+                            attack += (UINT)floor( bonusjob + (Stats->Level * bonuslvl) + (Attr->Str * bonusstr) + (Attr->Dex * bonusdex) + GServer->PatList.Index[items[i].itemnum]->attackpower);
+                            //Log(MSG_INFO, "Char %s have equipped Sword Whell Arms PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, attack);
+
+                        }
+                        break;
+                        case 614://Cannon Arms// normal one : id.334 should be ok
+                        {
+                            switch(CharInfo->Job)
+                            {
+                                case KNIGHT:
+                                {
+                                    bonusjob += 640;
+                                }
+                                break;
+                                case CHAMPION:
+                                {
+                                    bonusjob += 980;
+                                }
+                                break;
+                                case CLERIC:
+                                {
+                                    bonusjob += 690;
+                                }
+                                break;
+                                case MAGE:
+                                {
+                                    bonusjob += 650;
+                                }
+                                break;
+                                case RAIDER:
+                                {
+                                    bonusjob += 340;
+                                }
+                                break;
+                                case SCOUT:
+                                {
+                                    bonusjob += 620;
+                                }
+                                break;
+                                case BOURGEOIS:
+                                {
+                                    bonusjob += 650;
+                                }
+                                break;
+                                case ARTISAN:
+                                {
+                                    bonusjob -= 590;
+                                }
+                                break;
+                                default://TODO: other class and visitor // for now, they got the same value of artisan
+                                {
+                                    bonusjob -= 590;
+                                }
+                                break;
+
+                            }
+
+                            attack += (UINT)floor( bonusjob + (Stats->Level * bonuslvl) + (Attr->Str * bonusstr) + (Attr->Dex * bonusdex) + GServer->PatList.Index[items[i].itemnum]->attackpower);
+                            //Log(MSG_INFO, "Char %s have equipped Cannon Arms PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, attack);
+
+                        }
+                        break;
+                        case 615://Spear Arms// normal one : id.335
+                        {
+                            switch(CharInfo->Job)
+                            {
+                                case KNIGHT:
+                                {
+                                    bonusjob += 563;
+                                }
+                                break;
+                                case CHAMPION:
+                                {
+                                    bonusjob += 865;
+                                }
+                                break;
+                                case CLERIC:
+                                {
+                                    bonusjob += 613;
+                                }
+                                break;
+                                case MAGE:
+                                {
+                                    bonusjob += 573;
+                                }
+                                break;
+                                case RAIDER:
+                                {
+                                    bonusjob += 301;
+                                }
+                                break;
+                                case SCOUT:
+                                {
+                                    bonusjob += 543;
+                                }
+                                break;
+                                case BOURGEOIS:
+                                {
+                                    bonusjob += 573;
+                                }
+                                break;
+                                case ARTISAN:
+                                {
+                                    bonusjob -= 516;
+                                }
+                                break;
+                                default://TODO: other class and visitor // for now, they got the same value of artisan
+                                {
+                                    bonusjob -= 516;
+                                }
+                                break;
+
+                            }
+
+                            attack += (UINT)floor( bonusjob + (Stats->Level * bonuslvl) + (Attr->Str * bonusstr) + (Attr->Dex * bonusdex) + GServer->PatList.Index[items[i].itemnum]->attackpower);
+                            //Log(MSG_INFO, "Char %s have equipped Spear Arms PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, attack);
+
+                        }
+                        break;
+                        case 616://Reinforced Push Arms// normal one : id.336
+                        {
+                            switch(CharInfo->Job)
+                            {
+                                case KNIGHT:
+                                {
+                                    bonusjob += 490;
+                                }
+                                break;
+                                case CHAMPION:
+                                {
+                                    bonusjob += 755;
+                                }
+                                break;
+                                case CLERIC:
+                                {
+                                    bonusjob += 540;
+                                }
+                                break;
+                                case MAGE:
+                                {
+                                    bonusjob += 500;
+                                }
+                                break;
+                                case RAIDER:
+                                {
+                                    bonusjob += 265;
+                                }
+                                break;
+                                case SCOUT:
+                                {
+                                    bonusjob += 470;
+                                }
+                                break;
+                                case BOURGEOIS:
+                                {
+                                    bonusjob += 500;
+                                }
+                                break;
+                                case ARTISAN:
+                                {
+                                    bonusjob -= 440;
+                                }
+                                break;
+                                default://TODO: other class and visitor // for now, they got the same value of artisan
+                                {
+                                    bonusjob -= 440;
+                                }
+                                break;
+
+                            }
+
+                            attack += (UINT)floor( bonusjob + (Stats->Level * bonuslvl) + (Attr->Str * bonusstr) + (Attr->Dex * bonusdex) + GServer->PatList.Index[items[i].itemnum]->attackpower);
+                            //Log(MSG_INFO, "Char %s have equipped Reinforced Push Arms PAT item: %i,%i in slot %i who give %i AP", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, attack);
+
+                        }
+                        break;
+                        case 571: case 572: case 573: case 574: case 575://[TODO] :all the cart Weapon
+                        {
+                            attack += (UINT)floor( Stats->Level*0.2 + Attr->Str*0.5 + Attr->Dex*0.3 );
+                            attack += GServer->PatList.Index[items[i].itemnum]->attackpower;
+                            Log(MSG_INFO, "Char %s have equipped Cart PAT Weapon type(%i), ATK is not coded yet", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
+                        }
+                        break;
+                        default://Other PAT Weapon
+                        {
+                            attack += (UINT)floor( Stats->Level*0.2 + Attr->Str*0.5 + Attr->Dex*0.3 );
+                            attack += GServer->PatList.Index[items[i].itemnum]->attackpower;
+                            Log(MSG_INFO, "Char %s have equipped a PAT Weapon type %i, ATK is not coded yet for this type", CharInfo->charname, GServer->PatList.Index[items[i].itemnum]->type);
+                        }
+                        break;
+
                     }
                 }
 
@@ -2467,7 +2558,7 @@ unsigned int CPlayer::GetDefense( )
                     if(GServer->PatList.Index[items[i].itemnum]->options[j] == A_DEFENSE || GServer->PatList.Index[items[i].itemnum]->options[j] == DEFENSE || GServer->PatList.Index[items[i].itemnum]->options[j] == SHIELD_DEFENSE)
                     {
                         defense += GServer->PatList.Index[items[i].itemnum]->val_options[j];
-                        Log(MSG_INFO, "Char %s have equipped  PAT item: %i,%i in slot %i who give %i Deff", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j] );
+                        //Log(MSG_INFO, "Char %s have equipped  PAT item: %i,%i in slot %i who give %i Deff", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j] );
                         defense -= (defense * 1 / 100) + 10;//it's for try to match client value, Comment this line if you need exact deff from PAT Add.
                     }
                 }
@@ -3311,7 +3402,7 @@ unsigned int CPlayer::GetAttackSpeed( )
                     if(GServer->PatList.Index[items[i].itemnum]->options[j] == A_HASTE)
                     {
                         aspeed += GServer->PatList.Index[items[i].itemnum]->val_options[j];
-                        Log(MSG_INFO, "Char %s have equipped PAT item: %i,%i in slot %i who give %i Aspeed", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j] );
+                        //Log(MSG_INFO, "Char %s have equipped PAT item: %i,%i in slot %i who give %i Aspeed", CharInfo->charname, items[i].itemtype, items[i].itemnum, i, GServer->PatList.Index[items[i].itemnum]->val_options[j] );
                     }
                 }
             }

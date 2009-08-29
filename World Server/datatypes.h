@@ -245,6 +245,21 @@
 #define MAX_MILEAGE_SKILL 200
 #define SKILL_DELAY 500 //ms
 
+//Job Class ID
+#define VISITOR 0
+#define SOLDIER 111
+#define KNIGHT 121
+#define CHAMPION 122
+#define MUSE 211
+#define MAGE 221
+#define CLERIC 222
+#define HAWKER 311
+#define RAIDER 321
+#define SCOUT 322
+#define DEALER 411
+#define BOURGEOIS 421
+#define ARTISAN 422
+
 // weapon type
 #define ONE_HAND_SWORD 211
 #define ONE_HAND_BUNT_SWORD 212
