@@ -18,6 +18,7 @@
 
     depeloped with Main erose/hrose source server + some change from the original eich source
 */
+
 #include "player.h"
 #include "worldserver.h"
 
@@ -113,9 +114,10 @@ unsigned int CPlayer::GetDodge( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_DODGE||GServer->StatsList[items[i].stats]->stat[j]!=DODGE)
-                            continue;
-                        Dodge += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_DODGE || GServer->StatsList[items[i].stats]->stat[j] == DODGE)
+                        {
+                            Dodge += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -229,7 +231,8 @@ unsigned int CPlayer::GetAccury( )
         if(items[7].refine>0)
         {
             UINT refine = (UINT)floor(items[7].refine/16);
-            if(refine<10)
+
+            if(refine>0 && refine<10)
             {
                 Accury += extra_refine[refine];
             }
@@ -275,9 +278,10 @@ unsigned int CPlayer::GetAccury( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_ACCUR||GServer->StatsList[items[i].stats]->stat[j]!=ATK_ACCURACY)
-                            continue;
-                        Accury += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_ACCUR || GServer->StatsList[items[i].stats]->stat[j] == ATK_ACCURACY)
+                        {
+                            Accury += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -598,9 +602,10 @@ unsigned int CPlayer::GetCritical( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_CRITICAL||GServer->StatsList[items[i].stats]->stat[j]!=CRITICAL)
-                            continue;
-                        Critical += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_CRITICAL || GServer->StatsList[items[i].stats]->stat[j] == CRITICAL)
+                        {
+                            Critical += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -831,9 +836,10 @@ unsigned int CPlayer::GetMagicDefense( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_MRESIST||GServer->StatsList[items[i].stats]->stat[j]!=MAGIC_RESISTENCE_2)
-                            continue;
-                        MagicDefense += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_MRESIST || GServer->StatsList[items[i].stats]->stat[j] == MAGIC_RESISTENCE_2)
+                        {
+                            MagicDefense += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -1003,9 +1009,10 @@ unsigned int CPlayer::GetAttackPower( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_ATTACK)
-                            continue;
-                        attack += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_ATTACK)
+                        {
+                            attack += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -2161,7 +2168,7 @@ unsigned int CPlayer::GetAttackPower( )
 	return attack;
 }
 
-// Return Defense with and without PAT (client don't match perfectly)           //A_DEFENSE(19) / DEFENSE(53) / SHIELD_DEFENSE(102)
+// Return Defense with and without PAT                            //A_DEFENSE(19) / DEFENSE(53) / SHIELD_DEFENSE(102)
 unsigned int CPlayer::GetDefense( )
 {
     UINT defense = 0;
@@ -2196,13 +2203,13 @@ unsigned int CPlayer::GetDefense( )
 
             if(items[i].refine>0)//Deff From Refine
             {
-                UINT extra_refinev[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
-                UINT extra_refinep[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
-
                 UINT refine = (UINT)floor(items[i].refine/16);
 
                 if(refine>0 && refine<10)
                 {
+                    UINT extra_refinev[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
+                    UINT extra_refinep[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
+
                     defense += (UINT)floor(extra_refinev[refine]);
                     defense += (UINT)floor(extra_refinep[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );
                 }
@@ -2250,9 +2257,10 @@ unsigned int CPlayer::GetDefense( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_DEFENSE||GServer->StatsList[items[i].stats]->stat[j]!=DEFENSE)
-                            continue;
-                        defense += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_DEFENSE || GServer->StatsList[items[i].stats]->stat[j] == DEFENSE)
+                        {
+                            defense += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -3094,9 +3102,10 @@ unsigned int CPlayer::GetAttackSpeed( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_HASTE)
-                            continue;
-                        aspeed += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_HASTE)
+                        {
+                            aspeed += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -3233,9 +3242,10 @@ unsigned int CPlayer::GetMoveSpeed( )
                     {
                         for(UINT j=0;j<2;j++)
                         {
-                            if(GServer->StatsList[items[i].stats]->stat[j]!=A_DASH||GServer->StatsList[items[i].stats]->stat[j]!=MOV_SPEED)
-                                continue;
-                            mspeed += GServer->StatsList[items[i].stats]->value[j];
+                            if(GServer->StatsList[items[i].stats]->stat[j] == A_DASH || GServer->StatsList[items[i].stats]->stat[j] == MOV_SPEED)
+                            {
+                                mspeed += GServer->StatsList[items[i].stats]->value[j];
+                            }
                         }
                     }
                 }
@@ -3445,9 +3455,11 @@ unsigned long long CPlayer::GetMaxHP( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_MAX_HP||GServer->StatsList[items[i].stats]->stat[j]!=A_HP||GServer->StatsList[items[i].stats]->stat[j]!=MAX_HP)
-                            continue;
-                        hpmax += GServer->StatsList[items[i].stats]->value[j];
+                        if( GServer->StatsList[items[i].stats]->stat[j] == A_MAX_HP || GServer->StatsList[items[i].stats]->stat[j] == A_HP ||
+                            GServer->StatsList[items[i].stats]->stat[j] == MAX_HP)
+                        {
+                            hpmax += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -3630,9 +3642,11 @@ unsigned int CPlayer::GetMaxMP( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_MAX_MP||GServer->StatsList[items[i].stats]->stat[j]!=A_MP||GServer->StatsList[items[i].stats]->stat[j]!=MAX_MP)
-                            continue;
-                        maxmp += GServer->StatsList[items[i].stats]->value[j];
+                        if( GServer->StatsList[items[i].stats]->stat[j] == A_MAX_MP || GServer->StatsList[items[i].stats]->stat[j] == A_MP ||
+                            GServer->StatsList[items[i].stats]->stat[j] == MAX_MP)
+                        {
+                            maxmp += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -3753,9 +3767,10 @@ unsigned int CPlayer::GetHPRegenAmount( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_HP_REC_RATE||GServer->StatsList[items[i].stats]->stat[j]!=HP_REC_AMONT)
-                            continue;
-                        amount += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_HP_REC_RATE || GServer->StatsList[items[i].stats]->stat[j] == HP_REC_AMONT)
+                        {
+                            amount += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -3865,9 +3880,10 @@ unsigned int CPlayer::GetMPRegenAmount( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_MP_REC_RATE||GServer->StatsList[items[i].stats]->stat[j]!=MP_REC_RATE)
-                            continue;
-                        amount += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_MP_REC_RATE || GServer->StatsList[items[i].stats]->stat[j] == MP_REC_RATE)
+                        {
+                            amount += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -3974,9 +3990,10 @@ unsigned int CPlayer::GetMaxWeight( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=A_INVENTORY_CAPACITY||GServer->StatsList[items[i].stats]->stat[j]!=BAGPACK_CAPACITY)
-                            continue;
-                        weight += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == A_INVENTORY_CAPACITY || GServer->StatsList[items[i].stats]->stat[j] == BAGPACK_CAPACITY)
+                        {
+                            weight += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -4119,9 +4136,10 @@ unsigned int CPlayer::GetMPReduction( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=MP_COST_RED||GServer->StatsList[items[i].stats]->stat[j]!=MP_CONSUME)
-                            continue;
-                        mpreduction += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == MP_COST_RED || GServer->StatsList[items[i].stats]->stat[j] == MP_CONSUME)
+                        {
+                            mpreduction += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
@@ -4209,9 +4227,10 @@ unsigned int CPlayer::GetMaxSummonGauge( )
                 {
                     for(UINT j=0;j<2;j++)
                     {
-                        if(GServer->StatsList[items[i].stats]->stat[j]!=SUMMON_GAUGE)
-                            continue;
-                        gauge += GServer->StatsList[items[i].stats]->value[j];
+                        if(GServer->StatsList[items[i].stats]->stat[j] == SUMMON_GAUGE)
+                        {
+                            gauge += GServer->StatsList[items[i].stats]->value[j];
+                        }
                     }
                 }
             }
