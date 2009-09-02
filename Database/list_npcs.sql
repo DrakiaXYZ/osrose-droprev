@@ -146,15 +146,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Town Girl] Lithia', 1156, 29, 24.237, 5091.
 INSERT INTO `list_npcs` VALUES (0, '[Ghost] Harry', 1157, 29, 109.425, 5050.08, 5123.27, 257,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ranger] Paul', 1155, 29, 330.956, 5157.10, 5176.39, 255,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Beach Resident] Judith', 1204, 37, 358.499, 5115.68, 5324.15, 308,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Pick-A-Card] Alejandro', 1045, 37, 347.450, 5220.72, 5357.38, 92,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Clown Throw] Mildred', 1044, 37, 0.000, 5246.65, 5366.65, 91,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[RPS Game] Sherisse', 1043, 37, 0.000, 5259.34, 5367.26, 90,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Digging for Treasure] Augustus', 1048, 37, 293.031, 5227.87, 5324.44, 95,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Concession Stand] Lizzy', 1054, 37, 0.000, 5129.79, 5323.48, 98,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Festival Manager] Lero', 1050, 37, 31.693, 5182.50, 5340.08, 97,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Scavenger Hunt] Pirelli', 1049, 37, 198.637, 5334.27, 5289.01, 96,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Pie Crush] Tony', 1046, 37, 342.011, 5355.39, 5357.88, 93,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Chicken Races] Hig', 1047, 37, 347.450, 5297.48, 5362.05, 94,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Santa Claus', 1205, 38, 3.012, 5069.18, 5362.51, 309,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Loelsch', 1206, 38, 66.941, 5057.19, 5351.61, 310,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Evil Reindeer] Bob', 1490, 38, 97.961, 5065.61, 5206.88, 318,0,0,0);
