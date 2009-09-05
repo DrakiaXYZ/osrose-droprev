@@ -69,8 +69,8 @@ class CMonster : public CCharacter
         // Monster Functions
         void DoAi(int ainumber,char type);  //LMA: AIP.
         bool SummonUpdate(CMonster* monster, CMap* map, UINT j);
-        bool SetStats( );
-        bool UnspawnMonster( );
+        bool SetStats(bool all=true);   //LMA: update in some occasions.
+        bool UnspawnMonster();
       	bool IsGhost( );
       	bool IsGhostSeed( );
       	bool IsBonfire( );
@@ -93,11 +93,11 @@ class CMonster : public CCharacter
         bool UpdateValues( );
 
       	// Stats
-        unsigned int GetAttackPower( );
-        unsigned int GetDefense( );
-        unsigned int GetDodge( );
-        unsigned int GetAccury( );
-        unsigned int GetMagicDefense( );
+        unsigned int GetAttackPower(bool all);
+        unsigned int GetDefense(bool all);
+        unsigned int GetDodge(bool all);
+        unsigned int GetAccury(bool all);
+        unsigned int GetMagicDefense(bool all);
         unsigned int GetCritical( );
         unsigned int GetAttackSpeed( );
         unsigned int GetMoveSpeed( );

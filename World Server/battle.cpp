@@ -1726,6 +1726,7 @@ void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
     Log(MSG_INFO,"debufskill %i, %i",clientid,Enemy->clientid);
     if(skill->nbuffs>0 && bflag == true)
     {
+        //Log(MSG_INFO,"debufskill %i, %i",clientid,Enemy->clientid);
         BEGINPACKET( pak, 0x7b5 );
         ADDWORD    ( pak, Enemy->clientid );
         ADDWORD    ( pak, clientid );
@@ -1733,6 +1734,7 @@ void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
         ADDWORD    ( pak, GetInt( ) );
         ADDBYTE    ( pak, skill->nbuffs );
         GServer->SendToVisible( &pak, Enemy );
+        //GServer->SendToAllInMap(&pak,this->Position->Map);
     }
     BEGINPACKET( pak, 0x7b9);
     ADDWORD    ( pak, clientid);

@@ -95,7 +95,7 @@ AIACT(003)
 	float nY = (entity->Position->current.y + randDis) - iDist;
 	entity->Position->destiny.y=nY;
 	monster->thisnpc->stance = data->cSpeed;
-	monster->SetStats();
+	monster->SetStats(false);
     entity->Position->lastMoveTime = clock();
     //ClearBattle( entity->Battle );// this also seems to clear the attackers battle??
     //entity->Battle->atktype=0;
@@ -141,7 +141,7 @@ AIACT(004)
 
 
 	monster->thisnpc->stance = data->cSpeed;
-	monster->SetStats();
+	monster->SetStats(false);
     entity->Position->lastMoveTime = clock();
     //ClearBattle( entity->Battle );// this also seems to clear the attackers battle??
     //entity->Battle->atktype = 0;
@@ -187,7 +187,7 @@ AIACT(005)
 	float nY = (entity->findChar->Position->current.y + randDis) - iDist;
 	entity->Position->destiny.y=nY;
 	monster->thisnpc->stance = data->cSpeed;
-	monster->SetStats();
+	monster->SetStats(false);
     //entity->MoveTo(nX, nY);
     //entity->Position->lastMoveTime = clock();
     //ClearBattle( entity->Battle );// this also seems to clear the attackers battle??
@@ -356,7 +356,7 @@ AIACT(006)
     }
 
     monster->thisnpc->stance = 1;
-    monster->SetStats();
+    monster->SetStats(false);
     monster->StartAction( Target, NORMAL_ATTACK, 0 );
 
     //	int searchDistance = data->iDistance * 100;
@@ -434,7 +434,7 @@ AIACT(008)
 	monster->Position->destiny.x = nX;
 	monster->Position->destiny.y = nY;
 	monster->thisnpc->stance = data->cSpeed;
-	monster->SetStats();
+	monster->SetStats(false);
     monster->Position->lastMoveTime = clock();
     ClearBattle( entity->Battle );// this also seems to clear the attackers battle??
     //entity->Battle->atktype = 0;
@@ -1308,7 +1308,7 @@ AIACT(029)
     //	float x = (fMoveDistance - c) / m;
     //	thisMonster->stance = 1;
 	thisMonster->thisnpc->stance = 1;
-    thisMonster->SetStats();
+    thisMonster->SetStats(false);
     thisMonster->Position->source = caller->Position->current;
     thisMonster->MoveTo(caller->Position->current);
     //	thisMonster->CalculateStats();

@@ -22,12 +22,12 @@
 #include "worldmonster.h"
 
 // Get Mob Attack Power
-unsigned int CMonster::GetAttackPower( )
+unsigned int CMonster::GetAttackPower(bool all)
 {
 	unsigned int attack;
 	attack = thisnpc->atkpower;
 
-	if(IsSummon())//Tomiz : Check and Add The Owner AP To Base Summon Value(STB)
+	if(IsSummon()&&all)//Tomiz : Check and Add The Owner AP To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -60,12 +60,12 @@ unsigned int CMonster::GetAttackPower( )
 }
 
 // Get Monster Defense
-unsigned int CMonster::GetDefense( )
+unsigned int CMonster::GetDefense(bool all)
 {
     unsigned int defense;
     defense =  thisnpc->defense;
 
-    if(IsSummon())//Tomiz : Check and Add The Owner DEFF To Base Summon Value(STB)
+    if(IsSummon()&&all)//Tomiz : Check and Add The Owner DEFF To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -152,12 +152,12 @@ unsigned int CMonster::GetMoveSpeed( )
 }
 
 // return dodge
-unsigned int CMonster::GetDodge( )
+unsigned int CMonster::GetDodge(bool all)
 {
     UINT dodge = 0;
     dodge = thisnpc->dodge;
 
-    if(IsSummon())//Tomiz : Check and Add The Owner DODGE To Base Summon Value(STB)
+    if(IsSummon()&&all)//Tomiz : Check and Add The Owner DODGE To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -190,12 +190,12 @@ unsigned int CMonster::GetDodge( )
 }
 
 // return accury
-unsigned int CMonster::GetAccury( )
+unsigned int CMonster::GetAccury(bool all)
 {
     UINT hitrate = 0;
     hitrate = thisnpc->hitrate;
 
-    if(IsSummon())//Tomiz : Check and Add The Owner ACC To Base Summon Value(STB)
+    if(IsSummon()&&all)//Tomiz : Check and Add The Owner ACC To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -224,12 +224,12 @@ unsigned int CMonster::GetAccury( )
 }
 
 // return magic defense
-unsigned int CMonster::GetMagicDefense( )
+unsigned int CMonster::GetMagicDefense(bool all)
 {
     UINT mdef = 0;
     mdef = thisnpc->magicdefense;
 
-    if(IsSummon())//Tomiz : Check and Add The Owner MDEFF To Base Summon Value(STB)
+    if(IsSummon()&&all)//Tomiz : Check and Add The Owner MDEFF To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -312,7 +312,7 @@ float CMonster::GetAttackDistance( )
 }
 
 //Set Monster Stats Values
-bool CMonster::SetStats( )
+bool CMonster::SetStats(bool all)
 {
     if(thisnpc==NULL)
     {
@@ -326,17 +326,17 @@ bool CMonster::SetStats( )
         Stats->Level=thisnpc->level;
     }
 
-    Stats->Attack_Power = GetAttackPower( );
-    Stats->Defense = GetDefense( );
-    Stats->Attack_Speed = GetAttackSpeed( );
-    Stats->Move_Speed = GetMoveSpeed( );
-    Stats->Dodge = GetDodge( );
-    Stats->Accury = GetAccury( );
-    Stats->Critical = GetCritical( );
-    Stats->Magic_Defense = GetMagicDefense( );
-    Stats->Attack_Distance = GetAttackDistance( );
-    Stats->MaxHP = GetMaxHP( );
-    Stats->MaxMP = GetMaxMP( );
+    Stats->Attack_Power = GetAttackPower(all);
+    Stats->Defense = GetDefense(all);
+    Stats->Attack_Speed = GetAttackSpeed();
+    Stats->Move_Speed = GetMoveSpeed();
+    Stats->Dodge = GetDodge(all);
+    Stats->Accury = GetAccury(all);
+    Stats->Critical = GetCritical();
+    Stats->Magic_Defense = GetMagicDefense(all);
+    Stats->Attack_Distance = GetAttackDistance();
+    Stats->MaxHP = GetMaxHP();
+    Stats->MaxMP = GetMaxMP();
     //Stats->HP = Stats->MaxHP;
     //Stats->MP = Stats->MaxMP;
 
