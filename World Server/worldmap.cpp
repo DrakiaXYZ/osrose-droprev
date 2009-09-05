@@ -97,7 +97,6 @@ bool CMap::RemovePlayer( CPlayer* player, bool clearobject )
     return false;
 }
 
-
 // add a new monster to this map
 CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* MonsterDrop, CMDrops* MapDrop, UINT spawnid , bool GetDropData, bool is_tactic)
 {
@@ -165,9 +164,14 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
         if (tempplayer!=NULL)
         {
             monster->team=tempplayer->pvp_id;
-            Log(MSG_INFO,"ADDMONSTER, overwriting team with owner's pvp_id",tempplayer->pvp_id);
-        }
+            Log(MSG_INFO,"ADDMONSTER, overwriting team with owner's pvp_id %i",tempplayer->pvp_id);
 
+            //Tomiz : Get Owner lvl For Summon (the one from job, setup to fix normal atk formula because summon got lvl <= 100 in STB)
+            UINT ownerlevel = 0;
+            ownerlevel += tempplayer->Stats->Level;
+            monster->Stats->Level = ownerlevel;
+            Log(MSG_INFO,"Summon %i, got lvl %i by this owner",thisnpc->id,ownerlevel);
+        }
     }
 
     if(spawnid!=0)

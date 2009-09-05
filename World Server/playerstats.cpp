@@ -483,7 +483,7 @@ unsigned int CPlayer::GetAccury( )
                     if(GServer->PatList.Index[items[i].itemnum]->options[j] == A_ACCUR || GServer->PatList.Index[items[i].itemnum]->options[j] == ATK_ACCURACY)
                     {
                         Accury += GServer->PatList.Index[items[i].itemnum]->val_options[j];
-                        Log(MSG_INFO, "Char %s have equipped  PAT item: %i,%i in slot %i who give Accury", CharInfo->charname, items[i].itemtype, items[i].itemnum, i );
+                        //Log(MSG_INFO, "Char %s have equipped  PAT item: %i,%i in slot %i who give Accury", CharInfo->charname, items[i].itemtype, items[i].itemnum, i );
                     }
                 }
             }
@@ -1667,7 +1667,7 @@ unsigned int CPlayer::GetAttackPower( )
 
                 //If equipped without Weapon AND Weapon PAT OR If equipped with Weapon Grade 1 like short sword AND Weapon PAT
                 if(  GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count == 0 ||
-                    (GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0 && GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->itemgrade == 1))
+                    (GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0 && GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->id == 1))
                 {
                     attack += (UINT)floor( Stats->Level*0.2 + Attr->Str*0.5 + Attr->Dex*0.3 );
 
@@ -1688,7 +1688,7 @@ unsigned int CPlayer::GetAttackPower( )
                     }
                 }
                 //If equipped with Weapon Grade > 1 AND Weapon PAT
-                else if(GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0 && GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->itemgrade > 1)
+                else if(GServer->PatList.Index[items[i].itemnum]->attackpower != 0 && items[7].count > 0 && GServer->EquipList[items[7].itemtype].Index[items[7].itemnum]->id > 1)
                 {
                     UINT bonusjob = 0;
                     double bonuslvl = 0;
@@ -4529,7 +4529,7 @@ float CPlayer::GetAttackDistance( )
                 if(GServer->PatList.Index[items[i].itemnum]->attackdistance != 0)
                 {
                     AttackDistance += GServer->PatList.Index[items[i].itemnum]->attackdistance / 100;
-                    Log(MSG_INFO, "Char %s have equipped PAT Weapon item and should have: %i Atk Distance", CharInfo->charname, (GServer->PatList.Index[items[i].itemnum]->attackdistance / 100));
+                    //Log(MSG_INFO, "Char %s have equipped PAT Weapon item and should have: %i Atk Distance", CharInfo->charname, (GServer->PatList.Index[items[i].itemnum]->attackdistance / 100));
                 }
             }
         }

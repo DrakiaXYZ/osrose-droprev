@@ -18,6 +18,7 @@
 
     depeloped with Main erose/hrose source server + some change from the original eich source
 */
+
 #include "worldmonster.h"
 
 // Get Mob Attack Power
@@ -25,12 +26,36 @@ unsigned int CMonster::GetAttackPower( )
 {
 	unsigned int attack;
 	attack = thisnpc->atkpower;
+
+	if(IsSummon())//Tomiz : Check and Add The Owner AP To Base Summon Value(STB)
+    {
+        CPlayer* ownerclient = GetOwner( );
+        if(ownerclient!=NULL)
+        {
+            UINT lvlp = thisnpc->level;
+            attack += (long int)floor((ownerclient->Stats->Attack_Power * lvlp) / 100);
+            Log(MSG_INFO,"SUMMON: %i Got %i AP from is owner, lvlp: %i",thisnpc->id,(attack - thisnpc->atkpower),lvlp);
+        }
+    }
+
     if(thisnpc->weapon!=0)
+    {
         attack += GServer->EquipList[8].Index[thisnpc->weapon]->attackpower;
+    }
     if(Status->Attack_up!=0xff)
+    {
         attack += MagicStatus[Status->Attack_up].Value;
+    }
     if(Status->Attack_down!=0xff)
+    {
         attack -= MagicStatus[Status->Attack_down].Value;
+    }
+
+    if(IsSummon())
+    {
+        Log(MSG_INFO,"SUMMON: %i Final ATK: %i",thisnpc->id,attack);
+    }
+
 	return attack;
 }
 
@@ -39,24 +64,64 @@ unsigned int CMonster::GetDefense( )
 {
     unsigned int defense;
     defense =  thisnpc->defense;
+
+    if(IsSummon())//Tomiz : Check and Add The Owner DEFF To Base Summon Value(STB)
+    {
+        CPlayer* ownerclient = GetOwner( );
+        if(ownerclient!=NULL)
+        {
+            UINT lvlp = thisnpc->level;
+            defense += (long int)floor((ownerclient->Stats->Defense * lvlp) / 100);
+            Log(MSG_INFO,"SUMMON: %i Got %i Deff from is owner, lvlp: %i",thisnpc->id,(defense - thisnpc->defense),lvlp);
+        }
+    }
+
     if(thisnpc->subweapon!=0)
+    {
         defense += GServer->EquipList[SUBWEAPON].Index[thisnpc->subweapon]->defense;
+    }
     if(Status->Defense_up!=0xff)
+    {
         defense += MagicStatus[Status->Defense_up].Value;
+    }
     if(Status->Defense_down!=0xff)
+    {
         defense -= MagicStatus[Status->Defense_down].Value;
+    }
+
+    if(IsSummon())
+    {
+        Log(MSG_INFO,"SUMMON: %i Final DEFF: %i",thisnpc->id,defense);
+    }
+
     return defense;
 }
 
 // Get Monster atk speed
 unsigned int CMonster::GetAttackSpeed( )
 {
-    unsigned int aspeed = (unsigned int)thisnpc->atkspeed;
-    if(aspeed == 0) aspeed = 1; // prevent a /0 when hunting dragon egg
+    unsigned int aspeed;
+    aspeed = (unsigned int)thisnpc->atkspeed;
+
+    if(aspeed == 0)// prevent a /0 when hunting dragon egg
+    {
+        aspeed = 100;
+    }
+
     if(Status->Haste_up!=0xff)
+    {
         aspeed += MagicStatus[Status->Haste_up].Value;
+    }
     if(Status->Haste_down!=0xff)
+    {
         aspeed -= MagicStatus[Status->Haste_down].Value;
+    }
+
+    if(IsSummon())
+    {
+        Log(MSG_INFO,"SUMMON: %i Final ASPEED : %i",thisnpc->id,aspeed);
+    }
+
     return aspeed;
 }
 
@@ -64,6 +129,7 @@ unsigned int CMonster::GetAttackSpeed( )
 unsigned int CMonster::GetMoveSpeed( )
 {
     unsigned int mspeed = 0;
+
     if (thisnpc->stance==mRUNNING)
     {
        mspeed=thisnpc->rspeed;
@@ -74,9 +140,14 @@ unsigned int CMonster::GetMoveSpeed( )
     }
 
     if(Status->Dash_up!=0xff)
+    {
         mspeed += MagicStatus[Status->Dash_up].Value;
+    }
     if(Status->Dash_down!=0xff)
+    {
         mspeed -= MagicStatus[Status->Dash_down].Value;
+    }
+
     return mspeed;
 }
 
@@ -85,11 +156,36 @@ unsigned int CMonster::GetDodge( )
 {
     UINT dodge = 0;
     dodge = thisnpc->dodge;
-    if(dodge == 0) dodge = thisnpc->defense; // prevent a /0 for hawk skill
+
+    if(IsSummon())//Tomiz : Check and Add The Owner DODGE To Base Summon Value(STB)
+    {
+        CPlayer* ownerclient = GetOwner( );
+        if(ownerclient!=NULL)
+        {
+            UINT lvlp = thisnpc->level;
+            dodge += (long int)floor((ownerclient->Stats->Dodge * lvlp) / 100);
+            Log(MSG_INFO,"SUMMON: %i Got %i Dodge from is owner, lvlp: %i",thisnpc->id,(dodge - thisnpc->dodge),lvlp);
+        }
+    }
+
+    if(dodge == 0)// prevent a /0 for hawk skill
+    {
+        dodge = thisnpc->defense;
+    }
     if(Status->Dodge_up!=0xff)
+    {
         dodge += MagicStatus[Status->Dodge_up].Value;
+    }
     if(Status->Dodge_down!=0xff)
+    {
         dodge -= MagicStatus[Status->Dodge_down].Value;
+    }
+
+    if(IsSummon())
+    {
+        Log(MSG_INFO,"SUMMON: %i Final DODGE: %i",thisnpc->id,dodge);
+    }
+
     return dodge;
 }
 
@@ -98,10 +194,32 @@ unsigned int CMonster::GetAccury( )
 {
     UINT hitrate = 0;
     hitrate = thisnpc->hitrate;
+
+    if(IsSummon())//Tomiz : Check and Add The Owner ACC To Base Summon Value(STB)
+    {
+        CPlayer* ownerclient = GetOwner( );
+        if(ownerclient!=NULL)
+        {
+            UINT lvlp = thisnpc->level;
+            hitrate += (long int)floor((ownerclient->Stats->Accury * lvlp) / 100);
+            Log(MSG_INFO,"SUMMON %i Got %i Acc from is owner, lvlp: %i",thisnpc->id,(hitrate - thisnpc->hitrate),lvlp);
+        }
+    }
+
     if(Status->Accury_up!=0xff)
+    {
         hitrate += MagicStatus[Status->Accury_up].Value;
+    }
     if(Status->Accury_down!=0xff)
+    {
         hitrate -= MagicStatus[Status->Accury_down].Value;
+    }
+
+    if(IsSummon())
+    {
+        Log(MSG_INFO,"SUMMON: %i Final ACC: %i",thisnpc->id,hitrate);
+    }
+
     return hitrate;
 }
 
@@ -110,10 +228,32 @@ unsigned int CMonster::GetMagicDefense( )
 {
     UINT mdef = 0;
     mdef = thisnpc->magicdefense;
+
+    if(IsSummon())//Tomiz : Check and Add The Owner MDEFF To Base Summon Value(STB)
+    {
+        CPlayer* ownerclient = GetOwner( );
+        if(ownerclient!=NULL)
+        {
+            UINT lvlp = thisnpc->level;
+            mdef += (long int)floor((ownerclient->Stats->Magic_Defense * lvlp) / 100);
+            Log(MSG_INFO,"SUMMON %i Got %i Mdeff from is owner, lvlp: %i",thisnpc->id,(mdef - thisnpc->magicdefense),lvlp);
+        }
+    }
+
     if(Status->Magic_Defense_up!=0xff)
+    {
         mdef += MagicStatus[Status->Magic_Defense_up].Value;
+    }
     if(Status->Magic_Defense_down!=0xff)
+    {
         mdef -= MagicStatus[Status->Magic_Defense_down].Value;
+    }
+
+    if(IsSummon())
+    {
+        Log(MSG_INFO,"SUMMON: %i Final MDEFF: %i",thisnpc->id,mdef);
+    }
+
     return mdef;
 }
 
@@ -131,8 +271,9 @@ unsigned long long CMonster::GetMaxHP( )
     }
 
     if(MaxHP==0)
+    {
         MaxHP = (unsigned long long) thisnpc->shp;
-
+    }
 
     return MaxHP;
 }
@@ -143,6 +284,7 @@ bool CMonster::ForceMaxHP( )
     unsigned long long MaxHP = 0;
     MaxHP = (unsigned long long ) thisnpc->hp;
     MaxHP = MaxHP * ((unsigned long long) thisnpc->level);
+
     if(MaxHP==0)
     {
         MaxHP = (unsigned long long) thisnpc->shp;
@@ -156,11 +298,8 @@ bool CMonster::ForceMaxHP( )
     Stats->MaxHP=MaxHP;
     Stats->HP=MaxHP;
 
-
     return true;
 }
-
-
 
 unsigned int CMonster::GetCritical( )
 {
@@ -172,12 +311,21 @@ float CMonster::GetAttackDistance( )
     return thisnpc->atkdistance;
 }
 
-
-// set monster stats values
+//Set Monster Stats Values
 bool CMonster::SetStats( )
 {
-    if(thisnpc==NULL) return false;
-    Stats->Level = thisnpc->level;
+    if(thisnpc==NULL)
+    {
+        return false;
+    }
+
+    //Stats->Level = thisnpc->level;//Tomiz : Commented and added the check : if(!IsSummon()) bellow
+
+    if(!IsSummon())//Tomiz : Check Monster lvl if is not a Summon(the one from job, setup to fix normal atk formula because summon got lvl <= 100 in STB)
+    {
+        Stats->Level=thisnpc->level;
+    }
+
     Stats->Attack_Power = GetAttackPower( );
     Stats->Defense = GetDefense( );
     Stats->Attack_Speed = GetAttackSpeed( );
@@ -196,7 +344,6 @@ bool CMonster::SetStats( )
     {
         AIVar[i] = 0;
     }
-
 
     return true;
 }
