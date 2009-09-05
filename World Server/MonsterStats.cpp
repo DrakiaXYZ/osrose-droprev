@@ -27,7 +27,7 @@ unsigned int CMonster::GetAttackPower(bool all)
 	unsigned int attack;
 	attack = thisnpc->atkpower;
 
-	if(IsSummon()&&all)//Tomiz : Check and Add The Owner AP To Base Summon Value(STB)
+	if(IsSummon())//Tomiz : Check and Add The Owner AP To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -65,7 +65,7 @@ unsigned int CMonster::GetDefense(bool all)
     unsigned int defense;
     defense =  thisnpc->defense;
 
-    if(IsSummon()&&all)//Tomiz : Check and Add The Owner DEFF To Base Summon Value(STB)
+    if(IsSummon())//Tomiz : Check and Add The Owner DEFF To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -98,7 +98,7 @@ unsigned int CMonster::GetDefense(bool all)
 }
 
 // Get Monster atk speed
-unsigned int CMonster::GetAttackSpeed( )
+unsigned int CMonster::GetAttackSpeed(bool all)
 {
     unsigned int aspeed;
     aspeed = (unsigned int)thisnpc->atkspeed;
@@ -117,16 +117,16 @@ unsigned int CMonster::GetAttackSpeed( )
         aspeed -= MagicStatus[Status->Haste_down].Value;
     }
 
-    if(IsSummon())
+    /*if(IsSummon())
     {
         Log(MSG_INFO,"SUMMON: %i Final ASPEED : %i",thisnpc->id,aspeed);
-    }
+    }*/
 
     return aspeed;
 }
 
 // Get Monster Movement speed
-unsigned int CMonster::GetMoveSpeed( )
+unsigned int CMonster::GetMoveSpeed(bool all)
 {
     unsigned int mspeed = 0;
 
@@ -157,7 +157,7 @@ unsigned int CMonster::GetDodge(bool all)
     UINT dodge = 0;
     dodge = thisnpc->dodge;
 
-    if(IsSummon()&&all)//Tomiz : Check and Add The Owner DODGE To Base Summon Value(STB)
+    if(IsSummon())//Tomiz : Check and Add The Owner DODGE To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -195,7 +195,7 @@ unsigned int CMonster::GetAccury(bool all)
     UINT hitrate = 0;
     hitrate = thisnpc->hitrate;
 
-    if(IsSummon()&&all)//Tomiz : Check and Add The Owner ACC To Base Summon Value(STB)
+    if(IsSummon())//Tomiz : Check and Add The Owner ACC To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -258,7 +258,7 @@ unsigned int CMonster::GetMagicDefense(bool all)
 }
 
 // return max hp
-//unsigned int CMonster::GetMaxHP( )
+// unsigned int CMonster::GetMaxHP( )
 unsigned long long CMonster::GetMaxHP( )
 {
     //UINT MaxHP = 0;
@@ -301,17 +301,19 @@ bool CMonster::ForceMaxHP( )
     return true;
 }
 
-unsigned int CMonster::GetCritical( )
+// Get Mob Critical
+unsigned int CMonster::GetCritical(bool all)
 {
     return 60;  //60 = 20% of 300 our critical probability
 }
 
-float CMonster::GetAttackDistance( )
+// Get Mob Attack Distance
+float CMonster::GetAttackDistance(bool all)
 {
     return thisnpc->atkdistance;
 }
 
-//Set Monster Stats Values
+/*//Set Monster Stats Values
 bool CMonster::SetStats(bool all)
 {
     if(thisnpc==NULL)
@@ -339,6 +341,75 @@ bool CMonster::SetStats(bool all)
     Stats->MaxMP = GetMaxMP();
     //Stats->HP = Stats->MaxHP;
     //Stats->MP = Stats->MaxMP;
+
+    for(int i=0;i<20;i++)
+    {
+        AIVar[i] = 0;
+    }
+
+    return true;
+}*/
+
+//Set Monster Stats Values
+bool CMonster::SetStats(bool all)
+{
+    if(thisnpc==NULL)
+    {
+        return false;
+    }
+
+    if(!IsSummon())//Tomiz : Check Monster lvl if is not a Summon(the one from job, setup to fix normal atk formula because summon got lvl <= 100 in STB)
+    {
+        Stats->Level=thisnpc->level;
+    }
+
+    if (all||Stats->Attack_Power==0)
+    {
+    	Stats->Attack_Power = GetAttackPower(all);
+    }
+
+    if (all||Stats->Defense==0)
+    {
+    	Stats->Defense = GetDefense(all);
+    }
+
+    if (all||Stats->Dodge==0)
+    {
+    	Stats->Dodge = GetDodge(all);
+    }
+
+    if (all||Stats->Accury==0)
+    {
+    	Stats->Accury = GetAccury(all);
+    }
+
+    if (all||Stats->Magic_Defense==0)
+    {
+    	Stats->Magic_Defense = GetMagicDefense(all);
+    }
+
+    if (all||Stats->Critical==0)
+    {
+    	Stats->Critical = GetCritical(all);
+    }
+
+    if (all||Stats->Move_Speed==0)
+    {
+    	Stats->Move_Speed = GetMoveSpeed(all);
+    }
+
+    if (all||Stats->Attack_Speed==0)
+    {
+    	Stats->Attack_Speed = GetAttackSpeed(all);
+    }
+
+    if (all||Stats->Attack_Distance==0)
+    {
+    	Stats->Attack_Distance = GetAttackDistance(all);
+    }
+
+    Stats->MaxHP = GetMaxHP();
+    Stats->MaxMP = GetMaxMP();
 
     for(int i=0;i<20;i++)
     {
