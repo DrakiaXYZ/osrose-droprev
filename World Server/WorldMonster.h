@@ -93,20 +93,20 @@ class CMonster : public CCharacter
         bool UpdateValues( );
 
       	// Stats
-        unsigned int GetAttackPower(bool all);
-        unsigned int GetDefense(bool all);
-        unsigned int GetDodge(bool all);
-        unsigned int GetAccury(bool all);
-        unsigned int GetMagicDefense(bool all);
-        unsigned int GetCritical(bool all);
-        unsigned int GetAttackSpeed(bool all);
-        unsigned int GetMoveSpeed(bool all);
+        unsigned int GetAttackPower();
+        unsigned int GetDefense();
+        unsigned int GetDodge();
+        unsigned int GetAccury();
+        unsigned int GetMagicDefense();
+        unsigned int GetCritical();
+        unsigned int GetAttackSpeed();
+        unsigned int GetMoveSpeed();
 
         //unsigned int GetMaxHP( );
         unsigned long long GetMaxHP( );
         bool CMonster::ForceMaxHP( );   //LMA: Forcing maxHP
 
-        float GetAttackDistance(bool all);
+        float GetAttackDistance();
 
         // Events
         bool OnBeAttacked( CCharacter* Enemy );

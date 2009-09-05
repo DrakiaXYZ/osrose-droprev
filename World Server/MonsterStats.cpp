@@ -22,7 +22,7 @@
 #include "worldmonster.h"
 
 // Get Mob Attack Power
-unsigned int CMonster::GetAttackPower(bool all)
+unsigned int CMonster::GetAttackPower()
 {
 	unsigned int attack;
 	attack = thisnpc->atkpower;
@@ -60,7 +60,7 @@ unsigned int CMonster::GetAttackPower(bool all)
 }
 
 // Get Monster Defense
-unsigned int CMonster::GetDefense(bool all)
+unsigned int CMonster::GetDefense()
 {
     unsigned int defense;
     defense =  thisnpc->defense;
@@ -98,7 +98,7 @@ unsigned int CMonster::GetDefense(bool all)
 }
 
 // Get Monster atk speed
-unsigned int CMonster::GetAttackSpeed(bool all)
+unsigned int CMonster::GetAttackSpeed()
 {
     unsigned int aspeed;
     aspeed = (unsigned int)thisnpc->atkspeed;
@@ -126,7 +126,7 @@ unsigned int CMonster::GetAttackSpeed(bool all)
 }
 
 // Get Monster Movement speed
-unsigned int CMonster::GetMoveSpeed(bool all)
+unsigned int CMonster::GetMoveSpeed()
 {
     unsigned int mspeed = 0;
 
@@ -152,7 +152,7 @@ unsigned int CMonster::GetMoveSpeed(bool all)
 }
 
 // return dodge
-unsigned int CMonster::GetDodge(bool all)
+unsigned int CMonster::GetDodge()
 {
     UINT dodge = 0;
     dodge = thisnpc->dodge;
@@ -190,7 +190,7 @@ unsigned int CMonster::GetDodge(bool all)
 }
 
 // return accury
-unsigned int CMonster::GetAccury(bool all)
+unsigned int CMonster::GetAccury()
 {
     UINT hitrate = 0;
     hitrate = thisnpc->hitrate;
@@ -224,12 +224,12 @@ unsigned int CMonster::GetAccury(bool all)
 }
 
 // return magic defense
-unsigned int CMonster::GetMagicDefense(bool all)
+unsigned int CMonster::GetMagicDefense()
 {
     UINT mdef = 0;
     mdef = thisnpc->magicdefense;
 
-    if(IsSummon()&&all)//Tomiz : Check and Add The Owner MDEFF To Base Summon Value(STB)
+    if(IsSummon())//Tomiz : Check and Add The Owner MDEFF To Base Summon Value(STB)
     {
         CPlayer* ownerclient = GetOwner( );
         if(ownerclient!=NULL)
@@ -302,13 +302,13 @@ bool CMonster::ForceMaxHP( )
 }
 
 // Get Mob Critical
-unsigned int CMonster::GetCritical(bool all)
+unsigned int CMonster::GetCritical()
 {
     return 60;  //60 = 20% of 300 our critical probability
 }
 
 // Get Mob Attack Distance
-float CMonster::GetAttackDistance(bool all)
+float CMonster::GetAttackDistance()
 {
     return thisnpc->atkdistance;
 }
@@ -365,47 +365,47 @@ bool CMonster::SetStats(bool all)
 
     if (all||Stats->Attack_Power==0)
     {
-    	Stats->Attack_Power = GetAttackPower(all);
+    	Stats->Attack_Power = GetAttackPower();
     }
 
     if (all||Stats->Defense==0)
     {
-    	Stats->Defense = GetDefense(all);
+    	Stats->Defense = GetDefense();
     }
 
     if (all||Stats->Dodge==0)
     {
-    	Stats->Dodge = GetDodge(all);
+    	Stats->Dodge = GetDodge();
     }
 
     if (all||Stats->Accury==0)
     {
-    	Stats->Accury = GetAccury(all);
+    	Stats->Accury = GetAccury();
     }
 
     if (all||Stats->Magic_Defense==0)
     {
-    	Stats->Magic_Defense = GetMagicDefense(all);
+    	Stats->Magic_Defense = GetMagicDefense();
     }
 
     if (all||Stats->Critical==0)
     {
-    	Stats->Critical = GetCritical(all);
+    	Stats->Critical = GetCritical();
     }
 
     if (all||Stats->Move_Speed==0)
     {
-    	Stats->Move_Speed = GetMoveSpeed(all);
+    	Stats->Move_Speed = GetMoveSpeed();
     }
 
     if (all||Stats->Attack_Speed==0)
     {
-    	Stats->Attack_Speed = GetAttackSpeed(all);
+    	Stats->Attack_Speed = GetAttackSpeed();
     }
 
     if (all||Stats->Attack_Distance==0)
     {
-    	Stats->Attack_Distance = GetAttackDistance(all);
+    	Stats->Attack_Distance = GetAttackDistance();
     }
 
     Stats->MaxHP = GetMaxHP();
