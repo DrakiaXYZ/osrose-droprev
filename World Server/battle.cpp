@@ -152,7 +152,8 @@ void CCharacter::DoAttack( )
                                     monster->nextAi_attacked+=monster->thisnpc->AiTimer;
                                 }
 
-                                Log(MSG_INFO,"Clock is %u, next is_attacked at %u, so in %u",clock(),monster->thisnpc->AiTimer,monster->thisnpc->AiTimer-clock());
+                                //Log(MSG_INFO,"Clock is %u, next is_attacked at %u, so in %u",clock(),monster->thisnpc->AiTimer,monster->thisnpc->AiTimer-clock());
+                                Log(MSG_INFO,"Clock is %u, next is_attacked at %u, so in %u",clock(),monster->nextAi_attacked,monster->nextAi_attacked-clock());
 
                             }
 
@@ -574,7 +575,9 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
 
     BEGINPACKET( pak, 0x799 );
     ADDWORD    ( pak, clientid );
-    ADDWORD    ( pak, Battle->atktarget );
+    //ADDWORD    ( pak, Battle->atktarget );
+    ADDWORD    ( pak, Enemy->clientid );
+    Log(MSG_INFO,"pak 799 : clientid %i, Enemy->clientid %i",clientid,Enemy->clientid);
 
     //LMA: little test (see TESTDEATH)
     //ADDDWORD   ( pak, hitpower );
@@ -1394,7 +1397,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     long int skillpower=0;
     long int level_diff = Stats->Level - Enemy->Stats->Level;
 
-    if(Enemy->IsMonster())
+    if(Enemy->IsMonster() && skill->formula !=0)
     {
         if(level_diff >= 1)
         {
@@ -1440,6 +1443,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         break;
         default:
         {
+            skillpower += 5;
             Log(MSG_INFO,"%i cast Unknow Formula Skill (%i), Attack power %u, skillpower %li, Deff %u,MDeff %u, level diff %li, to %i",clientid,skill->formula,skill->atkpower,skillpower,Enemy->Stats->Defense,Enemy->Stats->Magic_Defense,level_diff,Enemy->clientid);
         }
         break;
