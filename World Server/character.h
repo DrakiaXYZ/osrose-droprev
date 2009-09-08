@@ -87,6 +87,7 @@ class CCharacter
         CCharacter* GetCharTarget( );
         CCharacter* GetCharBuffTarget( );           //LMA: Used for some summons.
         bool IsAttacking( );
+        bool first_attack;//Tomiz: Used for CCharacter::DoAttack( ), monster->DoAi(monster->thisnpc->AI, 3);
 
         // virtual functions
         // Events

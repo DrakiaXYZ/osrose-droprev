@@ -122,6 +122,13 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->Stats->MP = monster->Stats->MaxMP;
     monster->is_tactical=is_tactic;
     monster->suicide=false;
+    monster->first_attack=true;
+
+
+    for(int i=0;i<20;i++)
+    {
+        monster->AIVar[i] = 0;
+    }
 
     //LMA: no agressivity in Santa's planetoid ;)
     if(monster->Position->Map==38)

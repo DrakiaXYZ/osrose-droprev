@@ -411,10 +411,10 @@ bool CMonster::SetStats(bool all)
     Stats->MaxHP = GetMaxHP();
     Stats->MaxMP = GetMaxMP();
 
-    for(int i=0;i<20;i++)
+    /*for(int i=0;i<20;i++)
     {
         AIVar[i] = 0;
-    }
+    }*/
 
     return true;
 }

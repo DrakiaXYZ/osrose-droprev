@@ -135,8 +135,14 @@ void CCharacter::DoAttack( )
                     {
                         if(!monster->IsDead())
                         {
-                            Log(MSG_INFO,"Monster %i is attacked, doing his AI 3, HP: %I64i",monster->clientid,monster->Stats->HP);
-                            monster->DoAi(monster->thisnpc->AI, 3);
+                            /*Log(MSG_INFO,"Monster %i is attacked, doing his AI 3, HP: %I64i",monster->clientid,monster->Stats->HP);
+                            monster->DoAi(monster->thisnpc->AI, 3);*/
+                            if(monster->first_attack)
+                            {
+                                Log(MSG_INFO,"Monster %i is attacked, doing his AI 3, HP: %I64i",monster->clientid,monster->Stats->HP);
+                                monster->DoAi(monster->thisnpc->AI, 3);
+                                monster->first_attack=false;
+                            }
                         }
 
                     }

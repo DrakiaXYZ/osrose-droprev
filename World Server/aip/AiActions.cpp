@@ -1013,7 +1013,7 @@ AIACT(024)
             monster->StartAction( (CCharacter*) target, AOE_TARGET, data->nSkill );
         }
         break;
-        case 8: //self buff
+        /*case 8: //self buff
         {
             LogDebug("BUFF_SELF selected.");
             monster->StartAction( NULL, BUFF_SELF, data->nSkill );
@@ -1043,7 +1043,59 @@ AIACT(024)
                 monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
             }
         }
+        break;*/
+
+        case 8: //self buff
+        case 9: //skill buff
+        case 13://skill buff
+        case 11: //heal
+        {
+            switch(thisskill->target)
+            {
+                case 0://self buff
+                {
+                    LogDebug("BUFF_SELF selected.");
+                    monster->StartAction( NULL, BUFF_SELF, data->nSkill );
+                }
+                break;
+                default:
+                {
+                    if(thisskill->aoeradius == 0)
+                    {
+                        CCharacter* target = entity->GetCharTarget( );
+                        if(target == NULL) //some skills always return a NULL target here
+                        {
+                            if(entity->nearChar == NULL) // maybe there really is no possible target.
+                            {
+                                LogDebug("No target can be found for this skill");
+                                return AI_FAILURE;
+                            }
+                            else //so we are going to have them select a NEW target (if possible) rather than return AI_FAILURE
+                            {
+                                LogDebug("SKILL_BUFF type 13 selected. NEW target: %i",entity->nearChar->clientid);
+                                monster->StartAction( (CCharacter*) entity->nearChar, SKILL_BUFF, data->nSkill );
+                            }
+                        }
+                        else
+                        {
+                            LogDebug("SKILL_BUFF type %i selected. target: %i",thisskill->skilltype, target->clientid);
+                            monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
+                        }
+                    }
+                    else
+                    {
+                        //LMA: no need to do the same AOE buff all over again if not already done...
+                        if(monster->Battle->atktype!=SKILL_AOE&&monster->Battle->skillid!=data->nSkill)
+                        {
+                            monster->StartAction( NULL, SKILL_AOE, data->nSkill );
+                        }
+                    }
+                }
+                break;
+            }
+        }
         break;
+
         case 10: //heal AOE centered on self
             LogDebug("BUFF_AOE selected. Skill id %i", data->nSkill);
             monster->StartAction( NULL, BUFF_AOE, data->nSkill );
@@ -1545,6 +1597,7 @@ AIACT(035)
             break;
     }
     thisMonster->AIVar[data->nVarIDX] = tempval;
+    Log(MSG_INFO,"AI[%i] set to %i for monster %i",data->nVarIDX,tempval,thisMonster->montype);
 	//thisMonster->thisnpc->Objvar->SetVar(data->btOp, data->iValue); //code not working
 	return AI_SUCCESS;
 }
