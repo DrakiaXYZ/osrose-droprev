@@ -270,6 +270,7 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	ADDDWORD   ( pak, 0x87654321 );
 	ADDDWORD   ( pak, 0x00000000 );
 	thisclient->client->SendPacket( &pak );
+    thisclient->SetStats( );
     pakPlayer(thisclient);
     pakInventory(thisclient);
     pakQuestData(thisclient);

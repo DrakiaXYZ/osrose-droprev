@@ -4556,12 +4556,13 @@ void CPlayer::SetStats( )
     Stats->MaxHP = GetMaxHP( );
     Stats->MaxMP = GetMaxMP( );
     //Tomiz : If we change stance, we don't take in consideration the extra stats str and int and we must check if HP and MP is not > MaxHP and MaxMP
-    if(Status->Stance == DRIVING)
+    if(Stats->HP > Stats->MaxHP)
     {
-        if(Stats->HP > Stats->MaxHP)
-            Stats->HP = Stats->MaxHP;
-        if(Stats->MP > Stats->MaxMP)
-            Stats->MP = Stats->MaxMP;
+        Stats->HP = Stats->MaxHP;
+    }
+    if(Stats->MP > Stats->MaxMP)
+    {
+        Stats->MP = Stats->MaxMP;
     }
     //end
     Stats->Attack_Power = GetAttackPower( );
