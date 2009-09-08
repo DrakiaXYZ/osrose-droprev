@@ -791,8 +791,14 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
 }
 
 //LMA: AIP
-void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is add=0 idle=1 attacking=2 attacked=3 after killing target=4 hp<1=5
+//ainumber is monster->AI type is add=0 idle=1 attacking=2 attacked=3 after killing target=4 hp<1=5
+void CMonster::DoAi(int ainumberorg,char type)
 {
+    //LMA: reseting some timers.
+    if (type==0||type==1||type==4||type==5)
+    {
+        nextAi_attacked=clock();
+    }
 
     //LMA: does the monster have a special AIP?
     int ainumber=ainumberorg;

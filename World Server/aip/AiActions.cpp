@@ -977,7 +977,14 @@ AIACT(024)
     //	LogDebug( "entity->findChar %i",entity->findChar->clientid);
     //	LogDebug( "entity->nearChar %i", entity->nearChar->clientid);
 	CSkills* thisskill = GServer->GetSkillByID( data->nSkill );
+	if(thisskill==NULL)
+	{
+        Log(MSG_WARNING,"AIA024:: Skill %i doesn't exist!",data->nSkill);
+        return AI_FAILURE;
+	}
+
 	CCharacter* monster = entity;
+	int skill_timer=thisskill->duration*1000;
 	//if(monster->Battle->atktype != 0)
 	//{
     //    LogDebug("Cannot apply battle attacktype. Monster already has one");
@@ -1056,6 +1063,8 @@ AIACT(024)
                 {
                     LogDebug("BUFF_SELF selected.");
                     monster->StartAction( NULL, BUFF_SELF, data->nSkill );
+                    //LMA: no special time to add.
+                    skill_timer=0;
                 }
                 break;
                 default:
@@ -1165,6 +1174,11 @@ AIACT(024)
              }
         }
     }*/
+
+    //LMA: next attack.
+    monster->nextAi_attacked+=skill_timer;
+
+
 	return AI_SUCCESS;
 }
 

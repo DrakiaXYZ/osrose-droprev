@@ -137,12 +137,25 @@ void CCharacter::DoAttack( )
                         {
                             /*Log(MSG_INFO,"Monster %i is attacked, doing his AI 3, HP: %I64i",monster->clientid,monster->Stats->HP);
                             monster->DoAi(monster->thisnpc->AI, 3);*/
-                            if(monster->first_attack)
+
+                            //LMA: Doing is_attacked from time to time, not at each attack...
+                            if(0<=GServer->round((clock( ) - monster->nextAi_attacked)))
                             {
+                                monster->nextAi_attacked=clock();
+                                clock_t temp=monster->nextAi_attacked;
                                 Log(MSG_INFO,"Monster %i is attacked, doing his AI 3, HP: %I64i",monster->clientid,monster->Stats->HP);
                                 monster->DoAi(monster->thisnpc->AI, 3);
-                                monster->first_attack=false;
+
+                                if (temp==monster->nextAi_attacked)
+                                {
+                                    //LMA: AI Timer by default, some AIP can change this.
+                                    monster->nextAi_attacked+=monster->thisnpc->AiTimer;
+                                }
+
+                                Log(MSG_INFO,"Clock is %u, next is_attacked at %u, so in %u",clock(),monster->thisnpc->AiTimer,monster->thisnpc->AiTimer-clock());
+
                             }
+
                         }
 
                     }

@@ -122,7 +122,6 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->Stats->MP = monster->Stats->MaxMP;
     monster->is_tactical=is_tactic;
     monster->suicide=false;
-    monster->first_attack=true;
 
 
     for(int i=0;i<20;i++)
@@ -202,6 +201,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->lastDegenTime=clock();
     monster->OnSpawn( false );
     monster->lastAiUpdate = clock();
+    monster->nextAi_attacked=clock();
     monster->hitcount = 0xFF;
 
     monster->hitcount=0;
