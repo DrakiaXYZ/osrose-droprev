@@ -162,7 +162,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Poisoned = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -184,7 +185,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     {
                         character->Status->Muted = j;
                         character->Status->CanCastSkill = false;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -209,7 +211,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                         character->Status->CanAttack = false;
                         character->Status->CanMove = false;
                         character->Status->CanCastSkill = false;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -232,7 +235,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     {
                         character->Status->Faint = j;
                         character->Status->CanAttack = false;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -292,10 +296,12 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                         character->Status->ExtraDamage_up = j;
                     else
                         character->Status->ExtraDamage_down = j;
-                    character->MagicStatus[j].Buff = thisskill->buff[i];
+                    //character->MagicStatus[j].Buff = thisskill->buff[i];
+                    character->MagicStatus[j].Buff = thisskill->status[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
-                    character->MagicStatus[j].Value = BuffValue.Value;  // wrongO . Additional damage uses skill power not buff value. Fix later
+                    //character->MagicStatus[j].Value = BuffValue.Value;  // wrongO . Additional damage uses skill power not buff value. Fix later
+                    character->MagicStatus[j].Value = thisskill->atkpower;
                     character->MagicStatus[j].Status = thisskill->status[i];
                     bflag = true;
                 }
@@ -315,10 +321,12 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                         character->Status->ShieldDamage_up = j;
                     else
                         character->Status->ShieldDamage_down = j;
-                    character->MagicStatus[j].Buff = thisskill->buff[i];
+                    //character->MagicStatus[j].Buff = thisskill->buff[i];
+                    character->MagicStatus[j].Buff = thisskill->status[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
-                    character->MagicStatus[j].Value = BuffValue.Value;  // wrongO . shield damage uses skill power not buff value. Fix later
+                    //character->MagicStatus[j].Value = BuffValue.Value;  // wrongO . shield damage uses skill power not buff value. Fix later
+                    character->MagicStatus[j].Value = thisskill->atkpower;
                     character->MagicStatus[j].Status = thisskill->status[i];
                     bflag = true;
                 }
@@ -627,7 +635,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Flamed = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -648,7 +657,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Stealth = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -670,7 +680,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     {
                         character->Status->Weary = j;
                         character->Status->CanCastSkill = false;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -691,7 +702,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Cloaking = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -712,7 +724,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Detect = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -733,7 +746,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Taunt = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -754,7 +768,8 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     if(j>14)
                     {
                         character->Status->Recover = j;
-                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        //character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].Buff = thisskill->status[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = 0; // this might cause headaches later
@@ -1026,68 +1041,70 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
     BYTE buff3 = 0;
     BYTE buff4 = 0;
     //Build Debuffs and Buffs
-        //Up
-    if(character->Status->Attack_up != 0xff)//A_ATTACK:
-                buff2 += ATTACK_UP;
-    if(character->Status->Defense_up != 0xff)//A_DEFENSE:
-                buff2 += DEFENSE_UP;
-    if(character->Status->Magic_Defense_up != 0xff)//A_MDEFENSE_UP
-                buff2 += MDEFENSE_UP;
-    if(character->Status->Accury_up != 0xff)//A_ACCUR:
-                buff3 += HITRATE_UP;
+    //Up
     if(character->Status->Dash_up != 0xff)//A_DASH:
-                buff1 += DASH_UP;
-    if(character->Status->Haste_up != 0xff)//A_HASTE:
-                buff2 += HASTE_UP;
+        buff1 += DASH_UP;
     if(character->Status->HP_up != 0xff)//A_HP:
-                buff1 += HP_UP;
+        buff1 += HP_UP;
     if(character->Status->MP_up != 0xff)//A_MP:
-                buff1 += MP_UP;
+        buff1 += MP_UP;
+    if(character->Status->Attack_up != 0xff)//A_ATTACK:
+        buff2 += ATTACK_UP;
+    if(character->Status->Haste_up != 0xff)//A_HASTE:
+        buff2 += HASTE_UP;
+    if(character->Status->Defense_up != 0xff)//A_DEFENSE:
+        buff2 += DEFENSE_UP;
+    if(character->Status->Magic_Defense_up != 0xff)//A_MDEFENSE_UP
+        buff2 += MDEFENSE_UP;
+    if(character->Status->Accury_up != 0xff)//A_ACCUR:
+        buff3 += HITRATE_UP;
     if(character->Status->Critical_up != 0xff)//A_CRITICAL:
-                buff3 += CRITICAL_UP;
+        buff3 += CRITICAL_UP;
     if(character->Status->Dodge_up != 0xff)//A_DODGE:
-                buff1 += DODGE_UP;
+        buff3 += DODGE_UP;
     if(character->Status->ExtraDamage_up != 0xff)//A_Extra_Damage:
-                buff4 += DAMAGE_UP;
+        buff4 += DAMAGE_UP;
     if(character->Status->ShieldDamage_up != 0xff)//A_Shield_Damage:
-                buff4 += SHIELD_DAMAGE;
-        //Down
-    if(character->Status->Attack_down != 0xff) // A_ATTACK:
-                buff2 += ATTACK_DOWN;
-    if(character->Status->Defense_down != 0xff)//A_DEFENSE:
-                buff2 += DEFENSE_DOWN;
-    if(character->Status->Magic_Defense_down != 0xff)
-                buff2 += MDEFENSE_DOWN;
-    if(character->Status->Accury_down != 0xff)//A_ACCUR:
-                buff3 += HITRATE_DOWN;
+        buff4 += SHIELD_DAMAGE;
+    //Down
     if(character->Status->Dash_down != 0xff)//A_DASH:
-                buff1 += DASH_DOWN;
-    if(character->Status->Haste_down != 0xff)//A_HASTE:
-                buff2 += HASTE_DOWN;
+        buff1 += DASH_DOWN;
     if(character->Status->HP_down != 0xff)//A_HP:
-                //buff1 += 0;
-                buff1 += HP_UP;
+        buff1 += 0;
     if(character->Status->MP_down != 0xff)//A_MP:
-                //buff1 += 0;
-                buff1 += MP_UP;
-    if(character->Status->Critical_down != 0xff)//A_CRITICAL:
-                buff3 += CRITICAL_DOWN;
-    if(character->IsSummon( ))
-                buff4 += SUMMON;
-    if(character->Status->Stuned != 0xff)//A_STUN
-                buff4+= STUN;
+        buff1 += 0;
     if(character->Status->Poisoned != 0xff)//A_POISON
-                buff1+= POISONED;
-    if(character->Status->Muted != 0xff)//A_MUTE
-                buff3+= MUTED;
+        buff1+= POISONED;
     if(character->Status->Flamed != 0xff)//A_FLAME
-                buff1+= FLAMED;
-    if(character->Status->Stealth != 0xff)//A_STEALTH
-                buff4 += STEALTH;
+        buff1+= FLAMED;
+    if(character->Status->Attack_down != 0xff) // A_ATTACK:
+        buff2 += ATTACK_DOWN;
+    if(character->Status->Haste_down != 0xff)//A_HASTE:
+        buff2 += HASTE_DOWN;
+    if(character->Status->Defense_down != 0xff)//A_DEFENSE:
+        buff2 += DEFENSE_DOWN;
+    if(character->Status->Magic_Defense_down != 0xff)
+        buff2 += MDEFENSE_DOWN;
+    if(character->Status->Dodge_down  != 0xff)
+        buff3 += DODGE_UP;
+    if(character->Status->Accury_down != 0xff)//A_ACCUR:
+        buff3 += HITRATE_DOWN;
+    if(character->Status->Critical_down != 0xff)//A_CRITICAL:
+        buff3 += CRITICAL_DOWN;
+    if(character->Status->Muted != 0xff)//A_MUTE
+        buff3+= MUTED;
     if(character->Status->Weary != 0xff)//A_STEALTH
-                buff3 += WEARY;
+        buff3 += WEARY;
+    if(character->Status->ExtraDamage_down != 0xff)//A_Extra_Damage:
+        buff4 += DAMAGE_UP;
+    if(character->IsSummon( ))
+        buff4 += SUMMON;
+    if(character->Status->Stuned != 0xff)//A_STUN
+        buff4+= STUN;
+    if(character->Status->Stealth != 0xff)//A_STEALTH
+        buff4 += STEALTH;
     if(character->Status->Cloaking != 0xff)//A_CLOAKING
-                buff4 += CLOAKING;
+        buff4 += CLOAKING;
 
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
@@ -1099,32 +1116,34 @@ unsigned int CWorldServer::BuildUpBuffs( CCharacter* character )
     BYTE buff2 = 0;
     BYTE buff3 = 0;
     BYTE buff4 = 0;
-    // Buffs
-        //Up
-    if(character->Status->Attack_up != 0xff)//A_ATTACK:
-                buff2 += ATTACK_UP;
-    if(character->Status->Defense_up != 0xff)//A_DEFENSE:
-                buff2 += DEFENSE_UP;
-    if(character->Status->Magic_Defense_up != 0xff)//A_MDEFENSE_UP
-                buff2 += MDEFENSE_UP;
-    if(character->Status->Accury_up != 0xff)//A_ACCUR:
-                buff3 += HITRATE_UP;
+
+    //Build Buffs
+    //Up
     if(character->Status->Dash_up != 0xff)//A_DASH:
-                buff1 += DASH_UP;
-    if(character->Status->Haste_up != 0xff)//A_HASTE:
-                buff2 += HASTE_UP;
+        buff1 += DASH_UP;
     if(character->Status->HP_up != 0xff)//A_HP:
-                buff1 += HP_UP;
+        buff1 += HP_UP;
     if(character->Status->MP_up != 0xff)//A_MP:
-                buff1 += MP_UP;
+        buff1 += MP_UP;
+    if(character->Status->Attack_up != 0xff)//A_ATTACK:
+        buff2 += ATTACK_UP;
+    if(character->Status->Haste_up != 0xff)//A_HASTE:
+        buff2 += HASTE_UP;
+    if(character->Status->Defense_up != 0xff)//A_DEFENSE:
+        buff2 += DEFENSE_UP;
+    if(character->Status->Magic_Defense_up != 0xff)//A_MDEFENSE_UP
+        buff2 += MDEFENSE_UP;
+    if(character->Status->Accury_up != 0xff)//A_ACCUR:
+        buff3 += HITRATE_UP;
     if(character->Status->Critical_up != 0xff)//A_CRITICAL:
-                buff3 += CRITICAL_UP;
+        buff3 += CRITICAL_UP;
     if(character->Status->Dodge_up != 0xff)//A_DODGE:
-                buff1 += DODGE_UP;
+        buff3 += DODGE_UP;
     if(character->Status->ExtraDamage_up != 0xff)//A_Extra_Damage:
-                buff4 += DAMAGE_UP;
+        buff4 += DAMAGE_UP;
     if(character->Status->ShieldDamage_up != 0xff)//A_Shield_Damage:
-                buff4 += SHIELD_DAMAGE;
+        buff4 += SHIELD_DAMAGE;
+
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
 // Build Buffs to Show
@@ -1134,44 +1153,47 @@ unsigned int CWorldServer::BuildDeBuffs( CCharacter* character )
     BYTE buff2 = 0;
     BYTE buff3 = 0;
     BYTE buff4 = 0;
+
     //Build Debuffs
-        //Down
-    if(character->Status->Attack_down != 0xff) // A_ATTACK:
-                buff2 += ATTACK_DOWN;
-    if(character->Status->Defense_down != 0xff)//A_DEFENSE:
-                buff2 += DEFENSE_DOWN;
-    if(character->Status->Magic_Defense_down != 0xff)
-                buff2 += MDEFENSE_DOWN;
-    if(character->Status->Accury_down != 0xff)//A_ACCUR:
-                buff3 += HITRATE_DOWN;
+    //Down
     if(character->Status->Dash_down != 0xff)//A_DASH:
-                buff1 += DASH_DOWN;
-    if(character->Status->Haste_down != 0xff)//A_HASTE:
-                buff2 += HASTE_DOWN;
+        buff1 += DASH_DOWN;
     if(character->Status->HP_down != 0xff)//A_HP:
-                //buff1 += 0;
-                buff1 += HP_UP;
+        buff1 += 0;
     if(character->Status->MP_down != 0xff)//A_MP:
-                //buff1 += 0;
-                buff1 += MP_UP;
-    if(character->Status->Critical_down != 0xff)//A_CRITICAL:
-                buff3 += CRITICAL_DOWN;
-    if(character->IsSummon( ))
-                buff4 += SUMMON;
-    if(character->Status->Stuned != 0xff)//A_STUN
-                buff4+= STUN;
+        buff1 += 0;
     if(character->Status->Poisoned != 0xff)//A_POISON
-                buff1+= POISONED;
-    if(character->Status->Muted != 0xff)//A_MUTE
-                buff3+= MUTED;
+        buff1+= POISONED;
     if(character->Status->Flamed != 0xff)//A_FLAME
-                buff1+= FLAMED;
-    if(character->Status->Stealth != 0xff)//A_STEALTH
-                buff4 += STEALTH;
+        buff1+= FLAMED;
+    if(character->Status->Attack_down != 0xff) // A_ATTACK:
+        buff2 += ATTACK_DOWN;
+    if(character->Status->Haste_down != 0xff)//A_HASTE:
+        buff2 += HASTE_DOWN;
+    if(character->Status->Defense_down != 0xff)//A_DEFENSE:
+        buff2 += DEFENSE_DOWN;
+    if(character->Status->Magic_Defense_down != 0xff)
+        buff2 += MDEFENSE_DOWN;
+    if(character->Status->Dodge_down  != 0xff)
+        buff3 += DODGE_UP;
+    if(character->Status->Accury_down != 0xff)//A_ACCUR:
+        buff3 += HITRATE_DOWN;
+    if(character->Status->Critical_down != 0xff)//A_CRITICAL:
+        buff3 += CRITICAL_DOWN;
+    if(character->Status->Muted != 0xff)//A_MUTE
+        buff3+= MUTED;
     if(character->Status->Weary != 0xff)//A_STEALTH
-                buff3 += WEARY;
+        buff3 += WEARY;
+    if(character->Status->ExtraDamage_down != 0xff)//A_Extra_Damage:
+        buff4 += DAMAGE_UP;
+    if(character->IsSummon( ))
+        buff4 += SUMMON;
+    if(character->Status->Stuned != 0xff)//A_STUN
+        buff4+= STUN;
+    if(character->Status->Stealth != 0xff)//A_STEALTH
+        buff4 += STEALTH;
     if(character->Status->Cloaking != 0xff)//A_CLOAKING
-                buff4 += CLOAKING;
+        buff4 += CLOAKING;
 
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
