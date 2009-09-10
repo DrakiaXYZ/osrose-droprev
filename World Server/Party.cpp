@@ -273,7 +273,8 @@ bool CWorldServer::pakPartyManager( CPlayer* thisclient, CPacket* P )
             ADDWORD    ( pak, thisclient->clientid );
             ADDWORD    ( pak, thisclient->Stats->MaxHP );
             ADDWORD    ( pak, thisclient->Stats->HP );
-            ADDDWORD   ( pak, 0x00000000 );
+            //ADDDWORD   ( pak, 0x00000000 );//Tomiz : Was not commented before
+            ADDWORD    ( pak, BuildBuffs( thisclient ));//Tomiz : Buff Data
             ADDDWORD   ( pak, 0x0000000f );
             ADDWORD    ( pak, 0x1388 );
             ADDSTRING  ( pak, thisclient->CharInfo->charname );
