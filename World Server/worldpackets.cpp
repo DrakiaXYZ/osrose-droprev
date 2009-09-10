@@ -1181,21 +1181,56 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
        return true;
 	if( destslot==0 ) destslot = thisclient->GetNewItemSlot( thisclient->items[srcslot] );
 	if( destslot==0xffff ) return true;
-    if( srcslot==7 || destslot==7 )
+
+    if( srcslot==7 || destslot==7 )//Weapon
     {
         // clear the buffs if we change the weapon
         for(UINT i=0;i<15;i++)
         {
-            switch(thisclient->MagicStatus[i].Buff)
+            if(thisclient->MagicStatus[i].Buff != 0)
             {
-                case A_ATTACK:
-                case A_ACCUR:
-                case A_HASTE:
-                case A_CRITICAL:
-                case A_STEALTH:
-                case A_CLOAKING:
-                    thisclient->MagicStatus[i].Duration = 0;
-                break;
+                switch(thisclient->MagicStatus[i].Buff)
+                {
+                    case A_ATTACK:
+                    case A_ACCUR:
+                    case A_HASTE:
+                    case A_CRITICAL:
+                    case A_STEALTH:
+                    case A_CLOAKING:
+                    case A_ADDDMG:
+                    {
+                        thisclient->MagicStatus[i].Duration = 0;
+                        //Log(MSG_INFO, "Buff %i Magic Status %i should be down after weapon remove", thisclient->MagicStatus[i].Buff,thisclient->MagicStatus[i].Status);
+                    }
+                    break;
+                    /*default:
+                    {
+                        Log(MSG_INFO, "Buff %i Magic Status %i have to stay after weapon remove", thisclient->MagicStatus[i].Buff,thisclient->MagicStatus[i].Status);
+                    }*/
+                }
+            }
+        }
+    }
+    if( srcslot==8 || destslot==8 )//Shield
+    {
+        // clear the buffs if we change the Shield
+        for(UINT i=0;i<15;i++)
+        {
+            if(thisclient->MagicStatus[i].Buff != 0)
+            {
+                switch(thisclient->MagicStatus[i].Buff)
+                {
+                    case A_DEFENSE:
+                    {
+                        thisclient->MagicStatus[i].Duration = 0;
+                        //Log(MSG_INFO, "Buff %i Magic Status %i should be down after Shield remove", thisclient->MagicStatus[i].Buff,thisclient->MagicStatus[i].Status);
+                    }
+                    break;
+                    /*default:
+                    {
+                        Log(MSG_INFO, "Buff %i Magic Status %i have to stay after Shield remove", thisclient->MagicStatus[i].Buff,thisclient->MagicStatus[i].Status);
+                    }*/
+                }
             }
         }
     }
