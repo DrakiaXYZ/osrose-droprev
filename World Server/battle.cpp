@@ -1817,7 +1817,7 @@ bool CCharacter::UseSkill( CSkills* skill, CCharacter *Target )
 bool CCharacter::TakeExp( CCharacter *Target )
 {
     //LMA: We don't take exp from a player if the killer is a Player.
-    if(!Target->IsPlayer()||((!Target->IsPlayer())&&(!IsPlayer())))
+    if(!Target->IsPlayer()||(Target->IsPlayer()&&IsPlayer()))
     {
         return true;
     }
