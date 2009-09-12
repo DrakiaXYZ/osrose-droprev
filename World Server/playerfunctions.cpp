@@ -129,6 +129,13 @@ bool CPlayer::GetPlayerInfo( )
 	ADDSTRING( pak, text );
 	ADDBYTE( pak, 0 );
 	client->SendPacket(&pak);
+	sprintf(text,"Extra DMG: %i", Stats->ExtraDamage_add );
+	RESETPACKET( pak, 0x0784 );
+	ADDSTRING( pak, "[GM]PlayerInfo" );
+	ADDBYTE( pak, 0 );
+	ADDSTRING( pak, text );
+	ADDBYTE( pak, 0 );
+	client->SendPacket(&pak);
     return true;
 }
 
@@ -507,8 +514,10 @@ bool CPlayer::RefreshHPMP()
         ADDWORD    ( pak, clientid );
         ADDWORD    ( pak, GetMaxHP( ) );
         ADDWORD    ( pak, Stats->HP );
-        ADDDWORD   ( pak, 0x01000000 );
-        ADDDWORD   ( pak, 0x0000000f );
+        //ADDDWORD   ( pak, 0x01000000 );//Tomiz: Was not commented before
+        ADDDWORD   ( pak, GServer->BuildBuffs( this ));//Tomiz: Buff Data
+        //ADDDWORD   ( pak, 0x0000000f );//Tomiz: Was not commented before
+        ADDDWORD   ( pak, 0x1f40008c );//Tomiz
         ADDWORD    ( pak, 0x1388 );
         Party->party->SendToMembers( &pak);
     }

@@ -476,175 +476,269 @@ void CCharacter::RefreshBuff( )
         if( etime >= MagicStatus[i].Duration * CLOCKS_PER_SEC )
         {
 
-        Log(MSG_INFO,"Magic Status %i, vanish after: %i", MagicStatus[i].Status, MagicStatus[i].Duration);
+            Log(MSG_INFO,"Magic Status %i, vanish after: %i", MagicStatus[i].Status, MagicStatus[i].Duration);
 
             switch(MagicStatus[i].Status)
             {
                 case 18: // attack power up
                 case 19: // attack power down
                 case 48: // attack power up
+                {
                     if(i<15)
+                    {
                         Status->Attack_up = 0xff;
+                    }
                     else
+                    {
                         Status->Attack_down = 0xff;
+                    }
                     Stats->Attack_Power = GetAttackPower( );
+                }
                 break;
                 case 20: // def up
                 case 21: // def down
                 case 49: // def up
+                {
                     if(i<15)
+                    {
                         Status->Defense_up= 0xff;
+                    }
                     else
+                    {
                         Status->Defense_down = 0xff;
+                    }
                     Stats->Defense = GetDefense( );
+                }
                 break;
                 case 24: //accuracy up
                 case 25: //accuracy down
                 case 51: //attack accuracy up.
+                {
                     if(i<15)
+                    {
                         Status->Accury_up= 0xff;
+                    }
                     else
+                    {
                         Status->Accury_down = 0xff;
+                    }
                     Stats->Accury = GetAccury( );
+                }
                 break;
                 case 22: // macic resistance up
                 case 23: // magic resistance down
                 case 50: // magic resistance up
+                {
                     if(i<15)
+                    {
                         Status->Magic_Defense_up = 0xff;
+                    }
                     else
+                    {
                         Status->Magic_Defense_down = 0xff;
+                    }
                     Stats->Magic_Defense = GetMagicDefense( );
+                }
                 break;
                 case 28: //dodge up
                 case 29: //dodge down
                 case 53: //dodge rate up
+                {
                     if(i<15)
+                    {
                         Status->Dodge_up = 0xff;
+                    }
                     else
+                    {
                         Status->Dodge_down = 0xff;
+                    }
                     Stats->Dodge = GetDodge( );
+                }
                 break;
                 case 14: //dash
                 case 15: //slow
                 case 46: //movement speed increased
+                {
                     if(i<15)
+                    {
                         Status->Dash_up = 0xff;
+                    }
                     else
+                    {
                         Status->Dash_down = 0xff;
+                    }
                     Stats->Move_Speed = GetMoveSpeed( );
+                }
                 break;
                 case 16: // haste attack
                 case 17: // slow attack
                 case 47: // attack speed up
+                {
                     if(i<15)
+                    {
                         Status->Haste_up = 0xff;
+                    }
                     else
+                    {
                         Status->Haste_down = 0xff;
+                    }
                     Stats->Attack_Speed = GetAttackSpeed( );
+                }
                 break;
                 case 26: // crit up
                 case 27: // crit down
                 case 52: // crit up
+                {
                     if(i<15)
+                    {
                         Status->Critical_up = 0xff;
+                    }
                     else
+                    {
                         Status->Critical_down = 0xff;
+                    }
                     Stats->Critical = GetCritical( );
+                }
                 break;
                 case 12: // max HP up
                 case 44: // max HP up
+                {
                     if(i<15)
+                    {
                         Status->HP_up = 0xff;
+                    }
                     else
+                    {
                         Status->HP_down = 0xff;
+                    }
                     Stats->MaxHP = GetMaxHP( );
+
+                    if(Stats->HP > Stats->MaxHP)
+                    {
+                        Stats->HP = Stats->MaxHP;
+                    }
+                }
                 break;
                 case 13: // max MP up
                 case 45: // max MP up
+                {
                     if(i<15)
+                    {
                         Status->MP_up = 0xff;
+                    }
                     else
+                    {
                         Status->MP_down = 0xff;
+                    }
                     Stats->MaxMP = GetMaxMP( );
+
+                    if(Stats->MP > Stats->MaxMP)
+                    {
+                        Stats->MP = Stats->MaxMP;
+                    }
+                }
                 break;
                 case 32: // faint
-                     Status->Stuned = 0xff;
-                     Status->CanAttack = true;
-                     //printf("removing stun\n");
+                {
+                    Status->Stuned = 0xff;
+                    Status->CanAttack = true;
+                    //printf("removing stun\n");
+                }
                 break;
                 case 7: case 8: case 9: case 10: case 11: //poisoned
-                     Status->Poisoned = 0xff;
-                     //printf("removing poison\n");
+                {
+                    Status->Poisoned = 0xff;
+                    //printf("removing poison\n");
+                }
                 break;
                 case 30: // muted
-                     Status->Muted = 0xff;
-                     Status->CanCastSkill = true;
+                {
+                    Status->Muted = 0xff;
+                    Status->CanCastSkill = true;
+                }
                 break;
                 case 31: // sleep May need to be fixed later to accomodate multiple status effects.
-                     Status->Sleep = 0xff;
-                     Status->CanMove = true;
-                     Status->CanCastSkill = true;
-                     Status->CanAttack = true;
+                {
+                    Status->Sleep = 0xff;
+                    Status->CanMove = true;
+                    Status->CanCastSkill = true;
+                    Status->CanAttack = true;
+                }
                 break;
                 case 36: //A_Extra_Damage:
                 case 54: //A_GMExtra_Damage:
                 case 83: //Valkyrie Charm:
-                     if(i<15)
-                     {
+                {
+                    if(i<15)
+                    {
                         Status->ExtraDamage_up = 0xff;
-                        Stats->ExtraDamage = 0xff;
-                     }
-                     else
-                     {
-                         Status->ExtraDamage_down = 0xff;
-                         Stats->ExtraDamage = 0xff;
-                     }
-
+                        Stats->ExtraDamage_add = 0;//We put extardamage add value to 0 if we lost the adddmg buff
+                    }
+                    else
+                    {
+                        Status->ExtraDamage_down = 0xff;
+                        Stats->ExtraDamage_add = 0;//We put extardamage add value to 0 if we lost the adddmg buff
+                    }
+                }
                 break;
                 case 56: //Taunt
-                     Status->Taunt = 0xff;
-                     //printf("removing Taunt\n");
+                {
+                    Status->Taunt = 0xff;
+                    //printf("removing Taunt\n");
+                }
                 break;
                 case 58: case 61: case 71: case 77:  case 78: case 79: case 80://flame
-                     Status->Flamed = 0xff;
+                {
+                    Status->Flamed = 0xff;
+                }
                 break;
                 case 33://Stealth,Camoflauge
-                     if(IsAttacking( ))
-                     {
+                {
+                    if(IsAttacking( ))
+                    {
                         MagicStatus[i].Duration = 0;
-                     }
-                     Status->Stealth = 0xff;
-                     //printf("removing Stealth\n");
+                    }
+                    Status->Stealth = 0xff;
+                    //printf("removing Stealth\n");
+                }
                 break;
                 case 86://Stealth,Weary
+                {
                     Status->Weary = 0xff;
                     Status->CanCastSkill = true;
                     //printf("removing Weary\n");
+                }
                 break;
                 case 34://Cloaking
-                     Status->Cloaking = 0xff;
+                {
+                    Status->Cloaking = 0xff;
                     //printf("removing Cloaking\n");
+                }
                 break;
                 case 35: //ShieldDamage:
-                     if(i<15)
-//                     {
+                {
+                    if(i<15)
+                    {
                         Status->ShieldDamage_up = 0xff;
-//                        Stats->ShieldDamage = 0xff;
-//                     }
-                     else
-//                     {
-                         Status->ShieldDamage_down = 0xff;
-//                         Stats->ShieldDamage = 0xff;
-//                     }
+                        //Stats->ShieldDamage = 0xff;
+                    }
+                    else
+                    {
+                        Status->ShieldDamage_down = 0xff;
+                        //Stats->ShieldDamage = 0xff;
+                    }
+                }
                 break;
                 case 55://Detect
+                {
                     Status->Detect = 0xff;
                     Status->Cloaking = 0xff;
                     Status->Stealth = 0xff;
                     //printf("Detect Done\n");
+                }
                 break;
                 case 38://Purify
+                {
                     //Buff_Down
                     Status->Attack_down = 0xff;
                     Status->Defense_down = 0xff;
@@ -658,12 +752,14 @@ void CCharacter::RefreshBuff( )
                     Status->MP_down = 0xff;
                     Status->ExtraDamage_down = 0xff;
                     Status->ShieldDamage_down = 0xff;
+
                     //Bad Status
                     Status->Stun = 0xff;
                     Status->Poisoned = 0xff;
                     Status->Muted = 0xff;
                     Status->Sleep = 0xff;
                     Status->Flamed = 0xff;
+
                     //Stats
                     Stats->Attack_Power = GetAttackPower( );
                     Stats->Defense = GetDefense( );
@@ -676,6 +772,7 @@ void CCharacter::RefreshBuff( )
                     Stats->MaxHP = GetMaxHP( );
                     Stats->MaxMP = GetMaxMP( );
                     //printf("Purify Done\n");
+                }
                 break;
             }
 

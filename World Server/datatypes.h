@@ -167,8 +167,8 @@
 #define POISONED 0x04
 #define FLAMED 0x08
 //#define UNK2 0x08
-#define MP_UP 0x10//revizar
-#define HP_UP 0x20//revizar
+#define HP_UP 0x10//revizar
+#define MP_UP 0x20//revizar
 //#define MP_UP_HP_UP 0x30
 #define DASH_UP 0x40
 #define DASH_DOWN 0x80

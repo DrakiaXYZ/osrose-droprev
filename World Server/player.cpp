@@ -631,8 +631,10 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         ADDWORD    ( pak, clientid );
         ADDWORD    ( pak, GetMaxHP( ) );
         ADDWORD    ( pak, Stats->HP );
-        ADDDWORD   ( pak, 0x01000000 );
-        ADDDWORD   ( pak, 0x0000000f );
+        //ADDDWORD   ( pak, 0x01000000 );//Tomiz: Was not commented before
+        ADDDWORD   ( pak, GServer->BuildBuffs( this ));//Tomiz: Buff Data
+        //ADDDWORD   ( pak, 0x0000000f );//Tomiz: Was not commented before
+        ADDDWORD   ( pak, 0x7200005d );//Tomiz
         ADDWORD    ( pak, 0x1388 );
         player->client->SendPacket( &pak );
     }

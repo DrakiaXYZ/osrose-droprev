@@ -86,7 +86,6 @@ struct STATS
     unsigned int MPReduction;
     unsigned int side; //future expansion of drop system
     unsigned int sidechance; //future expansion of drop system
-    unsigned int ExtraDamage;
     unsigned int ExtraDamage_add;
 //    unsigned int ShieldDamage;
 };
@@ -119,7 +118,8 @@ struct STATUS
     BYTE HP_up;
     BYTE MP_up;
     BYTE ShieldDamage_up;
-    //BYTE ExtraDamage_up;
+    BYTE ExtraDamage_up;
+
     //Stats down
     BYTE Attack_down;
     BYTE Defense_down;
@@ -131,8 +131,8 @@ struct STATUS
     BYTE Dash_down;
     BYTE HP_down;
     BYTE MP_down;
-    //BYTE ExtraDamage_down;
     BYTE ShieldDamage_down;
+    BYTE ExtraDamage_down;
 
     //LMA: ospRose skill.
     //Status Effects
@@ -151,8 +151,6 @@ struct STATUS
     BYTE Invinc;
     //BYTE Flame;
     BYTE Flamed;
-    BYTE ExtraDamage_up;
-    BYTE ExtraDamage_down;
     BYTE Taunt;
     BYTE Weary; //Stealth(hawker skill. 1626-1629) 2nd deBuff (can't skill)
 
@@ -164,7 +162,6 @@ struct STATUS
     //BYTE Flame;
     BYTE Stealth;
     BYTE Cloaking;
-    //BYTE ExtraDamage;   //Was not quoted before
 
     bool CanAttack;
     bool CanRun;

@@ -503,12 +503,15 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     if(IsMonster( )) //temp fix to find balance btw monster and player
         hitpower = (long int)floor(attack * (GServer->Config.MonsterDmg/100.00));
 
-    //TEST
-    long int hitsave=hitpower;
-    hitpower+=Stats->ExtraDamage_add;
-    //TODO: bug here, ExtraDamage is here something like a % but in fact considered somewhere else as a "slot" for buffs...
-    //hitpower+=((hitpower*(Stats->ExtraDamage))/100);  //LMA: ED, Devilking / Arnold
-    //Log(MSG_INFO,"ED: before %i, after %i (extra *%i + %i)",hitsave,hitpower,Stats->ExtraDamage,Stats->ExtraDamage_add);
+    if(IsPlayer())//Add Dmg
+    {
+        if( Stats->ExtraDamage_add !=0 )
+        {
+            long int hitsave=hitpower;
+            hitpower += ((hitpower * Stats->ExtraDamage_add) / 100);
+            Log(MSG_INFO,"ExtraDmg Normal atk: before %i, after %i (ED: %i)",hitsave,hitpower,Stats->ExtraDamage_add);
+        }
+    }
 
     bool critical = false;
     if(hitpower<=0)
@@ -1457,14 +1460,15 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     bool bflag = false;
     Enemy->OnBeAttacked( this );
     if(skillpower<=0) skillpower = 0;
-    if(IsPlayer())
+    if(IsPlayer())//Add Dmg
     {
-        //LMA: ED, Devilking / Arnold
-        //Log(MSG_INFO,"Skill power %li, extradamage %li",skillpower,Stats->ExtraDamage_add);
-        skillpower+=Stats->ExtraDamage_add;
-        //Log(MSG_INFO,"Skill power %li, extradamage %li",skillpower,Stats->ExtraDamage_add);
-        //TODO: bug here, ExtraDamage is here something like a % but in fact considered somewhere else as a "slot" for buffs...
-        //skillpower+=((skillpower*(Stats->ExtraDamage))/100);
+        if( Stats->ExtraDamage_add != 0)
+        {
+            //LMA: ED, Devilking / Arnold
+            long int hitsave=skillpower;
+            skillpower += ((skillpower * Stats->ExtraDamage_add) / 100);
+            Log(MSG_INFO,"ExtraDmg Skill atk: before %i, after %i (ED: %i)",hitsave,skillpower,Stats->ExtraDamage_add);
+        }
     }
     if(!Enemy->IsSummon( ) && Enemy->IsMonster( ))
     {

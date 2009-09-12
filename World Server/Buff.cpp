@@ -146,7 +146,7 @@ bool CWorldServer::InstantBuff( CSkills* thisskill, CCharacter* character, int E
 // Add DeBuffs
 bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i)
 {
-    //Log( MSG_INFO, "checkabuffs status: %i buff: %i",( thisskill->status[i], thisskill->buff[i] ));
+    //Log( MSG_INFO, "checkabuffs status: %i buff: %i SkillID: %i", thisskill->status[i], thisskill->buff[i], thisskill->id);
     bool bflag = false;
     if(thisskill->status[i] != 0)
     {
@@ -270,32 +270,28 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             }
             break;
             case 36: //A_Extra_Damage:
-            case 54: //A_GMExtra_Damage:    // this isn't going to work at all the way it is written. the buff is in skill power, not buffs
+            case 54: //A_GMExtra_Damage:
             case 83: //Valkyrie Charm:
             {
-                /*
-                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
                                                 character->Status->ExtraDamage_up,
                                                 character->Status->ExtraDamage_down,
-                                                character->Stats->ExtraDamage, true );
-                */
-                //LMA: fix by sickb0y
-                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
-                                                character->Status->ExtraDamage_up,
-                                                character->Status->ExtraDamage_down,true);
+                                                character->Stats->ExtraDamage_add,true);
 
                 if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
 
+                    //Tomiz : Debug
+                    UINT prev_value=character->Stats->ExtraDamage_add;
                     //LMA: fix by sickb0y
-                    //TODO: WRONG fix!!! We need to set a value to something!!!
-                    //character->Stats->ExtraDamage = thisskill->atkpower;
+                    character->Stats->ExtraDamage_add = thisskill->atkpower;
 
                     if(j<15)
                         character->Status->ExtraDamage_up = j;
                     else
                         character->Status->ExtraDamage_down = j;
+                    Log( MSG_INFO, "Add DMG buff position %i. AddDMG(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     //character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].Buff = thisskill->status[i];
                     character->MagicStatus[j].BuffTime = clock();
@@ -488,7 +484,7 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             case 15: //slow
             case 46: //movement speed increased
             {
-                Log( MSG_INFO, "checkabuffs: move speed buff detected %i", thisskill->buff[i] );
+                //Log( MSG_INFO, "checkabuffs: move speed buff detected %i", thisskill->buff[i] );
                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
                                                 character->Status->Dash_up,
                                                 character->Status->Dash_down,
@@ -927,12 +923,13 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         }
         else //debuff
         {
-            for(UINT z=15;z<30;z++) // 15 to 29 are downward
+            //for(UINT z=15;z<30;z++) // 15 to 29 are downward
+            for(UINT z=15;z<32;z++) // 15 to 32 are downward
             {
                 if(character->MagicStatus[z].Status == 0)
                 {
                     NewValue.Position = z; //z is the new index in the magicstatus array where the buff will be placed
-                    Log(MSG_INFO, "DeBuff position = %i",z);
+                    //Log(MSG_INFO, "DeBuff position = %i",z);
                     break;
                 }
             }
@@ -1013,6 +1010,12 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         //Tomiz : END Bonus from int. for buffs
 
     }
+    if( thisskill->status[i] == 83 && (thisskill->id > 900 && thisskill->id < 910) )//Tomiz: Temp Fix For Spirit Boost who use atkpower for value (when skill is self skill)
+    {
+        Value += thisskill->atkpower;
+        Log(MSG_INFO, "Add DMG Skill: thisskill->value1 = %i",thisskill->atkpower);
+    }
+
     if(Buff)
     {
         if( Value + CurrentValue - DownValue >= CurrentValue )

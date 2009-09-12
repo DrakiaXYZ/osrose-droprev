@@ -46,7 +46,6 @@ CCharacter::CCharacter( )
     Stats->MaxWeight = 0;
     Stats->MaxSummonGauge = 0;
     Stats->MPReduction = 0;
-    Stats->ExtraDamage = 0; //LMA: Devilking / Arnold
     Stats->ExtraDamage_add=0;
 //    Stats->ShieldDamage = 0;
 
@@ -77,6 +76,7 @@ CCharacter::CCharacter( )
     //STATUS
     Status = new STATUS;
     assert(Status);
+
         //Stats up
     Status->Attack_up = 0xff;
     Status->Defense_up = 0xff;
@@ -90,6 +90,7 @@ CCharacter::CCharacter( )
     Status->MP_up = 0xff;
     Status->ShieldDamage_up = 0xff;
     Status->ExtraDamage_up = 0xff;  //LMA: Devilking/Arnold
+
         //Stats down
     Status->Attack_down = 0xff;
     Status->Defense_down = 0xff;
@@ -103,11 +104,11 @@ CCharacter::CCharacter( )
     Status->MP_down = 0xff;
     Status->ExtraDamage_down = 0xff;  //LMA: Devilking/Arnold
     Status->ShieldDamage_down = 0xff;
+
         //Status
     Status->Stun = 0xff;
     //Status->Spoisoned = 0xff;
     //Status->Muted = 0xff;
-    //Status->ExtraDamage = 0xff;  //LMA: Devilking/Arnold (was not quoted before)
     Status->Weary = 0xff;   //Stealth(hawker skill. 1626-1629) 2nd deBuff (can't skill)
     Status->Stealth = 0xff;
     Status->Cloaking = 0xff;
