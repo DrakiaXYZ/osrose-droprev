@@ -129,6 +129,7 @@ class CCharacter
         virtual float GetAttackDistance( );
         virtual unsigned int GetInt( );
         virtual unsigned int GetSen( );
+        virtual unsigned int GetCon( );
         virtual unsigned getWeaponType( );
         virtual bool AddClanPoints(unsigned int count);
         virtual CClientSocket* getClient();

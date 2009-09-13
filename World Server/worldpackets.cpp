@@ -4128,8 +4128,8 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	CItem item;
 	item.count = 1;
 	// item durability randomizer
-	int lowest = thisclient->Attr->Con/ 10 + 17;
-	int highest = thisclient->Attr->Con / 10 + 70;
+	int lowest = thisclient->GetCon() / 10 + 17;
+	int highest = thisclient->GetCon() / 10 + 70;
 	int range=(highest-lowest)+1;
 	item.durability = lowest+int(range*rand()/(RAND_MAX + 1.0));
 
@@ -4140,8 +4140,8 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	item.refine = 0;
 
 	// stats randomizer
-	int changeofstatslow = thisclient->Attr->Sen / 13 + 10;
-	int changeofstatshigh = thisclient->Attr->Sen / 13 + 50;
+	int changeofstatslow = thisclient->GetSen() / 13 + 10;
+	int changeofstatshigh = thisclient->GetSen() / 13 + 50;
 	int changeofstatsrange = (changeofstatshigh-changeofstatslow)+1;
 	if (changeofstatslow+int(changeofstatsrange*rand()/(RAND_MAX + 1.0)) > 50)
 	{

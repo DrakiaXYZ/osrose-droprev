@@ -466,6 +466,12 @@ unsigned int CCharacter::GetSen( )
     return 15;
 }
 
+// VIRTUAL [return Concentration]
+unsigned int CCharacter::GetCon( )
+{
+    return 15;
+}
+
 void CCharacter::RefreshBuff( )
 {
     bool bflag = false;

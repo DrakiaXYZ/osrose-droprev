@@ -878,6 +878,12 @@ unsigned int CPlayer::GetSen( )
     return (Attr->Sen + Attr->Esen); //Tomiz : We need to take sen from cloth,gem,ect into consideration(ExtraSen/Esen)
 }
 
+// return Concentration
+unsigned int CPlayer::GetCon( )
+{
+    return (Attr->Con + Attr->Econ); //Tomiz : We need to take con from cloth,gem,ect into consideration(ExtraCon/Econ)
+}
+
 // add item [return item slot [0xffff if couldn't add it]]
 unsigned int CPlayer::AddItem( CItem item )
 {
