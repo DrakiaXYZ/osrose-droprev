@@ -120,7 +120,7 @@ bool CWorldServer::pakPartyActions( CPlayer* thisclient, CPacket* P )
             }
         }
         break;
-        case 0x03: // Give leader
+        /*case 0x03: // Give leader Old Way
         {
             if(thisclient->Party->party==NULL)
                 return true;
@@ -131,6 +131,29 @@ bool CWorldServer::pakPartyActions( CPlayer* thisclient, CPacket* P )
             if(otherclient==NULL)
                 return true;
             BEGINPACKET(pak, 0x07d1)
+            ADDBYTE(pak, 8);
+            ADDWORD(pak, otherclient->clientid);
+            ADDWORD(pak, 0);
+            otherclient->Party->IsMaster = true;
+            thisclient->Party->IsMaster = false;
+            thisclient->Party->party->SendToMembers( &pak );
+        }
+        break;*/
+        case 0x03: //Tomiz: Give leader New Way
+        {
+            if(thisclient->Party->party==NULL)
+                return true;
+
+            unsigned int clientid = GETWORD((*P),1);
+
+            if (clientid == thisclient->clientid)
+               return true;
+
+            CPlayer* otherclient = GetClientByID( clientid, thisclient->Position->Map );
+            if(otherclient==NULL)
+                return true;
+
+            BEGINPACKET(pak, 0x7d1);
             ADDBYTE(pak, 8);
             ADDWORD(pak, otherclient->clientid);
             ADDWORD(pak, 0);

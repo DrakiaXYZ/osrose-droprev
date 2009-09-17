@@ -463,7 +463,7 @@ unsigned int CCharacter::GetInt( )
 // VIRTUAL [return Sensibility]
 unsigned int CCharacter::GetSen( )
 {
-    return 15;
+    return 10;
 }
 
 // VIRTUAL [return Concentration]

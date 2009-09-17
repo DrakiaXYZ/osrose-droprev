@@ -160,7 +160,8 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                 continue;
             if(!thisparty->flag)
             {
-                partyclient->Party->party->Exp += (thisparty->exp / 6) / 2;
+                //partyclient->Party->party->Exp += (thisparty->exp / 6) / 2;
+                partyclient->Party->party->Exp += (thisparty->exp / 6) / 6; //Tomiz: thisparty->exp decreased
                 if( partyclient->Party->party->PartyLevel == 50)
                 {
                     partyclient->Party->party->Exp = 0;
