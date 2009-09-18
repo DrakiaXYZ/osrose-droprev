@@ -146,10 +146,10 @@ bool CWorldServer::pakPartyActions( CPlayer* thisclient, CPacket* P )
 
             unsigned int clientid = GETWORD((*P),1);
 
-            if (clientid == thisclient->clientid)
+            if ( !thisclient->Party->IsMaster || clientid == thisclient->clientid )
                return true;
 
-            CPlayer* otherclient = GetClientByID( clientid, thisclient->Position->Map );
+            CPlayer* otherclient = GetClientByID( clientid );
             if(otherclient==NULL)
                 return true;
 
