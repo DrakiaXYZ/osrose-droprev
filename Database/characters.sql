@@ -37,7 +37,7 @@ CREATE TABLE `characters` (
   `clan_rank` int(11) NOT NULL DEFAULT '0',
   `stamina` int(11) NOT NULL DEFAULT '5000',
   `quickbar` varchar(255) NOT NULL DEFAULT '0',
-  `basic_skills` varchar(255) NOT NULL DEFAULT '11,12,13,14,15,16,17,18,19,20,25,26,27,28,29,30,31,32,33,50,101,5001',
+  `basic_skills` varchar(255) NOT NULL DEFAULT '11,12,13,14,15,16,17,18,19,20,25,26,27,28,29,30,31,32,33,50,101',
   `class_skills` varchar(500) NOT NULL DEFAULT '0',
   `class_skills_level` varchar(500) NOT NULL DEFAULT '1',
   `respawnid` int(11) NOT NULL DEFAULT '56',
