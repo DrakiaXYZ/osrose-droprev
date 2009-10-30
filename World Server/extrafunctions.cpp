@@ -1896,6 +1896,8 @@ UINT CWorldServer::ReturnItemType( CPlayer* thisclient, int slot )
 }
 
 // Return a pseudo random number
+//LMA: So if you do RandNumber( 40, 70) it means it'll return a
+//number from 40 to (40+70-1)!
 UINT CWorldServer::RandNumber( UINT init, UINT range, UINT seed )
 {
     if(seed!=0)

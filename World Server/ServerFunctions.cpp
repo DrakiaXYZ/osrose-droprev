@@ -350,8 +350,8 @@ CDrop* CWorldServer::GetDrop( CMonster* thismon )
             newdrop->item.refine = 16;
         else //50%
             newdrop->item.refine = 0;
-        newdrop->item.lifespan = RandNumber( 30, 100 );
-        newdrop->item.durability = RandNumber( 35, 70 );
+        newdrop->item.lifespan = RandNumber( 30, 70 );
+        newdrop->item.durability = RandNumber( 35, 65 );
         if( newdrop->item.itemtype==WEAPON || newdrop->item.itemtype==SUBWEAPON )
         {
             //socketed

@@ -557,14 +557,16 @@ bool CPlayer::Regeneration()
         if (Status->Stance==1)
         {
            bonus_hp++;
-           bonus_sitted=GServer->RandNumber(150,250);
+           //bonus_sitted=GServer->RandNumber(150,250);
+           bonus_sitted=GServer->RandNumber(150,100);
            nb_sec_stance=(float) 3;    //LMA: be sitted.
         }
         if(Fairy)
         {
            bonus_hp++;
            nb_sec_stance=(float) 3;
-           bonus_sitted+=GServer->RandNumber(150,250);
+           //bonus_sitted+=GServer->RandNumber(150,250);
+           bonus_sitted+=GServer->RandNumber(150,100);
         }
 
         bonus_hp+=nb_hp;
@@ -611,14 +613,16 @@ bool CPlayer::Regeneration()
         if (Status->Stance==1)
         {
            bonus_mp++;
-           bonus_sitted=GServer->RandNumber(150,250);
+           //bonus_sitted=GServer->RandNumber(150,250);
+           bonus_sitted=GServer->RandNumber(150,100);
            nb_sec_stance=(float) 3;    //LMA: be sitted.
         }
         if(Fairy)
         {
            bonus_mp++;
            nb_sec_stance=(float) 3;
-           bonus_sitted+=GServer->RandNumber(150,250);
+           //bonus_sitted+=GServer->RandNumber(150,250);
+           bonus_sitted+=GServer->RandNumber(150,100);
         }
         bonus_mp+=nb_mp;
         if(bonus_mp!=0)

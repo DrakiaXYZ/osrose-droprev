@@ -5671,7 +5671,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                         else if(grade==11)
                         {
                             //unique
-                            newitem.itemnum = RandNumber(392,394);
+                            //newitem.itemnum = RandNumber(392,394);
+                            newitem.itemnum = RandNumber(392,3);
                             newitem.itemtype = 12;
                             newitem.count = RandNumber(1,4);
                         }
@@ -5753,7 +5754,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                //newitem.count = BreakList.at(k)->amount[m];
                 if(BreakList.at(k)->amount_min[m]!=BreakList.at(k)->amount_max[m])
                 {
-                    newitem.count = RandNumber(BreakList.at(k)->amount_min[m],BreakList.at(k)->amount_max[m]);
+                    //newitem.count = RandNumber(BreakList.at(k)->amount_min[m],BreakList.at(k)->amount_max[m]);
+                    newitem.count = RandNumber(BreakList.at(k)->amount_min[m],BreakList.at(k)->amount_max[m]-BreakList.at(k)->amount_min[m]+1);
                 }
                 else
                 {
@@ -5847,7 +5849,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     //item.count = RandNumber( 1,reward->rewardamount);
                     if(reward->rewardamount_max!=reward->rewardamount_min)
                     {
-                        item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                        //item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                        item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max-reward->rewardamount_min+1);
                     }
                     else
                     {
@@ -5900,7 +5903,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                             //itemextra.count = RandNumber( 1,reward->rewardamount);
                             if(reward->rewardamount_max!=reward->rewardamount_min)
                             {
-                                itemextra.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                                //itemextra.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                                itemextra.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max-reward->rewardamount_min+1);
                             }
                             else
                             {
