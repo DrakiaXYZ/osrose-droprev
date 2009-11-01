@@ -47,6 +47,11 @@ unsigned CWorldServer::BuildItemData( CItem thisitem )
 		unsigned part4 = 0;
 		if(thisitem.itemtype==14)
 		{
+		    if (thisitem.sp_value==0&&thisitem.lifespan>0)
+		    {
+		        thisitem.sp_value=thisitem.lifespan*10;
+		    }
+
 		    if(thisitem.sp_value<0||thisitem.sp_value>1000)
 		    {
 		        thisitem.sp_value=thisitem.lifespan*10;
@@ -2817,12 +2822,12 @@ UINT CWorldServer::GetTimerFromAIP(dword script_id, bool is_npc)
             my_timer=6000;
         }
 
-        Log(MSG_INFO,"script %i has NOW a timer %u, NPC? %i",script_id,my_timer,is_npc);
+        //Log(MSG_INFO,"script %i has NOW a timer %u, NPC? %i",script_id,my_timer,is_npc);
     }
     else
     {
         //Just for test.
-        Log(MSG_INFO,"script %i has a timer %u, NPC? %i",script_id,my_timer,is_npc);
+        //Log(MSG_INFO,"script %i has a timer %u, NPC? %i",script_id,my_timer,is_npc);
     }
 
 
@@ -2830,3 +2835,46 @@ UINT CWorldServer::GetTimerFromAIP(dword script_id, bool is_npc)
 }
 
 
+//LMA: Sending the breakid from an itemnum and itemtype.
+UINT CWorldServer::GetBreakID(UINT itemnum,UINT itemtype)
+{
+    UINT breakid=0;
+
+    if(itemtype<=0||itemtype==7||itemtype>=10)
+    {
+        return 0;
+    }
+
+    if (itemnum>=EquipList[itemtype].max)
+    {
+        Log(MSG_WARNING,"Wrong itemnum %u > %u, (itemtype %u)",itemnum,EquipList[itemtype].max,itemtype);
+        return 0;
+    }
+
+    breakid=EquipList[itemtype].Index[itemnum]->breakid;
+
+    //some checks.
+   if (breakid!=0)
+    {
+        if(breakid>=maxBreak)
+        {
+            Log(MSG_WARNING,"The breakid %u for (%i::%i) is > %u",breakid,itemtype,itemnum,maxBreak);
+            return 0;
+        }
+
+        if(BreakList[breakid]->itemnum==0||BreakList[breakid]->itemtype==0)
+        {
+            Log(MSG_WARNING,"The breakid %u leads to an empty break?",breakid);
+            return 0;
+        }
+
+        if(itemnum!=BreakList[breakid]->itemnum||itemtype!=BreakList[breakid]->itemtype)
+        {
+            Log(MSG_INFO,"The breakid %u for (%i::%i) is also used for another item?",breakid,itemtype,itemnum);
+        }
+
+    }
+
+
+    return breakid;
+}

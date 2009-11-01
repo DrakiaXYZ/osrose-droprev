@@ -210,6 +210,7 @@ class CWorldServer : public CServerSocket
         UINT SummonFormula(CPlayer* thisclient,CMonster* thismonster);    //LMA: Formulas for summons.
         string EscapeMe(char* texte);  //LMA: Escaping.
         UINT GetTimerFromAIP(dword script_id, bool is_npc); //LMA: used to get a timer from a script.
+        UINT GetBreakID(UINT itemnum,UINT itemtype);  //LMA: Getting the breakid from an item.
     	UINT GetNewClientID( );
     	unsigned GetNewPartyID( );  //LMA: Getting a Party ID.
     	void DisconnectAll();
@@ -318,6 +319,9 @@ class CWorldServer : public CServerSocket
         bool LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP = true );
         bool CheckCompatibleClass(UINT rclass, UINT player_job);
    		bool pakAddWishList( CPlayer* , CPacket* );
+        bool GiveChestItems( CPlayer* thisclient,UINT chest_slot,CChest* thischest); //LMA: used for chests and slots.
+        bool GiveDasmItems( CPlayer* thisclient,UINT src);    //LMA: Used for disassemble.
+        bool GiveDefaultDasm( CPlayer* thisclient,UINT src, bool not_found, bool is_failed);
 
         //-------------------------- Clan functions
         bool pakClanManager ( CPlayer* thisclient, CPacket* P );
@@ -616,8 +620,9 @@ class CWorldServer : public CServerSocket
         //lma: putting a limit.
         //CBreakList BreakList[3000];
         //CBreakList BreakList[MAX_BREAK];
-        vector<CBreakList*>         BreakList;
-
+        //vector<CBreakList*>         BreakList;
+        CBreakList                 **BreakList;   //LMA: new way.
+        int                     maxBreak;
 
         // console
         bool handleCommand( char* );

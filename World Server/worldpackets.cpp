@@ -5561,6 +5561,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
             if (!ischest)
             {
+                //LMA: new code:
+                BYTE src = GETBYTE((*P),3);
+                return GiveDasmItems(thisclient,src);
+                /*
                 //start disassemble
                 BYTE src = GETBYTE((*P),3);
                 if(!CheckInventorySlot( thisclient, src))
@@ -5818,9 +5822,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
               thisclient->client->SendPacket( &pak );
               //   end disassemble
 
-              return true;
+              return true;*/
             }
 
+            //LMA: new code for boxes:
+             return GiveChestItems(thisclient,chestSlot, thischest);
+
+            /*
             //LMA: Mileage box?
             int is_mileage=GServer->UseList.Index[thisclient->items[chestSlot].itemnum]->is_mileage;
             int bonus=0;
@@ -5986,7 +5994,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
                 thisclient->client->SendPacket( &pak );
             }
-            return true;
+            return true;*/
+
         }
         break;
 
@@ -6773,4 +6782,550 @@ bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
 
 
 	return true;
+}
+
+
+//LMA: New code for chests and boxes.
+bool CWorldServer::GiveChestItems( CPlayer* thisclient,UINT chestSlot, CChest* thischest)
+{
+    CItemChests mychest[4];
+    int nb_items=0;
+    bool give_all=false;
+
+    if(thischest->nb_reward==-1||thischest->nb_reward!=thischest->Rewards.size())
+    {
+        thischest->nb_reward=thischest->Rewards.size();
+        Log(MSG_INFO,"Setting nb_rewards to %i (from %i) for chest %i (record %i)",thischest->Rewards.size(),thischest->nb_reward,thischest->chestid,thischest->breakid);
+    }
+
+    //How many rewards for this chest?
+    if (thischest->reward_min==thischest->reward_max&&thischest->reward_min==thischest->nb_reward)
+    {
+        //Special box where all items are to be given.
+        nb_items=thischest->reward_min;
+        give_all=true;
+        if (nb_items>thischest->Rewards.size())
+        {
+            Log(MSG_WARNING,"Not enough reward for the chest %i, needed %i, had only %i (record %i)",thischest->chestid,nb_items,thischest->Rewards.size(),thischest->breakid);
+            nb_items=thischest->Rewards.size();
+        }
+
+    }
+    else
+    {
+        nb_items=RandNumber(thischest->reward_min,thischest->reward_max-thischest->reward_min+1);
+        if (nb_items<=0)
+        {
+            nb_items=1;
+        }
+
+    }
+
+    if (nb_items>4)
+    {
+        Log(MSG_WARNING,"Too many items are to be given in the chest %i, min=%i, max=%i (record %i)",thischest->chestid,thischest->reward_min,thischest->reward_max,thischest->breakid);
+        nb_items=4;
+    }
+
+    //LMA: Mileage box?
+    int is_mileage=GServer->UseList.Index[thisclient->items[chestSlot].itemnum]->is_mileage;
+
+    if (give_all)
+    {
+        //Giving all the items, in order ^_^
+        //Used in clothes boxes and stuff.
+        int bonus=0;
+
+        for(int no_reward=0;no_reward<nb_items;no_reward++)
+        {
+            CReward* reward = thischest->Rewards.at(no_reward);
+
+            mychest[no_reward].item.itemtype = reward->type;
+            mychest[no_reward].item.itemnum = reward->id;
+            //item.count = reward->rewardamount;
+
+            //LMA: naRose changed their way.
+            //mychest[no_reward].item.count = RandNumber( 1,reward->rewardamount);
+            if(reward->rewardamount_max!=reward->rewardamount_min)
+            {
+                //mychest[no_reward].item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                mychest[no_reward].item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max-reward->rewardamount_min+1);
+            }
+            else
+            {
+                mychest[no_reward].item.count =reward->rewardamount_max;
+            }
+
+            //LMA: extra bonus for mileage boxes.
+            if(is_mileage==1)
+                bonus=GServer->RandNumber(1, 300);
+            if(reward->type>=10)
+                bonus=0;
+
+            mychest[no_reward].item.socketed = false;
+            mychest[no_reward].item.appraised = true;
+            mychest[no_reward].item.lifespan = 100;
+            mychest[no_reward].item.durability = 100;
+            mychest[no_reward].item.refine = 0;
+            mychest[no_reward].item.stats = bonus;
+            mychest[no_reward].item.gem = 0;
+            mychest[no_reward].item.sp_value=0;
+            mychest[no_reward].item.last_sp_value=0;
+            mychest[no_reward].slot=0;
+            mychest[no_reward].is_ok=true;
+        }
+
+    }
+    else
+    {
+        //Getting the good amount of rewards.
+        for(int no_reward=0;no_reward<nb_items;no_reward++)
+        {
+            int bonus=0;
+            unsigned int randv = RandNumber( 1, thischest->probmax );
+
+            DWORD prob = 1;
+            for(UINT i=0;i<thischest->Rewards.size();i++)
+            {
+                CReward* reward = thischest->Rewards.at( i );
+                prob += reward->prob;
+
+                //LMA: extra bonus for mileage boxes.
+                if(is_mileage==1)
+                    bonus=GServer->RandNumber(1, 300);
+                if(reward->type>=10)
+                    bonus=0;
+
+                if(randv<=prob)
+                {
+                    mychest[no_reward].item.itemtype = reward->type;
+                    mychest[no_reward].item.itemnum = reward->id;
+                    //item.count = reward->rewardamount;
+
+                    //LMA: naRose changed their way.
+                    //mychest[no_reward].item.count = RandNumber( 1,reward->rewardamount);
+                    if(reward->rewardamount_max!=reward->rewardamount_min)
+                    {
+                        //mychest[no_reward].item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                        mychest[no_reward].item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max-reward->rewardamount_min+1);
+                    }
+                    else
+                    {
+                        mychest[no_reward].item.count =reward->rewardamount_max;
+                    }
+
+                    mychest[no_reward].item.socketed = false;
+                    mychest[no_reward].item.appraised = true;
+                    mychest[no_reward].item.lifespan = 100;
+                    mychest[no_reward].item.durability = 100;
+                    mychest[no_reward].item.refine = 0;
+                    mychest[no_reward].item.stats = bonus;
+                    mychest[no_reward].item.gem = 0;
+                    mychest[no_reward].item.sp_value=0;
+                    mychest[no_reward].item.last_sp_value=0;
+                    mychest[no_reward].slot=0;
+                    mychest[no_reward].is_ok=true;
+                    prob = reward->prob;
+                    break;
+                }
+            }
+
+        }
+
+    }
+
+    thisclient->items[chestSlot].count--;
+    if (thisclient->items[chestSlot].count < 1)
+    {
+        ClearItem(thisclient->items[chestSlot]);
+    }
+
+    //Checking the slots.
+    int nb_ok=0;
+    for(int no_reward=0;no_reward<nb_items;no_reward++)
+    {
+        unsigned int tempslot = thisclient->AddItem(mychest[no_reward].item);
+        if (tempslot == 0xffff)
+        {
+            Log(MSG_WARNING,"Can not give a reward to %s (not enough place for item %u*(%i::%i) )",thisclient->CharInfo->charname,mychest[no_reward].item.count,mychest[no_reward].item.itemtype,mychest[no_reward].item.itemnum);
+            mychest[no_reward].is_ok=false;
+        }
+        else
+        {
+            nb_ok++;
+            mychest[no_reward].slot=tempslot;
+        }
+
+    }
+
+    //Packet time.
+    BEGINPACKET( pak, 0x7bc );
+    ADDBYTE (pak, 0x13);  // Status code. Congrats?
+    ADDBYTE (pak, (nb_ok + 1));  // Number of items
+
+    for(int no_reward=0;no_reward<nb_items;no_reward++)
+    {
+        if(!mychest[no_reward].is_ok)
+        {
+            continue;
+        }
+
+        unsigned int tempslot = mychest[no_reward].slot;
+        ADDBYTE (pak, tempslot);
+        ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
+        ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
+        ADDDWORD( pak, 0x00000000 );
+        ADDWORD ( pak, 0x0000 );
+    }
+
+    ADDBYTE (pak, chestSlot);
+    ADDDWORD(pak, BuildItemHead(thisclient->items[chestSlot]));
+    ADDDWORD(pak, BuildItemData(thisclient->items[chestSlot]));
+    ADDDWORD( pak, 0x00000000 );
+    ADDWORD ( pak, 0x0000 );
+    thisclient->client->SendPacket( &pak );
+
+
+    return true;
+}
+
+
+//LMA: Code used for disassemble.
+bool CWorldServer::GiveDasmItems( CPlayer* thisclient,UINT src)
+{
+    //start disassemble
+    if(!CheckInventorySlot( thisclient, src))
+        return false;
+    if(thisclient->items[src].count < 1)
+        return false;
+
+    //Rapid search.
+    bool is_ok=false;
+    int k=0;
+    bool is_failed=true;
+    bool not_found=true;
+
+    UINT breakid=GetBreakID(thisclient->items[src].itemnum,thisclient->items[src].itemtype);
+    if (breakid==0)
+    {
+        //trying the old way...
+        for(int i=0;i<maxBreak;i++)
+        {
+            if(thisclient->items[src].itemnum == BreakList[i]->itemnum && thisclient->items[src].itemtype == BreakList[i]->itemtype)
+            {
+                breakid = i;
+                is_failed=false;
+                not_found=false;
+                break;
+            }
+
+        }
+
+    }
+    else
+    {
+        is_failed=false;
+        not_found=false;
+    }
+
+    k=breakid;
+
+   UINT totalprob = 0;
+   for(int i=0;i<BreakList[k]->nb_reward;i++)
+   {
+       totalprob += BreakList[k]->prob[i];
+   }
+
+   if(totalprob==0)
+   {
+       is_failed=true;
+   }
+
+    //Handling failure!
+    if(is_failed)
+    {
+        return GiveDefaultDasm(thisclient,src,not_found,is_failed);
+    }
+
+    bool give_all=false;
+    CItemChests mybreak[4];
+    int nb_items=0;
+    UINT m[4];
+
+    for (int kk=0;kk<4;kk++)
+    {
+       m[kk]=99;
+    }
+
+    //How many rewards for this break?
+    if (BreakList[k]->reward_min==BreakList[k]->reward_max&&BreakList[k]->reward_min==BreakList[k]->nb_reward)
+    {
+        //Special break where all items are to be given.
+        nb_items=BreakList[k]->reward_min;
+        give_all=true;
+        if (nb_items>BreakList[k]->nb_reward)
+        {
+            Log(MSG_WARNING,"Not enough reward for the break %i, needed %i, had only %i",k,nb_items,BreakList[k]->nb_reward);
+            nb_items=BreakList[k]->nb_reward;
+        }
+
+    }
+    else
+    {
+        int nb_items=RandNumber(BreakList[k]->reward_min,BreakList[k]->reward_max-BreakList[k]->reward_min+1);
+        if (nb_items<=0)
+        {
+            nb_items=1;
+        }
+
+    }
+
+    if (nb_items>4)
+    {
+        Log(MSG_WARNING,"Too many items are to be given in the break %i, min=%i, max=%i",k,BreakList[k]->reward_min,BreakList[k]->reward_max);
+        nb_items=4;
+    }
+
+    if(give_all)
+    {
+        for (int no_reward=0;no_reward<nb_items;no_reward++)
+        {
+            mybreak[no_reward].item.itemnum = gi(BreakList[k]->product[no_reward],1);
+            mybreak[no_reward].item.itemtype = gi(BreakList[k]->product[no_reward],0);
+            mybreak[no_reward].item.socketed = false;
+            mybreak[no_reward].item.appraised = true;
+            mybreak[no_reward].item.lifespan = 100;
+            mybreak[no_reward].item.durability = RandNumber(40,50);
+            mybreak[no_reward].item.refine = 0;
+            mybreak[no_reward].item.stats = 0;
+            mybreak[no_reward].item.gem = 0;
+            mybreak[no_reward].item.sp_value=0;
+            mybreak[no_reward].item.last_sp_value=0;
+            mybreak[no_reward].slot=0;
+            mybreak[no_reward].is_ok=true;
+
+            if(BreakList[k]->amount_min[no_reward]!=BreakList[k]->amount_max[no_reward])
+            {
+                mybreak[no_reward].item.count = RandNumber(BreakList[k]->amount_min[no_reward],BreakList[k]->amount_max[no_reward]-BreakList[k]->amount_min[no_reward]+1);
+            }
+            else
+            {
+                mybreak[no_reward].item.count =BreakList[k]->amount_max[no_reward];
+            }
+
+        }
+
+    }
+    else
+    {
+        int no_reward=0;
+        while(no_reward<nb_items)
+       {
+           UINT rand = RandNumber(0,99999);
+           for(int i=0;i<BreakList[k]->nb_reward;i++)
+           {
+               if(rand < BreakList[k]->prob[i])
+                   m[no_reward] = i;
+               else
+                   rand -= BreakList[k]->prob[i];
+           }
+
+           if(m[no_reward]<20)
+           {
+                mybreak[no_reward].item.itemnum = gi(BreakList[k]->product[m[no_reward]],1);
+                mybreak[no_reward].item.itemtype = gi(BreakList[k]->product[m[no_reward]],0);
+                mybreak[no_reward].item.socketed = false;
+                mybreak[no_reward].item.appraised = true;
+                mybreak[no_reward].item.lifespan = 100;
+                mybreak[no_reward].item.durability = RandNumber(40,50);
+                mybreak[no_reward].item.refine = 0;
+                mybreak[no_reward].item.stats = 0;
+                mybreak[no_reward].item.gem = 0;
+                mybreak[no_reward].item.sp_value=0;
+                mybreak[no_reward].item.last_sp_value=0;
+                mybreak[no_reward].slot=0;
+                mybreak[no_reward].is_ok=true;
+
+                if(BreakList[k]->amount_min[m[no_reward]]!=BreakList[k]->amount_max[m[no_reward]])
+                {
+                    mybreak[no_reward].item.count = RandNumber(BreakList[k]->amount_min[m[no_reward]],BreakList[k]->amount_max[m[no_reward]]-BreakList[k]->amount_min[m[no_reward]]+1);
+                }
+                else
+                {
+                    mybreak[no_reward].item.count =BreakList[k]->amount_max[m[no_reward]];
+                }
+
+                no_reward++;
+           }
+
+       }
+
+
+    }
+
+    //Checking the slots.
+    int nb_ok=0;
+    for(int no_reward=0;no_reward<nb_items;no_reward++)
+    {
+        unsigned int tempslot = thisclient->AddItem(mybreak[no_reward].item);
+        if (tempslot == 0xffff)
+        {
+            Log(MSG_WARNING,"Can not give a reward to %s (not enough place for item %u*(%i::%i) )",thisclient->CharInfo->charname,mybreak[no_reward].item.count,mybreak[no_reward].item.itemtype,mybreak[no_reward].item.itemnum);
+            mybreak[no_reward].is_ok=false;
+        }
+        else
+        {
+            nb_ok++;
+            mybreak[no_reward].slot=tempslot;
+        }
+
+    }
+
+    //taking the broken item.
+  thisclient->items[src].count -= 1;
+  if( thisclient->items[src].count < 1)
+      ClearItem( thisclient->items[src] );
+  thisclient->UpdateInventory(src);
+
+    //packet time.
+  BEGINPACKET( pak, 0x7bc );
+  ADDBYTE    ( pak, 0x07 );//disassemble success
+  ADDBYTE    ( pak, nb_ok + 1 );//number of items to follow
+
+    for(int no_reward=0;no_reward<nb_items;no_reward++)
+    {
+        if(!mybreak[no_reward].is_ok)
+        {
+            continue;
+        }
+
+        unsigned int tempslot = mybreak[no_reward].slot;
+        ADDBYTE (pak, tempslot);
+        ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
+        ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
+        ADDDWORD( pak, 0x00000000 );
+        ADDWORD ( pak, 0x0000 );
+    }
+
+  ADDBYTE    ( pak, src );
+  ADDDWORD   ( pak, BuildItemHead( thisclient->items[src] ) );
+  ADDDWORD   ( pak, BuildItemData( thisclient->items[src] ) );
+  ADDWORD    ( pak, 0x0000);
+  ADDWORD    ( pak, 0x0000);
+  ADDWORD    ( pak, 0x0000);
+  thisclient->client->SendPacket( &pak );
+  //   end disassemble
+
+  return true;
+}
+
+
+//LMA: We give a banana or a bogus item to the player (disassemble).
+bool CWorldServer::GiveDefaultDasm( CPlayer* thisclient,UINT src, bool not_found, bool is_failed)
+{
+   Log(MSG_WARNING,"Player %s tried to disassemble item (%i::%i), it's not in break list or in error! not found %i, failed %i",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum,not_found,is_failed);
+
+    //let's give him a banana for his trouble ;)
+   CItem newitem;
+
+    //LMA: we give him other items if item mall, event or unique gear.
+   if(not_found)
+   {
+        int grade=0;
+        if(thisclient->items[src].itemtype>9)
+        {
+            Log(MSG_WARNING,"Weird itemtype for disassemble %i::%i for %s",thisclient->items[src].itemtype,thisclient->items[src].itemnum,thisclient->CharInfo->charname);
+        }
+        else
+        {
+            if(thisclient->items[src].itemnum>=EquipList[thisclient->items[src].itemtype].max)
+            {
+                Log(MSG_WARNING,"Weird itemnum for disassemble %i::%i for %s (>= %u)",thisclient->items[src].itemtype,thisclient->items[src].itemnum,thisclient->CharInfo->charname,EquipList[thisclient->items[src].itemtype].max);
+            }
+            else
+            {
+                grade=EquipList[thisclient->items[src].itemtype].Index[thisclient->items[src].itemnum]->itemgrade;
+            }
+
+        }
+
+        if(grade==13)
+        {
+            //item mall
+            newitem.itemnum = 449;
+            newitem.itemtype = 12;
+            newitem.count = RandNumber(1,4);
+        }
+        else if(grade==14)
+        {
+            //event
+            newitem.itemnum = 448;
+            newitem.itemtype = 12;
+            newitem.count = RandNumber(1,4);
+        }
+        else if(grade==11)
+        {
+            //unique
+            //newitem.itemnum = RandNumber(392,394);
+            newitem.itemnum = RandNumber(392,3);
+            newitem.itemtype = 12;
+            newitem.count = RandNumber(1,4);
+        }
+        else
+        {
+            //banana
+            newitem.itemnum = 102;
+            newitem.itemtype = 10;
+            newitem.count = 1;
+        }
+
+   }
+   else
+   {
+       //banana
+        newitem.itemnum = 102;
+        newitem.itemtype = 10;
+        newitem.count = 1;
+   }
+
+   newitem.refine = 0;
+   newitem.lifespan = 100;
+   newitem.durability = 40;
+   newitem.socketed=0;
+   newitem.appraised=0;
+   newitem.stats=0;
+   newitem.gem=0;
+   newitem.sp_value=0;
+   newitem.last_sp_value=0;
+
+   unsigned newslot = thisclient->AddItem(newitem);
+   if(newslot == 0xffff)
+   {
+       //This should never happen since client is handling that.
+       //We let the client crashes in this case ^_^
+       return false;
+   }
+
+  thisclient->items[src].count -= 1;
+  if( thisclient->items[src].count < 1)
+      ClearItem( thisclient->items[src] );
+  thisclient->UpdateInventory(src);
+
+  BEGINPACKET( pak, 0x7bc );
+  ADDBYTE    ( pak, 0x07 );//disassemble success
+  ADDBYTE    ( pak, 0x02 );//number of items to follow
+  ADDBYTE    ( pak, newslot );
+  ADDDWORD   ( pak, BuildItemHead( thisclient->items[newslot] ) );
+  ADDDWORD   ( pak, BuildItemData( thisclient->items[newslot] ) );
+  ADDWORD    ( pak, 0x0000);
+  ADDWORD    ( pak, 0x0000);
+  ADDWORD    ( pak, 0x0000);
+  ADDBYTE    ( pak, src );
+  ADDDWORD   ( pak, BuildItemHead( thisclient->items[src] ) );
+  ADDDWORD   ( pak, BuildItemData( thisclient->items[src] ) );
+  ADDWORD    ( pak, 0x0000);
+  ADDWORD    ( pak, 0x0000);
+  ADDWORD    ( pak, 0x0000);
+  thisclient->client->SendPacket( &pak );
+   return true;
 }

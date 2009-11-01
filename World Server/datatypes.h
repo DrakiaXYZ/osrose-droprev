@@ -430,6 +430,7 @@ struct CEquip
     UINT movespeed;
     UINT STLId;
     UINT STLPrefix;
+    UINT breakid;   //LMA: used for breakid.
 };
 
 // Jem Data
@@ -731,6 +732,13 @@ public:
     int sig_gem;
     int sp_value;
     int last_sp_value;
+};
+
+//LMA: Used for boxes and chests
+struct CItemChests {
+    CItem item;
+	unsigned int slot;
+	bool is_ok;
 };
 
 
@@ -1148,7 +1156,11 @@ struct CChest
     vector<CReward*> Rewards;
     unsigned int probmax;
     unsigned int rewardamount;
-    unsigned int rewardposs;
+    unsigned int reward_min;
+    unsigned int reward_max;
+    int nb_reward;
+    UINT breakid;
+    //unsigned int rewardposs;    //LMA: TODO: strip, left for compatibility for now
 };
 
 struct CBValue
@@ -1284,8 +1296,11 @@ struct CBreakList
     UINT amount_min[20];
     UINT amount_max[20];
     UINT prob[20];
-    UINT numToGive;
-    UINT total;
+    //UINT numToGive;
+    //UINT total;
+    UINT reward_min;
+    UINT reward_max;
+    int nb_reward;
 };
 
 // Quests (qsd)

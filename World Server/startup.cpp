@@ -324,6 +324,10 @@ bool CWorldServer::InitDefaultValues()
     StatusList=new CStatus*[STB_STATUS.rowcount];
     maxStatus=STB_STATUS.rowcount;
 
+    //breaklist.
+    BreakList=new CBreakList*[BreakData.rowcount];
+    maxBreak=BreakData.rowcount;
+
     //Skills and NPC as static array too, but no init for this one.
     SkillList=new CSkills*[STB_SKILL.rowcount];
     maxSkills=STB_SKILL.rowcount;
@@ -333,6 +337,30 @@ bool CWorldServer::InitDefaultValues()
     //Item stats.
     StatsList=new CItemStas*[STB_ITEM[10].rowcount];
     maxStats=STB_ITEM[10].rowcount;
+
+
+    //Null break
+    CBreakList* nullBreak=new CBreakList;
+    nullBreak->itemnum=0;
+    nullBreak->itemtype=0;
+    //nullBreak->numToGive=0;
+    //nullBreak->total=0;
+    nullBreak->nb_reward=0;
+    nullBreak->reward_min=0;
+    nullBreak->reward_max=0;
+
+    for(int i=0;i<20;i++)
+    {
+        nullBreak->amount_min[i]=0;
+        nullBreak->amount_max[i]=0;
+        nullBreak->product[i]=0;
+        nullBreak->prob[i]=0;
+    }
+
+    for(UINT i=0;i<maxBreak;i++)
+    {
+        BreakList[i]=nullBreak;
+    }
 
     //Equip null init
     CEquip* nullequip = new CEquip;
@@ -356,6 +384,7 @@ bool CWorldServer::InitDefaultValues()
     nullequip->attackspeed =0;
     nullequip->itemgrade = 0;
     nullequip->itemgradeID=0;
+    nullequip->breakid=0;
 
     for(int i=0;i<3;i++)
     {
@@ -1205,7 +1234,7 @@ bool CWorldServer::LoadMobGroups()
       //LMA: check
       if(thisgroup->limit<thismob->amount)
       {
-          Log(MSG_WARNING,"spawn %i: limit %u < monster amount %u",thisgroup->id,thisgroup->limit,thismob->amount);
+          //Log(MSG_WARNING,"spawn %i: limit %u < monster amount %u",thisgroup->id,thisgroup->limit,thismob->amount);
           //overwriting.
           thismob->amount=thisgroup->limit;
       }
@@ -2338,6 +2367,13 @@ bool CWorldServer::LoadEquip( )
             newequip->itemgradeID=STB_ITEM[j].rows[i][45];
             newequip->itemgrade = STB_ITEM[j].rows[i][46];
 
+            //LMA: used for breakid
+            newequip->breakid=0;
+            if(newequip->equiptype<7||newequip->equiptype==8||newequip->equiptype==9)
+            {
+                newequip->breakid=STB_ITEM[j].rows[i][47];
+            }
+
             //LMA: raretype not handled !!
             //newequip->raretype = STB_ITEM[j].rows[i][47];
             //EquipList[newequip->equiptype].Data.push_back( newequip );
@@ -3093,12 +3129,70 @@ bool CWorldServer::LoadBreakChestBlueList()
 
         }
 
+        //LMA: for now a chest is also a break.
+        CBreakList* newbreak = new (nothrow) CBreakList;
+        if(newbreak==NULL)
+        {
+            Log(MSG_WARNING, "Error allocing memory: break list\n" );
+            return false;
+        }
+
+        newbreak->itemnum=itemnum;
+        newbreak->itemtype=itemtype;
+        //We read the 20 items.
+        for(int j=0;j<20;j++)
+        {
+            newbreak->product[j]=BreakData.rows[i][2+j*old_break];
+            newbreak->amount_min[j]=0;
+
+            if(old_break!=3)
+            {
+                newbreak->amount_min[j]=BreakData.rows[i][3+j*old_break];
+                newbreak->amount_max[j]=BreakData.rows[i][4+j*old_break];
+                newbreak->prob[j]=BreakData.rows[i][5+j*old_break];
+            }
+            else
+            {
+                newbreak->amount_max[j]=BreakData.rows[i][3+j*old_break];
+                newbreak->prob[j]=BreakData.rows[i][4+j*old_break];
+            }
+
+            if(newbreak->amount_min[j]==0)
+            {
+                newbreak->amount_min[j]=1;
+            }
+
+        }
+
+        if(old_break!=3)
+        {
+            //newbreak->numToGive = BreakData.rows[i][83];
+            //newbreak->total = BreakData.rows[i][84];
+            newbreak->reward_min = BreakData.rows[i][82];
+            newbreak->reward_max = BreakData.rows[i][83];
+            newbreak->nb_reward = BreakData.rows[i][84];
+        }
+        else
+        {
+            //TODO: nb min
+            //newbreak->numToGive = BreakData.rows[i][62];
+            //newbreak->total = BreakData.rows[i][63];
+            newbreak->reward_min = 1;
+            newbreak->reward_max = BreakData.rows[i][62];
+            newbreak->nb_reward = BreakData.rows[i][63];
+        }
+
+        nb_break++;
+        //BreakList.push_back( newbreak );
+        BreakList[i]=newbreak;
+        //Log(MSG_INFO,"Break added: (%i:%i), numtogive %i, total %i",newbreak->itemtype,newbreak->itemnum,newbreak->numToGive,newbreak->total);
+
         //time to make the right choice :)
         switch (choice)
         {
                 case 1:
                 {
-                    //Break, should be easy.
+                    /*//Break, should be easy.
                     CBreakList* newbreak = new (nothrow) CBreakList;
                     if(newbreak==NULL)
                     {
@@ -3145,8 +3239,10 @@ bool CWorldServer::LoadBreakChestBlueList()
                     }
 
                     nb_break++;
-                    BreakList.push_back( newbreak );
+                    //BreakList.push_back( newbreak );
+                    BreakList[i]=newbreak;
                     //Log(MSG_INFO,"Break added: (%i:%i), numtogive %i, total %i",newbreak->itemtype,newbreak->itemnum,newbreak->numToGive,newbreak->total);
+                    */
                     break;
                 }
                 case 2:
@@ -3158,6 +3254,8 @@ bool CWorldServer::LoadBreakChestBlueList()
                         Log( MSG_WARNING, "Error allocing memory for chest\n" );
                         return false;
                     }
+
+                    newchest->breakid=i;
 
                     //Patch for Xmas gift boxes...
                     newchest->chestid = itemnum;
@@ -3249,14 +3347,25 @@ bool CWorldServer::LoadBreakChestBlueList()
                         newchest->Rewards.push_back( Reward );
                     }
 
-
                     if(old_break!=3)
                     {
-                        newchest->rewardposs = BreakData.rows[i][83];
+                        //newchest->rewardposs = BreakData.rows[i][83];   //LMA: left for compatibility
+                        newchest->reward_min=BreakData.rows[i][82];
+                        newchest->reward_max=BreakData.rows[i][83];
+                        newchest->nb_reward=BreakData.rows[i][84];
                     }
                     else
                     {
-                        newchest->rewardposs = BreakData.rows[i][62];
+                        //LMA: TODO: check the min in the "old" STB
+                        //newchest->rewardposs = BreakData.rows[i][62];   //LMA: left for compatibility
+                        newchest->reward_min=1;
+                        newchest->reward_max=BreakData.rows[i][62];
+                        newchest->nb_reward=BreakData.rows[i][63];
+                    }
+
+                    if (newchest->reward_min==0&&newchest->reward_max>0)
+                    {
+                        newchest->reward_min=1;
                     }
 
                     nb_chest++;
