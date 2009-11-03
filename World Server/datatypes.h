@@ -394,7 +394,8 @@ struct CPartyExp
     //UINT exp;
     unsigned long long exp;
     UINT num;
-    UINT partymember[50];
+    /*UINT partymember[50];*/
+    UINT partymember[7];            //LMA: Only 7 people allowed in a party.
     UINT maxlevel;
     bool flag;
 };

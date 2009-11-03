@@ -3469,6 +3469,12 @@ bool CWorldServer::pakGMBan( CPlayer* thisclient, char* name )
 // Reborn command credits Core
 bool CWorldServer::pakGMReborn(CPlayer* thisclient)
 {
+    if(thisclient->Party->party!=NULL)
+    {
+        Log(MSG_INFO,"Player %s tried to use reborn but he was in a party.");
+        return true;
+    }
+
      if(thisclient->Stats->Level < 250) //Level 250 can be changed to any level you want
      {
         GServer->SendPM(thisclient, "You have to be lvl 250 to reborn !");

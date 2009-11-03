@@ -28,6 +28,10 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
         MapList.Index[thismon->Position->Map]->DeleteMonster( thismon );
 	    return true;
     }
+
+    //LMA: Used later for party members...
+    int max_lvl=0;
+
     // Give Experience Drops and Quest Items
     vector<CPartyExp*> PartyExp;
     for(UINT i=0;i<thismon->PlayersDamage.size();i++)
@@ -105,6 +109,7 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                     thisparty->exp += (unsigned long long) ((exp*thisclient->Party->party->PartyLevel*2) / 100);
                     thisparty->num = 1;
                     thisparty->partymember[0] = thisclient->CharInfo->charid;
+                    max_lvl=thisclient->Stats->Level;
                     thisparty->maxlevel = thisclient->Stats->Level;
                     for(unsigned int p=0;p<ClientList.size();p++)
                     {
@@ -117,7 +122,19 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                         {
                             if(thisclient->Party->party == otherclient->Party->party )
                             {
+                                //LMA: Little stupid check.
+                                if (thisparty->num==7)
+                                {
+                                    Log(MSG_WARNING,"Too many people in this party, already at max, skipping");
+                                    break;
+                                }
+
                                 thisparty->partymember[thisparty->num] = otherclient->CharInfo->charid;
+                                if (otherclient->Stats->Level>max_lvl)
+                                {
+                                    max_lvl=otherclient->Stats->Level;
+                                }
+
                                 thisparty->num++;
                                 thisparty->maxlevel += otherclient->Stats->Level;
                             }
@@ -158,6 +175,17 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                 continue;
             if(partyclient->Party->party==NULL)
                 continue;
+
+            //LMA: no exp if a player has a too low level...
+            //Uncomment this part of code below if you want to use it... (HIGHRATEPARTYEXP)
+            /*
+            if(abs(partyclient->Stats->Level-max_lvl)>(Config.Partygap+1))
+            {
+                Log(MSG_HACK,"Player %s is lvl %i and tryes to get exp in a party which has max_lvl %i and max gap %i",partyclient->CharInfo->charname,partyclient->Stats->Level,max_lvl,Config.Partygap+1);
+                continue;
+            }*/
+            //Uncomment should end here.
+
             if(!thisparty->flag)
             {
                 //partyclient->Party->party->Exp += (thisparty->exp / 6) / 2;
