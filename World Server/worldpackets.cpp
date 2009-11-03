@@ -7072,7 +7072,7 @@ bool CWorldServer::GiveDasmItems( CPlayer* thisclient,UINT src)
     }
     else
     {
-        int nb_items=RandNumber(BreakList[k]->reward_min,BreakList[k]->reward_max-BreakList[k]->reward_min+1);
+        nb_items=RandNumber(BreakList[k]->reward_min,BreakList[k]->reward_max-BreakList[k]->reward_min+1);
         if (nb_items<=0)
         {
             nb_items=1;
@@ -7125,9 +7125,15 @@ bool CWorldServer::GiveDasmItems( CPlayer* thisclient,UINT src)
            for(int i=0;i<BreakList[k]->nb_reward;i++)
            {
                if(rand < BreakList[k]->prob[i])
+               {
                    m[no_reward] = i;
+                   break;
+               }
                else
+               {
                    rand -= BreakList[k]->prob[i];
+               }
+
            }
 
            if(m[no_reward]<20)
