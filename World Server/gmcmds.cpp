@@ -3039,11 +3039,11 @@ else if (strcmp(command, "itemstat")==0)
     }
    else if(strcmp(command, "tquest")==0)
     {
-        if(Config.Command_UnionPoints > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+        if(Config.Command_tquest > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
        {
-           Log( MSG_GMACTION, " %s : /unionpoints NOT ALLOWED" , thisclient->CharInfo->charname);
+           Log( MSG_GMACTION, " %s : /tquest NOT ALLOWED" , thisclient->CharInfo->charname);
            char buffer[200];
-           sprintf ( buffer, "unionpoints NOT ALLOWED");
+           sprintf ( buffer, "tquest NOT ALLOWED");
            SendPM(thisclient, buffer);
              return true;
        }
