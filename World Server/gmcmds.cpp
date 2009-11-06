@@ -1017,33 +1017,35 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /givezuly %s, %I64i" , thisclient->CharInfo->charname, name, zuly);
 		  return pakGMZulygive(thisclient, name, zuly);
 	}
-   else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
+else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
     {
         if(Config.Command_GmList > thisclient->Session->accesslevel)
            return true;
-        SendPM(thisclient, "The currently GM connected is:");
+        SendPM(thisclient, "Currently connected GMs:");
         int count=1;
+        int nb_gms=0;
         int hiddenam=0;
         char line0[200];
         while(count <= (ClientList.size()-1))
         {
+            char line1[200];
             CPlayer* whoclient = (CPlayer*)ClientList.at(count)->player;
             if(whoclient->Session->accesslevel > 100)
             {
-                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);
-            }
-
-            if(whoclient->isInvisibleMode != true)
-            {
-                SendPM(thisclient, line0 );
-            }
-            else
-            {
-                hiddenam++;
+                sprintf(line1, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);
+                if(whoclient->isInvisibleMode != true)
+                {
+                    SendPM(thisclient, line1 );
+                    nb_gms++;
+                }
+                else
+                {
+                    hiddenam++;
+                }
             }
             count++;
         }
-        sprintf(line0, "There are currently %i GM connected!", ((ClientList.size()-1)-hiddenam));
+        sprintf(line0, "There are currently %i GM connected!",nb_gms);
         Log( MSG_GMACTION, " %s : /gmlist" , thisclient->CharInfo->charname);
         SendPM(thisclient, line0 );
         return true;
@@ -3089,6 +3091,7 @@ else if (strcmp(command, "itemstat")==0)
         ADDWORD( pak, 0xa24d );
         ADDWORD( pak, 0x40b3 );
         thisclient->client->SendPacket( &pak );
+        GServer->DB->QExecute("UPDATE characters SET sex=%i WHERE id=%i", thisclient->CharInfo->Sex, thisclient->CharInfo->charid);
     }
    else if (strcmp(command, "union")==0)
     {

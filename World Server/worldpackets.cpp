@@ -6709,8 +6709,9 @@ bool CWorldServer::pakItemMall( CPlayer* thisclient, CPacket* P )
             case 0x01:
             {
                  //list of player's itemmall
-                 if (thisclient->nsitemmallitems==0)
-                    return true;
+                 //LMA: Doing this because of CMS which can add items on their own...
+                 /*if (thisclient->nsitemmallitems==0)
+                    return true;*/
                  ReturnItemMallList(thisclient);
             }
             break;

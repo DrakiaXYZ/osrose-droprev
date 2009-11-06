@@ -296,8 +296,8 @@ bool CWorldServer::pakCreateClan ( CPlayer* thisclient, CPacket* P )
     ADDBYTE    ( pak, 0x00 );
     SendToVisible( &pak, thisclient );
 
-    delete lma_slogan;
-    delete new_slogan;
+    delete[] lma_slogan;
+    delete[] new_slogan;
 
 
     return true;

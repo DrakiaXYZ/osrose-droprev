@@ -321,6 +321,8 @@ QUESTREWD(003)
             ADDWORD(pak, 0xa24d);
             ADDWORD(pak, 0x40b3);
             client->client->SendPacket(&pak);
+            GServer->DB->QExecute("UPDATE characters SET hairStyle=%i WHERE id=%i", client->CharInfo->Hair, client->CharInfo->charid);
+
         }
         break;
         case sFace:
@@ -340,6 +342,7 @@ QUESTREWD(003)
             ADDWORD(pak, 0xa24d);
             ADDWORD(pak, 0x40b3);
             client->client->SendPacket(&pak);
+            GServer->DB->QExecute("UPDATE characters SET face=%i WHERE id=%i", client->CharInfo->Face, client->CharInfo->charid);
         }
         break;
         case sReputation:
@@ -404,6 +407,7 @@ QUESTREWD(003)
             ADDWORD( pak, 0xa24d );
             ADDWORD( pak, 0x40b3 );
             client->client->SendPacket( &pak );
+            GServer->DB->QExecute("UPDATE characters SET sex=%i WHERE id=%i", client->CharInfo->Sex, client->CharInfo->charid);
 		}
         break;
 		case sJob:

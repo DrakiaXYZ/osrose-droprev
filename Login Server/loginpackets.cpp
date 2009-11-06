@@ -76,8 +76,16 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
     //LMA: end escaping
 
     MYSQL_RES *result = DB->QStore( "SELECT id,password,accesslevel,online,active FROM accounts WHERE username='%s'", thisclient->username.c_str() );
+    if(result==NULL)
+    {
+        delete[] lma_username;
+        delete[] new_username;
+        return false;
+    }
 
-    if(result==NULL) return false;
+    delete[] lma_username;
+    delete[] new_username;
+
     if( mysql_num_rows( result ) == 1 )
     {
         row = mysql_fetch_row(result);

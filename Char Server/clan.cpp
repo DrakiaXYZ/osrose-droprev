@@ -470,10 +470,23 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             //LMA: no case.
             //if(strcmp(nick,thisclient->charname)==0)
             if(stricmp(nick,thisclient->charname)==0)
+            {
+                delete []nick;
                 return true;
+            }
+
             CCharClient* otherclient = (CCharClient*) GetClientByName( nick );
             if(otherclient!=NULL)
             {
+                //LMA: does the other guy have already a clan?
+                if(otherclient->clanid!=0)
+                {
+                    Log(MSG_INFO,"%s tried to invite %s into his clan, but he was already in clanid %i",thisclient->charname,otherclient->charname,otherclient->clanid);
+                    delete []nick;
+                    break;
+                }
+
+
                 BEGINPACKET( pak, 0x7e0 );
                 ADDBYTE    ( pak, 0x0b );//invite action
                 ADDSTRING  ( pak, thisclient->charname );
@@ -776,13 +789,14 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 mysql_real_escape_string(DB->Mysql, new_news,lma_news,strlen(lma_news));
                 if(!DB->QExecute("UPDATE list_clan SET news='%s' WHERE id=%i", new_news, thisclan->id))
                 {
-                    delete lma_news;
-                    delete new_news;
+                    delete[] lma_news;
+                    delete[] new_news;
+                    delete []news;
                     return false;
                 }
 
-                delete lma_news;
-                delete new_news;
+                delete[] lma_news;
+                delete[] new_news;
             }
             delete []news;
         }

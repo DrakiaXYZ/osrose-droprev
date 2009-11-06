@@ -1152,7 +1152,7 @@ void CPlayer::savequests( CPlayer* thisclient )
     GServer->DB->QExecute( "DELETE FROM list_quest_new WHERE owner=%i",thisclient->CharInfo->charid );
     GServer->DB->QExecute("INSERT INTO list_quest_new (owner, quests) VALUES(%i,'%s')",
         thisclient->CharInfo->charid, questBuffer);
-    delete questBuffer;
+    delete[] questBuffer;
 }
 
 
