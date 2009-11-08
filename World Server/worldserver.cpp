@@ -704,6 +704,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Tele = ConfigGetInt    ( "commands.ini", "tele", 299 );
     Config.Command_TeleToMe = ConfigGetInt    ( "commands.ini", "teletome", 299 );
     Config.Command_Temple = ConfigGetInt    ( "commands.ini", "temple", 299 );
+    Config.Command_tquest = ConfigGetInt    ( "commands.ini", "tquest", 299 );
     Config.Command_Transx = ConfigGetInt    ( "commands.ini", "transx", 299 );
     Config.Command_Union = ConfigGetInt    ( "commands.ini", "union", 299 );
     Config.Command_UnionPoints = ConfigGetInt    ( "commands.ini", "unionpoints", 299 );

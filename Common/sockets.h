@@ -323,6 +323,7 @@ struct CROSEServerConfig
     int Command_TeleToMe;
     int Command_Temple;
     int Command_Transx;
+    int Command_tquest;
     int Command_Union;
     int Command_UnionPoints;
     int Command_Who;
