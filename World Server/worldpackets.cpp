@@ -4871,31 +4871,39 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
                 return false;
             }
 
-            if (storageprice <= thisclient->CharInfo->Zulies) {
-                thisclient->CharInfo->Zulies -= storageprice;
-            } else {
+            if (storageprice > thisclient->CharInfo->Zulies)
+            {
                 // not enough zulies
                 return true;
             }
 			//End of deposit Fee.
 
+            int newslot=0;
             if(newitem.itemtype>9 && newitem.itemtype<14)
             {
                 WORD count = GETWORD((*P),6);
                 if(count>thisclient->items[itemslot].count)
                     count = thisclient->items[itemslot].count;
                 newitem.count = count;
+
+                newslot = thisclient->GetNewStorageItemSlot ( newitem );
+                if(newslot==0xffff)
+                    return true;
+
                 thisclient->items[itemslot].count -= count;
                 if(thisclient->items[itemslot].count<=0)
                     ClearItem(thisclient->items[itemslot]);
             }
             else
             {
+                newslot = thisclient->GetNewStorageItemSlot ( newitem );
+                if(newslot==0xffff)
+                    return true;
+
                 ClearItem(thisclient->items[itemslot]);
             }
-            int newslot = thisclient->GetNewStorageItemSlot ( newitem );
-            if(newslot==0xffff)
-                return true;
+
+            thisclient->CharInfo->Zulies -= storageprice;
             //Log(MSG_INFO,"New (?) slot for deposit: %i",newslot);
 
             //LMA: New code (stackables?)

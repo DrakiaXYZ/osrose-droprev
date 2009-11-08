@@ -1163,7 +1163,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             strcpy(newclan->news,row[7]);
             newclan->rankingpoints=atoi(row[8]);
             newclan->siglogo=atoi(row[9]);
-            DB->QFree( );
+            //DB->QFree( );
             //member info
             CClanMembers* newmember = new CClanMembers;
             newmember->id = otherclient->charid;
