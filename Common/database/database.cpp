@@ -95,7 +95,7 @@ int CDatabase::QExecuteUpdate( char *Format,... )
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
-    Log( MSG_QUERY, "IN:: ExecU: %s",query );
+    //Log( MSG_QUERY, "IN:: ExecU: %s",query );
     pthread_mutex_lock( &SQLMutex );
     while(Qfail)
     {
@@ -113,7 +113,7 @@ int CDatabase::QExecuteUpdate( char *Format,... )
         else Qfail = false;
     }
     pthread_mutex_unlock( &SQLMutex );
-    Log( MSG_QUERY, "OUT ExecU");
+    //Log( MSG_QUERY, "OUT ExecU");
     return mysql_affected_rows(Mysql);
 }
 
@@ -128,7 +128,7 @@ bool CDatabase::QExecute( char *Format,... )
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
-    Log( MSG_QUERY,"IN QExec:: %s",query );
+    //Log( MSG_QUERY,"IN QExec:: %s",query );
 
     int no_err=0;
     no_err=pthread_mutex_lock( &SQLMutex );
@@ -149,7 +149,7 @@ bool CDatabase::QExecute( char *Format,... )
         else Qfail = false;
     }
     pthread_mutex_unlock( &SQLMutex );
-    Log( MSG_QUERY,"OUT:: QExec");
+    //Log( MSG_QUERY,"OUT:: QExec");
     return true;
 }
 
@@ -163,7 +163,7 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
     result = NULL;
-    Log( MSG_QUERY,"IN Qstore:: %s",query );
+    //Log( MSG_QUERY,"IN Qstore:: %s",query );
     pthread_mutex_lock( &SQLMutex );
 
     if (Mysql==NULL)
@@ -188,7 +188,7 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
         else Qfail = false;
     }
     result = mysql_store_result( Mysql );
-    Log( MSG_QUERY,"OUT Qstore");
+    //Log( MSG_QUERY,"OUT Qstore");
     return result;
 }
 
@@ -202,7 +202,7 @@ MYSQL_RES* CDatabase::QUse( char *Format, ...)
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
     result = NULL;
-    Log( MSG_QUERY,"IN Quse:: %s",query );
+    //Log( MSG_QUERY,"IN Quse:: %s",query );
     pthread_mutex_lock( &SQLMutex );
     while(Qfail)
     {
@@ -221,13 +221,13 @@ MYSQL_RES* CDatabase::QUse( char *Format, ...)
         else Qfail = false;
     }
     result = mysql_use_result( Mysql );
-    Log( MSG_QUERY,"OUT Quse");
+    //Log( MSG_QUERY,"OUT Quse");
     return result;
 }
 
 void CDatabase::QFree( )
 {
-    Log( MSG_QUERY,"Before Qfree");
+    //Log( MSG_QUERY,"IN Qfree");
     if(result!=NULL)
     {
 
@@ -240,5 +240,5 @@ void CDatabase::QFree( )
 
     result=NULL;
     pthread_mutex_unlock( &SQLMutex );
-    Log( MSG_QUERY,"After Qfree");
+    //Log( MSG_QUERY,"OUT Qfree");
 }
