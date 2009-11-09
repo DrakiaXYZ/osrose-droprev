@@ -4945,9 +4945,17 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
 
     if ( changed )
     {
-        //LMA: deleting all previous class skills.
+        int sp_points=0;
+
+        //LMA: deleting all previous class skills and getting skill points for people
+        //fool enough to give this gm command to players :(
         for (int k=0;k<60;k++)
         {
+            if(thisclient->cskills[k].thisskill!=NULL&&thisclient->cskills[k].thisskill->sp>0)
+            {
+                sp_points+=thisclient->cskills[k].level;
+            }
+
             thisclient->cskills[k].id = 0;
             thisclient->cskills[k].level = 1;
             thisclient->cskills[k].thisskill=NULL;
@@ -4956,6 +4964,22 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
         thisclient->saveskills();
         thisclient->ResetSkillOffset();
         SendPM(thisclient, "Class changed! Relog to remove your previous skills." );
+
+        if(sp_points>0)
+        {
+            thisclient->CharInfo->SkillPoints+=sp_points;
+            BEGINPACKET( pak, 0x720 );
+            ADDWORD( pak, 37 );
+            ADDWORD( pak, sp_points );
+            ADDWORD( pak, 0 );
+            thisclient->client->SendPacket( &pak );
+            RESETPACKET( pak, 0x0730 );
+            ADDWORD( pak, 5 );
+            ADDWORD( pak, 0xa24d );
+            ADDWORD( pak, 0x40b3 );
+            thisclient->client->SendPacket( &pak );
+        }
+
     }
     else
     {

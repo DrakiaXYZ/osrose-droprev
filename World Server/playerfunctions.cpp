@@ -226,7 +226,9 @@ bool CPlayer::VisiblityList( )
 		float distance = GServer->distance( this->Position->current, otherclient->Position->current );
 		if ( GServer->IsVisible( this, otherclient ) )
         {
-			if ( distance < MAXVISUALRANGE && !otherclient->isInvisibleMode )
+            //LMA: now invisible players are just usual users.
+			//if ( distance < MAXVISUALRANGE && !otherclient->isInvisibleMode )
+			if ( distance < MAXVISUALRANGE)
 			{
 				newVisiblePlayers.push_back( otherclient );
             }
@@ -237,7 +239,9 @@ bool CPlayer::VisiblityList( )
 		}
         else
         {
-			if ( distance < MINVISUALRANGE && !otherclient->isInvisibleMode )
+            //LMA: now invisible players are just usual users.
+			//if ( distance < MINVISUALRANGE && !otherclient->isInvisibleMode )
+			if ( distance < MINVISUALRANGE)
             {
 			    newVisiblePlayers.push_back( otherclient );
 				otherclient->SpawnToPlayer(this, otherclient);

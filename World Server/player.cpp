@@ -406,6 +406,7 @@ int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
 
 
 // Spawn Another User on the Screen
+//We send "otherclient" to "player"
 bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
 {
     BEGINPACKET( pak, 0x793 );
@@ -585,14 +586,39 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     ADDWORD( pak, items[139].itemnum );	// CART ABILITY
     ADDWORD( pak, GServer->BuildItemRefine( items[139] )  );
 	ADDWORD( pak, (Stats->HP<=0)?0x0:0xea7b );
-    if(Shop->open)
+
+	//LMA: Old code.
+    /*if(Shop->open)
     {
         ADDBYTE( pak, 0x02 );
     }
     else
     {
         ADDBYTE( pak, 0x00 );
+    }*/
+
+    //LMA: new code with invisible handling
+    if(Shop->open)
+    {
+        ADDBYTE( pak, 0x02 );
     }
+    else if(otherclient->is_invisible&&!player->is_invisible)
+    {
+        Log(MSG_INFO,"Player %s should be invisible to %s",otherclient->CharInfo->charname,player->CharInfo->charname);
+        ADDBYTE( pak, 0x01 );
+    }
+    else if(otherclient->is_invisible&&player->is_invisible)
+    {
+        //2 GMs together in hiding, just for the logs...
+        Log(MSG_INFO,"Player %s and %s are both invisible but should see each other.",otherclient->CharInfo->charname,player->CharInfo->charname);
+        ADDBYTE( pak, 0x00 );
+    }
+    else
+    {
+        ADDBYTE( pak, 0x00 );
+    }
+    //End of new code.
+
     ADDBYTE( pak, 0x00);
     ADDBYTE( pak, 0x00);
     if( Fairy )
