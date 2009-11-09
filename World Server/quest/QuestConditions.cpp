@@ -89,10 +89,16 @@ QUESTCOND(003){
 		    }
 		    break;
             case sGender:
-                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Sex, curAbil->iValue))
+            {
+                //LMA: We do this because Sex is a BYTE and if we do a (int*) the cast is wrong.
+                int temp_sex=client->CharInfo->Sex;
+                if(!OperateValues<int>(curAbil->btOp, (int*)&temp_sex, curAbil->iValue))
+                {
                     return QUEST_FAILURE;
-                break;
+                }
 
+            }
+            break;
             case sJob:
             {
                 word tempValue = client->CharInfo->Job / 100;
@@ -245,6 +251,30 @@ QUESTCOND(004){
             return QUEST_SUCCESS;
           }
 
+        }
+        else if(curItem->iWhere!=0&&curItem->iWhere!=13&&curItem->uiItemSN!=0)
+        {
+            //LMA: We check also some other items...
+            //curItem->iWhere is actually the itemtype...
+            int ch_itemtype=GServer->gi(curItem->uiItemSN,0);
+            int ch_itemnum=GServer->gi(curItem->uiItemSN,1);
+            int ch_nb_items=0;
+            for (int k=0;k<140;k++)
+            {
+                if(client->items[k].itemtype!=ch_itemtype||client->items[k].itemnum!=ch_itemnum)
+                {
+                    continue;
+                }
+
+                ch_nb_items=client->items[k].count;
+                if(OperateValues<int>(curItem->btOp, &ch_nb_items, curItem->iRequestCnt))
+                {
+                    return QUEST_SUCCESS;
+                }
+
+            }
+
+            return QUEST_FAILURE;
         }
 
         // Check equipped items for a specific item? - Drakia

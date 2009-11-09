@@ -1135,7 +1135,7 @@ AICOND(028)
     UINT tempval = thisMonster->AIVar[data->nVarIDX];
 
     LogDebug("AIC028:: check var[%i] ?%i? %i (is %i now)",data->nVarIDX,data->btOp,data->iValue,tempval);
-    Log(MSG_INFO,"AIC028:: check var[%i] ?%i? %i (is %i now) for monster %i",data->nVarIDX,data->btOp,data->iValue,tempval,thisMonster->montype);
+    //Log(MSG_INFO,"AIC028:: check var[%i] ?%i? %i (is %i now) for monster %i",data->nVarIDX,data->btOp,data->iValue,tempval,thisMonster->montype);
 
 	switch(data->btOp)
 	{
