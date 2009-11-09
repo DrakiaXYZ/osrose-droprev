@@ -602,12 +602,12 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     {
         ADDBYTE( pak, 0x02 );
     }
-    else if(otherclient->is_invisible&&!player->is_invisible)
+    else if(otherclient->isInvisibleMode&&!player->isInvisibleMode)
     {
         Log(MSG_INFO,"Player %s should be invisible to %s",otherclient->CharInfo->charname,player->CharInfo->charname);
         ADDBYTE( pak, 0x01 );
     }
-    else if(otherclient->is_invisible&&player->is_invisible)
+    else if(otherclient->isInvisibleMode&&player->isInvisibleMode)
     {
         //2 GMs together in hiding, just for the logs...
         Log(MSG_INFO,"Player %s and %s are both invisible but should see each other.",otherclient->CharInfo->charname,player->CharInfo->charname);

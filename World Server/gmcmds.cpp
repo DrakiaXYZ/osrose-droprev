@@ -4713,13 +4713,13 @@ bool CWorldServer::pakGMHide( CPlayer* thisclient, int mode )
     if ( mode == 1 )
     {
         thisclient -> isInvisibleMode = true;
-        ADDSTRING( pak, "You are now invisible !" );
+        ADDSTRING( pak, "You are now invisible, type /here !" );
         Log( MSG_GMACTION, " %s : /hide invisible" , thisclient->CharInfo->charname);
     }
     else
     {
         thisclient -> isInvisibleMode = false;
-        ADDSTRING( pak, "You are now visible !" );
+        ADDSTRING( pak, "You are now visible type /here !" );
         Log( MSG_GMACTION, " %s : /hide visible" , thisclient->CharInfo->charname);
     }
     ADDBYTE( pak, 0 );
