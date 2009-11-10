@@ -174,6 +174,7 @@ class CPlayer: public CCharacter
     void savedata( );
     int GoodSkill(int skill_id);    //LMA: which skill family?
     int FindSkillOffset(int family);    //LMA: Find a skill offset...
+    bool FindSkill(int family,UINT skill); //LMA: Does a skill already exist?
     void ResetSkillOffset(); //LMA: reset skill offsets.
     void AttrAllSkills();   //LMA: searchs all the skills for a player (to be used after allskill gm command for example).
     void AttrGMSkills();   //DK: ???

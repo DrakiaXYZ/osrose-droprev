@@ -2165,10 +2165,19 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
      }
 
      //LMA: Union Shops.
+     //Some maps are entirely dedicated to Union.
+     if(thisclient->Position->Map>=15&&thisclient->Position->Map<=18)
+     {
+         is_union=true;
+     }
+
      if(thisnpc->npctype>=1109&&thisnpc->npctype<=1112)
      {
          is_union=true;
+     }
 
+    if (is_union)
+    {
          switch (thisclient->CharInfo->unionid)
          {
              case 1:
@@ -2205,7 +2214,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
              break;
          }
 
-     }
+    }
 
 	BYTE ncount = 0;
 	BEGINPACKET( pak, 0x717 );
@@ -2240,8 +2249,11 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
         while (tmpcount>0)
         {
             CItem thisitem;
-            thisitem.itemnum = SellList.Index[sellid]->item[itemid] % 1000;
-            thisitem.itemtype = SellList.Index[sellid]->item[itemid] / 1000;
+            //LMA: Shitty old alg :(
+            /*thisitem.itemnum = SellList.Index[sellid]->item[itemid] % 1000;
+            thisitem.itemtype = SellList.Index[sellid]->item[itemid] / 1000;*/
+            thisitem.itemnum = gi(SellList.Index[sellid]->item[itemid],1);
+            thisitem.itemtype = gi(SellList.Index[sellid]->item[itemid],0);
             if (thisitem.itemtype==0||thisitem.itemnum==0)
             {
                 Log(MSG_WARNING,"Problem with selling list, NPC %i, tabid %i, sellid %i, itemid %i",thisnpc->npctype,tabid,sellid,itemid);
@@ -2471,7 +2483,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                             }
                             else
                             {
-                                price = 0;
+                                price = NaturalList.Index[thisitem.itemnum]->craft_difficult;
                             }
 
                             if (thisclient->CharInfo->rewardpoints<(long int) price*count)
@@ -2499,7 +2511,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                             }
                             else
                             {
-                                price = 0;
+                                price = NaturalList.Index[thisitem.itemnum]->craft_difficult;
                             }
 
                             if (nb_union_points<(long int) price*count)
@@ -2570,7 +2582,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                             }
                             else
                             {
-                                price = 0;
+                                price = NaturalList.Index[thisitem.itemnum]->craft_difficult;
                             }
 
                             if (thisclient->CharInfo->rewardpoints<(long int) price*count)
@@ -2598,7 +2610,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                             }
                             else
                             {
-                                price = 0;
+                                price = NaturalList.Index[thisitem.itemnum]->craft_difficult;
                             }
 
                             if (nb_union_points<(long int) price*count)

@@ -1193,6 +1193,12 @@ int CPlayer::FindSkillOffset(int family)
     end[3]=120;
     end[4]=320;
 
+    if (family>4)
+    {
+        Log(MSG_WARNING,"Bad family in FindSkillOffset (%i)",family);
+        return -1;
+    }
+
     int res=cur_max_skills[family];
 
     if (res<end[family])
@@ -1203,6 +1209,47 @@ int CPlayer::FindSkillOffset(int family)
 
 
     return -1;
+}
+
+//LMA: Find a skill in cskills...
+bool CPlayer::FindSkill(int family,UINT skill)
+{
+    int begin[5];
+    int end[5];
+
+    begin[0]=0;
+    begin[1]=60;
+    begin[2]=320;
+    begin[3]=90;
+    begin[4]=120;
+    end[0]=60;
+    end[1]=90;
+    end[2]=362;
+    end[3]=120;
+    end[4]=320;
+
+    if (family>4)
+    {
+        Log(MSG_WARNING,"Bad family in FindSkill (%i) for skill %i",family, skill);
+        return true;
+    }
+
+    for (int k=begin[family];k<end[family];k++)
+    {
+        if (cskills[k].thisskill==NULL)
+        {
+            continue;
+        }
+
+        if(cskills[k].id==skill)
+        {
+            return true;
+        }
+
+    }
+
+
+    return false;
 }
 
 //LMA: reset skill offsets.

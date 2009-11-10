@@ -463,6 +463,7 @@ struct CNaturalData
     UINT quality;
     UINT pricevalue;
     UINT STLId;
+    UINT craft_difficult;   //LMA: Used for union prices...
 };
 
 // pat data

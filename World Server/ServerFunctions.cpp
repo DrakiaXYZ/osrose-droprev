@@ -1540,6 +1540,20 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
         }
         else
         {
+            //LMA: Checking if the skill isn't already learned.
+            if (thisclient->FindSkill(family,skill))
+            {
+                Log(MSG_WARNING,"%s:: already learned skill %i family %i",thisclient->CharInfo->charname,skill,family);
+                b=0;
+                BEGINPACKET( pak, 0x7b0 );
+                ADDBYTE    ( pak, b);
+                ADDWORD    ( pak, thisclient->p_skills-1);
+                ADDWORD    ( pak, skill);
+                ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
+                thisclient->client->SendPacket( &pak);
+                return false;
+            }
+
             int index=thisclient->FindSkillOffset(family);
             if(index==-1)
             {

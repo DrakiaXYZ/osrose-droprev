@@ -413,6 +413,7 @@ bool CWorldServer::InitDefaultValues()
     nullnatural->weight = 0;
     nullnatural->quality = 0;
     nullnatural->pricevalue = 0;
+    nullnatural->craft_difficult=0;
     NaturalList.nullnatural = nullnatural;
 
     for(UINT i=0;i<NaturalList.max;i++)
@@ -2449,6 +2450,9 @@ bool CWorldServer::LoadNaturalItem( )
 
         //LMA: STL:
         thisnatural->STLId= STB_ITEM[11].rows[i][20];
+
+        //LMA: Union price often
+        thisnatural->craft_difficult=STB_ITEM[11].rows[i][15];
 
         //NaturalList.Data.push_back( thisnatural );
         NaturalList.Index[thisnatural->id] = thisnatural;
