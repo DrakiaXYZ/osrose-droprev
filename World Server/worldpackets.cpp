@@ -6181,7 +6181,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
                 }
 
-                if(grade>16)
+                if(grade>NB_REF_RULES)
                 {
                     Log(MSG_WARNING,"Weird grade for refine %i::%i for %s, %u",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname,grade);
                     grade=0;

@@ -2210,7 +2210,8 @@ bool CWorldServer::LoadUpgrade( )
 
     fclose(fh);
 
-    for (int k=0;k<15;k++)
+    //LMA: Time for refining rules.
+    for (int k=0;k<NB_REF_RULES;k++)
     {
         for (int j=0;j<2;j++)
         {
@@ -2242,9 +2243,9 @@ bool CWorldServer::LoadUpgrade( )
         int safe_until = GetUIntValue(",");
         int can_degrade = GetUIntValue(",");
 
-        if(id>14||id<1)
+        if(id>=NB_REF_RULES||id<1)
         {
-            Log(MSG_WARNING,"Incorrect refine rules ID: %i (max 14)",id);
+            Log(MSG_WARNING,"Incorrect refine rules ID: %i, must be <%u, change NB_REF_RULES",id,NB_REF_RULES);
             continue;
         }
 

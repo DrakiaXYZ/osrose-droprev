@@ -60,6 +60,9 @@
 #define LTBKOREAN 1
 #define LTBENGLISH 2
 
+//LMA: Refine Rules:
+#define NB_REF_RULES 17
+
 //LMA: AIP
 #include "aip/Aip.h"
 
@@ -567,7 +570,8 @@ class CWorldServer : public CServerSocket
 
         //UINT                    upgrade[2][10];
         UINT                    upgrade[10][2];         //LMA: new way
-        UINT                    refine_grade[15][2];    //lma: refining rules.
+        //UINT                    refine_grade[15][2];    //lma: refining rules.
+        UINT                    refine_grade[NB_REF_RULES][2];    //lma: refining rules.
         CEquipList              EquipList[10];
         CJemList                JemList;
         CNaturalList            NaturalList;
