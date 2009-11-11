@@ -208,9 +208,9 @@ QUESTREWD(001)
         {
             tmpItem.count = 0;
             slot = client->GetNewItemSlot( tmpItem );
-            if (client->items[slot].count<data->nDupCNT)
+            if (slot==0xffff||client->items[slot].count<data->nDupCNT)
             {
-                Log(MSG_HACK,"QSD001: %s: Not enough items to be deleted!",client->CharInfo->charname);
+                Log(MSG_HACK,"QSD001: %s: Not enough items to be deleted or bad slot (%u) for item %i*%u::%u (%u)!",client->CharInfo->charname,slot,tmpItem.count,tmpItem.itemtype,tmpItem.itemnum,data->uiItemSN);
                 return QUEST_FAILURE;
             }
 

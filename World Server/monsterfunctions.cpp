@@ -48,7 +48,13 @@ bool CMonster::PlayerInGrid()
         return false;
 
     //getting coordinates.
-    coords=GServer->GetGridNumber((int) map->id,(int) Position->current.x,(int) Position->current.y);
+    coords=GServer->GetGridNumber((int) map->id,(int) Position->current.x,(int) Position->current.y,this);
+
+    //LMA: Special case where a monster is outside the grid, we update it to kill it.
+    if(coords==0&&Stats->HP<=0)
+    {
+        return true;
+    }
 
     //Is there anyone in the grids nearby?
     int nb_players=0;

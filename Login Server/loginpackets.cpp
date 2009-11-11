@@ -123,7 +123,9 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
                 }
 
                 thisclient->accesslevel = atoi(row[2]);
-                if( thisclient->accesslevel < Config.MinimumAccessLevel )
+
+                //LMA: banned handled after this check.
+                if( thisclient->accesslevel>0&&thisclient->accesslevel < Config.MinimumAccessLevel )
                 { //The server are under inspection
                     ADDBYTE( pak, 0 );
                     ADDDWORD( pak, 0 );
@@ -131,6 +133,7 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
                     DB->QFree( );
                     return true;
                 }
+
                 if ( thisclient->accesslevel > 0 )
                 {
                     thisclient->userid = atoi(row[0]);

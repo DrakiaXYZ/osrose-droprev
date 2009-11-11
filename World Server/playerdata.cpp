@@ -1252,6 +1252,7 @@ bool CPlayer::FindSkill(int family,UINT skill)
     return false;
 }
 
+
 //LMA: reset skill offsets.
 void CPlayer::ResetSkillOffset()
 {

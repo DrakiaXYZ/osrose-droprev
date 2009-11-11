@@ -519,6 +519,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
 	        ADDSTRING  ( pak, nick );
 	        ADDBYTE    ( pak, 0x00);
             SendToClanMembers(thisclient->clanid,&pak);
+
             for(UINT i=0;i<thisclan->ClanMembers.size( );i++)
             {
                 CClanMembers* ClanMember =  thisclan->ClanMembers.at( i );
@@ -549,6 +550,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                }
                pakClanMembers( otherclient );
             }
+
             if(!DB->QExecute("UPDATE characters SET clanid=0 AND clan_rank=1 WHERE char_name='%s'",nick))
             {
                 delete []nick;

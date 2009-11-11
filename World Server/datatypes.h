@@ -397,6 +397,8 @@ struct CPartyExp
     /*UINT partymember[50];*/
     UINT partymember[7];            //LMA: Only 7 people allowed in a party.
     UINT maxlevel;
+    int cheat_min_lvl; //LMA: cheat test max lvl
+    int cheat_max_lvl; //LMA: cheat test min lvl
     bool flag;
 };
 

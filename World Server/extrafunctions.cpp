@@ -2049,7 +2049,9 @@ UINT CWorldServer::GetGridNumber(int mapid, int posx, int posy)
 
    grid_id=allmaps[mapid].grid_id;
    if (grid_id==-1||allmaps[mapid].always_on==true)
+   {
        return 0;
+   }
 
    //we're on a 8*8 grid basis, we're translating to 10*10 grid basis.
    //In fact the 8*8 is into 10*10, a 1 border around 8*8, helps with calculations, explains the +1
@@ -2064,8 +2066,56 @@ UINT CWorldServer::GetGridNumber(int mapid, int posx, int posy)
 
    if(res>=gridmaps[grid_id].nb_cells)
    {
-       Log(MSG_WARNING,"A monster or player is in a wrong grid! map %i (%i,%i) %i>=%i",mapid,posx,posy,res,gridmaps[grid_id].nb_cells);
+       Log(MSG_WARNING,"A Player is in a wrong grid! map %i (%i,%i) %u>=%u",mapid,posx,posy,res,gridmaps[grid_id].nb_cells);
        return 0;
+   }
+
+
+   return res;
+}
+
+//LMA Grid (for monster)
+//Calculates the grid number using player or monster position
+UINT CWorldServer::GetGridNumber(int mapid, int posx, int posy,CMonster* thismonster)
+{
+   UINT res=0;
+   int grid_id=0;
+
+
+    if(mapid>=NB_MAPS)
+    {
+        Log(MSG_WARNING,"Wrong map in GetGridNumber, %i>=%u",mapid,NB_MAPS);
+        return 0;
+    }
+
+   grid_id=allmaps[mapid].grid_id;
+   if (grid_id==-1||allmaps[mapid].always_on==true)
+   {
+       return 0;
+   }
+
+   //we're on a 8*8 grid basis, we're translating to 10*10 grid basis.
+   //In fact the 8*8 is into 10*10, a 1 border around 8*8, helps with calculations, explains the +1
+   //Log(MSG_INFO,"map %i, O(%i,%i), A(%i,%i),W=%i,L=%i",mapid,gridmaps[grid_id].org_x,gridmaps[grid_id].org_y,posx,posy,gridmaps[grid_id].width,gridmaps[grid_id].length);
+   /*res=(UINT) floor((posy-gridmaps[grid_id].org_y)*8/gridmaps[grid_id].width)+1;
+   res=(UINT) (floor((posx-gridmaps[grid_id].org_x)*8/gridmaps[grid_id].length)+1)+res*10;*/
+   //Log(MSG_INFO,"res: %u",res);
+
+   //New way...
+   res=(UINT) floor((posy-gridmaps[grid_id].org_y)/MINVISUALRANGE)+1;
+   res=(UINT) (floor((posx-gridmaps[grid_id].org_x)/MINVISUALRANGE)+1)+res*(allmaps[mapid].nb_col+2);
+
+   if(res>=gridmaps[grid_id].nb_cells)
+   {
+       if(thismonster==NULL)
+       {
+           Log(MSG_WARNING,"A NULL monster is in a wrong grid! map %i (%i,%i) %u>=%u",mapid,posx,posy,res,gridmaps[grid_id].nb_cells);
+           return 0;
+       }
+
+        Log(MSG_WARNING,"Monster CID %u (montype %u) is in a wrong grid, let's kill him! map %i (%i,%i) %u>=%u",thismonster->clientid,thismonster->montype,mapid,posx,posy,res,gridmaps[grid_id].nb_cells);
+        thismonster->Stats->HP=-1;
+        return 0;
    }
 
 
