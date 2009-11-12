@@ -6779,7 +6779,7 @@ bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
 	UINT data = GETDWORD((*P),5);
 
     //testing slot.
-    if (slot<=0||slot>=MAX_WISHLIST)
+    if (slot<0||slot>=MAX_WISHLIST)
     {
         Log(MSG_WARNING,"Wrong wishlist slot for %s (slot %i, item %u::%u)",thisclient->CharInfo->charname,slot,head,data);
         return true;
