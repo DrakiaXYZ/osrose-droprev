@@ -6774,9 +6774,16 @@ bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
 {
 	if(thisclient==NULL) return false;
 	UINT slot = GETBYTE( (*P), 0 );
-	if(slot>=MAX_WISHLIST) return true;
+	//if(slot>=MAX_WISHLIST) return true;
 	UINT head = GETDWORD((*P),1);
 	UINT data = GETDWORD((*P),5);
+
+    //testing slot.
+    if (slot<=0||slot>=MAX_WISHLIST)
+    {
+        Log(MSG_WARNING,"Wrong wishlist slot for %s (slot %i, item %u::%u)",thisclient->CharInfo->charname,slot,head,data);
+        return true;
+    }
 
     //LMA: We delete a slot.
 	if (head==0&&data==0)
@@ -6787,7 +6794,12 @@ bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
 
     CItem testitem = GetItemByHeadAndData( head , data);
 	// check if is a valid item
-	if(testitem.itemtype>14 || testitem.itemtype<1) return false;
+	if(testitem.itemtype>14 || testitem.itemtype<1)
+	{
+	    Log(MSG_WARNING,"Wrong item for %s (slot %i, item %u::%u)",thisclient->CharInfo->charname,slot,head,data);
+	    return true;
+	}
+
 	// save to the database
 	/*
 	DB->QExecute( "DELETE FROM wishlist WHERE itemowner=%u AND slot=%i",

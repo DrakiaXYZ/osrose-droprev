@@ -753,8 +753,8 @@ struct BSItem {
     int slot;
     int count;
     long int price;
-    int head;
-    int data;
+    UINT head;
+    UINT data;
 };
 
 // -----------------------------------------------------------------------------------------
