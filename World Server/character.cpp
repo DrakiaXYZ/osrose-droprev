@@ -298,7 +298,6 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 
     }
 
-
     //LMA maps: special case (arrive in Game)
     //and he changed map (GM or scroll or teleporter or boat?)
     //2do: other cases too, all in fact...
@@ -351,7 +350,9 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
     {
         // if (IsPlayer()) printf("Arrived! X: %i, Y: %i\n", (int)Position->current.x, (int)Position->current.y);
         if(Position->Map==8&&IsMonster())
+        {
             Log(MSG_INFO," Monster Arrived, J (%.2f:%.2f)->(%.2f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+        }
 
 		Position->current.x = Position->destiny.x;
 		Position->current.y = Position->destiny.y;

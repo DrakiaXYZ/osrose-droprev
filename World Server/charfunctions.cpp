@@ -382,18 +382,44 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
     if(skill==NULL)
     {
         if(distance<=Stats->Attack_Distance)
+        {
             return true;
+        }
+
     }
     else
     {
         if(distance<=skill->range)
+        {
             return true;
+        }
+
     }
 
     //LMA: log
+    //LOTSOFLOGSHERE
     if(Enemy->IsMonster())
     {
-        Log(MSG_INFO,"Player is at distance %.2f of the monster, and needs to be in range of %.2f",distance,Stats->Attack_Distance);
+        //Log(MSG_INFO,"E=M:: Player is at distance %.2f of the monster, and needs to be in range of %.2f",distance,Stats->Attack_Distance);
+        Log(MSG_INFO,"E=M:: M CID %u, P CID %u, M(%.2f;%.2f)->(%.2f;%.2f), P(%.2f;%.2f)->(%.2f;%.2f), dist=%.2f",
+        Enemy->clientid,clientid,
+        Enemy->Position->current.x,Enemy->Position->current.y,
+        Enemy->Position->destiny.x,Enemy->Position->destiny.y,
+        Position->current.x,Position->current.y,
+        Position->destiny.x,Position->destiny.y,
+        distance);
+    }
+
+    if(Enemy->IsPlayer())
+    {
+        //Log(MSG_INFO,"E=P:: Player is at distance %.2f of the monster, and needs to be in range of %.2f",distance,Stats->Attack_Distance);
+        Log(MSG_INFO,"E=P:: M CID %u, P CID %u, M(%.2f;%.2f)->(%.2f;%.2f), P(%.2f;%.2f)->(%.2f;%.2f), dist=%.2f",
+        clientid,Enemy->clientid,
+        Position->current.x,Position->current.y,
+        Position->destiny.x,Position->destiny.y,
+        Enemy->Position->current.x,Enemy->Position->current.y,
+        Enemy->Position->destiny.x,Enemy->Position->destiny.y,
+        distance);
     }
 
 
