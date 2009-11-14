@@ -512,11 +512,15 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 delete []nick;
                 return true;
             }
+
+            //LMA: the name order was wrong... Kicked then kicker.
             BEGINPACKET( pak, 0x7e0 );
 	        ADDBYTE    ( pak, 0x81 );//xxx have kicket to yyyy
-	        ADDSTRING  ( pak, thisclient->charname );
-	        ADDBYTE    ( pak, 0x00);
+	        //ADDSTRING  ( pak, thisclient->charname );
 	        ADDSTRING  ( pak, nick );
+	        ADDBYTE    ( pak, 0x00);
+	        //ADDSTRING  ( pak, nick );
+	        ADDSTRING  ( pak, thisclient->charname );
 	        ADDBYTE    ( pak, 0x00);
             SendToClanMembers(thisclient->clanid,&pak);
 
@@ -556,7 +560,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 delete []nick;
                 return false;
             }
-            Log(MSG_INFO,"[CS] delete %s from clan by %s",nick,thisclient->charname);
+            Log(MSG_INFO,"[CS] delete (kick) %s from clan by %s",nick,thisclient->charname);
             delete []nick;
         }
         break;
