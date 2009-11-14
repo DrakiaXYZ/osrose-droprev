@@ -72,45 +72,6 @@ bool CMap::TeleportPlayer( CPlayer* player, fPoint coordold, bool TelePassenger 
     fPoint coord;
     coord=coordold;
 
-    //LMA: We do a quest trigger if needed...
-    /*
-    //If we are already in the map, no need to redo all the stuff again.
-    //We don't do the qsdzone again if in the UW map...
-    dword hash_zone=QSDzone;
-    if(hash_zone>0&&((id!=player->Position->Map)||(id!=9)))
-    {
-        //LMA: we set the pvp vars to nothing again.
-        player->pvp_id=-1;
-        player->pvp_status=-1;
-
-        //int success=player->ExecuteQuestTrigger(hash_zone,false);
-        int success=player->ExecuteQuestTrigger(hash_zone,true);
-        if (success==QUEST_SUCCESS)
-        {
-            //Log(MSG_WARNING,"teleporting player %s, quest %u returned ok",player->CharInfo->charname,hash_zone);
-
-            //Special case for map 9 (UW).
-            if(id==9)
-            {
-                if(player->UWPosition->Map>0&&player->UWPosition->source.x>0&&player->UWPosition->source.y>0)
-                {
-                    Log(MSG_WARNING,"Player %s is UW teleporting to map %i (%.2f,%.2f)",player->CharInfo->charname,player->UWPosition->Map,player->UWPosition->source.x,player->UWPosition->source.y);
-                    coord.x = player->UWPosition->source.x;
-                    coord.y = player->UWPosition->source.y;
-                    //MapList.Index[player->UWPosition->Map]->TeleportPlayer( player, coord, false );
-                }
-
-            }
-
-        }
-        else
-        {
-            Log(MSG_WARNING,"teleporting player %s, quest %u returned failure",player->CharInfo->charname,hash_zone);
-        }
-
-    }
-    */
-
     if(id==9&&player->UWPosition->source.x>0&&player->UWPosition->source.y>0)
     {
         coord.x = player->UWPosition->source.x;

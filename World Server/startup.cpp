@@ -306,11 +306,6 @@ bool CWorldServer::InitDefaultValues()
     UseList.Index = new CUseData*[STB_ITEM[9].rowcount];
     UseList.max=STB_ITEM[9].rowcount;
 
-    //LMA: hard for now...
-    /*
-    MapList.Index = new CMap*[300];
-    MapList.max=300;
-    */
     //Real amount.
     MapList.Index = new CMap*[ZoneData.rowcount];
     MapList.max=ZoneData.rowcount;
@@ -658,14 +653,6 @@ bool CWorldServer::LoadNPCData( )
         //LMA: Mass Exporter.
         if (Config.massexport==1)
         {
-            /*
-            if(NPC_AIP.find(newnpc->AI)==NPC_AIP.end())
-            {
-                //NPC_AIP[newnpc->AI]=newnpc->id;
-                NPC_AIP[newnpc->AI].push_back(newnpc->id);
-            }
-            */
-
             NPC_AIP[newnpc->AI].push_back(newnpc->id);
         }
 
@@ -1033,107 +1020,6 @@ bool CWorldServer::LoadRespawnData( )
 	Log( MSG_LOAD, "RespawnZones Data loaded" );
 	return true;
 }
-
-/*
-bool CWorldServer::LoadChestData( )
-{
-    Log(MSG_LOAD, "Chest Data                   ");
-    MYSQL_ROW row;
-    MYSQL_RES *result = DB->QStore("SELECT chestid,reward,rewardtype,prob,maxamount,maxpossible FROM chest_data order by id");
-    if(result==NULL) return false;
-    while( row = mysql_fetch_row(result) )
-    {
-        CChest* newchest = new (nothrow) CChest;
-        if(newchest==NULL)
-        {
-            Log( MSG_ERROR, "Error allocing memory" );
-            continue;
-        }
-        newchest->chestid = atoi(row[0]);
-
-        UINT value = 0;
-        bool First = true;
-        // items
-        while((value=atoi(strtok(First?row[1]:NULL, "|")))!=0)
-        {
-            First = false;
-            CReward* Reward = new (nothrow) CReward;
-            if(Reward==NULL)
-            {
-                Log(MSG_WARNING, "\nError allocing memory [chestdata]" );
-                continue;
-            }
-            Reward->id = value;
-            newchest->Rewards.push_back( Reward );
-        }
-
-        value = 0;
-        // Reward Type
-        for(UINT j=0;j<newchest->Rewards.size();j++)
-        {
-            value = atoi(strtok((j==0?row[2]:NULL), "|"));
-            if(value==0)
-            {
-                newchest->Rewards.erase(newchest->Rewards.begin() + j);
-                Log(MSG_WARNING, "reward type not set! chestid: %i - reward id: %i - reward deleted", newchest->chestid, newchest->Rewards.at(j)->id );
-            }
-            else
-            {
-                newchest->Rewards.at(j)->type = value;
-            }
-        }
-
-        newchest->rewardamount = 0;
-        value = 0;
-        // Reward Amount
-        for(UINT j=0;j<newchest->Rewards.size();j++)
-        {
-            value = atoi(strtok((j==0?row[4]:NULL), "|"));
-            if(value==0)
-            {
-                newchest->Rewards.erase(newchest->Rewards.begin() + j);
-                Log(MSG_WARNING, "reward amount not set! chestid: %i - reward id: %i - reward deleted", newchest->chestid, newchest->Rewards.at(j)->id );
-            }
-            else
-            {
-            newchest->Rewards.at(j)->rewardamount = value;
-            }
-        }
-        // Reward Total
-        for(UINT j=0;j<newchest->Rewards.size();j++)
-        {
-            value = atoi(row[5]);
-            {
-            newchest->rewardposs = value;
-//            newchest->Rewards.at(j)->rewardposs = value;
-            }
-        }
-
-        newchest->probmax = 0;
-        value = 0;
-        // probability
-        for(UINT j=0;j<newchest->Rewards.size();j++)
-        {
-            value = atoi(strtok((j==0?row[3]:NULL), "|"));
-            if(value==0)
-            {
-                newchest->Rewards.at(j)->prob = 1;
-                Log(MSG_WARNING, "Probability is not complete, chestid: %i - probability set to 1", newchest->chestid );
-            }
-            else
-            {
-                newchest->Rewards.at(j)->prob = value;
-            }
-            newchest->probmax += newchest->Rewards.at(j)->prob;
-        }
-
-        ChestList.push_back( newchest );
-    }
-    DB->QFree( );
-    Log( MSG_LOAD, "Chest Data loaded" );
-   	return true;
-}
-*/
 
 bool CWorldServer::LoadMobGroups()
 {
@@ -1697,101 +1583,6 @@ bool CWorldServer::LoadNPCsSpecial( )
     return true;
 }
 
-/*
-bool CWorldServer::LoadDropsData( )
-{
-	Log( MSG_LOAD, "Drops Data                  " );
-    FILE* fh = NULL;
-    fh = fopen("data/drops_data.csv", "r");
-    if(fh==NULL)
-    {
-        Log(MSG_ERROR, "\nError loading file data/drops_data.csv" );
-        return false;
-    }
-    char line[500];
-    fgets( line, 500, fh );// this is the column name
-    while(!feof(fh))
-    {
-        memset( &line, '\0', 500 );
-        fgets( line, 500, fh );
-        CMDrops* newdrop = new (nothrow) CMDrops;
-        if(newdrop==NULL)
-        {
-            fclose(fh);
-            continue;
-        }
-        newdrop->id = GetUIntValue(",", &line);
-        char* items = GetStrValue(",");
-        char* prob = GetStrValue(",");
-        newdrop->level_min = GetUIntValue(",");
-        newdrop->level_max = GetUIntValue(",");
-        newdrop->level_boss = GetUIntValue(",");
-        UINT value = 0;
-        bool First = true;
-
-        // items
-        while((value=GetUIntValue("|", First?items:NULL))!=0)
-        {
-            First = false;
-            CDropInfo* DropInfo = new (nothrow) CDropInfo;
-            if(DropInfo==NULL)
-            {
-                Log(MSG_WARNING, "\nError allocing memory [dropinfo]" );
-                continue;
-            }
-            if(value<20000)
-            {
-                DropInfo->type = value/1000;
-                DropInfo->item = value%1000;
-            }
-            else
-            {
-                DropInfo->type = value/1000000;
-                DropInfo->item = value%1000000;
-            }
-            newdrop->Drops.push_back( DropInfo );
-        }
-        newdrop->probmax = 0;
-        value = 0;
-        // probability
-        for(UINT j=0;j<newdrop->Drops.size();j++)
-        {
-            value = GetUIntValue("|",(j==0?prob:NULL));
-            if(value==0)
-            {
-                newdrop->Drops.at(j)->prob = 1;
-                if(newdrop->Drops.at(j)->type<10 || newdrop->Drops.at(j)->type==14)
-                    newdrop->Drops.at(j)->prob *= Config.DROP_RATE;
-                Log(MSG_WARNING, "Probability is not complete, dropid: %i - temporal probability will be 1 * rate", newdrop->id );
-            }
-            else
-            {
-                newdrop->Drops.at(j)->prob = value;
-                if(newdrop->Drops.at(j)->type<10 || newdrop->Drops.at(j)->type==14)
-                    newdrop->Drops.at(j)->prob *= Config.DROP_RATE;
-            }
-            newdrop->probmax += newdrop->Drops.at(j)->prob;
-        }
-        // sort time
-        for(UINT j=0;j<newdrop->Drops.size();j++)
-        {
-            for(UINT k=j;k<newdrop->Drops.size();k++)
-            {
-                if(newdrop->Drops.at(j)>newdrop->Drops.at(k))
-                {
-                    CDropInfo* DropInfo = newdrop->Drops.at(j);
-                    newdrop->Drops.at(j) = newdrop->Drops.at(k);
-                    newdrop->Drops.at(k) = DropInfo;
-                }
-            }
-        }
-        MDropList.push_back( newdrop );
-	}
-	fclose(fh);
-	Log( MSG_LOAD, "Drops Data loaded" );
-	return true;
-}*/
-
 //hidden
 bool CWorldServer::LoadPYDropsData( )
 {
@@ -2142,30 +1933,11 @@ bool CWorldServer::LoadMonsters( )
 	return true;
 }
 
+//Refine code.
 bool CWorldServer::LoadUpgrade( )
 {
 
     Log( MSG_LOAD, "Refine Data - CSV      " );
-    /*
-    //LMA: old code.
-    Log( MSG_LOAD, "Refine Data - STB      " );
-    for (UINT i = 0; i<upgradeData.rowcount; i++)
-    {
-        // weapons
-        if (upgradeData.rows[i][0] != 0)
-        {
-            upgrade[0][upgradeData.rows[i][0]] = upgradeData.rows[i][1];
-        }
-
-        // gear
-        if (upgradeData.rows[i][2] != 0)
-        {
-            upgrade[1][upgradeData.rows[i][2]] = upgradeData.rows[i][3];
-        }
-    }
-
-    STBFreeData(&upgradeData);*/
-
     //LMA: New refine system from naRose.
     for (int k=0;k<10;k++)
     {
@@ -2616,96 +2388,6 @@ bool CWorldServer::LoadConsItem( )
 }
 
 
-/*
-//LMA: Old version...
-bool CWorldServer::LoadZoneData( )
-{
-    Log( MSG_LOAD, "Zone Data                   " );
-    FILE* fh = fopen( "data/zone_data.csv", "r" );
-    if(fh==NULL)
-    {
-        Log(MSG_ERROR, "\nError loading file data/zone_data.csv" );
-        return false;
-    }
-
-    char line[500];
-    fgets( line, 500, fh );// this is the column name
-    while(!feof(fh))
-    {
-        memset( &line, '\0', 500 );
-        fgets( line, 500, fh );
-        CMap* newzone = new (nothrow) CMap( );
-        if(newzone==NULL)
-        {
-            Log(MSG_WARNING, "\nError allocing memory: CMap" );
-            fclose(fh);
-            return false;
-        }
-        newzone->id = GetUIntValue(",", &line);
-
-        //LMA: check if out of memory.
-        if (newzone->id>=MapList.max)
-        {
-           Log(MSG_WARNING,"zone_data.csv, index overflow trapped %i>%i (increase MAX_MAP_DATA)",newzone->id,MapList.max);
-           delete newzone;
-           continue;
-        }
-        //#endif
-
-        newzone->dayperiod = GetUIntValue(",");
-        newzone->morningtime = GetUIntValue(",");
-        newzone->daytime = GetUIntValue(",");
-        newzone->eveningtime = GetUIntValue(",");
-        newzone->nighttime = GetUIntValue(",");
-        newzone->allowpvp = GetUIntValue(",");
-        newzone->allowpat = GetUIntValue(",")==0?true:false;
-        //newzone->ghost = GetUIntValue(",");
-
-        //LMA begin
-        //CF Mode
-        //20070621-211100
-        //map is cf (for jelly bean)
-       newzone->is_cf=GetUIntValue(",");
-       newzone->id_temp_mon = 0;
-       newzone->id_def_mon = 0;
-       newzone->min_lvl = 0;
-       newzone->mon_lvl = 0;
-       newzone->mon_exp = 0;
-       newzone->percent=0;
-
-       //mode 1: one monster temporarily, then the "real" one :)
-        if (newzone->is_cf==1)
-        {
-           Log( MSG_LOAD, "Map %u is CF mode 1 !",newzone->id);
-           newzone->min_lvl = GetUIntValue(",");
-           newzone->id_temp_mon = GetUIntValue(",");
-           newzone->id_def_mon = GetUIntValue(",");
-           newzone->mon_lvl = GetUIntValue(",");
-           newzone->mon_exp = GetUIntValue(",");
-           newzone->percent = GetUIntValue(",");
-        }
-        else
-        {
-            newzone->is_cf=0;
-        }
-        //LMA end
-
-        newzone->MapTime = 0;
-        newzone->LastUpdate = clock( );
-        newzone->CurrentTime = 0;
-        newzone->MonsterSpawnList.clear();
-        newzone->MobGroupList.clear();
-        MapList.Map.push_back(newzone);
-        MapList.Index[newzone->id] = newzone;
-    }
-    fclose(fh);
-    Log( MSG_LOAD, "Zone Data Loaded" );
-
-    return true;
-}
-*/
-
-
 //LMA: Loading Zone data (no CF anymore).
 bool CWorldServer::LoadZoneData( )
 {
@@ -2742,6 +2424,7 @@ bool CWorldServer::LoadZoneData( )
             newzone->MapTime = 0;
             newzone->LastUpdate = clock( );
             newzone->CurrentTime = 0;
+            newzone->is_cf=0;
             newzone->MonsterSpawnList.clear();
             newzone->MobGroupList.clear();
 
@@ -2771,6 +2454,7 @@ bool CWorldServer::LoadZoneData( )
         newzone->QSDzone=ZoneData.rows[i][22];
         newzone->QSDkilling=ZoneData.rows[i][23];
         newzone->QSDDeath=ZoneData.rows[i][24];
+        newzone->is_cf=0;
 
         newzone->MapTime = 0;
         newzone->LastUpdate = clock( );
@@ -3197,6 +2881,7 @@ bool CWorldServer::LoadBreakChestBlueList()
         {
                 case 1:
                 {
+                    //LMA: Commented because we add all the chests as regular breaks now, so the code below is done beforehand.
                     /*//Break, should be easy.
                     CBreakList* newbreak = new (nothrow) CBreakList;
                     if(newbreak==NULL)

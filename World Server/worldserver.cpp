@@ -368,14 +368,12 @@ bool CWorldServer::OnServerReady( )
     //pakGMForceUW(NULL,5);
 
 
-
     //LMA: for debug (load old skill system and compares to new one).
     /*
     LoadSkillDataOld( );
     LMACheckSkills();
     LMACheckStuff();
     */
-
     //End debug.
 
     //Load our Server Info

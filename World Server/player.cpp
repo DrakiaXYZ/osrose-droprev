@@ -464,81 +464,6 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     pvp_id=otherclient->ReturnPvp(player,otherclient);
     ADDDWORD(pak,pvp_id);
 
-
-    /*if(otherclient->Party->party==NULL || otherclient->Party->party != player->Party->party || otherclient->Party->party == player->Party->party)
-    {
-        CMap* map = GServer->MapList.Index[player->Position->Map];
-        if(map->allowpvp==1)
-        {
-            if((map->id>=11) && (map->id<=13))
-            {
-                //CF Maps
-                Log(MSG_INFO,"[PVP1] Two players in CF map, sending clanid %i",Clan->clanid);
-                ADDDWORD(pak, Clan->clanid );
-            }
-            else
-            {
-                //maxxon test:
-                //ADDDWORD(pak, 0x00000051 );
-                Log(MSG_INFO,"[PVP1] Vs All");
-                ADDDWORD(pak, clientid + 0x100 );
-            }
-
-        }
-        else if(map->allowpvp==2) // pvp group vs group
-        {
-            //LMA: for Union war.
-            if (map->id==9&&CharInfo->unionid>0)
-            {
-                int lma_alliance=0;
-                lma_alliance=pvp_id;
-                if(lma_alliance!=11&&lma_alliance!=13)
-                {
-                    int new_value=11;
-                    if (CharInfo->unionid==3||CharInfo->unionid==5)
-                    {
-                        lma_alliance=13;
-                    }
-
-                    LogDebug("793: Wrong pvp_id for player %s, changing it from %i to %i",CharInfo->charname,lma_alliance,new_value);
-                    pvp_id=new_value;
-                    lma_alliance=pvp_id;
-                }
-
-                //lma_alliance=0x07D0;
-                //if (CharInfo->unionid==3||CharInfo->unionid==5)
-                //{
-                    //lma_alliance=0x03E8;
-                //}
-
-                ADDDWORD(pak, lma_alliance);
-                Log(MSG_INFO,"0x793 Alliance %i for Union %i",lma_alliance,CharInfo->unionid);
-            }
-            else
-            {
-                //test maxxon
-                //ADDWORD(pak, 51);
-                ADDDWORD(pak, Clan->clanid );
-            }
-
-            ////test maxxon:
-            //Log(MSG_INFO,"[PVP2] sending clanid %i",Clan->clanid);
-            //ADDDWORD(pak, Clan->clanid);
-        }
-        else
-        {
-            //test maxxon
-            //ADDDWORD(pak, 0x00000000 );
-            ADDDWORD(pak, 0x00000002);
-        }
-
-    }
-    else
-    {
-        ADDDWORD(pak, 0x00000000 );
-    }*/
-
-
     ADDDWORD( pak, GServer->BuildBuffs( this ) );//BUFFS
     ADDBYTE( pak, CharInfo->Sex );					// GENDER
     ADDWORD( pak, Stats->Move_Speed );			// WALK SPEED MAYBE?
@@ -563,11 +488,6 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     ADDWORD( pak, items[8].itemnum );		// SUBWEAPON
     ADDWORD( pak, GServer->BuildItemRefine( items[8] )  );		// SUBWEAPON REFINE
 
-    /*
-    ADDWORD( pak, ((items[132].itemnum << 5) & 0x3ff) );//arrows
-    ADDWORD( pak, ((items[133].itemnum << 5) & 0x3ff) );//bullets
-    ADDWORD( pak, ((items[134].itemnum << 5) & 0x3ff) );//cannons
-    */
     //Fix from maximz
     ADDWORD( pak, ((items[132].itemnum << 5) ));//arrows
     ADDWORD( pak, ((items[133].itemnum << 5) ));//bullets
@@ -586,16 +506,6 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     ADDWORD( pak, items[139].itemnum );	// CART ABILITY
     ADDWORD( pak, GServer->BuildItemRefine( items[139] )  );
 	ADDWORD( pak, (Stats->HP<=0)?0x0:0xea7b );
-
-	//LMA: Old code.
-    /*if(Shop->open)
-    {
-        ADDBYTE( pak, 0x02 );
-    }
-    else
-    {
-        ADDBYTE( pak, 0x00 );
-    }*/
 
     //LMA: new code with invisible handling
     if(Shop->open)

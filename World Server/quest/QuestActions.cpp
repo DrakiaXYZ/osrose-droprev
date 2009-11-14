@@ -609,17 +609,6 @@ QUESTREWD(005){
             else
             {
                 client->UpdateInventory(slot,0xffff,true);
-                /*
-                // Success
-                BEGINPACKET( pak, 0x71f);
-                ADDBYTE(pak, 0x01);
-                ADDBYTE(pak, slot);
-                ADDDWORD(pak, GServer->BuildItemHead ( client->items[slot]) );
-                ADDDWORD(pak, GServer->BuildItemData ( client->items[slot]) );
-                ADDDWORD( pak, 0x00000000 );
-                ADDWORD ( pak, 0x0000 );
-                client->client->SendPacket(&pak);
-                */
             }
         }
         break;
@@ -896,15 +885,6 @@ QUESTREWD(011)
 	}
 	else if	(data->btWho == 1)
 	{
-	    //Event
-	    /*
-		short VarValue = server->EventVar.GetVar(data->nVarNo);
-		OperateValues(data->btOp, &VarValue, (short)data->iValue);
-		server->EventVar.SetVar(data->nVarNo, VarValue);
-		*/
-        //Log(MSG_WARNING,"SERVER EVENT IN QUESTREWDC(011)");
-        //return QUEST_SUCCESS;
-
         //LMA: For event Object.
 
 	    //Npc

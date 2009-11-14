@@ -955,30 +955,6 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
         return;
     }
 
-    //Clan Points
-    /*
-    if(opcode==27)
-    {
-        STR_COND_027 * data = (STR_COND_027 *)dataorg;
-        switch(data->btOP)
-        {
-            case 0x01:
-            {
-                LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Updates Clan points on charserver (%u)",opcode,data->nPOINT);
-            }
-            break;
-            default:
-            {
-                LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: ?%i? Clan points?? (%u) (NOT CODED)",opcode,data->btOP,data->nPOINT);
-            }
-            break;
-        }
-
-
-        return;
-    }
-    */
-
     //Check Clan Points amount.
    if(opcode==27)
     {

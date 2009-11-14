@@ -313,43 +313,6 @@ float CMonster::GetAttackDistance()
     return thisnpc->atkdistance;
 }
 
-/*//Set Monster Stats Values
-bool CMonster::SetStats(bool all)
-{
-    if(thisnpc==NULL)
-    {
-        return false;
-    }
-
-    //Stats->Level = thisnpc->level;//Tomiz : Commented and added the check : if(!IsSummon()) bellow
-
-    if(!IsSummon())//Tomiz : Check Monster lvl if is not a Summon(the one from job, setup to fix normal atk formula because summon got lvl <= 100 in STB)
-    {
-        Stats->Level=thisnpc->level;
-    }
-
-    Stats->Attack_Power = GetAttackPower(all);
-    Stats->Defense = GetDefense(all);
-    Stats->Attack_Speed = GetAttackSpeed();
-    Stats->Move_Speed = GetMoveSpeed();
-    Stats->Dodge = GetDodge(all);
-    Stats->Accury = GetAccury(all);
-    Stats->Critical = GetCritical();
-    Stats->Magic_Defense = GetMagicDefense(all);
-    Stats->Attack_Distance = GetAttackDistance();
-    Stats->MaxHP = GetMaxHP();
-    Stats->MaxMP = GetMaxMP();
-    //Stats->HP = Stats->MaxHP;
-    //Stats->MP = Stats->MaxMP;
-
-    for(int i=0;i<20;i++)
-    {
-        AIVar[i] = 0;
-    }
-
-    return true;
-}*/
-
 //Set Monster Stats Values
 bool CMonster::SetStats(bool all)
 {

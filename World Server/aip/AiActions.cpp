@@ -1020,38 +1020,6 @@ AIACT(024)
             monster->StartAction( (CCharacter*) target, AOE_TARGET, data->nSkill );
         }
         break;
-        /*case 8: //self buff
-        {
-            LogDebug("BUFF_SELF selected.");
-            monster->StartAction( NULL, BUFF_SELF, data->nSkill );
-        }
-        break;
-        case 9: //skill buff
-        case 13://skill buff
-        case 11: //heal
-        {
-            CCharacter* target = entity->GetCharTarget( );
-            if(target == NULL) //some skills always return a NULL target here
-            {
-                if(entity->nearChar == NULL) // maybe there really is no possible target.
-                {
-                    LogDebug("No target can be found for this skill");
-                    return AI_FAILURE;
-                }
-                else //so we are going to have them select a NEW target (if possible) rather than return AI_FAILURE
-                {
-                    LogDebug("SKILL_BUFF type 13 selected. NEW target: %i",entity->nearChar->clientid);
-                    monster->StartAction( (CCharacter*) entity->nearChar, SKILL_BUFF, data->nSkill );
-                }
-            }
-            else
-            {
-                LogDebug("SKILL_BUFF type %i selected. target: %i",thisskill->skilltype, target->clientid);
-                monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
-            }
-        }
-        break;*/
-
         case 8: //self buff
         case 9: //skill buff
         case 13://skill buff
@@ -1123,57 +1091,6 @@ AIACT(024)
         }
         break;
     }
-    /*
-    if (data->btTarget == 0)
-	{
-        //CCharacter* target = entity->GetCharTarget();
-        //if(target==NULL)return AI_FAILURE;
-        //CCharacter* monster = entity;  //defined twice????
-        LogDebug("BUFF_AOE selected");
-        monster->StartAction( NULL, BUFF_AOE, data->nSkill );
-    }
-	else if (data->btTarget == 1)
-	{
-        CCharacter* target = entity->GetCharTarget( );
-        if(target==NULL)return AI_FAILURE;
-        if(data->nMotion == 8)
-        {
-            LogDebug("SKILL_ATTACK selected");
-            monster->StartAction( (CCharacter*) target, SKILL_ATTACK, data->nSkill );
-        }
-        else
-        {
-            LogDebug("SKILL_BUFF selected");
-            monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
-        }
-    }
-    else if (data->btTarget == 2)
-	{
-        if(thisskill->target == tYourself)
-        {
-             LogDebug("BUFF_SELF selected");
-             monster->StartAction( entity, BUFF_SELF, data->nSkill );
-        }
-        else if (thisskill->target == tAlly)
-        {
-            LogDebug("BUFF_AOE selected");
-            monster->StartAction( NULL, BUFF_AOE, data->nSkill );
-        }
-        else if (thisskill->target == tHostileCharacter)
-        {
-             CCharacter* target = entity->GetCharTarget( );
-             if(target == NULL)return AI_FAILURE;
-             if(data->nMotion == 8)
-             {
-                 LogDebug("SKILL_ATTACK selected");
-                 monster->StartAction( (CCharacter*) target, SKILL_ATTACK, data->nSkill );
-             }
-             else
-             {
-                 monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
-             }
-        }
-    }*/
 
     //LMA: next attack.
     monster->nextAi_attacked+=skill_timer;
@@ -1417,32 +1334,6 @@ AIACT(030)
         return AI_SUCCESS;
     }
 
-
-    /*
-    //LMA: cast to Player...
-    CPlayer* player =new CPlayer(NULL);
-    //player=reinterpret_cast<CPlayer*>(entity);
-
-    player->Position->current.x=entity->Position->current.x;
-    player->Position->current.y=entity->Position->current.y;
-    player->Position->current.z=entity->Position->current.z;
-    player->
-
-
-    player->CheckQuest=0;
-    int result=(player->ExecuteQuestTrigger(hash) == QUEST_SUCCESS)?AI_SUCCESS:AI_FAILURE;
-    //Log(MSG_INFO,"AIACT(030) after ExecuteQuestTrigger");
-    delete player;
-    //Log(MSG_INFO,"After delete");
-    return result;
-    */
-
-    /*
-    CPlayer* lma_player=reinterpret_cast<CPlayer*>(entity);
-    lma_player->CheckQuest=0;
-
-    return (lma_player->ExecuteQuestTrigger(hash) == QUEST_SUCCESS)?AI_SUCCESS:AI_FAILURE;
-    */
 }
 
 //set monster's attack target to the same as the owner
@@ -1502,19 +1393,6 @@ AIACT(033)
 	LogDebug( "AIACT(033) zone (2)");
 	return AI_SUCCESS;
 }
-
-//Gives item to caller (credits PY).
-/*
-AIACT(034)
-{
-	//word nItemNum;	//Pos: 0x00
-	//word nCount;	//Pos: 0x02
-	//Give item to "CALLER"
-	GETAIACTDATA(034);
-	LogDebug( "AIACT(034) Item (?)");
-	return AI_SUCCESS;
-}
-*/
 
 //Gives item to caller (credits PY).
 AIACT(034)

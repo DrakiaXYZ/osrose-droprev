@@ -825,27 +825,6 @@ void CCharacter::RefreshBuff( )
                      thisdrop = GetDrop( );
                      if( thisdrop!=NULL)
                      {
-                         //LMA: no drop in packet.
-                         /*
-                         ADDFLOAT   ( pak, thisdrop->pos.x*100 );
-                         ADDFLOAT   ( pak, thisdrop->pos.y*100 );
-                         if( thisdrop->type==1)
-                         {
-                             ADDDWORD( pak, 0xccccccdf );
-                             ADDDWORD( pak, thisdrop->amount );
-                            ADDDWORD( pak, 0xcccccccc );
-                            ADDWORD ( pak, 0xcccc );
-                         }
-                         else
-                         {
-                             ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
-                             ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
-                            ADDDWORD( pak, 0x00000000 );
-                            ADDWORD ( pak, 0x0000 );
-                         }
-                         ADDWORD    ( pak, thisdrop->clientid );
-                         ADDWORD    ( pak, thisdrop->owner );
-                         */
                          CMap* map = GServer->MapList.Index[thisdrop->posMap];
                          map->AddDrop( thisdrop );
                      }
@@ -898,26 +877,6 @@ void CCharacter::RefreshBuff( )
                      thisdrop = GetDrop( );
                      if( thisdrop!=NULL)
                      {
-                         /*
-                         ADDFLOAT   ( pak, thisdrop->pos.x*100 );
-                         ADDFLOAT   ( pak, thisdrop->pos.y*100 );
-                         if( thisdrop->type==1)
-                         {
-                             ADDDWORD( pak, 0xccccccdf );
-                             ADDDWORD( pak, thisdrop->amount );
-                            ADDDWORD( pak, 0xcccccccc );
-                            ADDWORD ( pak, 0xcccc );
-                         }
-                         else
-                         {
-                             ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
-                             ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
-                            ADDDWORD( pak, 0x00000000 );
-                            ADDWORD ( pak, 0x0000 );
-                         }
-                         ADDWORD    ( pak, thisdrop->clientid );
-                         ADDWORD    ( pak, thisdrop->owner );
-                         */
                          CMap* map = GServer->MapList.Index[thisdrop->posMap];
                          map->AddDrop( thisdrop );
                      }

@@ -275,45 +275,6 @@ void CCharacter::DoAttack( )
         break;
        case SKILL_BUFF://buffs
         {
-            /*
-            CSkills* skill = GServer->GetSkillByID( Battle->skillid );
-            if(skill==NULL)
-            {
-                ClearBattle( Battle );
-                return;
-            } // debuff or buff? [netwolf]
-            switch (skill->target)
-             {
-                    case 5:
-                    {
-                     CCharacter* Enemy = GetCharTarget( );
-                     if(Enemy==NULL)
-                     {
-                                     ClearBattle( Battle );
-                                     return;
-                     }
-                     if(IsTargetReached( Enemy, skill ) && CanAttack( ))
-                     {
-                        //Log(MSG_INFO,"%i:: DeBuff time for %i",clientid,Enemy->clientid);
-                        DebuffSkill( Enemy, skill );
-                     }
-                    }break;
-                    default:
-                    {
-                            CCharacter* Target = GetCharTarget( );
-                            if(Target==NULL)
-                            {
-                                     ClearBattle( Battle );
-                                     return;
-                            }
-                            if(IsTargetReached( Target, skill ) && CanAttack( ))
-                            {
-                               //Log(MSG_INFO,"%i:: Buff time for %i",clientid,Target->clientid);
-                               BuffSkill( Target, skill );
-                            }
-                    }break;
-            }
-            */
             //osptest
             CCharacter* Enemy = GetCharTarget( );
             if(Enemy == NULL)
@@ -443,21 +404,6 @@ void CCharacter::DoAttack( )
                 return;
             }
 
-            /*
-            //[netwolf]
-            switch (skill->target)
-             {
-                    case 5:
-                    {
-                         CCharacter* Enemy = NULL;
-                         AoeDebuff( skill, Enemy );
-                    } break;
-                    default:
-                    {
-                            AoeBuff( skill );
-                    }   break;
-             }
-             */
              //osprose
              AoeBuff( skill );
              //osprose end
@@ -671,48 +617,8 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         }
         else if (Enemy->IsMonster())
         {
-            //LMA let's send a suicide packet so monster should be killed twice.
-            /*
-            CMonster* thisMonster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
-            BEGINPACKET( pak, 0x799 );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, thisMonster->thisnpc->hp*thisMonster->thisnpc->level );
-            ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );
-            */
-
-            //Other way, setting his life to 1 and kill him.
-            /*BEGINPACKET( pak, 0x79f );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, 1);
-            GServer->SendToVisible( &pak, Enemy );
-
-            RESETPACKET( pak, 0x799 );
-            ADDWORD    ( pak, clientid );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, 100 );
-            ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );*/
+            //LMA let's send a suicide packet so monster should be killed twice (not anymore).
         }
-
-        //LMA: We send two other packets, just to be sure...
-        /*
-        if(Enemy->IsPlayer())
-        {
-            for (int k=0;k<1;k++)
-            {
-                BEGINPACKET( pak, 0x799 );
-                ADDWORD    ( pak, clientid );
-                ADDWORD    ( pak, Battle->atktarget );
-                ADDDWORD   ( pak, Enemy->Stats->MaxHP*2);
-                ADDDWORD   ( pak, 16 );
-                GServer->SendToVisible( &pak, Enemy);
-                Log(MSG_WARNING,"Special death Packet, sent");
-            }
-
-        }
-        */
 
     }
     else
@@ -860,7 +766,6 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
     }
 
     //Log(MSG_INFO,"new stat MP %i",Stats->MP);
-
     //Log(MSG_INFO,"%i Really doing skill %i to %i",clientid,skill->id,Target->clientid);
 
     Battle->castTime = 0;
@@ -999,43 +904,6 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 
     Battle->castTime = 0;
     CMap* map = GServer->MapList.Index[Position->Map];
-    /*
-    for(UINT i=0;i<map->MonsterList.size();i++)
-    {
-        CMonster* monster = map->MonsterList.at(i);
-        if(monster->clientid==clientid) continue;
-        if(IsSummon( ) || IsPlayer( ))
-        {
-            if(monster->IsSummon( ) && (map->allowpvp==0 || monster->owner==clientid)) continue;
-        }
-        else
-        {
-            if(!monster->IsSummon( )) continue;
-        }
-        if(GServer->IsMonInCircle( goodtarget,monster->Position->current,(float)skill->aoeradius+1))
-        {
-            Log(MSG_INFO,"AOE Attack (1) monster %i radius %.2f",monster->montype,(float)skill->aoeradius+1);
-            UseAtkSkill( (CCharacter*) monster, skill );
-        }
-
-    }
-
-    if(map->allowpvp!=0 || (IsMonster( ) && !IsSummon( )))
-    {
-        for(UINT i=0;i<map->PlayerList.size();i++)
-        {
-            CPlayer* player = map->PlayerList.at(i);
-            if(player->clientid==clientid) continue;
-            if(GServer->IsMonInCircle( goodtarget,player->Position->current,(float)skill->aoeradius+1))
-            {
-                Log(MSG_INFO,"AOE Attack (2) player %s",player->CharInfo->charname);
-                UseAtkSkill( (CCharacter*) player, skill );
-            }
-
-        }
-    }
-
-    */
 
     //osprose
     //TODO: pvp ?
@@ -1130,26 +998,10 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     {
         if(!Enemy->IsDead( ))
         {
-            //LMA: UW handling.
-            //LMA: done in AtkSkill
-            /*
-            if ((Position->Map==9)&&IsPlayer()&&Enemy->IsPlayer())
-            {
-                Log(MSG_INFO,"UWKILL begin AOE skill");
-                UWKill(Enemy);
-            }
-            */
-
             Battle->atktarget = Battle->target;
             Battle->atktype = NORMAL_ATTACK;
             Battle->skilltarget = 0;
             Battle->skillid = 0;
-
-            //LMA: done in AtkSkill
-            /*
-            if(!is_already_dead)
-                TakeExp(Enemy);
-            */
         }
         else
         {
@@ -1380,21 +1232,6 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
 
     reduceItemsLifeSpan( false );
     Enemy->reduceItemsLifeSpan(true);
-    /*
-    //Skill power calculations Old Way
-    long int skillpower = skill->atkpower + (long int)floor(GetInt( )/2);
-    long int level_diff = Stats->Level - Enemy->Stats->Level;
-    //Log(MSG_INFO,"Attack power %u, skillpower %li, MD %u, level diff %li",skill->atkpower,skillpower,Enemy->Stats->Magic_Defense,level_diff);
-    skillpower -= Enemy->Stats->Magic_Defense;
-    if(Enemy->IsMonster()){
-        if(level_diff >= 1){
-            skillpower += Stats->Attack_Power * (level_diff / 5) + (level_diff*2);
-        }else{
-            skillpower += Stats->Attack_Power - (level_diff / 2);
-        }
-    }
-    //Skill power calculations END of Old Way
-    */
 
     //Skill power calculations LMA/Tomiz : New Way
     long int skillpower=0;
@@ -1454,7 +1291,6 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //END Skill power calculations LMA/Tomiz : New Way
 
     //Tell enemy he's attacked & add damage & send the dmg packet
-
     Log(MSG_INFO,"Atk Skill damage %li, Enemy HP before %li",skillpower,Enemy->Stats->HP);
 
     bool bflag = false;
@@ -1580,17 +1416,6 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         if(!is_already_dead)
         {
             TakeExp(Enemy);
-
-            //Some monsters trigger QSD on death...
-            /*
-            if(IsPlayer()&&Enemy->IsMonster()&&Enemy->char_montype==3003)
-            {
-                CPlayer* thisplayer= (CPlayer*) this;
-                //StPatrick_01;
-                thisplayer->ExecuteQuestTrigger(71055222,true);
-            }
-            */
-
         }
         //end of test.
 
@@ -1610,29 +1435,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         }
         else if (Enemy->IsMonster())
         {
-            //LMA let's send a suicide packet so monster should be killed twice.
-            /*
-            CMonster* thisMonster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
-            BEGINPACKET( pak, 0x799 );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, thisMonster->thisnpc->hp*thisMonster->thisnpc->level );
-            ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );
-            */
-
-            //Other way, setting his life to 1 and kill him.
-            /*BEGINPACKET( pak, 0x79f );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, 1);
-            GServer->SendToVisible( &pak, Enemy );
-
-            RESETPACKET( pak, 0x799 );
-            ADDWORD    ( pak, clientid );
-            ADDWORD    ( pak, Enemy->clientid );
-            ADDDWORD   ( pak, 100 );
-            ADDDWORD   ( pak, 16 );
-            GServer->SendToVisible( &pak, Enemy );*/
+            //LMA let's send a suicide packet so monster should be killed twice (not anymore).
         }
 
     }

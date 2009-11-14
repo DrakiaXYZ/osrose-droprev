@@ -502,18 +502,6 @@ QUESTREWDC(019)
     // let's check the values first
     GETREWDDATA(019);
 
-    //osprose
-    /*
-	CMap* map = GServer->MapList.Index[data->nZoneNo];
-	if(map == NULL) return QUEST_SUCCESS;
-	if( map->PlayerList.size()<1 ) return QUEST_SUCCESS;
-	for(UINT j=0;j<map->PlayerList.size();j++)
-    {
-        CPlayer* player = map->PlayerList.at(j);
-        player->ExecuteQuestTrigger(data->m_HashTrigger);
-    }
-    */
-
     char* tempName = reinterpret_cast<char*>(&data->TriggerName) - 2;
     dword hash = MakeStrHash(tempName);
     CMap* map = GServer->MapList.Index[data->nZoneNo];
@@ -521,28 +509,11 @@ QUESTREWDC(019)
 
 	if(map == NULL) return QUEST_SUCCESS;
 	if( map->PlayerList.size()<1 ) return QUEST_SUCCESS;
-	/*
-	for(UINT j=0;j<map->PlayerList.size();j++)
-    {
-        CPlayer* player = map->PlayerList.at(j);
-        //LMA: Team is Pvp for a player.
-        if(player->pvp_id!=data->nTeamNo)
-            continue;
-        player->ExecuteQuestTrigger(hash,true);
-    }
-    */
 
     //LMA: We have to beware of loops, sometimes we warp a player so playerlist's size changes...
     vector<CPlayer*> temp_player;
 	for(UINT j=0;j<map->PlayerList.size();j++)
     {
-        /*
-        CPlayer* player = map->PlayerList.at(j);
-        //LMA: Team is Pvp for a player.
-        if(player->pvp_id!=data->nTeamNo)
-            continue;
-        */
-
         if(map->PlayerList.at(j)->pvp_id!=data->nTeamNo)
             continue;
 

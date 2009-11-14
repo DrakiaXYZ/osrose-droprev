@@ -498,34 +498,6 @@ QUESTCOND(012)
 //Select NPC
 QUESTCOND(013)
 {
-    /*GETCONDDATA(013);
-
-    if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
-
-    CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
-    std::map<dword, CNpc*>::iterator triggerITR = server->NpcList.find(data->iNpcNo);
-    if(triggerITR == server->NpcList.end()){
-        thisNpc->SelectedNpc = NULL;
-        return QUEST_FAILURE;
-    }
-    thisNpc->SelectedNpc = triggerITR->second;
-
-    return QUEST_SUCCESS;*/
-    // More NPC specific stuff
-    /*
-    CMap* thisMap = GServer->MapList.Index[client->Position->Map];
-    CNPC* thisNpc = thisMap->GetNPCInMapQSD(data->iNpcNo);
-
-    if (thisNpc == NULL) {
-        Log (MSG_WARNING, "QSD  CDT13:: NPC %i not found in map %i",data->iNpcNo,client->Position->Map);
-        return QUEST_FAILURE;
-    }
-
-    client->quest.selectedNpc = thisNpc;
-
-    return QUEST_SUCCESS;
-    */
-
     //LMA: like AIP.
     GETCONDDATA(013);
 	client->quest.RefNPC=data->iNpcNo; // sets the reference variable for the correct ObjVar
@@ -799,38 +771,6 @@ QUESTCOND(026)
 //LMA: Check Clan Points amount (?)
 QUESTCOND(027){
     GETCONDDATA(027);
-
-    //LMA: This is supposed to be a condition, not an action...
-    /*
-  if( client->questdebug )
-    server->SendPM(client, "QUEST - Clan Points");
-    switch(data->btOP)
-    {
-        case 0x01:
-
-             //BEGINPACKET( pak, 0x7e0 );
-             //ADDBYTE    ( pak, 0x5C ); //action to update clan points (charserver)
-	         //ADDWORD    ( pak, client->Clan->clanid);
-	         //ADDWORD    ( pak, client->clientid );
-             //ADDDWORD    ( pak, client->Clan->CP );
-             //ADDWORD    ( pak, 0x00);
-             //GServer->SendISCPacket( &pak );
-             //Log(MSG_NOTICE, "implement CharServer Communication at __FILE__ _LINE__");
-
-
-             //LMA: temp version...
-            BEGINPACKET( pak, 0x7e0 );
-            ADDBYTE    ( pak, 0xfe );
-            //ADDWORD    ( pak, client->CharInfo->charid);  //charid
-            ADDDWORD    ( pak, client->CharInfo->charid);  //charid
-            ADDDWORD    ( pak, 0);  //Clan points (to be added)
-            cryptPacket( (char*)&pak, GServer->cct );
-            send( GServer->csock, (char*)&pak, pak.Size, 0 );
-            //Log(MSG_NOTICE, "implement CP nb at __FILE__ _LINE__");
-            break;
-    }
-	return QUEST_SUCCESS;
-	*/
 
     //LMA: Getting real clan points amount.
     client->Clan->CP=GServer->getClanPoints(client->Clan->clanid);

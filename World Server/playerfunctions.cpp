@@ -301,7 +301,7 @@ bool CPlayer::VisiblityList( )
 
 	}
 
-	//LMA: bonus from bonfires / salamender.
+	//LMA: bonus from bonfires / salamender.  (all done by AIP now)
 	//One update so we divide if several bonuses
 	//regen will be updated faster, that's all.
     nb_mp=bon_nb_mp;
@@ -1123,43 +1123,6 @@ void CPlayer::TakeFuel(int add_fuel)
        client->SendPacket( &pak );
        return;
     }
-
-    //Total fuel
-    /*
-    float total_fuel=(float) GServer->PatList.Index[items[135].itemnum]->maxfuel+ (float) GServer->PatList.Index[items[136].itemnum]->maxfuel;   //maximum fuel.
-    if (total_fuel==0)
-    {
-      if (items[135].itemnum>=31&&items[135].itemnum<=35)
-      {
-        //CG
-        total_fuel=(float) 5000;
-      }
-      else
-      {
-        //Cart
-        total_fuel=(float) 3000;
-      }
-
-    }
-
-
-    //consumption factor
-    conso_fuel=(float) GServer->PatList.Index[items[135].itemnum]->fuelcons + (float) GServer->PatList.Index[items[136].itemnum]->fuelcons;
-    if(conso_fuel==0)
-    {
-        if (items[135].itemnum>=31&&items[135].itemnum<=35)
-        {
-           //CG
-           conso_fuel=(float) 23;
-        }
-        else
-        {
-            //Cart
-            conso_fuel=(float) 2;
-        }
-
-    }
-    */
 
     //LMA: new way (STB)
     float total_fuel=(float) GServer->PatList.Index[items[135].itemnum]->jauge+ (float) GServer->PatList.Index[items[136].itemnum]->jauge;   //maximum fuel.

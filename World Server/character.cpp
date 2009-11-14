@@ -242,55 +242,6 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
 // update position
 void CCharacter::UpdatePosition( bool monster_stay_still )
 {
-    /* old version
-    if(IsOnBattle( ) && Battle->target!=0)
-    {
-        CCharacter* Target = GetCharTarget( );
-        if(Target!=NULL)
-        {
-            if(IsMonster())
-            {
-                float distance = GServer->distance( Position->current, Position->source );
-                if(distance>30)
-                {
-                    if(Position->Map==8)
-                        Log(MSG_INFO,"Update Position, OnFar");
-
-                    OnFar( );
-                }
-                else
-                {
-                    if (!monster_stay_still)
-                       Position->destiny = Target->Position->current; //MOBS ONLY
-                    else
-                        Log(MSG_INFO,"This one stays still");
-
-                    if(Position->Map==8)
-                        Log(MSG_INFO,"Update Position, destiny=Target->Position->current (%2.f:%.2f)",Position->destiny.x,Position->destiny.y);
-
-                }
-
-            }
-            else
-            {
-                if(Position->Map==8)
-                    Log(MSG_INFO,"Update Position Player, destiny=Target->Position->current (%2.f:%.2f)",Position->destiny.x,Position->destiny.y);
-
-                Position->destiny = Target->Position->current; //ONLY IF NO TARGET ON BATTLE
-            }
-
-        }
-        else
-        {
-            if(Position->Map==8)
-                Log(MSG_INFO,"Update Position,no target, clear battle");
-
-            ClearBattle( Battle );
-        }
-
-    }
-    */
-
     //LMA: osprose.
     if(IsOnBattle( ) && Battle->target!=0)
     {
@@ -303,6 +254,9 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
         else
         {
             //LMA: Don't need to move if the target is reached.
+            //Bad idea since the monster can go away and it seems
+            //player goes automatically after him client side...
+            /*
             if (Battle->atktype==NORMAL_ATTACK)
             {
                 if(!IsTargetReached( Target ))
@@ -312,6 +266,12 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 
             }
             else
+            {
+                Position->destiny=Target->Position->current;
+            }
+            */
+            //So let's go back to the old way.
+            if(!IsTargetReached( Target ))
             {
                 Position->destiny=Target->Position->current;
             }

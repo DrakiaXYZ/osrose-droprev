@@ -160,10 +160,11 @@ PVOID MapProcess( PVOID TS )
                 {
                     CMonster* monster = map->MonsterList.at(j);
 
+                    /*//LMA: Was for log purposes.
                     if(monster->Stats->HP<0)
                     {
-                        //Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
-                    }
+                        Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
+                    }*/
 
                     //LMA: AIP CODE
 
@@ -196,66 +197,6 @@ PVOID MapProcess( PVOID TS )
                         map->DeleteMonster( monster, true, j );
                         continue;
                     }
-
-                   //LMA begin
-                   //20070621-211100
-                    //Beans for CF...
-                    if(map->is_cf==1&&monster->montype==map->id_temp_mon)
-                    {
-                      //we use butterflies (temporary monster) as decoys ;)
-                       UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
-                       if(etime<20000)
-                       {
-                         //if(!monster->PlayerInRange( )) continue;
-                         if(!monster->UpdateValues( )) continue;
-                         monster->UpdatePosition(monster->stay_still);
-                       }
-                       else if(etime>20000 && etime<120000) // convert temporary monster to definitive 20 seconds after the temporary was spawned
-                       {
-                        //if(!monster->PlayerInRange( )) continue;
-                        if(!monster->UpdateValues( )) continue;
-                            monster->UpdatePosition(monster->stay_still);
-                          CPlayer* player = monster->GetNearPlayer( );
-                          if(player==NULL) continue;
-                          //time for j&b (definitive monster) to come :)
-                          UINT montype = map->id_def_mon;
-
-                          //We kill the temporary and summon the new one.
-                          fPoint position_cf = GServer->RandInCircle( player->Position->current,20 );
-                          Log( MSG_WARNING, "deleting butterfly for J&B, ID %u",monster->clientid);
-                          map->DeleteMonster( monster, true, j );
-                          CMonster* monster2=map->AddMonster( montype, position_cf, 0, NULL, NULL, 0, true );
-                          //just appear and do nothing :)
-                          monster2->StartAction( (CCharacter*)player, 9, 0 );
-                          continue;
-
-                          //other way
-                          /*
-                          map->ConverToMonster( monster, montype , true );
-                          monster->StartAction( (CCharacter*)player, 9, 0 );
-                          */
-                        }
-                        else if (etime>120000) // delete sweet butterfly (temporary monster)...
-                        {
-                          map->DeleteMonster( monster, true, j ); continue;
-                        }
-
-                      }
-
-                      //if the monster is not killed soon enough, let's destroy it.
-                      if(map->is_cf!=0&&monster->montype==map->id_def_mon)
-                      {
-                           UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
-                           if(etime>180000)
-                           {
-                                map->DeleteMonster( monster, true, j ); continue;
-                           }
-
-                            //if(!monster->PlayerInRange( )) continue;
-                            if(!monster->UpdateValues( )) continue;
-                            monster->UpdatePosition(monster->stay_still);
-                      }
-                    //LMA END
 
                     //General monsters===============================================================
                     //LMA: moved to beginning...
@@ -396,7 +337,9 @@ PVOID MapProcess( PVOID TS )
             }
 
             if(only_npc)
+            {
                 pthread_mutex_lock( &map->MonsterMutex );
+            }
 
             //LMA: AIP for NPC.
             for(UINT j=0;j<map->NPCList.size();j++)
@@ -425,21 +368,21 @@ PVOID MapProcess( PVOID TS )
                         Log(MSG_WARNING,"NPC %i hadn't timer, file AI=%i",npc->npctype,npc->thisnpc->AI);
                     }
 
-                    //Leum, for Union War.
+                    //Leum, for Union War (no need to do his stuff always).
                     if(npc->npctype==1113&&GServer->ObjVar[1113][1]>0)
                     {
                         //LogDebug("Doing an update for Leum each 10 seconds since UW is on");
                         delay=10000;
                     }
 
-                    //Walls for map 66
+                    //Walls for map 66 (no need to do his stuff always)
                     if(npc->npctype>=1024&&npc->npctype<=1027&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
                     {
                         //LogDebug("Doing an update for Wall %i each second quest from Hope is on",npc->npctype);
                         delay=1000;
                     }
 
-                    //Hope map 66
+                    //Hope map 66 (no need to do his stuff always)
                     if(npc->npctype==1249&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
                     {
                         //LogDebug("Doing an update for Hope each 10 seconds quest from Hope is on",npc->npctype);
@@ -459,19 +402,6 @@ PVOID MapProcess( PVOID TS )
                      //if(is_time_ok)
                      if(delay<(UINT)GServer->round((clock( ) - npc->lastAiUpdate)))
                      {
-
-                        //Walls for map 66
-                        /*if(npc->npctype>=1024&&npc->npctype<=1027&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
-                        {
-                            Log(MSG_WARNING,"Doing an update for Wall %i each second quest from Hope is on",npc->npctype);
-                        }
-
-                        //Hope map 66
-                        if(npc->npctype==1249&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
-                        {
-                            Log(MSG_WARNING,"Doing an update for Hope each 10 seconds quest from Hope is on",npc->npctype);
-                        }*/
-
                          //Log(MSG_INFO,"Doing AIP for NPC %i",npc->npctype);
 
                          //LMA: Debug Log

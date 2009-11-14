@@ -74,20 +74,6 @@ bool CPlayer::loaddata( )
     //LMA: Pvp according to union:
     //LMA²: Will be set by QSDs now...
     pvp_id=-1;
-    /*
-    if(CharInfo->unionid==1||CharInfo->unionid==4)
-    {
-        pvp_id=11;
-    }
-    else if(CharInfo->unionid==3||CharInfo->unionid==5)
-    {
-        pvp_id=13;
-    }
-    else
-    {
-        pvp_id=0;
-    }
-    */
 
     //LMA: mileage stuff
     bonusxp=atoi(row[35]);
@@ -528,15 +514,6 @@ bool CPlayer::loaddata( )
 		items[itemnum].sp_value = atoi(row[11]);
 		CalculateSignature(itemnum);  //Calculate signature.
 
-        //LMA: little check, refine from 1 to 9 are not valid...
-        /*
-        if(items[itemnum].refine>0&&items[itemnum].refine<=9)
-        {
-            Log(MSG_WARNING,"Invalid refine %i for item (%i:%i) for %s",items[itemnum].refine,items[itemnum].itemtype,items[itemnum].itemnum,CharInfo->charname);
-            items[itemnum].refine*=16;
-        }
-        */
-
         switch (items[itemnum].refine)
         {
             case 0:
@@ -698,7 +675,7 @@ void CPlayer::CalculateSignature( int slot )
 
      if(items[slot].last_sp_value>1000)
      {
-        Log(MSG_INFO,"ERROR sp_value, Previous value %i",items[slot].last_sp_value);
+        Log(MSG_INFO,"ERROR sp_value %s:: Previous value %i (sp_value %i, lifespan %u) for item %u::%u slot %i",CharInfo->charname,items[slot].last_sp_value,items[slot].sp_value,items[slot].lifespan,items[slot].itemtype,items[slot].itemnum,slot);
         items[slot].sp_value=items[slot].lifespan*10;
         items[slot].last_sp_value=-1;
         //GServer->DB->QExecuteUpdate("UPDATE items SET sp_value=%i WHERE owner=%i",items[slot].sp_value,CharInfo->charid);
@@ -713,71 +690,6 @@ void CPlayer::CalculateSignature( int slot )
 //0=delete
 //1=add/update
 //2=do nothing
-/*
-int CPlayer::CheckSignature( int slot )
-{
-     long int res_head=-1;
-     long int res_data=-1;
-     int res=1;
-
-
-     if(items[slot].itemnum==0)
-     {
-        items[slot].sig_head=0;
-        items[slot].sig_data=0;
-        items[slot].sig_gem=0;
-        return 0;
-     }
-
-     res_head=(long int)pow(2,5)*items[slot].itemnum+items[slot].itemtype;
-
-     if( items[slot].itemtype >= 10 && items[slot].itemtype <= 13 )
-     {
-         res_data=items[slot].count;
-         //Log(MSG_INFO,"item: %i(%i*[%i:%i]), data: (%i:%i)",slot,items[slot].count,items[slot].itemtype,items[slot].itemnum,res_data,items[slot].sig_data,res_head,items[slot].sig_head);
-         if ((items[slot].sig_head==res_head)&&(items[slot].sig_data==res_data))
-            return 2;
-     }
-     else
-     {
-        res_data=items[slot].stats;
-        if(items[slot].socketed)
-        		res_data+=(long int)pow(2,26);
-        if(items[slot].appraised)
-		        res_data+=(long int)pow(2,27);
-
-        res_data+=(long int)pow(2,16)*(items[slot].lifespan*10);
-		res_data+=(long int)pow(2,9)*items[slot].durability;
-		res_data+=(long int)pow(2,28)*items[slot].refine;
-		Log(MSG_INFO,"Signature slot %i: %i*(%i::%i), data: (%li:%li), head(%li:%li)",slot,items[slot].count,items[slot].itemtype,items[slot].itemnum,res_data,items[slot].sig_data,res_head,items[slot].sig_head);
-
-        //special PAT handling
-		if(items[slot].itemtype == 14)
-		{
-             if(items[slot].sp_value<=0&&items[slot].lifespan>0)
-             {
-                items[slot].sp_value=10*items[slot].lifespan;
-                items[slot].last_sp_value=-1;
-             }
-
-            if ((items[slot].sig_head==res_head)&&(items[slot].sig_data==res_data)&&(items[slot].sig_gem==items[slot].gem)&&(items[slot].last_sp_value==items[slot].sp_value))
-               return 2;
-        }
-        else
-        {
-            if ((items[slot].sig_head==res_head)&&(items[slot].sig_data==res_data)&&(items[slot].sig_gem==items[slot].gem))
-               return 2;
-        }
-     }
-
-     items[slot].sig_head=res_head;
-     items[slot].sig_data=res_data;
-     items[slot].sig_gem=items[slot].gem;
-     items[slot].last_sp_value=items[slot].sp_value;
-
-
-     return res;
-}*/
 int CPlayer::CheckSignature( int slot )
 {
      long int res_head=-1;
