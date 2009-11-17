@@ -186,6 +186,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Eucar Judge] Ishtal', 1171, 51, 206.565, 54
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Pavrick', 1181, 51, 335.763, 5440.45, 5103.41, 281,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Sergei', 1184, 51, 258.129, 5450.88, 5077.06, 284,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Shamanist] Est', 1191, 54, 84.016, 5088.26, 4257.84, 291,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Kapeka', 1194, 55, 61.813, 5271.06, 4623.53, 294,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Station Guide] Chacha', 1219, 61, 12.550, 5226.60, 4452.72, 319,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Toanu', 1229, 61, 180.000, 5434.62, 4671.50, 329,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Guanu', 1230, 61, 181.501, 5424.42, 4671.62, 330,0,0,0);
