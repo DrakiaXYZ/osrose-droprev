@@ -3413,8 +3413,8 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   }
 
   LogDebugPriority(3);
-  LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
-  Log(MSG_INFO,"PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
+  LogDebug("PakGiveQuest %s:: %u ([%08x]), action %i slot %i",thisclient->CharInfo->charname,hash,hash,action,slot);
+  Log(MSG_INFO,"PakGiveQuest %s:: %u ([%08x]), action %i slot %i",thisclient->CharInfo->charname,hash,hash,action,slot);
   LogDebugPriority(4);
 
   if (action == 2)
@@ -3429,7 +3429,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
     thisclient->client->SendPacket(&pak);
 
       LogDebugPriority(3);
-      LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i delete quest",hash,hash,action,slot);
+      LogDebug("PakGiveQuest %s:: %u ([%08x]), action %i slot %i delete quest",thisclient->CharInfo->charname,hash,hash,action,slot);
       LogDebugPriority(4);
     return true;
   }
@@ -3447,10 +3447,10 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   ADDDWORD( pak, hash);
   thisclient->client->SendPacket(&pak);
 
-  Log(MSG_INFO,"PakGiveQuest %u end",hash);
+  Log(MSG_INFO,"PakGiveQuest %s:: %u end",thisclient->CharInfo->charname,hash);
 
   LogDebugPriority(3);
-  LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i result %i",hash,hash,action,slot,success);
+  LogDebug("PakGiveQuest %s:: %u ([%08x]), action %i slot %i result %i",thisclient->CharInfo->charname,hash,hash,action,slot,success);
   LogDebugPriority(4);
 
 
