@@ -3430,12 +3430,14 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
 
       LogDebugPriority(3);
       LogDebug("PakGiveQuest %s:: %u ([%08x]), action %i slot %i delete quest",thisclient->CharInfo->charname,hash,hash,action,slot);
+      Log(MSG_INFO,"PakGiveQuest %s:: %u ([%08x]), action %i slot %i delete quest",thisclient->CharInfo->charname,hash,hash,action,slot);
       LogDebugPriority(4);
     return true;
   }
 
   if (action != 3)
   {
+      Log(MSG_INFO,"action not 3, %i",action);
       return false;
   }
 
@@ -3451,6 +3453,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
 
   LogDebugPriority(3);
   LogDebug("PakGiveQuest %s:: %u ([%08x]), action %i slot %i result %i",thisclient->CharInfo->charname,hash,hash,action,slot,success);
+  Log(MSG_INFO,"PakGiveQuest %s:: %u ([%08x]), action %i slot %i result %i",thisclient->CharInfo->charname,hash,hash,action,slot,success);
   LogDebugPriority(4);
 
 

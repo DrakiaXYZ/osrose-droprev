@@ -217,7 +217,7 @@ class CPlayer: public CCharacter
     int GetQuestVar(short nVarType, short nVarNO);
     void SetQuestVar(short nVarType, short nVarNO, short nValue);
     //int ExecuteQuestTrigger(dword hash);
-    int ExecuteQuestTrigger(dword hash, bool send_packet=false);    //LMA: Special case, we send the "good" quest name.
+    int ExecuteQuestTrigger(dword hash, bool send_packet=false, UINT index=0);    //LMA: Special case, we send the "good" quest name.
 
     // Player Stats
     unsigned int GetAttackPower( );

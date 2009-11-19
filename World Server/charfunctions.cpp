@@ -398,6 +398,7 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
 
     //LMA: log
     //LOTSOFLOGSHERE
+    /*
     if(Enemy->IsMonster())
     {
         //Log(MSG_INFO,"E=M:: Player is at distance %.2f of the monster, and needs to be in range of %.2f",distance,Stats->Attack_Distance);
@@ -421,6 +422,7 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
         Enemy->Position->destiny.x,Enemy->Position->destiny.y,
         distance);
     }
+    */
 
 
     return false;

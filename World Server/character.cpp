@@ -162,11 +162,20 @@ bool CCharacter::UpdateValues( )
 }
 
 //LMA: AIP (qsd quests).
-int CCharacter::ExecuteQuestTrigger(dword hash)
+int CCharacter::ExecuteQuestTrigger(dword hash, UINT index)
 {
+    if(IsPlayer())
+    {
+        Log(MSG_WARNING,"In CHARACTER!!! %u",hash);
+    }
+
     CQuestTrigger* trigger = NULL;
     CQuestTrigger* nexttrigger = NULL;
-    for(unsigned j=0; j < GServer->TriggerList.size(); j++)
+
+    //LMA: To counter some very weird cases where the hashes exist several times...
+    UINT my_index=0;
+    //for(unsigned j=0; j < GServer->TriggerList.size(); j++)
+    for(unsigned j=index; j < GServer->TriggerList.size(); j++)
     {
       if (GServer->TriggerList.at(j)->TriggerHash == hash)
       {
@@ -175,16 +184,18 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
         //LMA: bug on next trigger.
         if(j+1<GServer->TriggerList.size())
         {
+            my_index=j+1;
             nexttrigger = GServer->TriggerList.at(j + 1);
         }
 
         break;
       }
+
     }
 
     if (trigger == NULL)
     {
-        LogDebug( "EXTC::Trigger not found hash %u", hash);
+        LogDebug( "EXTC::Trigger not found hash %u, index %u", hash,index);
         return QUEST_FAILURE;
     }
 
@@ -214,7 +225,7 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
                 return QUEST_SUCCESS;
             }
 
-            return ExecuteQuestTrigger(nexttrigger->TriggerHash);
+            return ExecuteQuestTrigger(nexttrigger->TriggerHash,my_index);
         }
 
       }

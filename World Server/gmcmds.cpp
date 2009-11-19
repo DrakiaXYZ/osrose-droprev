@@ -3076,6 +3076,13 @@ else if (strcmp(command, "itemstat")==0)
         thisclient->client->SendPacket( &pak );
         return true;
 	}
+    else if(strcmp(command, "testq")==0)
+    {
+        //LMA: TEST COMMAND
+        dword hash=416458245;
+        thisclient->ExecuteQuestTrigger(hash);
+       return true;
+    }
    else if(strcmp(command, "transx")==0)
     {
         if(Config.Command_Transx > thisclient->Session->accesslevel)

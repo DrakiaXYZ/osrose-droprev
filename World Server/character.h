@@ -54,7 +54,7 @@ class CCharacter
 
         //LMA: for AIP.
         CNPC* refnpc;
-       int ExecuteQuestTrigger(dword hash);
+       int ExecuteQuestTrigger(dword hash,UINT index=0);
 
        // Battle Functions
         void DoAttack( );

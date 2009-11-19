@@ -1874,13 +1874,17 @@ bool CPlayer::PrizeExchange(CPlayer* thisclient, UINT prizeid)
 
 
 //QSD Quests
-int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
+int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet, UINT index)
 {
-    //Log(MSG_WARNING,"EXTP BEGIN %u for %s",hash,CharInfo->charname);
+    Log(MSG_WARNING,"EXTP BEGIN %u for %s, index %u",hash,CharInfo->charname,index);
     CQuestTrigger* trigger = NULL;
     CQuestTrigger* nexttrigger = NULL;
     CheckQuest = -1;
-    for(unsigned j=0; j < GServer->TriggerList.size(); j++)
+
+    //LMA: To counter some very weird cases where the hashes exist several times...
+    UINT my_index=0;
+    //for(unsigned j=0; j < GServer->TriggerList.size(); j++)
+    for(unsigned j=index; j < GServer->TriggerList.size(); j++)
     {
       if (GServer->TriggerList.at(j)->TriggerHash == hash)
       {
@@ -1889,7 +1893,13 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
         //LMA: bug on next trigger.
         if(j+1<GServer->TriggerList.size())
         {
+            my_index=j+1;
             nexttrigger = GServer->TriggerList.at(j + 1);
+            Log(MSG_WARNING,"EXTP %u for %s:: next trigger %u, %s FORCED",hash,CharInfo->charname,nexttrigger->TriggerHash,nexttrigger->TriggerName);
+        }
+        else
+        {
+            Log(MSG_WARNING,"EXTP %u for %s:: next trigger %u, %s",hash,CharInfo->charname,nexttrigger->TriggerHash,nexttrigger->TriggerName);
         }
 
         break;
@@ -1905,6 +1915,7 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
 
     int success = QUEST_SUCCESS;
     LogDebug( "EXTP::Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
+    Log(MSG_WARNING,"EXTP::Trigger Executed: %s[next? %i]", trigger->TriggerName, trigger->CheckNext);
 
     for (dword i = 0; i < trigger->ConditionCount; i++)
     {
@@ -1912,30 +1923,37 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
       if (command > 30 || command < 0) continue;
       success = (*GServer->qstCondFunc[command])(GServer, this, trigger->Conditions[i]->data);
       LogDebug( "EXTP::Condition %03u returned %d", command, success);
+      Log(MSG_WARNING,"EXTP::Condition %03u returned %d", command, success);
 
       if (success == QUEST_FAILURE)
       {
         if (!trigger->CheckNext)
         {
             LogDebug("EXTP::No checknext (FAILURE)");
+            Log(MSG_WARNING,"EXTP::No checknext (FAILURE)");
             return success;
         }
         else
         {
             LogDebug("EXTP::checknext because FAILURE");
+            Log(MSG_WARNING,"EXTP::checknext because FAILURE, will do %u",nexttrigger->TriggerHash);
+
             if(nexttrigger==NULL)
             {
                 Log(MSG_WARNING,"CPLAYER::ExecuteQuestTrigger, Next trigger but NULL! %u",hash);
                 return QUEST_SUCCESS;
             }
 
-            return ExecuteQuestTrigger(nexttrigger->TriggerHash,send_packet);
+            return ExecuteQuestTrigger(nexttrigger->TriggerHash,send_packet,my_index);
         }
 
       }
 
       LogDebug("EXTP::Quest cdt success");
+      Log(MSG_WARNING,"EXTP::Quest cdt %i / %i success",i+1,trigger->ConditionCount);
     }
+
+    Log(MSG_WARNING,"EXTP:: OUT of CDT");
 
     for (dword i = 0; i < trigger->ActionCount; i++)
     {
@@ -1943,11 +1961,15 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
       if ((command > 28 || command < 0) && command != 34)
       {
           LogDebug( "unknown Action command %i", command);
+          Log(MSG_WARNING,"unknown Action command %i", command);
           continue;
       }
 
       //LogDebug("EXTP::QSD ACT %03u BEGIN",command);
-      LogDebug( "EXTP::Reward %03u returned %d", command, (*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data));
+
+      //Don't delete that LOG!!!
+      //(*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data);
+      LogDebug( "EXTP::Reward %03u returned %d, %i / %i", command, (*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data),i+1,trigger->ActionCount);
     }
 
     //LMA: In some case we have to send a quest packet.
@@ -1961,7 +1983,7 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
         client->SendPacket(&pak);
     }
 
-    //Log(MSG_WARNING,"EXTP END %u for %s",hash,CharInfo->charname);
+    Log(MSG_WARNING,"EXTP END %u for %s",hash,CharInfo->charname);
 
     return success;
 }
