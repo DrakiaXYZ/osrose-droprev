@@ -97,12 +97,15 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
         #endif
         if ( res == 0 )
         {
+            //Account is Active
            if(atoi(row[4])==1)
             {
                 // Activation Fix By Rifke
                 Log( MSG_INFO, "Success login '%s' : Account verfified.", thisclient->username.c_str() );
+
+                // characters is already logged
                 if(atoi(row[3])==1)
-                {   // characters is already logged
+                {
                     Log(MSG_WARNING, "Account %s try re-login", thisclient->username.c_str() );
                     ADDBYTE( pak, 4 );
                     ADDDWORD( pak, 0 );
@@ -187,12 +190,14 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
         ADDBYTE( pak, 2 );
         ADDDWORD( pak, 0 );
     }
-/*
-1 - general error   | 4 - your account is already logged
-6 - topup account   | 7 - cannot connect to server please try again
-8 - server exceeded | 9 - account have not been verified
-10 - login failed   | 11 - ip capacity is full
-*/
+
+    /*
+    1 - general error   | 4 - your account is already logged
+    6 - topup account   | 7 - cannot connect to server please try again
+    8 - server exceeded | 9 - account have not been verified
+    10 - login failed   | 11 - ip capacity is full
+    */
+
     thisclient->SendPacket ( &pak );
     return true;
 }

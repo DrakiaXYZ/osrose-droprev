@@ -108,6 +108,8 @@ class CCharServer : public CServerSocket
     	bool pakWSCharSelect ( CCharClient* thisclient, CPacket* P );
     	bool pakLoginConnected  ( CCharClient* thisclient, CPacket* P );
     	bool pakLoginDSClient( CCharClient* thisclient, CPacket* P );
+        bool DiscoAllAvatars(UINT userid ); //LMA: Against same account hack.
+        int GetNbUserID( UINT userid ); //LMA: Against same account hack.
     	bool pak7e5 ( CCharClient* thisclient, CPacket* P );
         bool pakChatrooms ( CCharClient* thisclient, CPacket* P );
 

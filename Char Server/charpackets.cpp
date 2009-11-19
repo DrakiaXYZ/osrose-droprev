@@ -46,6 +46,14 @@ bool CCharServer::pakDoIdentify( CCharClient* thisclient, CPacket* P )
 		DB->QFree( );
 	}
 
+	//LMA: We try something here... We tell the worldserver to disconnect every characte
+	//from this account to avoid multi client on the same account (let's call this a preemptive strike).
+    if(GetNbUserID(thisclient->userid)>1)
+    {
+        Log(MSG_HACK,"[HACK] User ID %u (%s) has several avatars logged on the same account.",thisclient->userid,thisclient->username);
+        return false;
+    }
+
 	Log( MSG_INFO,"User '%s'(#%i) logged in", thisclient->username, thisclient->userid );
 
 	BEGINPACKET( pak, 0x070c );
@@ -540,4 +548,5 @@ bool CCharServer::pakLoginDSClient( CCharClient* thisclient, CPacket* P )
     }
     return true;
 }
+
 

@@ -141,3 +141,54 @@ unsigned long int CCharServer::GetServerTime( )
 	uCurTime += ((timeinfo->tm_year-2000) * 86400*366 );
 	return uCurTime;
 }
+
+//LMA: Count the number of userid (accounts) in the list.
+int CCharServer::GetNbUserID( UINT userid )
+{
+    int nb_accounts=0;
+    for(UINT i=0;i<ClientList.size( );i++)
+	{
+	    CCharClient* client = (CCharClient*) ClientList.at( i );
+        if(client->userid==userid)
+        {
+            nb_accounts++;
+            Log(MSG_INFO,"i=%i / %u , %s",i,ClientList.size( ),client->username);
+            /*if (nb_accounts>1)
+            {
+                //Hack, in all cases.
+                return nb_accounts;
+            }*/
+
+        }
+
+	}
+
+    return nb_accounts;
+}
+
+//LMA: Disconnectiong all avatars from an account
+bool CCharServer::DiscoAllAvatars(UINT userid )
+{
+    CCharClient* otherclient = GetClientByUserID( userid );
+    if(otherclient==NULL)
+    {
+        Log( MSG_WARNING, "Userid '%u' is not online (DiscoAllAvatars)", userid );
+        return true;
+    }
+
+    otherclient->isLoggedIn = false;
+    otherclient->isActive = false;
+    BEGINPACKET( pak, 0x502 );
+    ADDBYTE    ( pak, 1 );
+    ADDDWORD   ( pak, userid );
+    //ADDBYTE    ( pak, 0x00 );
+    cryptPacket( (char*)&pak, NULL );
+    CChanels* thischannel = GetChannelByID( otherclient->channel );
+    if(thischannel!=NULL)
+    {
+        send( thischannel->sock, (char*)&pak, pak.Size, 0 );
+    }
+
+
+    return true;
+}
