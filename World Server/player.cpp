@@ -183,6 +183,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 
     questdebug = false;
     Session->codedebug = false;
+    Session->first_id=true;
     Saved = false;
     isInvisibleMode = false;
     Fairy = false;

@@ -2841,3 +2841,29 @@ UINT CWorldServer::GetBreakID(UINT itemnum,UINT itemtype)
 
     return breakid;
 }
+
+
+//LMA: Count the number of userid (accounts) in the list.
+int CWorldServer::GetNbUserID( UINT userid )
+{
+    int nb_accounts=0;
+    for(UINT i=0;i<ClientList.size( );i++)
+	{
+	    CPlayer* thisclient = (CPlayer*)ClientList.at(i)->player;
+        if(thisclient->Session->userid==userid)
+        {
+            nb_accounts++;
+            Log(MSG_INFO,"Avatar logged for userid %i:: %s (nb=%i) ",userid,thisclient->CharInfo->charname,nb_accounts);
+            /*if (nb_accounts>1)
+            {
+                //Hack, in all cases.
+                return nb_accounts;
+            }*/
+
+        }
+
+	}
+
+
+    return nb_accounts;
+}

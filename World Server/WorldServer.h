@@ -214,6 +214,7 @@ class CWorldServer : public CServerSocket
         string EscapeMe(char* texte);  //LMA: Escaping.
         UINT GetTimerFromAIP(dword script_id, bool is_npc); //LMA: used to get a timer from a script.
         UINT GetBreakID(UINT itemnum,UINT itemtype);  //LMA: Getting the breakid from an item.
+        int GetNbUserID( UINT userid ); //LMA: Used to count all avatars from a single userid.
     	UINT GetNewClientID( );
     	unsigned GetNewPartyID( );  //LMA: Getting a Party ID.
     	void DisconnectAll();

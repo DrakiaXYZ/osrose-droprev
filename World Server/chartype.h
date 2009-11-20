@@ -261,6 +261,7 @@ struct SESSION
 	bool isLoggedIn;
 	bool inGame;
     bool codedebug;
+    bool first_id;
 };
 
 struct RIDE

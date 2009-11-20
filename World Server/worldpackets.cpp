@@ -263,6 +263,19 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	//thisclient->CharInfo->Storage_Zulies = atoi( row[3] );
 	thisclient->CharInfo->Storage_Zulies = atoll( row[3] );
 	DB->QFree( );
+
+	//LMA: Anti hack (multi client on the same userid)
+	if(thisclient->Session->first_id)
+	{
+	    if(GetNbUserID(thisclient->Session->userid)>1)
+	    {
+	        Log(MSG_HACK,"UserID %u tryes to log %s but he has already another avatar loaded!",thisclient->Session->userid,thisclient->CharInfo->charname);
+	        return false;
+	    }
+
+	    thisclient->Session->first_id=false;
+	}
+
 	if(!thisclient->loaddata( )) return false;
 	Log( MSG_INFO, "User '%s'(#%i) logged in with character '%s'", thisclient->Session->username, thisclient->Session->userid, thisclient->CharInfo->charname);
 	BEGINPACKET( pak, 0x070c );
@@ -3282,11 +3295,21 @@ bool CWorldServer::pakTradeAdd ( CPlayer* thisclient, CPacket* P )
         return true;
 	BYTE islot = GETBYTE((*P),0);
 	WORD slotid = GETWORD((*P),1);
+
+	//LMA: check:
+	if(islot<0x0a&&slotid>=MAX_INVENTORY)
+	{
+	    Log(MSG_HACK,"Player %s tries to trade an item with incorrect slot %u >= %u",thisclient->CharInfo->charname,slotid,MAX_INVENTORY);
+	    return false;
+	}
+
 	DWORD count = GETDWORD((*P),3);
 	CPlayer* otherclient = GetClientByID( thisclient->Trade->trade_target, thisclient->Position->Map );
 	if (otherclient==NULL) return true;
 	BEGINPACKET( pak, 0x7c1 );
 	ADDBYTE( pak, islot );
+
+	//Zuly
 	if( islot == 0x0a )
     {
         if (count > thisclient->CharInfo->Zulies)
@@ -3301,20 +3324,35 @@ bool CWorldServer::pakTradeAdd ( CPlayer* thisclient, CPacket* P )
     {
         if(islot>0x0a)
             return false;
+
+        //Items
 		if( count != 0 )
         {
+            //add a slot.
             if(count>thisclient->items[slotid].count)
                 return false;
+
+            for (int ii=islot+1;ii<10;ii++)
+            {
+                if(slotid!=0&&(slotid==thisclient->Trade->trade_itemid[ii]))
+                {
+                    Log(MSG_HACK, "[TRADEADD] Player %s tried to dupe item in slot %i (%u::%u)",thisclient->CharInfo->charname,slotid,thisclient->items[slotid].itemtype,thisclient->items[slotid].itemnum);
+                    return false;
+                }
+
+            }
+
 			thisclient->Trade->trade_count[islot] = count;
 			thisclient->Trade->trade_itemid[islot] = slotid;
 			CItem tmpitem = thisclient->items[slotid]; tmpitem.count = count;
 			ADDDWORD( pak, BuildItemHead( tmpitem ) );
 			ADDDWORD( pak, BuildItemData( tmpitem ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
 		}
         else
         {
+            //Delete a slot.
 			thisclient->Trade->trade_count[islot] = 0;
 			thisclient->Trade->trade_itemid[islot] = 0;
 			ADDDWORD( pak, 0 );
@@ -3851,7 +3889,7 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
                 thisclient->cskills[k].thisskill=NULL;
             }
 
-            Log(MSG_INFO,"Skill reset, we get %i skills points back",nb_skills_points);
+            Log(MSG_INFO,"Skill reset for %s, he gets %i skills points back",thisclient->CharInfo->charname,nb_skills_points);
             thisclient->CharInfo->SkillPoints+=nb_skills_points;
 
             //LMA: for tests.
