@@ -608,8 +608,11 @@ bool CPlayer::loaddata( )
     // Calculate how many fairies are available online, according to amount of players
 	int oldFairyMax = GServer->Config.FairyMax;
     GServer->Config.FairyMax = (int)ceil((float)GServer->ClientList.size() / 50.0); //(1 fairy more every 50 player)
-	if( oldFairyMax < GServer->Config.FairyMax )
+	//if( oldFairyMax < GServer->Config.FairyMax )
+	if( GServer->Config.FairyMax > GServer->FairyList.size() )
 	{
+	    //LMA: Adding a fairy
+	    Log(MSG_INFO,"Adding a fairy, needed %u, we have %u",GServer->Config.FairyMax,GServer->FairyList.size());
         CFairy* thisfairy = new (nothrow) CFairy;
         thisfairy->LastTime = clock();
         thisfairy->assigned = 0;

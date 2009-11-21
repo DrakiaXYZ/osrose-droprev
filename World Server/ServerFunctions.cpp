@@ -1701,35 +1701,46 @@ void CWorldServer::RefreshFairy( )
         if (Config.FairyMode == 1 && ClientList.size() > 1)
         {
             //if fairy mode on and someone online
-           for (int i=0; i<Config.FairyMax; i++)     // check all fairies
-           {
-                if ( FairyList.at(i)->LastTime <= ( clock() - (FairyList.at(i)->WaitTime*60*CLOCKS_PER_SEC) ) && !FairyList.at(i)->assigned )  // if fairy hour is now
-	            {
-                    int value = rand()%(int)(ClientList.size()-1) + 1;  //choose random value in clientlist
-		            CPlayer* targetclient = (CPlayer*) ClientList.at(value)->player;
-		            if (targetclient==NULL)
-		            {
-		                Log(MSG_WARNING,"RefreshFairyNew:: Player is NULL");
-		                return;
-		            }
 
-		            //LMA: Patch if fairy was attributed as the player is not actually yet IG...
-		            //The Fairy is not an easy lady ^_^
-		            //A player already faired can't have one...
-		            if (!targetclient->Fairy&&(clock()-targetclient->firstlogin)>(60*CLOCKS_PER_SEC))
-		            {
-                        FairyList.at(i)->ListIndex = targetclient->CharInfo->charid;
-    			        FairyList.at(i)->LastTime = clock();
-    			        FairyList.at(i)->assigned = true;
-    			        targetclient->Fairy = true;
-    			        targetclient->FairyListIndex = i;        // FairyList index number of our actual fairy
-    			        DoFairyStuff(targetclient, 1);           // spawn fairy to target
-    			        targetclient->SetStats();
+            // check all fairies
+           //for (int i=0; i<Config.FairyMax; i++)
+           for (int i=0; i<FairyList.size(); i++)
+           {
+
+               //LMA: Available fairies, depending on Config.FairyMax (depending on number of players).
+               if(i<Config.FairyMax)
+               {
+                    if (!FairyList.at(i)->assigned && FairyList.at(i)->LastTime <= ( clock() - (FairyList.at(i)->WaitTime*60*CLOCKS_PER_SEC) ))  // if fairy hour is now
+                    {
+                        int value = rand()%(int)(ClientList.size()-1) + 1;  //choose random value in clientlist
+                        CPlayer* targetclient = (CPlayer*) ClientList.at(value)->player;
+                        if (targetclient==NULL)
+                        {
+                            Log(MSG_WARNING,"RefreshFairyNew:: Player is NULL");
+                            return;
+                        }
+
+                        //LMA: Patch if fairy was attributed as the player is not actually yet IG...
+                        //The Fairy is not an easy lady ^_^
+                        //A player already faired can't have one...
+                        if (!targetclient->Fairy&&(clock()-targetclient->firstlogin)>(60*CLOCKS_PER_SEC))
+                        {
+                            FairyList.at(i)->ListIndex = targetclient->CharInfo->charid;
+                            FairyList.at(i)->LastTime = clock();
+                            FairyList.at(i)->assigned = true;
+                            targetclient->Fairy = true;
+                            targetclient->FairyListIndex = i;        // FairyList index number of our actual fairy
+                            DoFairyStuff(targetclient, 1);           // spawn fairy to target
+                            targetclient->SetStats();
+                        }
+
                     }
 
-                }
+               }
 
                 //it's time for our fairy to go away
+                //LMA: We need to check all the vector, else if some players disconnected, some players could be "trapped" with
+                //their fairy since Config.FairyMax<Fairylist.size()
 			    if (FairyList.at(i)->assigned&&(FairyList.at(i)->LastTime + (Config.FairyStay*60*CLOCKS_PER_SEC)) <= clock())
     			{
     			    CPlayer* oldclient  = GetClientByCID(FairyList.at(i)->ListIndex);
@@ -1752,7 +1763,9 @@ void CWorldServer::RefreshFairy( )
         if (Config.FairyMode == 0 && ClientList.size() > 1)
         {
             // if server mode off and someone online
-             for (int i=0; i<Config.FairyMax; i++)
+             //for (int i=0; i<Config.FairyMax; i++)
+             //LMA: For all fairies...
+             for (int i=0; i<FairyList.size(); i++)
              {
                  if (FairyList.at(i)->assigned && (FairyList.at(i)->LastTime + (Config.FairyStay*60*CLOCKS_PER_SEC)) <= clock())
     			{

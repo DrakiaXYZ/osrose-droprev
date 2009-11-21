@@ -4094,7 +4094,8 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
                if (GServer->FairyList.at(i)->assigned == false)
                {
                    FairyIndex=i;
-                   i=GServer->Config.FairyMax;
+                   //i=GServer->Config.FairyMax;
+                   break;
                }
 
           }
@@ -4185,28 +4186,43 @@ bool CWorldServer::pakGMHurtHim(CPlayer* thisclient, char* name)
 bool CWorldServer::pakGMManageFairy(CPlayer* thisclient, int mode)
 {
     BEGINPACKET (pak, 0x702);
-	if(mode == 0){
-        if (GServer->Config.FairyMode != mode){
+	if(mode == 0)
+	{
+        if (GServer->Config.FairyMode != mode)
+        {
 	        GServer->Config.FairyMode = 0;
             ADDSTRING(pak, "You have de-activated the Fairy mode ingame.");
-        }else{
+        }
+        else
+        {
             ADDSTRING(pak, "The Fairy mode is already de-activated.");
         }
-    }else{
-      	if (GServer->Config.FairyMode != mode){
+
+    }
+    else
+    {
+      	if (GServer->Config.FairyMode != mode)
+      	{
 	        GServer->Config.FairyMode = 1;
-            for (int i=0; i<GServer->Config.FairyMax; i++)
+            //for (int i=0; i<GServer->Config.FairyMax; i++)
+            for (int i=0; i<GServer->FairyList.size(); i++)
             {
                 GServer->DoFairyFree(i);
                 GServer->FairyList.at(i)->WaitTime = GServer->Config.FairyWait;
             }
+
             ADDSTRING(pak, "You have activated the Fairy mode ingame.");
-        }else{
+        }
+        else
+        {
             ADDSTRING(pak, "The Fairy mode is already activated.");
         }
+
     }
+
     ADDBYTE(pak, 0);
     thisclient->client->SendPacket(&pak);
+
 
 	return true;
 }
