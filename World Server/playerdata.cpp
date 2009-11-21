@@ -605,10 +605,11 @@ bool CPlayer::loaddata( )
 	Session->isLoggedIn = true;
     GServer->DB->QExecute("UPDATE accounts SET online=true where id=%u", Session->userid );
 
-    // Calculate how many fairies are available online, according to amoutn of players
+    // Calculate how many fairies are available online, according to amount of players
 	int oldFairyMax = GServer->Config.FairyMax;
     GServer->Config.FairyMax = (int)ceil((float)GServer->ClientList.size() / 50.0); //(1 fairy more every 50 player)
-	if( oldFairyMax < GServer->Config.FairyMax ){
+	if( oldFairyMax < GServer->Config.FairyMax )
+	{
         CFairy* thisfairy = new (nothrow) CFairy;
         thisfairy->LastTime = clock();
         thisfairy->assigned = 0;

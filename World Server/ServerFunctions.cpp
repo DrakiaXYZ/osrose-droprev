@@ -1619,15 +1619,23 @@ void CWorldServer::DoFairyFree( int fairy )
     GServer->FairyList.at(fairy)->ListIndex = 0;
 
     if(GServer->Config.FairyTestMode == 0)
-         GServer->FairyList.at(fairy)->WaitTime = GServer->Config.FairyWait * (rand()% GServer->GetFairyRange(1)+ GServer->GetFairyRange(0));
+    {
+        GServer->FairyList.at(fairy)->WaitTime = GServer->Config.FairyWait * (rand()% GServer->GetFairyRange(1)+ GServer->GetFairyRange(0));
+    }
 
     GServer->FairyList.at(fairy)->LastTime = clock();
+
+
+    return;
 }
 
+//LMA: Old code.
+/*
 void CWorldServer::RefreshFairy( )
 {
         //fairy: The wait timer should be possibibly bigger when there is few people online.
-        if (Config.FairyMode == 1 && ClientList.size() > 1){   //if fairy mode on and someone online
+        if (Config.FairyMode == 1 && ClientList.size() > 1)
+        {   //if fairy mode on and someone online
            for (int i=0; i<Config.FairyMax; i++)     // check all fairies
            {
                 if ( FairyList.at(i)->LastTime <= ( clock() - (FairyList.at(i)->WaitTime*60*CLOCKS_PER_SEC) ) && !FairyList.at(i)->assigned )  // if fairy hour is now
@@ -1649,6 +1657,7 @@ void CWorldServer::RefreshFairy( )
                     }
 
                 }
+
 			    if ( (FairyList.at(i)->LastTime + (Config.FairyStay*60*CLOCKS_PER_SEC)) <= clock() && FairyList.at(i)->assigned)  // id time for our fairy to go away
     			{
                     CPlayer* oldclient  = (CPlayer*) ClientList.at(FairyList.at(i)->ListIndex)->player;
@@ -1658,10 +1667,14 @@ void CWorldServer::RefreshFairy( )
                     DoFairyStuff(oldclient, 0);  // unspawn fairy
                     oldclient->SetStats();
                 }
+
            }
+
         }
+
         // this close fairies after their time if GM de activate  fairy mode when some fairies are assigned.
-        if (Config.FairyMode == 0 && ClientList.size() > 1){    // if serevr mode off and someone online
+        if (Config.FairyMode == 0 && ClientList.size() > 1)
+        {    // if serevr mode off and someone online
              for (int i=0; i<Config.FairyMax; i++)
              {
                  if ( (FairyList.at(i)->LastTime + (Config.FairyStay*60*CLOCKS_PER_SEC)) <= clock() && FairyList.at(i)->assigned)
@@ -1673,6 +1686,92 @@ void CWorldServer::RefreshFairy( )
                     DoFairyStuff(oldclient, 0);
                     oldclient->SetStats();
                 }
+
              }
+
          }
+
+}
+*/
+
+//LMA: New version using charid now...
+void CWorldServer::RefreshFairy( )
+{
+        //fairy: The wait timer should be possibibly bigger when there is few people online.
+        if (Config.FairyMode == 1 && ClientList.size() > 1)
+        {
+            //if fairy mode on and someone online
+           for (int i=0; i<Config.FairyMax; i++)     // check all fairies
+           {
+                if ( FairyList.at(i)->LastTime <= ( clock() - (FairyList.at(i)->WaitTime*60*CLOCKS_PER_SEC) ) && !FairyList.at(i)->assigned )  // if fairy hour is now
+	            {
+                    int value = rand()%(int)(ClientList.size()-1) + 1;  //choose random value in clientlist
+		            CPlayer* targetclient = (CPlayer*) ClientList.at(value)->player;
+		            if (targetclient==NULL)
+		            {
+		                Log(MSG_WARNING,"RefreshFairyNew:: Player is NULL");
+		                return;
+		            }
+
+		            //LMA: Patch if fairy was attributed as the player is not actually yet IG...
+		            //The Fairy is not an easy lady ^_^
+		            //A player already faired can't have one...
+		            if (!targetclient->Fairy&&(clock()-targetclient->firstlogin)>(60*CLOCKS_PER_SEC))
+		            {
+                        FairyList.at(i)->ListIndex = targetclient->CharInfo->charid;
+    			        FairyList.at(i)->LastTime = clock();
+    			        FairyList.at(i)->assigned = true;
+    			        targetclient->Fairy = true;
+    			        targetclient->FairyListIndex = i;        // FairyList index number of our actual fairy
+    			        DoFairyStuff(targetclient, 1);           // spawn fairy to target
+    			        targetclient->SetStats();
+                    }
+
+                }
+
+                //it's time for our fairy to go away
+			    if (FairyList.at(i)->assigned&&(FairyList.at(i)->LastTime + (Config.FairyStay*60*CLOCKS_PER_SEC)) <= clock())
+    			{
+    			    CPlayer* oldclient  = GetClientByCID(FairyList.at(i)->ListIndex);
+    			    DoFairyFree(i);
+    			    if(oldclient!=NULL)
+    			    {
+                        oldclient->Fairy = false;
+                        oldclient->FairyListIndex = 0;
+                        DoFairyStuff(oldclient, 0);  // unspawn fairy
+                        oldclient->SetStats();
+    			    }
+
+                }
+
+           }
+
+        }
+
+        // this close fairies after their time if GM de activate fairy mode when some fairies are assigned.
+        if (Config.FairyMode == 0 && ClientList.size() > 1)
+        {
+            // if server mode off and someone online
+             for (int i=0; i<Config.FairyMax; i++)
+             {
+                 if (FairyList.at(i)->assigned && (FairyList.at(i)->LastTime + (Config.FairyStay*60*CLOCKS_PER_SEC)) <= clock())
+    			{
+                    CPlayer* oldclient  = GetClientByCID(FairyList.at(i)->ListIndex);
+    			    DoFairyFree(i);
+    			    if(oldclient!=NULL)
+    			    {
+                        oldclient->Fairy = false;
+                        oldclient->FairyListIndex = 0;
+                        DoFairyStuff(oldclient, 0);  // unspawn fairy
+                        oldclient->SetStats();
+    			    }
+
+                }
+
+             }
+
+         }
+
+
+    return;
 }

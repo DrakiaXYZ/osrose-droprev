@@ -127,6 +127,7 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
     	cryptPacket( (char*)&pak, NULL );
     	send( csock, (char*)&pak, pak.Size, 0 );
     }
+
     if ( player->Fairy )
     {
         FairyList.at(player->FairyListIndex)->assigned = false;
@@ -139,6 +140,7 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
         // recalculate FairyMax
         Config.FairyMax = (int)ceil((float)ClientList.size() / 50.0); //(1 fairy more every 50 player)
     }
+
     if(player->Party->party!=NULL)
     {
         CParty* party = player->Party->party;

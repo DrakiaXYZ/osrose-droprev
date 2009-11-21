@@ -4048,61 +4048,87 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
 // Add Fairy
 bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
 {
-	if (GServer->Config.FairyMode== 0){
+	if (GServer->Config.FairyMode== 0)
+	{
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "Fairy feature is de-activated.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
         return true;
     }
+
 	CPlayer* otherclient = GetClientByCharName (name);
-	if(otherclient==NULL){
+	if(otherclient==NULL)
+	{
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User does not exist or is not online.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
         return true;
     }
-    if(mode == 0 && otherclient->Fairy == false){
+
+    if(mode == 0 && otherclient->Fairy == false)
+    {
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User already not fairied.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
         return true;
     }
-    if(mode == 1 && otherclient->Fairy == true){
+
+    if(mode == 1 && otherclient->Fairy == true)
+    {
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User already fairied.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
         return true;
     }
-    if(!otherclient->Fairy && mode == 1){
-          int FairyIndex=100;
-          for (int i=0; i<GServer->Config.FairyMax; i++){
-               if (GServer->FairyList.at(i)->assigned == false){
+
+    //We give a fairy.
+    if(!otherclient->Fairy && mode == 1)
+    {
+          int FairyIndex=GServer->Config.FairyMax+1;
+          for (int i=0; i<GServer->Config.FairyMax; i++)
+          {
+               if (GServer->FairyList.at(i)->assigned == false)
+               {
                    FairyIndex=i;
                    i=GServer->Config.FairyMax;
                }
+
           }
-          if (FairyIndex == 100){
+
+          if (FairyIndex == (GServer->Config.FairyMax+1))
+          {
               BEGINPACKET(pak, 0x702);
 		      ADDSTRING(pak, "No free Fairy.");
 		      ADDBYTE(pak, 0);
 		      thisclient->client->SendPacket(&pak);
 		      return true;
           }
+
           BEGINPACKET(pak, 0x702);
 		  ADDSTRING(pak, "User fairied.");
 		  ADDBYTE(pak, 0);
 		  thisclient->client->SendPacket(&pak);
-          int ListIndex;
-          for (int i=0; i<ClientList.size(); i++){
-              if (GServer->ClientList.at(i)->player == otherclient){
+
+          int ListIndex=0;
+          //LMA: New fairy system.
+          ListIndex=otherclient->CharInfo->charid;
+          /*
+          //Old.
+          for (int i=0; i<ClientList.size(); i++)
+          {
+              if (GServer->ClientList.at(i)->player == otherclient)
+              {
                  ListIndex = i;
+                 ListIndex = otherclient->CharInfo->charid;
                  i = GServer->ClientList.size();
               }
-          }
+
+          }*/
+
           otherclient->Fairy = true;
           otherclient->FairyListIndex = FairyIndex;
           GServer->FairyList.at(FairyIndex)->ListIndex = ListIndex;
@@ -4113,7 +4139,10 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
           otherclient->SetStats();
           Log( MSG_INFO, "HP: %i  MP: %i  ATK: %i   DEF: %i   CRI: %i  MSPD: %i", otherclient->Stats->MaxHP, otherclient->Stats->MaxMP, otherclient->Stats->Attack_Power, otherclient->Stats->Defense, otherclient->Stats->Critical, otherclient->Stats->Move_Speed);
     }
-    if(otherclient->Fairy && mode == 0){
+
+    //We take back a fairy.
+    if(otherclient->Fairy && mode == 0)
+    {
           GServer->DoFairyFree(otherclient->FairyListIndex);
           GServer->FairyList.at(otherclient->FairyListIndex)->WaitTime = GServer->Config.FairyWait;
           otherclient->Fairy = false;
@@ -4126,7 +4155,10 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
           otherclient->SetStats();
           Log( MSG_INFO, "HP: %i  MP: %i  ATK: %i   DEF: %i   CRI: %i  MSPD: %i", otherclient->Stats->MaxHP, otherclient->Stats->MaxMP, otherclient->Stats->Attack_Power, otherclient->Stats->Defense, otherclient->Stats->Critical, otherclient->Stats->Move_Speed);
     }
+
     otherclient->SetStats();
+
+
 	return true;
 }
 

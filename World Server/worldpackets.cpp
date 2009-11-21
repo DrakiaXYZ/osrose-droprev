@@ -6156,7 +6156,7 @@ bool CWorldServer::pakCharDSClient( CPlayer* thisclient, CPacket* P )
         {
             if(otherclient==NULL)
             {
-                Log(MSG_WARNING, "userid '%s' not found online", userid );
+                Log(MSG_WARNING, "userid '%s' not found online (pakCharDSClient)", userid );
                 return true;
             }
 
