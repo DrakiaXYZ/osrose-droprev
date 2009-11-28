@@ -93,6 +93,15 @@ PVOID MapProcess( PVOID TS )
 
                     //LMA: mileage coupon checks.
                     time_t etime=time(NULL);
+                    if(player->no_exp&&(etime>=player->timer_no_exp))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Null Xp vanished.");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->timer_no_exp=0;
+                      player->no_exp=false;
+                    }
                     if(player->bonusxp>1&&(etime>=player->timerxp))
                     {
                       BEGINPACKET( pak, 0x702 );

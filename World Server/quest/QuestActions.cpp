@@ -436,27 +436,47 @@ QUESTREWD(003)
         case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
         {
             if (curAbil->iType==81)
+            {
                 client->CharInfo->union01+=curAbil->iValue;
+                client->CharInfo->union01+=curAbil->iValue*client->pc_up/100;
+            }
+
         }
         case 82:
         {
             if (curAbil->iType==82)
+            {
                 client->CharInfo->union02+=curAbil->iValue;
+                client->CharInfo->union02+=curAbil->iValue*client->pc_up/100;
+            }
+
         }
         case 83:
         {
             if (curAbil->iType==83)
+            {
                 client->CharInfo->union03+=curAbil->iValue;
+                client->CharInfo->union03+=curAbil->iValue*client->pc_up/100;
+            }
+
         }
         case 84:
         {
             if (curAbil->iType==84)
+            {
                 client->CharInfo->union04+=curAbil->iValue;
+                client->CharInfo->union04+=curAbil->iValue*client->pc_up/100;
+            }
+
         }
         case 85:
         {
             if (curAbil->iType==85)
+            {
                 client->CharInfo->union05+=curAbil->iValue;
+                client->CharInfo->union05+=curAbil->iValue*client->pc_up/100;
+            }
+
             Log(MSG_INFO,"[UnionPoints] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
             //BEGINPACKET( pak, 0x721 );
             BEGINPACKET( pak, 0x720 );

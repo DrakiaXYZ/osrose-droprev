@@ -1117,7 +1117,9 @@ bool CWorldServer::pakPickDrop( CPlayer* thisclient, CPacket* P )
                 thisclient->Party->party->SendToMembers( &pak, dropowner );
             }
         }
+
 		CMap* map = MapList.Index[thisdrop->posMap];
+		//Log(MSG_INFO,"Drop picked in map %u",thisdrop->posMap);
 		pthread_mutex_lock( &map->DropMutex );
 		map->DeleteDrop( thisdrop );
 		pthread_mutex_unlock( &map->DropMutex );
@@ -3906,6 +3908,11 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             flag=false;
         }
         break;
+        case 18:
+        {
+            //LMA: sometimes nothing to do...
+            flag=true;
+        }
     }
     if(flag == true)
     {

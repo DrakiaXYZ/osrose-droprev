@@ -474,8 +474,9 @@ bool CPlayer::loaddata( )
     if (do_save)
         saveskills();
 
-    //LMA: % rebate
+    //LMA: % rebate and bonus union points
     pc_rebate=0;
+    pc_up=0;
 
     for (int i=0;i<MAX_ALL_SKILL;i++)
     {
@@ -487,6 +488,12 @@ bool CPlayer::loaddata( )
         if (cskills[i].thisskill->buff[0]==59)
         {
             pc_rebate+=cskills[i].thisskill->value2[0];
+        }
+
+        //Union points (no stats?)
+        if (cskills[i].thisskill->id==5500)
+        {
+            pc_up=50;
         }
 
     }
@@ -868,6 +875,7 @@ void CPlayer::saveskills( )
         return;
 
     int pc_temp=0;
+    int pc_union=0;
     char basic[1024];
     char drive[1024];
     char sclass[1024];
@@ -943,12 +951,19 @@ void CPlayer::saveskills( )
            sprintf(&mlevel[strlen(mlevel)], ",%i",cskills[i].level);
         }
 
-        //LMA: % dealer rebate.
+        //LMA: % dealer rebate and other stuff.
         if (cskills[i].thisskill!=NULL)
         {
+            //Dealer
             if (cskills[i].thisskill->buff[0]==59)
             {
                 pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+            //Union points (no stats?)
+            if (cskills[i].thisskill->id==5500)
+            {
+                pc_union=50;
             }
 
         }
@@ -996,6 +1011,7 @@ void CPlayer::saveskills( )
     }
 
     pc_rebate=pc_temp;
+    pc_up=pc_union;
 
     //LMA: Saving Skills Data for a player.
     GServer->DB->QExecute("UPDATE characters SET class_skills='%s',class_skills_level='%s',basic_skills='%s',driving_skills='%s',unique_skills='%s',mileage_skills='%s',unique_skills_level='%s',mileage_skills_level='%s' WHERE id=%i",

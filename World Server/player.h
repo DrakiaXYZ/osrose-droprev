@@ -77,6 +77,11 @@ class CPlayer: public CCharacter
     int bonusxp;
     bool once;
 
+    //LMA: Null exp.
+    time_t timer_no_exp;
+    bool no_exp;
+
+
     //Medal of Fortune(id.1300/type.10)_One additional drop chance for defeating a monster is added (Double Drop -> ddrop)
     int wait_validation_ddrop;
     time_t timerddrop;
@@ -118,6 +123,9 @@ class CPlayer: public CCharacter
 
     //LMA: % for dealer (when buying from NPC).
     int pc_rebate;
+
+    //LMA: union points bonus.
+    int pc_up;
 
     int cur_max_skills[5];
 

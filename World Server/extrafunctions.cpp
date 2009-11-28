@@ -1502,6 +1502,20 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
               //Log( MSG_INFO, "TIme Coupon Number %i",UseList.Index[useitem->itemnum]->useeffect[0]);
               switch (UseList.Index[useitem->itemnum]->useeffect[0])
               {
+                    case 138: //LMA: Null exp.
+                    {
+                        Log(MSG_INFO,"Null Exp activated for %s",thisclient->CharInfo->charname);
+                        thisclient->no_exp=true;
+                        thisclient->Shop->mil_shop_time=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);     //Effective Time Duration
+                        BEGINPACKET( pak, 0x702 );
+                        ADDSTRING( pak, "[Mileage] Null Exp activated." );
+                        ADDBYTE( pak, 0 );
+                        thisclient->client->SendPacket(&pak);
+                        useitem->usescript = 18;
+                        useitem->usetype =0;
+                        useitem->usevalue =UseList.Index[useitem->itemnum]->quality/100;
+                    }
+                    break;
                     case 96://Special Shop Coupon, Shop A/B/C, Moldie, snowman, ....
                     {
                         Log(MSG_INFO,"Shop changed to %i",UseList.Index[useitem->itemnum]->quality);
@@ -1513,7 +1527,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                         ADDSTRING( pak, "[Mileage] Your Shop look has changed." );
                         ADDBYTE( pak, 0 );
                         thisclient->client->SendPacket(&pak);
-                        useitem->usescript = 1;
+                        //useitem->usescript = 1;
+                        useitem->usescript = 18;
                         useitem->usetype =0;
                         useitem->usevalue =UseList.Index[useitem->itemnum]->quality;
                     }
@@ -1524,7 +1539,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     {
                         if (thisclient->timerxp == 0)
                         {
-                            useitem->usescript = 1;
+                            //useitem->usescript = 1;
+                            useitem->usescript = 18;
                             useitem->usetype =0;
                             useitem->usevalue =UseList.Index[useitem->itemnum]->quality/100;
                             thisclient->bonusxp=1;

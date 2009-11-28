@@ -116,6 +116,10 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     wait_validation=0;
     once=false;
 
+    //LMA: Exp nullfier
+    timer_no_exp=0;
+    no_exp=false;
+
     //bonus Medal of Fortune(id.1300/type.10)_One additional drop chance for defeating a monster is added (Double Drop -> ddrop)
     timerddrop=0;
     bonusddrop=1;
@@ -136,6 +140,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 
     attack_fuel=0;
     pc_rebate=0;
+    pc_up=0;
 
     // SESSION
     Session = new SESSION;

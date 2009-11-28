@@ -159,7 +159,12 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
             //mod for CF
             //Adding bonusxp (mileage)
             UINT prev_xp=thisclient->CharInfo->Exp;
-            thisclient->CharInfo->Exp +=  thisclient->bonusxp*GetColorExp( thisclient->Stats->Level, thismon->thisnpc->level + special_lvl, exp );
+
+            //LMA: Xp nullifier.
+            if(!thisclient->no_exp)
+            {
+                thisclient->CharInfo->Exp +=  thisclient->bonusxp*GetColorExp( thisclient->Stats->Level, thismon->thisnpc->level + special_lvl, exp );
+            }
             //Log(MSG_INFO,"Bonus XP %i, previous XP, %i, new: %i",thisclient->bonusxp,prev_xp,thisclient->CharInfo->Exp);
             //LMA END
 
@@ -267,14 +272,19 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
             //20070621-211100
             //mods for CF
             unsigned int expoption = partyclient->Party->party->Option%0x80;
-            if( expoption==0 )
+            //LMA: Exp nullfier.
+            if(!partyclient->no_exp)
             {
+                if( expoption==0 )
+                {
 
-                partyclient->CharInfo->Exp +=  GetColorExp( partyclient->Stats->Level, thismon->Stats->Level + special_lvl, (UINT)round(thisparty->exp / thisparty->num) );
-            }
-            else
-            {
-                partyclient->CharInfo->Exp +=  GetColorExp( partyclient->Stats->Level, thismon->Stats->Level + special_lvl, (UINT)round(partyclient->Stats->Level * thisparty->exp / thisparty->maxlevel) );
+                    partyclient->CharInfo->Exp +=  GetColorExp( partyclient->Stats->Level, thismon->Stats->Level + special_lvl, (UINT)round(thisparty->exp / thisparty->num) );
+                }
+                else
+                {
+                    partyclient->CharInfo->Exp +=  GetColorExp( partyclient->Stats->Level, thismon->Stats->Level + special_lvl, (UINT)round(partyclient->Stats->Level * thisparty->exp / thisparty->maxlevel) );
+                }
+
             }
             //LMA END
 
