@@ -46,6 +46,12 @@ bool CCharServer::pakDoIdentify( CCharClient* thisclient, CPacket* P )
 		DB->QFree( );
 	}
 
+	//LMA: Adding a log for admins. Account ids shouldn't be less than 78
+	if(thisclient->userid<78)
+	{
+	    Log(MSG_INFO,"Account ID %i (%s) is < 78, this is NOT advised to have ids too low (<10). You should change the id if it is the case.",thisclient->userid,thisclient->username);
+	}
+
 	//LMA: We try something here... We tell the worldserver to disconnect every characte
 	//from this account to avoid multi client on the same account (let's call this a preemptive strike).
     if(GetNbUserID(thisclient->userid)>1)
