@@ -369,6 +369,9 @@ class CWorldServer : public CServerSocket
         bool pakGMForceUW(CPlayer* thisclient, int time); //LMA: forcing Union Wars.
         bool pakGMForceUWPlayers(CPlayer* thisclient, int nb_players);   //LMA: forcing Union Wars (nb players).
         bool pakGMExportSTBSTL(CPlayer* thisclient);    //LMA: export STB and STL to a .sql file.
+        bool pakGMSpawnList(CPlayer* thisclient, int range); //LMA: New spawn handling
+        bool pakGMSpawnDetail(CPlayer* thisclient, UINT id, UINT map); //LMA: New spawn handling
+        bool pakGMSpawnForceRefresh(CPlayer* thisclient, UINT id, UINT map);   //LMA: New spawn handling
         bool pakGMReborn( CPlayer* thisclient); //Reborn by Core
         bool pakGMLevel( CPlayer* thisclient, int level , char* name);
         bool pakGMTeleToPlayer( CPlayer* thisclient, char* name );

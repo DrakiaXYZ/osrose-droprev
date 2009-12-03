@@ -2841,6 +2841,50 @@ else if (strcmp(command, "itemstat")==0)
       CSkills* thisskill = GetSkillByID(skillid);
       thisclient->UseSkill(thisskill, Target);
     }
+   else if(strcmp(command, "spawnlist")==0)
+    {
+        //TODO: command for this one.
+        if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
+            return true;
+	    if((tmp = strtok(NULL, " "))==NULL) return true; int range=atoi(tmp);
+	    if (range<0)
+	    {
+	        return true;
+	    }
+
+	    Log( MSG_GMACTION, "%s:: spawnlist %i" ,thisclient->CharInfo->charname,range);
+	    return pakGMSpawnList(thisclient, range);
+	}
+   else if(strcmp(command, "spawndetail")==0)
+    {
+        //TODO: command for this one.
+        if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
+            return true;
+	    if((tmp = strtok(NULL, " "))==NULL) return true; int map=atoi(tmp);
+	    if((tmp = strtok(NULL, " "))==NULL) return true; int id=atoi(tmp);
+	    if (map<0||id<0)
+	    {
+	        return true;
+	    }
+
+	    Log( MSG_GMACTION, "%s:: spawndetail %i %i" ,thisclient->CharInfo->charname,map,id);
+	    return pakGMSpawnDetail(thisclient,id,map);
+	}
+   else if(strcmp(command, "spawnrefresh")==0)
+    {
+        //TODO: command for this one.
+        if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
+            return true;
+	    if((tmp = strtok(NULL, " "))==NULL) return true; int map=atoi(tmp);
+	    if((tmp = strtok(NULL, " "))==NULL) return true; int id=atoi(tmp);
+	    if (map<0||id<0)
+	    {
+	        return true;
+	    }
+
+	    Log( MSG_GMACTION, "%s:: spawnrefresh %i %i" ,thisclient->CharInfo->charname,map,id);
+	    return pakGMSpawnForceRefresh(thisclient,id,map);
+	}
    else if(strcmp(command, "SpeedModif")==0)
     {
         if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
@@ -5624,3 +5668,180 @@ bool CWorldServer::pakGMExportSTBSTL(CPlayer* thisclient)
     return true;
 }
 
+
+//LMA: returning spawn list around a player.
+bool CWorldServer::pakGMSpawnList(CPlayer* thisclient, int range)
+{
+    UINT map=thisclient->Position->Map;
+    UINT nb_found=0;
+
+    if (map>maxZone)
+    {
+        return true;
+    }
+
+    for (unsigned j = 0; j < MapList.Index[map]->MobGroupList.size(); j++)
+    {
+        CMobGroup* mygroup = MapList.Index[map]->MobGroupList.at(j);
+        if(distance(thisclient->Position->current,mygroup->point)>range)
+        {
+            continue;
+        }
+
+        SendPM(thisclient,"Spawn %u found at (%.2f,%.2f)",mygroup->id,mygroup->point.x,mygroup->point.y);
+        Log(MSG_INFO,"Spawn %u found at (%.2f,%.2f)",mygroup->id,mygroup->point.x,mygroup->point.y);
+    }
+
+    SendPM(thisclient,"End of spawnlist");
+    Log(MSG_INFO,"End of spawnlist");
+
+
+    return true;
+}
+
+
+//LMA: returning a detail of a spawn list.
+bool CWorldServer::pakGMSpawnDetail(CPlayer* thisclient, UINT id, UINT map)
+{
+    if (map>maxZone)
+    {
+        Log(MSG_INFO,"Map %u does not exist",map);
+        return true;
+    }
+
+    CMobGroup* thisgroup = GetMobGroup(id,map);
+    if (thisgroup==NULL)
+    {
+        Log(MSG_INFO,"The spawn %u doesn't exist in map %u",id,map);
+        return true;
+    }
+
+    //Getting last group.
+    int last_group=thisgroup->curBasic-1;
+    if(last_group<0)
+    {
+        last_group=thisgroup->basicMobs.size()-1;
+        if(last_group<0)
+        {
+            last_group=0;
+        }
+
+    }
+
+    SendPM(thisclient,"Current spawn information for group %u in map %u:", id,map);
+    Log(MSG_INFO,"Current spawn information for group %u in map %u:", id,map);
+
+    SendPM(thisclient,"-> Current group=%u/%u", last_group,thisgroup->basicMobs.size()-1);
+    SendPM(thisclient,"-> basic deads %u/ %u, is ready? %i",thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount,thisgroup->group_ready);
+
+
+    //Getting the map.
+    CMap* mymap= GServer->MapList.Index[map];
+
+    //searching now where are the monsters using this spawnid.
+    //doing a mutext to be sure we're alone touching this one.
+    pthread_mutex_lock( &mymap->MonsterMutex );
+    for(UINT j = 0; j < mymap->MonsterList.size(); j++)
+    {
+        CMonster* thismon = mymap->MonsterList.at(j);
+        if(thismon==NULL)
+        {
+            continue;
+        }
+
+        if (thismon->Position->respawn==id)
+        {
+            SendPM(thisclient,"--> Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
+        }
+
+    }
+
+    pthread_mutex_unlock( &mymap->MonsterMutex );
+    SendPM(thisclient,"End of monster list");
+
+
+    return true;
+}
+
+//LMA: We force the refresh of a group (will load the next one).
+//We just kill the monsters from the group and the next spawn should come alone.
+bool CWorldServer::pakGMSpawnForceRefresh(CPlayer* thisclient, UINT id, UINT map)
+{
+    if (map>maxZone)
+    {
+        Log(MSG_INFO,"Map %u does not exist",map);
+        return true;
+    }
+
+    CMobGroup* thisgroup = GetMobGroup(id,map);
+    if (thisgroup==NULL)
+    {
+        Log(MSG_INFO,"The spawn %u doesn't exist in map %u",id,map);
+        return true;
+    }
+
+    //Getting last group.
+    int last_group=thisgroup->curBasic-1;
+    if(last_group<0)
+    {
+        last_group=thisgroup->basicMobs.size()-1;
+        if(last_group<0)
+        {
+            last_group=0;
+        }
+
+    }
+
+    //Getting the map.
+    CMap* mymap= GServer->MapList.Index[map];
+
+    //searching now where are the monsters using this spawnid.
+    //doing a mutext to be sure we're alone touching this one.
+    vector<UINT> monstertokill;
+    pthread_mutex_lock( &mymap->MonsterMutex );
+    for(UINT j = 0; j < mymap->MonsterList.size(); j++)
+    {
+        CMonster* thismon = mymap->MonsterList.at(j);
+        if(thismon==NULL)
+        {
+            continue;
+        }
+
+        if (thismon->Position->respawn==id)
+        {
+            monstertokill.push_back(thismon->clientid);
+        }
+
+    }
+
+    pthread_mutex_unlock( &mymap->MonsterMutex );
+
+    SendPM(thisclient,"Trying to refresh spawn group %u in map %u (Nb to kill %u):", id,map,monstertokill.size());
+
+    //We need to kill them.
+    for(UINT j=0;j<monstertokill.size();j++)
+    {
+        CMonster* thismon=GetMonsterByID(monstertokill.at(j),map);
+        if(thismon==NULL)
+        {
+            Log(MSG_INFO,"Can't find monster %u for delete.",monstertokill.at(j));
+            continue;
+        }
+
+        SendPM(thisclient,"--> Killing Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
+        //suicide time.
+        thismon->Stats->HP = -1;
+        BEGINPACKET( pak, 0x799 );
+        ADDWORD    ( pak, thismon->clientid );
+        ADDWORD    ( pak, thismon->clientid );
+        ADDDWORD   ( pak, thismon->thisnpc->hp*thismon->thisnpc->level );
+        ADDDWORD   ( pak, 16 );
+        SendToVisible( &pak, thismon );
+        mymap->DeleteMonster( thismon );
+    }
+
+    SendPM(thisclient,"End of Force refresh, the spawn should refresh on his own.");
+
+
+    return true;
+}
