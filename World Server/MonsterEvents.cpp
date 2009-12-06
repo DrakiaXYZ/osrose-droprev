@@ -54,7 +54,7 @@ bool CMonster::OnBeAttacked( CCharacter* Enemy )
 // called when a monster die [give exp/give extra drop]
 bool CMonster::OnDie( )
 {
-    CMap* map = GServer->MapList.Index[Position->Map];
+    //CMap* map = GServer->MapList.Index[Position->Map];
 
     //LMA begin
     //CF mode 1

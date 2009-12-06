@@ -1725,21 +1725,26 @@ void CCharacter::UWKill(CCharacter* Enemy)
 
     UINT bonus_exp=GServer->GetColorExp(killer_level,killed_level,7000);
     plkiller->CharInfo->Exp += bonus_exp;
-    BEGINPACKET( pak, 0x79b );
-    ADDDWORD   ( pak, plkiller->CharInfo->Exp );
-    ADDWORD    ( pak, plkiller->CharInfo->stamina );
 
-    if(plkilled!=NULL)
+    //LMA: Only if not level up
+    if(plkiller->CharInfo->Exp<plkiller->GetLevelEXP())
     {
-        ADDWORD    ( pak, plkilled->clientid );
-    }
-    else
-    {
-        ADDWORD    ( pak, 0 );
-    }
+        BEGINPACKET( pak, 0x79b );
+        ADDDWORD   ( pak, plkiller->CharInfo->Exp );
+        ADDWORD    ( pak, plkiller->CharInfo->stamina );
 
-    plkiller->client->SendPacket( &pak );
-    //Log(MSG_WARNING,"Giving %u exp to %s",bonus_exp,plkiller->CharInfo->charname);
+        if(plkilled!=NULL)
+        {
+            ADDWORD    ( pak, plkilled->clientid );
+        }
+        else
+        {
+            ADDWORD    ( pak, 0 );
+        }
+
+        plkiller->client->SendPacket( &pak );
+        //Log(MSG_WARNING,"Giving %u exp to %s",bonus_exp,plkiller->CharInfo->charname);
+    }
 
 
   return;

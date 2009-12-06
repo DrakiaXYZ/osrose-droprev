@@ -4612,11 +4612,17 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         {
             int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
             thisclient->CharInfo->Exp += crafting_exp;//  add exp
-            RESETPACKET( pak, 0x79b );
-            ADDDWORD   ( pak, thisclient->CharInfo->Exp );
-            ADDWORD    ( pak, thisclient->CharInfo->stamina );
-            ADDWORD    ( pak, 0 );
-            thisclient->client->SendPacket( &pak );
+
+            //LMA: Only if not level up
+            if(thisclient->CharInfo->Exp<thisclient->GetLevelEXP())
+            {
+                BEGINPACKET( pak, 0x79b );
+                ADDDWORD   ( pak, thisclient->CharInfo->Exp );
+                ADDWORD    ( pak, thisclient->CharInfo->stamina );
+                ADDWORD    ( pak, 0 );
+                thisclient->client->SendPacket( &pak );
+            }
+
         }
 
      }

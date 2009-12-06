@@ -165,15 +165,23 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
             {
                 thisclient->CharInfo->Exp +=  thisclient->bonusxp*GetColorExp( thisclient->Stats->Level, thismon->thisnpc->level + special_lvl, exp );
             }
+
             //Log(MSG_INFO,"Bonus XP %i, previous XP, %i, new: %i",thisclient->bonusxp,prev_xp,thisclient->CharInfo->Exp);
             //LMA END
 
-            BEGINPACKET( pak, 0x79b );
-            ADDDWORD   ( pak, thisclient->CharInfo->Exp );
-            ADDWORD    ( pak, thisclient->CharInfo->stamina );
-            //ADDWORD    ( pak, 0 );
-            ADDWORD    ( pak, thismon->clientid );
-            thisclient->client->SendPacket( &pak );
+            //LMA: We don't send exp packet if there is a level up coming up next.
+            if(thisclient->CharInfo->Exp<thisclient->GetLevelEXP())
+            {
+                //LMA: TEST
+                //Log(MSG_INFO,"new exp in giveexp %I64i",thisclient->CharInfo->Exp);
+                BEGINPACKET( pak, 0x79b );
+                ADDDWORD   ( pak, thisclient->CharInfo->Exp );
+                ADDWORD    ( pak, thisclient->CharInfo->stamina );
+                //ADDWORD    ( pak, 0 );
+                ADDWORD    ( pak, thismon->clientid );
+                thisclient->client->SendPacket( &pak );
+            }
+
         }
 
     }
@@ -288,12 +296,18 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
             }
             //LMA END
 
-    		BEGINPACKET( pak, 0x79b );
-    		ADDDWORD   ( pak, partyclient->CharInfo->Exp );
-    		ADDWORD    ( pak, partyclient->CharInfo->stamina );
-    		//ADDWORD    ( pak, 0 );
-    		ADDWORD    ( pak, thismon->clientid );
-    		partyclient->client->SendPacket( &pak );
+            if(partyclient->CharInfo->Exp<partyclient->GetLevelEXP())
+            {
+                //LMA: TEST
+                //Log(MSG_INFO,"new exp in giveexp %I64i",partyclient->CharInfo->Exp);
+                BEGINPACKET( pak, 0x79b );
+                ADDDWORD   ( pak, partyclient->CharInfo->Exp );
+                ADDWORD    ( pak, partyclient->CharInfo->stamina );
+                //ADDWORD    ( pak, 0 );
+                ADDWORD    ( pak, thismon->clientid );
+                partyclient->client->SendPacket( &pak );
+            }
+
         }
     }
 

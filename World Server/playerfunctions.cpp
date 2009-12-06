@@ -32,17 +32,28 @@ UINT CPlayer::GetLevelEXP( )
 }
 
 // check if player can level up
+//LMA: Old version
+/*
 bool CPlayer::CheckPlayerLevelUP( )
 {
 	if (CharInfo->Exp >= GetLevelEXP())
     {
+
+        //LMA: TEST:
+        Log(MSG_INFO,"%s should level up (%I64i >= %u), level: %u",CharInfo->charname,CharInfo->Exp,GetLevelEXP(),Stats->Level);
+
 	    CharInfo->Exp -= GetLevelEXP();
 	    Stats->Level++;
 	    Stats->HP = GetMaxHP( );
 	    Stats->MP = GetMaxHP( );
 	    CharInfo->StatPoints += 10 + (Stats->Level/2);
 	    if(Stats->Level>=10)
-        CharInfo->SkillPoints += 1;
+	    {
+	        CharInfo->SkillPoints += 1;
+	    }
+
+        //LMA: TEST
+	    Log(MSG_INFO,"new exp %I64i, new level: %u",CharInfo->Exp,Stats->Level);
 
 		BEGINPACKET( pak, 0x79e );
 		ADDWORD( pak, clientid );
@@ -58,6 +69,55 @@ bool CPlayer::CheckPlayerLevelUP( )
 		SetStats( );
             //SendLevelUPtoChar(this);
 	}
+	return true;
+}
+*/
+
+//LMA: New version (check if player can level up):
+bool CPlayer::CheckPlayerLevelUP( )
+{
+    //No lvl up needed.
+    if (CharInfo->Exp<GetLevelEXP())
+    {
+        return true;
+    }
+
+	while (CharInfo->Exp >= GetLevelEXP())
+    {
+        //LMA: TEST:
+        //Log(MSG_INFO,"%s should level up (%I64i >= %u), level: %u",CharInfo->charname,CharInfo->Exp,GetLevelEXP(),Stats->Level);
+
+	    CharInfo->Exp -= GetLevelEXP();
+	    Stats->Level++;
+	    Stats->HP = GetMaxHP( );
+	    Stats->MP = GetMaxHP( );
+	    CharInfo->StatPoints += 10 + (Stats->Level/2);
+	    if(Stats->Level>=10)
+	    {
+	        CharInfo->SkillPoints += 1;
+	    }
+
+        //LMA: TEST
+	    //Log(MSG_INFO,"new exp %I64i, new level: %u",CharInfo->Exp,Stats->Level);
+	}
+
+	//sending the packet now :)
+    BEGINPACKET( pak, 0x79e );
+    ADDWORD( pak, clientid );
+    ADDWORD( pak, Stats->Level );
+    ADDDWORD( pak, CharInfo->Exp );
+    ADDWORD( pak, CharInfo->StatPoints );
+    ADDWORD( pak, CharInfo->SkillPoints );
+    client->SendPacket( &pak );
+
+    RESETPACKET( pak, 0x79e );
+    ADDWORD( pak, clientid );
+    GServer->SendToVisible( &pak, this );
+    SetStats( );
+    //SendLevelUPtoChar(this);
+    //Log(MSG_INFO,"Def exp %I64i, def level: %u",CharInfo->Exp,Stats->Level);
+
+
 	return true;
 }
 

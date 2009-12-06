@@ -192,12 +192,57 @@ PVOID MapProcess( PVOID TS )
                     //LMA: maps (using grid now?)
                      ok_cont=false;
                      if (GServer->Config.testgrid!=0)
+                     {
                          ok_cont=monster->PlayerInGrid( );
+                     }
                      else
+                     {
                          ok_cont=monster->PlayerInRange( );
+                     }
 
                     if (!ok_cont)
+                    {
+                        //LMA: Perhaps not necessary but who knows...
+                        if (monster->IsSummon())
+                        {
+                            monster->SummonUpdate(monster,map, j);
+                            continue;
+                        }
+
+                        if(monster->IsDead( ))
+                        {
+                            //LMA: we do it only if the monster didn't commit suicide, for Chief Turak for now...
+                            if(monster->montype!=1830)
+                            {
+                                LogDebugPriority(3);
+                                LogDebug("DoAIP mainprocess monster %u is dead %i",monster->montype,monster->thisnpc->AI);
+                                LogDebugPriority(4);
+                                monster->DoAi(monster->thisnpc->AI, 5);
+
+                            }
+                            else
+                            {
+                                if(monster->suicide)
+                                {
+                                    LogDebugPriority(3);
+                                    LogDebug("We DON'T DoAIP mainprocess monster %u is dead %i, because chief turak committed suicide.",monster->montype,monster->thisnpc->AI);
+                                    LogDebugPriority(4);
+                                }
+                                else
+                                {
+                                    LogDebugPriority(3);
+                                    LogDebug("DoAIP mainprocess monster chief turak %u is dead %i",monster->montype,monster->thisnpc->AI);
+                                    LogDebugPriority(4);
+                                    monster->DoAi(monster->thisnpc->AI, 5);
+                                }
+
+                            }
+
+                            monster->OnDie( );
+                        }
+
                         continue;
+                    }
 
                     //LMA: daynight stuff :) kinda vampire code for spawns ^_^
                     if((monster->daynight!=0)&&((monster->daynight==2&&!map->IsNight())||(monster->daynight==1&&map->IsNight())))

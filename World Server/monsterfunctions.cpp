@@ -45,7 +45,9 @@ bool CMonster::PlayerInGrid()
     //we don't handle this map (player shouldn't be here, monster neither, non existing map).
     //Or no players in map.
     if (map->PlayerList.size()==0||grid_id==-1)
+    {
         return false;
+    }
 
     //getting coordinates.
     coords=GServer->GetGridNumber((int) map->id,(int) Position->current.x,(int) Position->current.y,this);
@@ -75,6 +77,7 @@ bool CMonster::PlayerInGrid()
         //Log(MSG_INFO,"monster in cell %i (AUTO)",coords);
         return true;
     }
+
 
     return false;
 }

@@ -565,11 +565,17 @@ QUESTREWD(005){
 		case 0://EXP
 		{
             client->CharInfo->Exp += GetRewardValue(data->btEquation, data->iValue, client, 0);
-            BEGINPACKET(pak, 0x79b);
-            ADDDWORD(pak, client->CharInfo->Exp);
-            ADDDWORD(pak, client->CharInfo->stamina);
-            ADDWORD (pak, 0);
-            client->client->SendPacket(&pak);
+
+            //LMA: Only if not level up
+            if(client->CharInfo->Exp<client->GetLevelEXP())
+            {
+                BEGINPACKET(pak, 0x79b);
+                ADDDWORD(pak, client->CharInfo->Exp);
+                ADDDWORD(pak, client->CharInfo->stamina);
+                ADDWORD (pak, 0);
+                client->client->SendPacket(&pak);
+            }
+
         }
 		break;
 		case 1://Zuly
