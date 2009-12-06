@@ -5115,7 +5115,11 @@ bool CWorldServer::pakGMMoveTo( CPlayer* thisclient, fPoint position )
 	BEGINPACKET( pak, 0x79a );
 	ADDWORD    ( pak, thisclient->clientid );
 	ADDWORD    ( pak, thisclient->Battle->target );
-	ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+
+	//LMA: It's distance.
+	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+	ADDWORD    ( pak, (DWORD) (distance(thisclient->Position->current,thisclient->Position->destiny)*100) );
+
 	ADDFLOAT   ( pak, thisclient->Position->destiny.x*100 );
 	ADDFLOAT   ( pak, thisclient->Position->destiny.y*100 );
 	ADDFLOAT   ( pak, thisclient->Position->destiny.z*100 );

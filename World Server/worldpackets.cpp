@@ -517,7 +517,10 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 
 	//LMA: Base Speed
 	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );	// MSPEED
-    ADDWORD    ( pak, thisclient->Stats->Base_Speed );	// MSPEED
+    //ADDWORD    ( pak, thisclient->Stats->Base_Speed );	// MSPEED
+
+    //LMA: it's in fact the distance from current to destiny and not the base speed...
+    ADDWORD    ( pak, (DWORD) (distance(thisclient->Position->current,thisclient->Position->destiny)*100));
 
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x02 ) );	// POSITION X
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x06 ) );	// POSITION Y
