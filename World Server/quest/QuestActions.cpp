@@ -107,6 +107,7 @@ QUESTREWD(000)
                         ADDDWORD( pak, 0xcccccccc );
                         ADDWORD ( pak, 0xcccc );
                         client->client->SendPacket(&pak);
+                        client->CharInfo->Zulies+=zaward;
                         Log(MSG_WARNING,"Giving %u zuly to player %s",zaward,client->CharInfo->charname);
                     }
 
