@@ -507,6 +507,7 @@ bool CPlayer::loaddata( )
             Log(MSG_WARNING, "char %s have a invalid or empty item in inventory: %i-%i [%i], this item will be deleted", CharInfo->charname, atoi(row[1]), atoi(row[0]), atoi(row[6]) );
             continue;
         }
+
 		UINT itemnum = atoi(row[5]);
 		items[itemnum].itemnum = atoi(row[0]);
 		items[itemnum].itemtype = atoi(row[1]);
@@ -519,6 +520,14 @@ bool CPlayer::loaddata( )
 		items[itemnum].appraised = (atoi(row[9])==1)?true:false;
 		items[itemnum].gem = atoi(row[10])>3999?0:atoi(row[10]);
 		items[itemnum].sp_value = atoi(row[11]);
+
+		//LMA: checking the count too :(
+        if((items[itemnum].itemtype<10||items[itemnum].itemtype>12)&&items[itemnum].count!=1)
+        {
+            Log(MSG_WARNING,"%s:: Wrong item quantity in slot %i, %u*(%u::%u), reseting it to 1.",CharInfo->charname,itemnum,items[itemnum].count,items[itemnum].itemtype,items[itemnum].itemnum);
+            items[itemnum].count=1;
+        }
+
 		CalculateSignature(itemnum);  //Calculate signature.
 
         switch (items[itemnum].refine)

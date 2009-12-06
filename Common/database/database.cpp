@@ -95,7 +95,7 @@ int CDatabase::QExecuteUpdate( char *Format,... )
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
-    //Log( MSG_QUERY, "IN:: ExecU: %s",query );
+    Log( MSG_QUERY, "IN:: ExecU: %s",query );
     pthread_mutex_lock( &SQLMutex );
     while(Qfail)
     {
@@ -128,7 +128,7 @@ bool CDatabase::QExecute( char *Format,... )
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
-    //Log( MSG_QUERY,"IN QExec:: %s",query );
+    Log( MSG_QUERY,"IN QExec:: %s",query );
 
     int no_err=0;
     no_err=pthread_mutex_lock( &SQLMutex );
@@ -163,7 +163,7 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
     result = NULL;
-    //Log( MSG_QUERY,"IN Qstore:: %s",query );
+    Log( MSG_QUERY,"IN Qstore:: %s",query );
     pthread_mutex_lock( &SQLMutex );
 
     if (Mysql==NULL)
@@ -202,7 +202,7 @@ MYSQL_RES* CDatabase::QUse( char *Format, ...)
 	vsprintf( query, Format, ap );
 	va_end  ( ap );
     result = NULL;
-    //Log( MSG_QUERY,"IN Quse:: %s",query );
+    Log( MSG_QUERY,"IN Quse:: %s",query );
     pthread_mutex_lock( &SQLMutex );
     while(Qfail)
     {

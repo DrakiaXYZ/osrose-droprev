@@ -1443,7 +1443,7 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
             itemstats =0;
         else
             itemstats =atoi(tmp);
-// Remove below if you want GM to socket anything but Armor, Jewelery or Weapons - code by lmame
+        // Remove below if you want GM to socket anything but Armor, Jewelery or Weapons - code by lmame
         if(itemtype!=3&&itemtype!=7&&itemtype!=8)
         {
             itemsocket=0;
@@ -1453,6 +1453,13 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
             }
 
         }
+
+        //LMA: check on item amount
+        if(itemtype<10||itemtype>12)
+        {
+            itemamount=1;
+        }
+
         Log( MSG_GMACTION, " %s : /item %i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, itemid, itemtype, itemamount , itemrefine , itemsocket ,itemstats);
         return pakGMItem( thisclient , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );
     }
