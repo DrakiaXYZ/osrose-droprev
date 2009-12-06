@@ -3181,7 +3181,8 @@ unsigned int CPlayer::GetMoveSpeed( )
     UINT pmspeed = 0;//Passive Skill % Value
     UINT vmspeed = 0;//Passive Skill Value
 
-    if(!Status->CanRun)
+    //LMA: Adding a special case since we can drive beeing overweight.
+    if(!Status->CanRun&&Status->Stance!=DRIVING)
     {
         Status->Stance = WALKING;
     }
@@ -3191,6 +3192,7 @@ unsigned int CPlayer::GetMoveSpeed( )
         case WALKING: //walking
         {
             mspeed = 200;
+            Stats->Base_Speed=mspeed;   //LMA: Changing the base speed too ^_^
         }
         break;
         case 1:
@@ -3315,6 +3317,20 @@ unsigned int CPlayer::GetMoveSpeed( )
         break;
         case DRIVING: //cart
         {
+            if(!Status->CanRun)
+            {
+                mspeed=300;
+                Stats->Base_Speed=mspeed;   //LMA: Changing the base speed too ^_^
+
+                if(Fairy)
+                {
+                    mspeed = (unsigned int)floor(mspeed*1.2);
+                }
+
+
+                return mspeed;
+            }
+
             UINT porc = 1;
             UINT nb_parts=0;
             float lma_speed;

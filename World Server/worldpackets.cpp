@@ -269,7 +269,7 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	{
 	    if(GetNbUserID(thisclient->Session->userid)>1)
 	    {
-	        Log(MSG_HACK,"UserID %u tryes to log %s but he has already another avatar loaded!",thisclient->Session->userid,thisclient->CharInfo->charname);
+	        Log(MSG_HACK,"[HACK] UserID %u tryes to log %s but he has already another avatar loaded!",thisclient->Session->userid,thisclient->CharInfo->charname);
 	        return false;
 	    }
 
@@ -432,11 +432,38 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     //LMA: Update.
     ADDWORD(pak, 0x0000 );
     thisclient->client->SendPacket( &pak );
+
+    //LMA: Are we in overweight?
+    BYTE pc_weight=1;
+    if(thisclient->GetMaxWeight()>0)
+    {
+        pc_weight=thisclient->GetCurrentWeight()*100/thisclient->GetMaxWeight();
+    }
+
+    if(pc_weight>100)
+    {
+        thisclient->Status->CanRun=false;
+        thisclient->Stats->Move_Speed = thisclient->GetMoveSpeed( );
+    }
+
+    if(pc_weight>110)
+    {
+        thisclient->Status->CanAttack=false;
+    }
+
     // set weight
+    /*
     RESETPACKET( pak, 0x762 );
     ADDWORD    ( pak, thisclient->clientid );       	// USER ID
     ADDBYTE    ( pak, 1 );								// SOMETHING TO DO WITH WEIGHT
+    thisclient->client->SendPacket( &pak );*/
+
+    //LMA: complete version.
+    RESETPACKET( pak, 0x762 );
+    ADDWORD    ( pak, thisclient->clientid );       	// USER ID
+    ADDBYTE    ( pak, pc_weight );						//% weight.
     thisclient->client->SendPacket( &pak );
+
     // set speed
 	RESETPACKET(pak, 0x782 );
 	ADDWORD    ( pak, thisclient->clientid );
