@@ -5691,6 +5691,9 @@ bool CWorldServer::pakGMSpawnList(CPlayer* thisclient, int range)
         return true;
     }
 
+    //SendPM(thisclient,"Begin of spawnlist in map %u",map);
+    Log(MSG_INFO,"Begin of spawnlist in map %u",map);
+
     for (unsigned j = 0; j < MapList.Index[map]->MobGroupList.size(); j++)
     {
         CMobGroup* mygroup = MapList.Index[map]->MobGroupList.at(j);
@@ -5699,11 +5702,11 @@ bool CWorldServer::pakGMSpawnList(CPlayer* thisclient, int range)
             continue;
         }
 
-        SendPM(thisclient,"Spawn %u found at (%.2f,%.2f)",mygroup->id,mygroup->point.x,mygroup->point.y);
-        Log(MSG_INFO,"Spawn %u found at (%.2f,%.2f)",mygroup->id,mygroup->point.x,mygroup->point.y);
+        //SendPM(thisclient,"Spawn %u found at (%.2f,%.2f), dist: %.2f",mygroup->id,mygroup->point.x,mygroup->point.y);
+        Log(MSG_INFO,"Spawn %u found at (%.2f,%.2f), dist: %.2f",mygroup->id,mygroup->point.x,mygroup->point.y,distance(thisclient->Position->current,mygroup->point));
     }
 
-    SendPM(thisclient,"End of spawnlist");
+    //SendPM(thisclient,"End of spawnlist");
     Log(MSG_INFO,"End of spawnlist");
 
 
@@ -5739,12 +5742,14 @@ bool CWorldServer::pakGMSpawnDetail(CPlayer* thisclient, UINT id, UINT map)
 
     }
 
-    SendPM(thisclient,"Current spawn information for group %u in map %u:", id,map);
+    //SendPM(thisclient,"Current spawn information for group %u in map %u:", id,map);
     Log(MSG_INFO,"Current spawn information for group %u in map %u:", id,map);
 
-    SendPM(thisclient,"-> Current group=%u/%u", last_group,thisgroup->basicMobs.size()-1);
-    SendPM(thisclient,"-> basic deads %u/ %u, is ready? %i",thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount,thisgroup->group_ready);
+    //SendPM(thisclient,"-> Current group=%u/%u", last_group,thisgroup->basicMobs.size()-1);
+    //SendPM(thisclient,"-> basic deads %u/ %u, is ready? %i",thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount,thisgroup->group_ready);
 
+    Log(MSG_INFO,"-> Current group=%u/%u", last_group,thisgroup->basicMobs.size()-1);
+    Log(MSG_INFO,"-> basic deads %u/ %u, is ready? %i",thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount,thisgroup->group_ready);
 
     //Getting the map.
     CMap* mymap= GServer->MapList.Index[map];
@@ -5762,13 +5767,15 @@ bool CWorldServer::pakGMSpawnDetail(CPlayer* thisclient, UINT id, UINT map)
 
         if (thismon->Position->respawn==id)
         {
-            SendPM(thisclient,"--> Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
+            //SendPM(thisclient,"--> Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
+            Log(MSG_INFO,"--> Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
         }
 
     }
 
     pthread_mutex_unlock( &mymap->MonsterMutex );
-    SendPM(thisclient,"End of monster list");
+    //SendPM(thisclient,"End of monster list");
+    Log(MSG_INFO,"End of monster list");
 
 
     return true;
@@ -5827,7 +5834,8 @@ bool CWorldServer::pakGMSpawnForceRefresh(CPlayer* thisclient, UINT id, UINT map
 
     pthread_mutex_unlock( &mymap->MonsterMutex );
 
-    SendPM(thisclient,"Trying to refresh spawn group %u in map %u (Nb to kill %u):", id,map,monstertokill.size());
+    //SendPM(thisclient,"Trying to refresh spawn group %u in map %u (Nb to kill %u):", id,map,monstertokill.size());
+    Log(MSG_INFO,"Trying to refresh spawn group %u in map %u (Nb to kill %u):", id,map,monstertokill.size());
 
     //We need to kill them.
     for(UINT j=0;j<monstertokill.size();j++)
@@ -5839,7 +5847,8 @@ bool CWorldServer::pakGMSpawnForceRefresh(CPlayer* thisclient, UINT id, UINT map
             continue;
         }
 
-        SendPM(thisclient,"--> Killing Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
+        //SendPM(thisclient,"--> Killing Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
+        Log(MSG_INFO,"--> Killing Monster %u, type %u is at (%.2f,%.2f), HP %I64i/%I64i, tactical? %i",thismon->clientid,thismon->montype,thismon->Position->current.x,thismon->Position->current.y,thismon->Stats->HP,thismon->Stats->MaxHP,thismon->is_tactical);
         //suicide time.
         thismon->Stats->HP = -1;
         BEGINPACKET( pak, 0x799 );
@@ -5851,7 +5860,8 @@ bool CWorldServer::pakGMSpawnForceRefresh(CPlayer* thisclient, UINT id, UINT map
         mymap->DeleteMonster( thismon );
     }
 
-    SendPM(thisclient,"End of Force refresh, the spawn should refresh on his own.");
+    //SendPM(thisclient,"End of Force refresh, the spawn should refresh on his own.");
+    Log(MSG_INFO,"End of Force refresh, the spawn should refresh on his own.");
 
 
     return true;

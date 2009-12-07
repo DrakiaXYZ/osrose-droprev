@@ -270,6 +270,7 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	    if(GetNbUserID(thisclient->Session->userid)>1)
 	    {
 	        Log(MSG_HACK,"[HACK] UserID %u tryes to log %s but he has already another avatar loaded!",thisclient->Session->userid,thisclient->CharInfo->charname);
+	        ForceDiscClient(thisclient->Session->userid);
 	        return false;
 	    }
 

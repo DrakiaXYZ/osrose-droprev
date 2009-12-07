@@ -2883,3 +2883,24 @@ int CWorldServer::GetNbUserID( UINT userid )
 
     return nb_accounts;
 }
+
+//LMA: Disconnect char
+bool CWorldServer::ForceDiscClient( unsigned int userid )
+{
+    CPlayer* otherclient = GetClientByUserID( userid );
+    if(otherclient==NULL) return true;
+
+    if(otherclient==NULL)
+    {
+        Log(MSG_WARNING, "userid '%s' not found online (ForceDiscClient)", userid );
+        return true;
+    }
+
+    BEGINPACKET( pak, 0x707 );
+    ADDWORD( pak, 0 );
+    otherclient->client->SendPacket( &pak );
+    otherclient->client->isActive = false;
+
+
+    return true;
+}

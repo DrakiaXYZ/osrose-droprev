@@ -1045,6 +1045,9 @@ bool CCharacter::AoeBuff( CSkills* skill )
     //checking if buffing party and no party so himself :)
     if(skill->target==1 && GetParty( )==NULL)
     {
+        Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
+        if(Stats->MP<0) Stats->MP=0;
+
         Log(MSG_INFO,"AOEBuffs, buffing only myself");
         UseBuffSkill( this, skill );
         ClearBattle( Battle );
