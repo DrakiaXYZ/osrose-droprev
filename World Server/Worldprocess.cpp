@@ -29,6 +29,14 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
 	    return true;
     }
 
+    //LMA TEST
+    bool lma_debug=false;
+   if(thismon->Position->respawn==5246)
+   {
+       lma_debug=true;
+       Log(MSG_INFO,"GiveExp Spawn %u CID %u",thismon->Position->respawn,thismon->clientid);
+   }
+
     // Give Experience Drops and Quest Items
     vector<CPartyExp*> PartyExp;
     for(UINT i=0;i<thismon->PlayersDamage.size();i++)
@@ -316,6 +324,11 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
     {
         //It seems it's ok, the class party destructor isn't beeing called...
         delete PartyExp.at(p);
+    }
+
+    if (lma_debug)
+    {
+        Log(MSG_INFO,"END GiveExp Spawn %u CID %u",thismon->Position->respawn,thismon->clientid);
     }
 
     MapList.Index[thismon->Position->Map]->DeleteMonster( thismon );

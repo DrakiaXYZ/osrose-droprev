@@ -328,18 +328,18 @@ void CMap::RespawnMonster( )
 
        //LMA: debugging spawn problem
        lma_debug=false;
-       /*if(thisgroup->id==4054)
+       if(thisgroup->id==5246)
        {
            lma_debug=true;
-           Log(MSG_INFO,"Respawn monster spawn %i",thisgroup->id);
-       }*/
+           Log(MSG_INFO,"Spawn %u:: Respawn time?",thisgroup->id);
+       }
 
       clock_t rtime = clock() - thisgroup->lastRespawnTime;
       if (rtime < thisgroup->respawntime*CLOCKS_PER_SEC || thisgroup->active >= thisgroup->limit)
       {
           if(lma_debug)
           {
-              Log(MSG_INFO,"No respawn for group %u (time %u < %u ? or limit %u>=%u ?)",thisgroup->id,rtime,thisgroup->respawntime*CLOCKS_PER_SEC,thisgroup->active,thisgroup->limit);
+              Log(MSG_INFO,"Spawn %u:: No respawn (time %u < %u ? or limit %u>=%u ?)",thisgroup->id,rtime,thisgroup->respawntime*CLOCKS_PER_SEC,thisgroup->active,thisgroup->limit);
           }
 
         continue;
@@ -366,15 +366,14 @@ void CMap::RespawnMonster( )
 
       if(lma_debug)
       {
-          Log(MSG_INFO,"Tactical? %u>=%u ?",thisgroup->basicKills,thisgroup->tacticalpoints);
+          Log(MSG_INFO,"Spawn %u:: Tactical? %u>=%u ?",thisgroup->id,thisgroup->basicKills,thisgroup->tacticalpoints);
       }
 
       if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills >= thisgroup->tacticalpoints)
       {
-
           if(lma_debug)
           {
-              Log(MSG_INFO,"Tactical yes");
+              Log(MSG_INFO,"Spawn %u:: Tactical time",thisgroup->id);
           }
 
           //adding ALL tacticals.
@@ -434,7 +433,7 @@ void CMap::RespawnMonster( )
 
       if(lma_debug)
       {
-          Log(MSG_INFO,"Basic group, this one %u, previous %u, laskills (%u)>=amount(%u) ?",thisgroup->curBasic,last_group,thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount);
+          Log(MSG_INFO,"Spawn %u:: Basic group check, this one %u, previous %u, laskills %u>=amount %u ?",thisgroup->id,thisgroup->curBasic,last_group,thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount);
       }
 
       //if(thisgroup->lastKills>=thisgroup->basicMobs.at(last_group)->amount)
@@ -448,7 +447,7 @@ void CMap::RespawnMonster( )
 
               if(lma_debug)
               {
-                  Log(MSG_INFO,"Group wasn't ready, he will now.");
+                  Log(MSG_INFO,"Spawn %u:: Group wasn't ready to spawn, he is now.",thisgroup->id);
               }
 
 
@@ -466,9 +465,8 @@ void CMap::RespawnMonster( )
 
           if(lma_debug)
           {
-              Log(MSG_INFO,"new group will be %u, active for now %u",thisgroup->curBasic,thisgroup->active);
+              Log(MSG_INFO,"Spawn %u:: new group will be %u, active for now %u",thisgroup->id,thisgroup->curBasic,thisgroup->active);
           }
-
 
         //we add the monsters.
         //LMA: Don't spawn all the mobs at once.
@@ -483,6 +481,15 @@ void CMap::RespawnMonster( )
 
         }
 
+      if(lma_debug)
+      {
+          Log(MSG_INFO,"Spawn %u:: We'll spawn %u monsters (rand from 1 to %u)",thismob->real_amount,thismob->amount);
+      }
+
+        thisgroup->lastKills=0;
+        //LMA: setting the respawn time here.
+        thisgroup->lastRespawnTime = clock();
+
         //for (UINT i = 0; i < thismob->amount; i++)
         for (UINT i = 0; i < thismob->real_amount; i++)
         {
@@ -490,25 +497,33 @@ void CMap::RespawnMonster( )
             {
                   if(lma_debug)
                   {
-                      Log(MSG_INFO,"Stop spawning monster %u>=%u",thisgroup->active,thisgroup->limit);
+                      Log(MSG_INFO,"Spawn %u:: Stop spawning monster %u>=%u",thisgroup->id,thisgroup->active,thisgroup->limit);
                   }
 
                 break;
             }
 
             fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );
-            AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+
+            //LMA: We get the monster for test purposes.
+            //AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+            CMonster* tempmonster=AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
 
               if(lma_debug)
               {
-                  Log(MSG_INFO,"Spawing monster %u at (%.2f;%.2f) (%u<%u), active now %u",thismob->mobId,position.x,position.y,thismob->mobId,i,thismob->real_amount,thisgroup->active);
+                  if (tempmonster!=NULL)
+                  {
+                      Log(MSG_INFO,"Spawn %u:: Spawing monster %u (CID %u) at (%.2f;%.2f) (%u<%u), active now %u",thisgroup->id,thismob->mobId,tempmonster->clientid,position.x,position.y,thismob->mobId,i,thismob->real_amount,thisgroup->active);
+                  }
+                  else
+                  {
+                      Log(MSG_WARNING,"Spawn %u:: FAILURE Spawing monster %u at (%.2f;%.2f) (%u<%u), active now %u",thisgroup->id,thismob->mobId,position.x,position.y,thismob->mobId,i,thismob->real_amount,thisgroup->active);
+                  }
+
               }
 
         }
 
-        thisgroup->lastKills=0;
-        //LMA: setting the respawn time here.
-        thisgroup->lastRespawnTime = clock();
       }
 
     }

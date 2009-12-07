@@ -104,14 +104,14 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     CNPCData* thisnpc = GServer->GetNPCDataByID( montype );
     if(thisnpc==NULL)
     {
-        Log( MSG_WARNING, "Invalid montype %i", montype );
+        Log( MSG_WARNING, "Add Monster:: Invalid montype %u", montype );
         return NULL;
     }
 
     CMonster* monster = new (nothrow) CMonster( position, montype, this->id, owner, spawnid  );
     if(monster==NULL)
     {
-        Log( MSG_WARNING, "Error allocing memory" );
+        Log( MSG_WARNING, "Add Monster %u:: Error allocing memory",montype);
         return NULL;
     }
 
@@ -288,6 +288,14 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
 {
     if(monster==NULL) return false;
 
+    //LMA TEST
+    bool lma_debug=false;
+   if(monster->Position->respawn==5246)
+   {
+       lma_debug=true;
+       Log(MSG_INFO,"DeleteMonster Spawn %u CID %u",monster->Position->respawn,monster->clientid);
+   }
+
     GServer->ClearClientID( monster->clientid );
     if(monster->Position->respawn!=0)
     {
@@ -298,15 +306,33 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
                 thisgroup->lastRespawnTime = clock();*/
 
             //LMA: only if the monster isn't tactical...
+
+           if(lma_debug)
+           {
+               Log(MSG_INFO,"DeleteMonster Spawn %u CID %u:: group found, is tactical? %i",monster->Position->respawn,monster->clientid,monster->is_tactical);
+           }
+
             if(!monster->is_tactical)
             {
                 thisgroup->active--;
                 thisgroup->basicKills++;
                 thisgroup->lastKills++;
+
+               if(lma_debug)
+               {
+                   Log(MSG_INFO,"DeleteMonster Spawn %u CID %u:: not tactical, active %u, basickills %u, lastkills %u",monster->Position->respawn,monster->clientid,thisgroup->active,thisgroup->basicKills,thisgroup->lastKills);
+               }
+
             }
 
         }
+        else
+        {
+            Log(MSG_WARNING,"Spawn %u not found in map %u",monster->Position->respawn,monster->Position->Map);
+        }
+
     }
+
     if(clearobject)
     {
         BEGINPACKET( pak, 0x799 );
@@ -315,23 +341,50 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
         ADDDWORD   ( pak, monster->Stats->HP );
         ADDDWORD   ( pak, 16 );
         GServer->SendToVisible( &pak, monster );
+
+       if(lma_debug)
+       {
+           Log(MSG_INFO,"DeleteMonster Spawn %u CID %u:: clearing",monster->Position->respawn,monster->clientid);
+       }
+
     }
+
     if(i!=0)
     {
+
+       if(lma_debug)
+       {
+           Log(MSG_INFO,"DeleteMonster Spawn %u CID %u:: erasing with %u",monster->Position->respawn,monster->clientid,i);
+       }
+
         MonsterList.erase( MonsterList.begin()+i );
         delete monster;
         return true;
     }
+
     for(UINT i=0;i<MonsterList.size();i++)
     {
         CMonster* othermon = MonsterList.at(i);
         if(othermon==monster)
         {
+
+           if(lma_debug)
+           {
+               Log(MSG_INFO,"DeleteMonster Spawn %u CID %u:: erasing",monster->Position->respawn,monster->clientid);
+           }
+
             MonsterList.erase( MonsterList.begin()+i );
             delete monster;
             return true;
         }
+
     }
+
+   if(lma_debug)
+   {
+       Log(MSG_INFO,"DeleteMonster Spawn %u CID %u:: erasing, not found in monsterlist",monster->Position->respawn,monster->clientid);
+   }
+
     delete monster;
     return false;
 }

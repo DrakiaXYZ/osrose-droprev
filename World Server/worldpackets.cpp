@@ -3128,9 +3128,14 @@ bool CWorldServer::pakTradeAction ( CPlayer* thisclient, CPacket* P )
 			break;
 		case 6:
 			if (thisclient->Trade->trade_status==6)
-				thisclient->Trade->trade_status=4;
+			{
+			    thisclient->Trade->trade_status=4;
+			}
 			else
-				thisclient->Trade->trade_status=6;
+			{
+			    thisclient->Trade->trade_status=6;
+			}
+
 			if (otherclient->Trade->trade_status==6)
             {
 				RESETPACKET( pak, 0x7c0 );
