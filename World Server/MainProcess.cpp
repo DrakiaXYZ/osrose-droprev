@@ -67,6 +67,104 @@ PVOID MapProcess( PVOID TS )
 
                      //Log(MSG_INFO,"Player %s in map %i, position->map %i",player->CharInfo->charname,map->id,player->Position->Map);
 
+                     #ifdef LMA_SPAWNM
+                     //LMA: For use with /spawnmonsters gm command (for drop me).
+                     if(player->mdeb!=0&&player->mend!=0&&player->playertime!=0)
+                     {
+                         if(player->playertime < (UINT)GServer->round((clock( ) - player->lastSpawnUpdate)))
+                         {
+                             CMap* map = GServer->MapList.Index[player->Position->Map];
+
+                             //let's delete the old one :)
+                             if(player->last_monstercid!=0)
+                             {
+                                CMonster* thismon = GServer->GetMonsterByID(player->last_monstercid, player->Position->Map);
+                                if (thismon!=NULL)
+                                {
+                                    thismon->Stats->HP = -1;
+                                    map->DeleteMonster( thismon );
+                                }
+
+                                GServer->SendPM(player,"Killing monster %u.",player->last_monstercid);
+                                player->ClearObject(player->last_monstercid);
+
+                                /*
+                                thismon->Stats->HP = -1;
+                                BEGINPACKET( pak, 0x799 );
+                                ADDWORD    ( pak, thismon->clientid );
+                                ADDWORD    ( pak, thismon->clientid );
+                                ADDDWORD   ( pak, thismon->thisnpc->hp*thismon->thisnpc->level );
+                                ADDDWORD   ( pak, 16 );
+                                GServer->SendToVisible( &pak, thismon );
+                                map->DeleteMonster( thismon );
+                                */
+                                player->playertime=1000;
+                                player->last_monstercid=0;
+                             }
+                             else
+                             {
+                                 if(player->last_monster==0)
+                                 {
+                                     player->last_monster=player->mdeb;
+                                 }
+                                 else
+                                 {
+                                     player->last_monster++;
+                                 }
+
+                                 if (player->last_monster<=player->mend)
+                                 {
+                                     player->lastSpawnUpdate=clock();
+                                    fPoint position;
+                                    position.x=player->xx;
+                                    position.y=player->yy;
+                                    position.z=0;
+
+                                    bool is_ok=false;
+                                    CMonster* thismonster=NULL;
+                                    if(player->last_monster<GServer->maxNPC)
+                                    {
+                                        if(GServer->NPCData[player->last_monster]->STLId!=0)
+                                        {
+                                            is_ok=true;
+                                            thismonster=map->AddMonster( player->last_monster, position, 0, NULL, NULL, 0 , true );
+                                            if (thismonster==NULL)
+                                            {
+                                                is_ok=false;
+                                            }
+
+                                        }
+
+                                    }
+
+                                    if (is_ok)
+                                    {
+                                        GServer->SendPM(player,"Spawning monster %u (%u).",player->last_monster,thismonster->clientid);
+                                        player->last_monstercid=thismonster->clientid;
+                                        player->playertime=2000;
+                                    }
+                                    else
+                                    {
+                                        GServer->SendPM(player,"Monster %u does not exist.",player->last_monster);
+                                        player->last_monstercid=0;
+                                        player->playertime=1000;
+                                    }
+
+                                 }
+                                 else
+                                 {
+                                     GServer->SendPM(player,"End spawning from %u to %u.",player->mdeb,player->mend);
+                                     player->mdeb=0;
+                                     player->mend=0;
+                                 }
+
+                             }
+
+                         }
+
+                     }
+                     #endif
+
                      player->RefreshHPMP();         //LMA HP / MP Jumping
                     if(player->UpdateValues( )) //Does nothing except for rides... equals to true if player isn't on the back seat
                         player->UpdatePosition(false);

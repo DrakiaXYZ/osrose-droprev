@@ -63,6 +63,10 @@
 //LMA: Refine Rules:
 #define NB_REF_RULES 17
 
+//LMA: for monster slicer and drop_me
+//define to use it.
+//#define LMA_SPAWNM
+
 //LMA: AIP
 #include "aip/Aip.h"
 

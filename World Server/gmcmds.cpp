@@ -2877,6 +2877,35 @@ else if (strcmp(command, "itemstat")==0)
 	    Log( MSG_GMACTION, "%s:: spawndetail %i %i" ,thisclient->CharInfo->charname,map,id);
 	    return pakGMSpawnDetail(thisclient,id,map);
 	}
+	#ifdef LMA_SPAWNM
+        else if(strcmp(command, "spawnmonsters")==0)
+        {
+            if((tmp = strtok(NULL, " "))==NULL) return true; int mdeb=atoi(tmp);
+            if((tmp = strtok(NULL, " "))==NULL) return true; int mend=atoi(tmp);
+            if((tmp = strtok(NULL, " "))==NULL) return true; int xx=atoi(tmp);
+            if((tmp = strtok(NULL, " "))==NULL) return true; int yy=atoi(tmp);
+
+            if(mdeb==mend&&mdeb==0)
+            {
+                //this is the mire, save it if you need to setup a grid in drop_me
+                SendPM(thisclient,"Spawning monster 0123456789 (mire
+                    ).");
+                return true;
+            }
+
+            SendPM(thisclient,"Doing from %u to %u at (%u;%u).",mdeb,mend,xx,yy);
+
+            thisclient->lastSpawnUpdate=clock();
+            thisclient->last_monster=0;
+            thisclient->last_monstercid=0;
+            thisclient->mdeb=mdeb;
+            thisclient->mend=mend;
+            thisclient->xx=xx;
+            thisclient->yy=yy;
+            thisclient->playertime=3000;
+            return true;
+        }
+	#endif
    else if(strcmp(command, "spawnrefresh")==0)
     {
         //TODO: command for this one.

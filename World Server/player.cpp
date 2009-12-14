@@ -30,6 +30,17 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 
     pvp_id=-1;  //LMA: Pvp ID (set by qsd most of the time).
 
+     #ifdef LMA_SPAWNM
+        lastSpawnUpdate=0;
+        last_monster=0;
+        last_monstercid=0;
+        mdeb=0;
+        mend=0;
+        playertime=0;
+        xx=0;
+        yy=0;
+    #endif
+
     skip_qsd_zone=false;
 
     map_warp_zone=0;

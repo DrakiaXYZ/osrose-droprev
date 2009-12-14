@@ -30,6 +30,17 @@ class CCharacter
 
         clock_t lastAiUpdate;   //LMA: AIP
 
+        #ifdef LMA_SPAWNM
+            clock_t lastSpawnUpdate;   //LMA: AIP
+            unsigned int last_monster;
+            unsigned int mdeb;
+            unsigned int mend;
+            unsigned int last_monstercid;
+            unsigned int playertime;
+            unsigned int xx;
+            unsigned int yy;
+        #endif
+
         unsigned int clientid;
         unsigned int char_montype;  //LMA: montype ID for CCharacter
         unsigned int char_owner;    //LMA: owner for CCharacter.
