@@ -385,6 +385,10 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
         {
             return true;
         }
+        else
+        {
+            Position->destiny = Enemy->Position->current;
+        }
 
     }
     else
@@ -392,6 +396,10 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
         if(distance<=skill->range)
         {
             return true;
+        }
+        else
+        {
+            Position->destiny = Enemy->Position->current;
         }
 
     }
