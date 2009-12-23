@@ -2497,9 +2497,9 @@ bool CWorldServer::LoadZoneData( )
         Log(MSG_WARNING,"The number of maps in list_zone.STB (%u) is not the same as NB_MAPS (%u), change NB_MAPS in code if you have more warning messages.",maxZone,NB_MAPS);
     }
 
-    if(nb_active>NB_GRIDS)
+    if(nb_active>=NB_GRIDS)
     {
-        Log(MSG_WARNING,"It seems you have more active maps than you can handle later, %u>%u, change NB_GRIDS in code if you have more warning messages.",nb_active,NB_GRIDS);
+        Log(MSG_WARNING,"It seems you have more active maps than you can handle later, %u>=%u, change NB_GRIDS to %u in code if you have more warning messages.",nb_active,NB_GRIDS,(nb_active+1));
     }
 
 
