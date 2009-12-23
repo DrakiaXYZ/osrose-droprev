@@ -603,7 +603,7 @@ class CWorldServer : public CServerSocket
         //CSTBData				STB_QUEST;				// Quest data - already declared in line 393
         CSTBData				STB_ITEM[14];			// Item data
         CSTBData                STB_DROP;               // Drop list
-        CSTBData                STB_ZONE;               // Zone data
+        //CSTBData                STB_ZONE;               // Zone data
         CSTBData                STB_PRODUCT;            // Crafting data
         CSTBData                STB_SELL;               // npc sell index
         //CSTBData                upgradeData;            // Upgrade - refine data (LMA: we use a csv file now).

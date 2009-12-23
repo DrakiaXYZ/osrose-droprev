@@ -45,7 +45,7 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DDataPeg\\STB\\LIST_PAT.STB", &STB_ITEM[13] );
         STBStoreData( "3DDataPeg\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
         STBStoreData( "3DDataPeg\\STB\\LIST_SELL.STB", &STB_SELL );
-        STBStoreData( "3DDataPeg\\STB\\LIST_ZONE.STB", &STB_ZONE );
+        //STBStoreData( "3DDataPeg\\STB\\LIST_ZONE.STB", &STB_ZONE );
         STBStoreData( "3DDataPeg\\STB\\ITEM_DROP.STB", &STB_DROP );
         //STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
         STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
@@ -72,7 +72,7 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DData\\STB\\LIST_PAT.STB", &STB_ITEM[13] );
         STBStoreData( "3DData\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
         STBStoreData( "3DData\\STB\\LIST_SELL.STB", &STB_SELL );
-        STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
+        //STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
         STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
         //STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
         STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
@@ -1009,7 +1009,7 @@ bool CWorldServer::LoadRespawnData( )
         //LMA: check if out of memory.
         if (thisrespawnpoint->destMap>=MapList.max)
         {
-           Log(MSG_WARNING,"RespawnZones, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisrespawnpoint->destMap,MapList.max);
+           Log(MSG_WARNING,"RespawnZones, index overflow trapped %i>%i (should not happen)",thisrespawnpoint->destMap,MapList.max);
            delete thisrespawnpoint;
            continue;
         }
@@ -1398,7 +1398,7 @@ bool CWorldServer::LoadMonsterSpawn( )
             //LMA: check if out of memory.
             if (thisspawn->map>=MapList.max)
             {
-               Log(MSG_WARNING,"Spawn, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisspawn->map,MapList.max);
+               Log(MSG_WARNING,"Spawn, index overflow trapped %i>%i (should not happen)",thisspawn->map,MapList.max);
                delete thisspawn;
                continue;
             }
@@ -1476,7 +1476,7 @@ bool CWorldServer::LoadNPCs( )
         //LMA: check if out of memory.
         if (thisnpc->posMap>=MapList.max)
         {
-           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MapList.max);
+           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (should not happen)",thisnpc->posMap,MapList.max);
            delete thisnpc;
            continue;
         }
@@ -1503,7 +1503,7 @@ bool CWorldServer::LoadNPCs( )
     //LMA: check if out of memory.
     if (thisnpc->posMap>=MapList.max)
     {
-       Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA) WarpGate",thisnpc->posMap,MapList.max);
+       Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (should not happen) WarpGate",thisnpc->posMap,MapList.max);
        delete thisnpc;
     }
     else
@@ -1569,7 +1569,7 @@ bool CWorldServer::LoadNPCsSpecial( )
         //LMA: check if out of memory.
         if (thisnpc->posMap>=MapList.max)
         {
-           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MapList.max);
+           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (should not happen)",thisnpc->posMap,MapList.max);
            delete thisnpc;
            continue;
         }
@@ -2391,6 +2391,7 @@ bool CWorldServer::LoadConsItem( )
 //LMA: Loading Zone data (no CF anymore).
 bool CWorldServer::LoadZoneData( )
 {
+    UINT nb_active=0;
 
     Log( MSG_LOAD, "Zone Data - STB   " );
     for(unsigned int i=0;i<ZoneData.rowcount;i++)
@@ -2435,7 +2436,7 @@ bool CWorldServer::LoadZoneData( )
         //LMA: check if out of memory (shouldn't happen).
         if (newzone->id>=MapList.max)
         {
-           Log(MSG_WARNING,"list Zone, index overflow trapped %i>%i (increase MAX_MAP_DATA)",newzone->id,MapList.max);
+           Log(MSG_WARNING,"list Zone, index overflow trapped %i>%i (should not happen)",newzone->id,MapList.max);
            delete newzone;
            continue;
         }
@@ -2482,11 +2483,24 @@ bool CWorldServer::LoadZoneData( )
             newzone->allowpvp = 0;
         }
 
+        nb_active++;
+
         MapList.Map.push_back(newzone);
         MapList.Index[newzone->id] = newzone;
     }
 
     Log( MSG_LOAD, "Zone Data STB Loaded" );
+
+    //LMA: Some checks :)
+    if(maxZone>NB_MAPS)
+    {
+        Log(MSG_WARNING,"The number of maps in list_zone.STB (%u) is not the same as NB_MAPS (%u), change NB_MAPS in code if you have more warning messages.",maxZone,NB_MAPS);
+    }
+
+    if(nb_active>NB_GRIDS)
+    {
+        Log(MSG_WARNING,"It seems you have more active maps than you can handle later, %u>%u, change NB_GRIDS in code if you have more warning messages.",nb_active,NB_GRIDS);
+    }
 
 
     return true;
