@@ -53,7 +53,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Soldier] Winters', 1117, 2, 0.000, 5522.99,
 INSERT INTO `list_npcs` VALUES (0, '[Mayor] Darren', 1081, 2, 178.499, 5514.48, 5238.20, 181,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Felice Fete', 1202, 2, 206.565, 5562.00, 5164.83, 306,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Adalric', 1108, 2, 150.956, 5461.70, 5167.42, 226,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Guide] Alphonso', 1118, 2, 178.499, 5520.56, 5063.66, 218,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Interplanetary Guide] Alphonso', 1118, 2, 178.499, 5520.56, 5063.66, 218,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Historian] Jones', 1104, 2, 162.011, 5578.19, 4890.44, 204,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Vicious Captain] Ruven', 1125, 2, 270.000, 5597.76, 4918.87, 220,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Manager of Ferrell] Arothel', 1089, 2, 270.000, 5713.43, 5360.16, 189,0,0,0);
@@ -175,7 +175,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Hebarn''s Vassal] Starburner', 1079, 41, 14
 INSERT INTO `list_npcs` VALUES (0, '[Archaeologist] Jorgus', 1076, 41, 0.000, 5104.47, 5201.29, 264,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Referee] Jeannot', 1069, 46, 150.956, 5172.31, 4996.83, 269,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Referee] Godefrey', 1068, 46, 330.956, 5541.62, 5366.57, 270,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Station Guide] Illiya', 1188, 51, 148.307, 5107.24, 4996.57, 288,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Interplanetary Guide] Illiya', 1188, 51, 148.307, 5107.24, 4996.57, 288,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Anzhelika', 1186, 51, 139.107, 5263.61, 5079.49, 286,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Banker] Andre', 1180, 51, 0.000, 5414.86, 5114.41, 280,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Pabel', 1185, 51, 3.008, 5298.98, 5105.03, 285,0,0,0);
@@ -187,7 +187,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Smith] Pavrick', 1181, 51, 335.763, 5440.45
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Sergei', 1184, 51, 258.129, 5450.88, 5077.06, 284,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Shamanist] Est', 1191, 54, 84.016, 5088.26, 4257.84, 291,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Kapeka', 1194, 55, 61.813, 5271.06, 4623.53, 294,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Station Guide] Chacha', 1219, 61, 12.550, 5226.60, 4452.72, 319,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Interplanetary Guide] Chacha', 1219, 61, 12.550, 5226.60, 4452.72, 319,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Toanu', 1229, 61, 180.000, 5434.62, 4671.50, 329,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Guanu', 1230, 61, 181.501, 5424.42, 4671.62, 330,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Junon Order Elder] Oscar Patrick', 1214, 61, 157.957, 5371.18, 4546.51, 314,0,0,0);
@@ -229,6 +229,18 @@ INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 2-2', 1027, 66, 0.000, 5713
 INSERT INTO `list_npcs` VALUES (0, '[Ruins Curator] Hope', 1249, 66, 180.000, 5900.05, 4341.24, 409,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 1-1', 1024, 66, 0.000, 5868.43, 4225.89, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 1-2', 1025, 66, 0.000, 5867.85, 3940.73, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Interplanetary Guide] Nova', 2101, 73, 0.000, 5241.30, 5225.49, 453,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Wandering Rifter] Nimbo', 2102, 73, 0.000, 5328.58, 5233.29, 454,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Dread Captain] Bruise', 2103, 74, 22.043, 5090.25, 5293.49, 455,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[First Mate] Bighand Jack', 2104, 74, 0.000, 5164.95, 5256.50, 456,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Astrophysicist] Dr. Ega', 2106, 74, 266.005, 5199.97, 5232.90, 458,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Deckhand] Skully', 2105, 74, 335.763, 5215.69, 5239.55, 457,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Lojala Blackbear Captain] Skualo', 2111, 80, 162.011, 5000.09, 5142.27, 469,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Lojala Trader] Brizo', 2112, 80, 44.459, 5059.07, 5160.72, 470,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Lojala Storage Keeper] Ventego', 2113, 80, 6.067, 4985.28, 5205.54, 471,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 80, 207.374, 5025.32, 5153.08, 219,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Lojala Smith] Ekblovo', 2114, 80, 52.486, 5040.65, 5211.01, 472,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Fidelulo Blackbear Leader] Fulmo', 2115, 81, 214.535, 5552.80, 5016.10, 474,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5072.13, 5289.34, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5072.59, 5112.01, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5157.48, 5288.80, 0,0,0,0);
