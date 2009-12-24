@@ -1156,11 +1156,11 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
             x = 5093;
             y = 5144;
         }
-/*        else if (loc == 10) // Pyramid Tombs
+/*        else if (loc == 10) // Oblivion Temple
         {
             map = 41;
-            x = 5105; // 5165 if jRose Client
-            y = 5246; // 5207 if jRose Client
+            x = 5105;
+            y = 5246;
         }
 */        else if (loc == 11) // Sikuku Underground Prison
         {
@@ -1176,21 +1176,21 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
                 y = 5285;
              }
         }
-/*        else if (loc == 12) // Oro
+        else if (loc == 12) // Oro
         {
-             if (thisclient->Stats->Level<160)
+             if (thisclient->Stats->Level<180)
              {
-                 SendPM(thisclient, "You need to be a least Level 160 to visit Oro!");
+                 SendPM(thisclient, "You need to be a least Level 180 to visit Oro!");
                  return true;
              }
              else
              {
-                map = 80;
-                x = 5163;
-                y = 5236;
+                map = 72;
+                x = 5146;
+                y = 5278;
              }
         }
-*/
+
 /*        else if (loc == 13) // Union Wars - Attack
         {
              if (thisclient->Stats->Level<100)
@@ -1233,9 +1233,9 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
             SendPM(thisclient, "7 = Lions Plains");
             SendPM(thisclient, "8 = Luna Clan Field");
             SendPM(thisclient, "9 = Desert of the Dead");
-//            SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
+//            SendPM(thisclient, "10 = Oblivion Temple");
             SendPM(thisclient, "11 = Sikuku Underground Prison");
-//            SendPM(thisclient, "12 = Oro");
+            SendPM(thisclient, "12 = Oro");
 //            SendPM(thisclient, "13 = Union Wars-Atk");
 //            SendPM(thisclient, "14 = Union Wars-Def");
             SendPM(thisclient, "Example; /go 3");
