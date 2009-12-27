@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: osrose
 Target Host: localhost
 Target Database: osrose
-Date: 7/24/2009 9:35:23 AM
+Date: 12/26/2009 7:26:09 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -12,14 +12,14 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for list_skills
 -- ----------------------------
 CREATE TABLE `list_skills` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `classid` int(11) NOT NULL,
   `skillid` int(11) NOT NULL,
   `skill_level` varchar(4) NOT NULL,
-  `description` varchar(50) default NULL,
-  `isactive` int(11) NOT NULL default '1',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=411 DEFAULT CHARSET=utf8;
+  `description` varchar(50) DEFAULT NULL,
+  `isactive` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=412 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -434,3 +434,4 @@ INSERT INTO `list_skills` VALUES ('407', '0', '5508', '1', 'Mileage-Protection B
 INSERT INTO `list_skills` VALUES ('408', '0', '5509', '1', 'Mileage-Marksmen Blessing', '1');
 INSERT INTO `list_skills` VALUES ('409', '0', '5510', '1', 'Mileage-Intense Blessing', '1');
 INSERT INTO `list_skills` VALUES ('410', '0', '5596', '1', 'Quest-Pharaoh Stance', '1');
+INSERT INTO `list_skills` VALUES ('411', '0', '2882', '1', 'Unique-Wayfinder Skill', '1');
