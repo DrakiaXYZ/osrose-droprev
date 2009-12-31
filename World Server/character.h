@@ -22,6 +22,10 @@
 #define _ROSE_CHARACTER_
 #include "chartype.h"
 
+//LMA: for monster slicer and drop_me
+//define to use it.
+//#define LMA_SPAWNM
+
 class CCharacter
 {
     public:

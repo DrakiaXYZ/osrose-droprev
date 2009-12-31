@@ -2888,8 +2888,7 @@ else if (strcmp(command, "itemstat")==0)
             if(mdeb==mend&&mdeb==0)
             {
                 //this is the mire, save it if you need to setup a grid in drop_me
-                SendPM(thisclient,"Spawning monster 0123456789 (mire
-                    ).");
+                SendPM(thisclient,"Spawning monster 0123456789 (mire).");
                 return true;
             }
 
@@ -3394,6 +3393,12 @@ bool CWorldServer::pakGMTele( CPlayer* thisclient, int map, float x, float y,int
     if(no_qsd!=0)
     {
         thisclient->skip_qsd_zone=true;
+    }
+
+    //LMA: check to avoid stupid stuff.
+    if(map<=0||map>=maxZone)
+    {
+        return true;
     }
 
     coord.x = x;
