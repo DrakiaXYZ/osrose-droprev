@@ -331,11 +331,18 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
         //New coordinates
     	new_map=Position->Map;
     	grid_id=GServer->allmaps[new_map].grid_id;
+
+        if (grid_id==-1)
+        {
+            Log(MSG_WARNING,"It seems you forgot to declare map %i in map_grid.csv",new_map);
+        }
+
         new_coords=GServer->GetGridNumber(new_map,(UINT) floor(Position->current.x),(UINT) floor(Position->current.y));
     	last_map=new_map;
     	last_coords=new_coords;
 
-    	if (grid_id!=-1||!GServer->allmaps[new_map].always_on)
+    	//if (grid_id!=-1||!GServer->allmaps[new_map].always_on)
+    	if (grid_id!=-1&&!GServer->allmaps[new_map].always_on)
            GServer->gridmaps[grid_id].coords[new_coords]++;
 
    	    is_done=true;
@@ -387,13 +394,20 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 
 	new_map=Position->Map;
 	grid_id=GServer->allmaps[new_map].grid_id;
+
+	if (grid_id==-1)
+	{
+	    Log(MSG_WARNING,"It seems you forgot to declare map %i in map_grid.csv",new_map);
+	}
+
 	new_coords=GServer->GetGridNumber(new_map,(UINT) floor(Position->current.x),(UINT) floor(Position->current.y));
 	//changed?
     if (last_map==new_map&&new_coords==last_coords)
          return;
 
      //Let's update.
-	if (grid_id!=-1||!GServer->allmaps[new_map].always_on)
+	//if (grid_id!=-1||!GServer->allmaps[new_map].always_on)
+	if (grid_id!=-1&&!GServer->allmaps[new_map].always_on)
 	   GServer->gridmaps[grid_id].coords[new_coords]++;
 
    //deleting player from his previous map
