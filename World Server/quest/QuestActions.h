@@ -267,5 +267,6 @@ struct STR_REWD_033 {
 
 // unspawn NPC
 struct STR_REWD_034 {
+    byte btOP;
 };
 

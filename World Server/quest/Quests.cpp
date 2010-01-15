@@ -679,13 +679,23 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
             itemtype=gi(curItem->uiItemSN,0);
             itemnum=gi(curItem->uiItemSN,1);
 
-            if(curItem->iWhere!=13)
+            //where not reliable...
+            //if(curItem->iWhere!=13)
+            if(itemtype!=13)
             {
-                LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Item %i (%i:%i, %s %s) %s %i",curItem->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),Operators(curItem->btOp,buffero),curItem->iRequestCnt);
+                if (curItem->uiItemSN==0)
+                {
+                    LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check if equipped item in slot %i is %s (0:0)",curItem->iWhere,Operators(curItem->btOp,buffero),curItem->iRequestCnt);
+                }
+                else
+                {
+                    LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Item %i (%i:%i, %s %s) %s %i, where %i",curItem->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),Operators(curItem->btOp,buffero),curItem->iRequestCnt,curItem->iWhere);
+                }
+
             }
             else
             {
-                LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Quest Item %i (%i:%i, %s %s) %s %i",curItem->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),Operators(curItem->btOp,buffero),curItem->iRequestCnt);
+                LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Quest Item %i (%i:%i, %s %s) %s %i, where %i",curItem->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),Operators(curItem->btOp,buffero),curItem->iRequestCnt,curItem->iWhere);
             }
 
         }
@@ -713,7 +723,8 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //world time
     if(opcode==7)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: World time (NOT CODED)",opcode);
+        STR_COND_007 * data = (STR_COND_007 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: World time (NOT CODED, begintime %u, endtime %u)",opcode,data->ulTime,data->ulEndTime);
         return;
     }
 
@@ -730,14 +741,13 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     {
         STR_COND_009 * data = (STR_COND_009 *)dataorg;
 
-
         if(data->btOp)
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i (%s) DOES exist",opcode,data->iSkillSN1,GServer->GetSTLSkillByID(data->iSkillSN1));
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i (%s) DOES exist (sn2: %u)",opcode,data->iSkillSN1,GServer->GetSTLSkillByID(data->iSkillSN1),data->iSkillSN2);
         }
         else
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i (%s) does NOT exist",opcode,data->iSkillSN1,GServer->GetSTLSkillByID(data->iSkillSN1));
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i (%s) does NOT exist (sn2: %u)",opcode,data->iSkillSN1,GServer->GetSTLSkillByID(data->iSkillSN1),data->iSkillSN2);
         }
 
 
@@ -747,7 +757,8 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //Unknow
     if(opcode==10)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED)",opcode);
+        STR_COND_010 * data = (STR_COND_010 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED) lowpc %u, highpc %u",opcode,data->btLowPcnt,data->btHighPcnt);
         return;
     }
 
@@ -755,8 +766,8 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     if(opcode==11)
     {
         STR_COND_011 * data = (STR_COND_011 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Object variable (NOT CODED for Client) (CODED for Monsters / NPC)",opcode);
-        LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check ObjVar[%i] %s %i",data->nVarNo,Operators(data->btOp,buffero),data->iValue);
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Object variable",opcode);
+        LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check ObjVar[%i] %s %i (btwho %u)",data->nVarNo,Operators(data->btOp,buffero),data->iValue,data->btWho);
         return;
     }
 
@@ -795,7 +806,8 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //Zone Time
     if(opcode==16)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Zone Time (NOT CODED)",opcode);
+        STR_COND_016 * data = (STR_COND_016 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Zone Time (NOT CODED) (who %u, ultime %u, ulendtime %u)",opcode,data->btWho,data->ulTime,data->ulEndTime);
         return;
     }
 
@@ -803,7 +815,11 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     if(opcode==17)
     {
         STR_COND_017 * data = (STR_COND_017 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Does NPC %i (%s) ObjVar[%i] %s NPC %i %(s) ObjVar[%i], junk1 %i, junk2 %i",opcode,data->NpcVar1.iNpcNo,GServer->GetSTLMonsterNameByID(data->NpcVar1.iNpcNo),data->NpcVar1.nVarNo,Operators(data->btOp,buffero),data->NpcVar2.iNpcNo,GServer->GetSTLMonsterNameByID(data->NpcVar2.iNpcNo),data->NpcVar2.nVarNo,data->NpcVar1.unused,data->NpcVar2.unused);
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Does NPC %i (%s) ObjVar[%i] %s NPC %i %(%s) ObjVar[%i], junk1 %i, junk2 %i",
+            opcode,data->NpcVar1.iNpcNo,GServer->GetSTLMonsterNameByID(data->NpcVar1.iNpcNo),data->NpcVar1.nVarNo,
+            Operators(data->btOp,buffero),
+            data->NpcVar2.iNpcNo,GServer->GetSTLMonsterNameByID(data->NpcVar2.iNpcNo),
+            data->NpcVar2.nVarNo,data->NpcVar1.unused,data->NpcVar2.unused);
         return;
     }
 
@@ -828,22 +844,24 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //Time on Day
     if(opcode==19)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Time on Day (NOT CODED)",opcode);
+        STR_COND_019 * data = (STR_COND_019 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Time on Day (NOT CODED) (weekday %u, hour1 %u, min1 %u, hour2 %u, min2 %u)",opcode,data->btWeekDay,data->btHour1,data->btMin1,data->btHour2,data->btMin2);
         return;
     }
 
     //Unknow
     if(opcode==20)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED)",opcode);
+        STR_COND_020 * data = (STR_COND_020 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED) (no1 %u, no2 %u)",opcode,data->iNo1,data->iNo2);
         return;
     }
 
-    //Unknow
+    //Near Selected NPC
     if(opcode==21)
     {
         STR_COND_021 * data = (STR_COND_021 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Near Selected NPC, range %u (CODED FOR PLAYERS)",opcode,data->iRadius);
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Near Selected NPC, range %u (CODED FOR PLAYERS), (type, %u)",opcode,data->iRadius,data->btSelObjType);
         return;
     }
 
@@ -915,7 +933,8 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //Clan Contribution
     if(opcode==25)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Contribution (NOT CODED)",opcode);
+        STR_COND_025 * data = (STR_COND_025 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Contribution (NOT CODED) (ncont %u, op %u)",opcode,data->nCONT,data->btOP);
         return;
     }
 
@@ -995,21 +1014,24 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //Clan Grade
     if(opcode==28)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Grade (NOT CODED)",opcode);
+        STR_COND_028 * data = (STR_COND_028 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Grade (NOT CODED) (money %u, op %u)",opcode,data->iMONEY,data->btOP);
         return;
     }
 
     //Clan Members
     if(opcode==29)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Members (NOT CODED)",opcode);
+        STR_COND_029 * data = (STR_COND_029 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Members (NOT CODED) (membercnt %u, op %u)",opcode,data->nMemberCNT,data->btOP);
         return;
     }
 
     //Clan Skills
     if(opcode==30)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Skills (NOT CODED)",opcode);
+        STR_COND_030 * data = (STR_COND_030 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Skills (NOT CODED) (skiil1 %u, skill2 %u, op %u)",opcode,data->nSkill1,data->nSkill2,data->btOP);
         return;
     }
 
@@ -1106,7 +1128,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         itemtype=gi(data->uiItemSN,0);
         itemnum=gi(data->uiItemSN,1);
 
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: current quest: %s %i items %u (%i:%i, %s %s)",opcode,buffer,data->nDupCNT,data->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum));
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: current quest: %s %i items %u (%i:%i, %s %s), (partyop %u)",opcode,buffer,data->nDupCNT,data->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),data->btPartyOpt);
 
 
         return;
@@ -1181,12 +1203,12 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         {
             case 0://EXP
                 {
-                    LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %u Exp",opcode,data->iValue);
+                    LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %u Exp, (partyop %u, itemopt %u, nPartyOpt %u)",opcode,data->iValue,data->btPartyOpt,data->nItemOpt,data->nPartyOpt);
                 }
                 break;
             case 1://Zuly
                 {
-                    LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %u Zuly",opcode,data->iValue);
+                    LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %u Zuly, (partyop %u, itemopt %u, nPartyOpt %u)",opcode,data->iValue,data->btPartyOpt,data->nItemOpt,data->nPartyOpt);
                 }
                 break;
             case 2://Item
@@ -1200,18 +1222,18 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
 
                     if(nItem.IsStackable())
                     {
-                        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %i (+formula()) item %u (%i:%i, %s %s)",opcode,data->iValue,data->iItemSN,nItem.itemtype,nItem.itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(nItem.itemtype,nItem.itemnum));
+                        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %i (+formula()) item %u (%i:%i, %s %s), (partyop %u, itemopt %u, nPartyOpt %u)",opcode,data->iValue,data->iItemSN,nItem.itemtype,nItem.itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(nItem.itemtype,nItem.itemnum),data->btPartyOpt,data->nItemOpt,data->nPartyOpt);
                     }
                     else
                     {
-                        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give 1 item %u (%i:%i, %s %s)",opcode,data->iItemSN,nItem.itemtype,nItem.itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(nItem.itemtype,nItem.itemnum));
+                        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give 1 item %u (%i:%i, %s %s), (partyop %u, itemopt %u, nPartyOpt %u)",opcode,data->iItemSN,nItem.itemtype,nItem.itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(nItem.itemtype,nItem.itemnum),data->btPartyOpt,data->nItemOpt,data->nPartyOpt);
                     }
 
                 }
                 break;
             default:
             {
-                LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give Unknown reward %i, item %u, count / value %u",opcode,data->btTarget,data->iItemSN,data->iValue);
+                LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give Unknown reward %i, item %u, count / value %u, (partyop %u, itemopt %u, nPartyOpt %u)",opcode,data->btTarget,data->iItemSN,data->iValue,data->btPartyOpt,data->nItemOpt,data->nPartyOpt);
             }
             break;
 
@@ -1225,7 +1247,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     if(opcode==6)
     {
         STR_REWD_006 * data = (STR_REWD_006 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Restore %i%% HP, %i%% MP",opcode,data->iPercentOfHP, data->iPercentOfMP);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Restore %i%% HP, %i%% MP (partyop %u)",opcode,data->iPercentOfHP, data->iPercentOfMP,data->btPartyOpt);
         return;
     }
 
@@ -1235,11 +1257,11 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         STR_REWD_007 * data = (STR_REWD_007 *)dataorg;
         if(data->btPartyOpt!=0)
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i (%s) at (%.2f,%.2f), with party members.",opcode,data->iZoneSN,GServer->GetSTLZoneNameByID(data->iZoneSN),(float)(data->iX/100),(float)(data->iY/100));
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i (%s) at (%.2f,%.2f), with party members. (partyop %u)",opcode,data->iZoneSN,GServer->GetSTLZoneNameByID(data->iZoneSN),(float)(data->iX/100),(float)(data->iY/100),data->btPartyOpt);
         }
         else
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i (%s) at (%.2f,%.2f)",opcode,data->iZoneSN,GServer->GetSTLZoneNameByID(data->iZoneSN),(float)(data->iX/100),(float)(data->iY/100));
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i (%s) at (%.2f,%.2f), (partyop %u)",opcode,data->iZoneSN,GServer->GetSTLZoneNameByID(data->iZoneSN),(float)(data->iX/100),(float)(data->iY/100),data->btPartyOpt);
         }
 
 
@@ -1253,11 +1275,11 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
 
         if(data->iX==0||data->iY==0||data->iZoneSN==0)
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) near me (team %i)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iTeamNo);
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) near me (team %i), (btwho)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iTeamNo,data->btWho);
         }
         else
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) to map %i (%s) at (%.2f,%.2f) (team %i)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iZoneSN,GServer->GetSTLZoneNameByID(data->iZoneSN),(float)(data->iX/100),(float)(data->iY/100),data->iTeamNo);
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) to map %i (%s) at (%.2f,%.2f) (team %i), (btwho %u)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iZoneSN,GServer->GetSTLZoneNameByID(data->iZoneSN),(float)(data->iX/100),(float)(data->iY/100),data->iTeamNo,data->btWho);
         }
 
 
@@ -1285,7 +1307,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     if(opcode==11)
     {
         STR_REWD_011 * data = (STR_REWD_011 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update variable (NOT CODED for Client) (CODED for Monsters / NPC)",opcode);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update variable",opcode);
         if(data->btWho==0)
         {
             LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Update ObjVar[%i] %s %i, who=%i (NPC)",data->nVarNo,Operators(data->btOp,buffero),data->iValue,data->btWho);
@@ -1332,7 +1354,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         STR_REWD_013 * data = (STR_REWD_013 *)dataorg;
         char* tempName = reinterpret_cast<char*>(&data->szTriggerName) - 2;
         dword hash = MakeStrHash(tempName);
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest Trigger %s (%u)",opcode,tempName,hash);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest Trigger %s (%u) (who %u, isec %u, nexttrigger %u)",opcode,tempName,hash,data->btWho,data->iSec,data->m_HashNextTrigger);
 
         return;
     }
@@ -1341,7 +1363,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     if(opcode==14)
     {
         STR_REWD_014 * data = (STR_REWD_014 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Learn Skill %i (%s)",opcode,data->iSkillNo,GServer->GetSTLSkillByID(data->iSkillNo));
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Learn Skill %i (%s), (op %u)",opcode,data->iSkillNo,GServer->GetSTLSkillByID(data->iSkillNo),data->btOp);
         return;
     }
 
@@ -1356,7 +1378,8 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Unknown...
     if(opcode==16)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED)",opcode);
+        STR_REWD_016 * data = (STR_REWD_016 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED), (op %u)",opcode,data->nGroupSN);
         return;
     }
 
@@ -1370,7 +1393,8 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Send Announcment...
     if(opcode==18)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Send Announcment (NOT CODED)",opcode);
+        STR_REWD_018 * data = (STR_REWD_018 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Send Announcment (NOT CODED), (strid %u, ncnt %u)",opcode,data->iStrID,data->nCnt);
         return;
     }
 
@@ -1380,7 +1404,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         STR_REWD_019 * data = (STR_REWD_019 *)dataorg;
         char* tempName = reinterpret_cast<char*>(&data->TriggerName) - 2;
         dword hash = MakeStrHash(tempName);
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest %s (hash %u) in Other Map %i (%s) for team %i (NOT CODED for Client) (CODED for Monsters / NPC)",opcode,tempName,hash,data->nZoneNo,GServer->GetSTLZoneNameByID(data->nZoneNo),data->nTeamNo);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest %s (hash %u) in Other Map %i (%s) for team %i (NOT CODED for Client) (CODED for Monsters / NPC), (triggerlength %u)",opcode,tempName,hash,data->nZoneNo,GServer->GetSTLZoneNameByID(data->nZoneNo),data->nTeamNo,data->nTriggerLength);
         return;
     }
 
@@ -1405,7 +1429,8 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Unknown...
     if(opcode==22)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED)",opcode);
+        STR_REWD_022 * data = (STR_REWD_022 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED), (op %u)",opcode,data->btOp);
         return;
     }
 
@@ -1435,14 +1460,16 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Clan Skill...
     if(opcode==26)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Skill (NOT CODED)",opcode);
+        STR_REWD_026 * data = (STR_REWD_026 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Skill (NOT CODED), (skill %u,op %u)",opcode,data->nSkillNo,data->btOP);
         return;
     }
 
     //Clan Contribution...
     if(opcode==27)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Contribution (NOT CODED)",opcode);
+        STR_REWD_027 * data = (STR_REWD_027 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Contribution (NOT CODED), (cont %u,op %u)",opcode,data->nCONT,data->btOP);
         return;
     }
 
@@ -1467,7 +1494,8 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Unspawn a NPC
     if(opcode==34)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Removing previously selected NPC.",opcode);
+        STR_REWD_034 * data = (STR_REWD_034 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Removing previously selected NPC. (op %u)",opcode,data->btOP);
         return;
     }
 

@@ -213,7 +213,12 @@ QUESTCOND(004){
           server->SendPM(client, "Check Item - [Slot:%i][Type:%i]", curItem->iWhere, curItem->uiItemSN);
 
         // Check quest items for a specific amount
-		if (curItem->iWhere==13)
+        int ch_itemtype=GServer->gi(curItem->uiItemSN,0);
+        int ch_itemnum=GServer->gi(curItem->uiItemSN,1);
+
+        //LMA: where not reliable.
+		//if (curItem->iWhere==13)
+		if(ch_itemtype==13)
 		{
           // Ok, check the current Check'd quest.
           if (client->CheckQuest < 0) return QUEST_SUCCESS;
@@ -252,12 +257,14 @@ QUESTCOND(004){
           }
 
         }
-        else if(curItem->iWhere!=0&&curItem->iWhere!=13&&curItem->uiItemSN!=0)
+        else if(ch_itemtype!=0&&ch_itemtype!=13&&curItem->uiItemSN!=0)
         {
+            //else if(curItem->iWhere!=0&&curItem->iWhere!=13&&curItem->uiItemSN!=0)
+
             //LMA: We check also some other items...
             //curItem->iWhere is actually the itemtype...
-            int ch_itemtype=GServer->gi(curItem->uiItemSN,0);
-            int ch_itemnum=GServer->gi(curItem->uiItemSN,1);
+            //int ch_itemtype=GServer->gi(curItem->uiItemSN,0);
+            //int ch_itemnum=GServer->gi(curItem->uiItemSN,1);
             int ch_nb_items=0;
             for (int k=0;k<140;k++)
             {
@@ -278,6 +285,7 @@ QUESTCOND(004){
         }
 
         // Check equipped items for a specific item? - Drakia
+        //LMA: usually it's to test if a player has something equipped or not (reset skill and so on).
 		if(curItem->uiItemSN == 0 && curItem->iWhere != 0)
 		{
 			int itemHead = client->items[curItem->iWhere].itemtype;
@@ -533,7 +541,7 @@ QUESTCOND(017)
     int var1=0;
     int var2=0;
 
-    LogDebug("QD17 We compare NPC %i[%i] with (%i) NPC %i[%i]",data->NpcVar1.iNpcNo,data->NpcVar1.nVarNo,data->btOp,data->NpcVar1.iNpcNo,data->NpcVar1.nVarNo);
+    LogDebug("QD17 We compare NPC %i[%i] with (%i) NPC %i[%i]",data->NpcVar1.iNpcNo,data->NpcVar1.nVarNo,data->btOp,data->NpcVar2.iNpcNo,data->NpcVar2.nVarNo);
 
     if(data->NpcVar1.iNpcNo>=MAX_NPC||data->NpcVar2.iNpcNo>=MAX_NPC||data->NpcVar1.nVarNo>=20||data->NpcVar2.nVarNo>=20)
     {

@@ -138,10 +138,10 @@ QUESTREWDC(008){
     GETREWDDATA(008);
 
 
-    if(data->iMonsterSN>=3050||data->iMonsterSN<=3089)
+    /*if(data->iMonsterSN>=3050||data->iMonsterSN<=3089)
     {
         Log(MSG_WARNING,"xmas gifts");
-    }
+    }*/
 
     LogDebug("BEGIN QUESTREWDC(008)");
     fPoint position;
