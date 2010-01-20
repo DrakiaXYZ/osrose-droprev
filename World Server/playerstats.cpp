@@ -2441,6 +2441,10 @@ unsigned int CPlayer::GetAttackSpeed( )
             case 12: //normal
                 aspeed = 88;
             break;
+            case 16:
+                //fast +1, same as 11
+                aspeed = 93;
+            break;
             case 11: //+1
                 aspeed = 93;
             break;
