@@ -385,6 +385,8 @@ bool CServerSocket::isBanned( sockaddr_in* ClientInfo )
 // Returns the current time/date
 unsigned long int CServerSocket::GetServerTime( )
 {
+    //LMA: This is wrong since the year goes from 1900 and there is a month offset too...
+    /*
 	// Get time/date and write it to the beginning of the row
 	time_t rawtime;							// For time
 	struct tm* timeinfo;					//    "
@@ -396,6 +398,10 @@ unsigned long int CServerSocket::GetServerTime( )
 	uCurTime += (timeinfo->tm_hour        * 3600      );
 	uCurTime += (timeinfo->tm_yday        * 86400     );
 	uCurTime += ((timeinfo->tm_year-2000) * 86400*366 );
+	*/
+
+	unsigned long int uCurTime = time(NULL);
+
 	return uCurTime;
 }
 

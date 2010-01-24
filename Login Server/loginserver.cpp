@@ -94,6 +94,9 @@ void CLoginServer::DeleteClientSocket( CClientSocket* thisclient )
 	* @param ClientInfo sockaddr_in structure
 	* @return true if the client is banned else false
 */
+//LMA: You should use the PHP function "time" or the c++  function "time"
+//to set the startban (seconds since 1970).
+//bantime is in seconds.
 bool CLoginServer::isBanned( sockaddr_in* ClientInfo )
 {
 	if(DB==NULL) return false;
