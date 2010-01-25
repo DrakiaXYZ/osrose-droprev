@@ -5462,11 +5462,17 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
 // Close Shop
 bool CWorldServer::pakCloseShop( CPlayer* thisclient, CPacket* P )
 {
-    BEGINPACKET( pak, 0x7c3 );
-    ADDWORD    ( pak, thisclient->clientid );
-    ADDBYTE    ( pak, 0x00 );
-    SendToVisible( &pak, thisclient );
+    //LMA: to solve the "gem" visible bug?
+    if(thisclient->Shop->open)
+    {
+        BEGINPACKET( pak, 0x7c3 );
+        ADDWORD    ( pak, thisclient->clientid );
+        ADDBYTE    ( pak, 0x00 );
+        SendToVisible( &pak, thisclient );
+    }
+
     thisclient->Shop->open = false;
+
     for(unsigned int j=0;j<30;j++)
     {
         thisclient->Shop->SellingList[j].slot = 0;
