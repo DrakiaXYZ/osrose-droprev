@@ -1359,6 +1359,9 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         if(Config.Command_Here > thisclient->Session->accesslevel)
            return true;
 
+        if( thisclient->Shop->open)
+            return true;
+
         return pakGMTele(thisclient, thisclient->Position->Map, thisclient->Position->current.x, thisclient->Position->current.y);
     }
    else if (strcmp(command, "hide")==0)

@@ -93,6 +93,10 @@ bool CPlayer::loaddata( )
 
     last_fuel=0;
 
+    //LMA: shout hack.
+    next_shout=0;
+    spam_shout=false;
+
     Shop->ShopType=atoi(row[37]);
     Shop->mil_shop_time=atoi(row[38]);
 

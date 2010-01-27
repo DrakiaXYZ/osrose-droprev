@@ -1996,6 +1996,23 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
 // Shouting
 bool CWorldServer::pakShout ( CPlayer* thisclient, CPacket* P )
 {
+    //LMA: to avoid shout spamming (20 seconds between each shout).
+    time_t etime=time(NULL);
+    if (etime<thisclient->next_shout)
+    {
+        //Only one hack message...
+        if (!thisclient->spam_shout)
+        {
+            Log(MSG_HACK,"Possible shout hack by player %s",thisclient->CharInfo->charname);
+            thisclient->spam_shout=true;
+        }
+
+        return true;
+    }
+
+    thisclient->next_shout=time(NULL)+19;   //Can shout at this time.
+    thisclient->spam_shout=false;
+
 	BEGINPACKET(pak, 0x0785);
 	ADDSTRING  ( pak, thisclient->CharInfo->charname );
 	ADDBYTE    ( pak, 0 );

@@ -51,6 +51,10 @@ class CPlayer: public CCharacter
     //Fuel
     clock_t last_fuel;
 
+   //LMA: last shout.
+    time_t next_shout;
+    bool spam_shout;
+
     // Fairy
     bool Fairy;
     UINT FairyListIndex;

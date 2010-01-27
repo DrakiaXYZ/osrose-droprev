@@ -1506,7 +1506,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     {
                         Log(MSG_INFO,"Null Exp activated for %s",thisclient->CharInfo->charname);
                         thisclient->no_exp=true;
-                        thisclient->Shop->mil_shop_time=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);     //Effective Time Duration
+                        thisclient->timer_no_exp=time(NULL)+60*(UseList.Index[useitem->itemnum]->useeffect[1]*10);     //Effective Time Duration
                         BEGINPACKET( pak, 0x702 );
                         ADDSTRING( pak, "[Mileage] Null Exp activated." );
                         ADDBYTE( pak, 0 );
