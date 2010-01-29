@@ -5604,6 +5604,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 return false;
 
             //LMA: We need to get the "real" item needed for upgrade.
+            if (thisclient->items[item].itemtype==0||thisclient->items[item].itemtype>14||thisclient->items[item].itemnum==0||thisclient->items[item].itemnum>=EquipList[thisclient->items[item].itemtype].max)
+            {
+                Log(MSG_HACK,"Player %s tried to refine an item with wrong values slot %u, item %u::%u",thisclient->CharInfo->charname,item,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+                return false;
+            }
+
             UINT gradeIndex=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->itemgradeID;
 
             if(gradeIndex==0||gradeIndex>=ProductList.max)
