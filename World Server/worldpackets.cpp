@@ -875,6 +875,13 @@ bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
 	}
     else
     {
+        //LMA: is there something to drop to begin with?
+        if(thisclient->items[itemid].itemtype==0||thisclient->items[itemid].itemnum==0)
+        {
+            Log(MSG_WARNING,"Player %s tries to drop empty item %u::%u in slot %u",thisclient->CharInfo->charname,thisclient->items[itemid].itemtype,thisclient->items[itemid].itemnum,itemid);
+            return true;
+        }
+
         // fixed by tomciaaa [item count drop correctly and dissaper from inventory]
         bool flag = false;
         if(thisclient->items[itemid].itemtype >=10 && thisclient->items[itemid].itemtype <= 13)
