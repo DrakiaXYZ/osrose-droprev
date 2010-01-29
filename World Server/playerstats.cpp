@@ -2422,6 +2422,30 @@ unsigned int CPlayer::GetAttackSpeed( )
 	UINT paspeed = 0;//Passive Skill % Value
     UINT vaspeed = 0;//Passive Skill Value
 
+    //LMA: new formula:
+    int ind_0=17;   //For naRose BEFORE client 259, it's 12. It's the Fast + 0 (normal) offset.
+    if(items[7].itemnum!=0 && items[7].count > 0)
+    {
+        UINT wpnspd = 0;
+        wpnspd = GServer->EquipList[WEAPON].Index[items[7].itemnum]->attackspeed;
+
+        int temp_speed=88+((ind_0-wpnspd)*5);
+        if (temp_speed<=0||wpnspd==0)
+        {
+            Log(MSG_WARNING,"Weird Aspeed value for weapon value=%i (STB ASpeed=%i)",items[7].itemnum,wpnspd);
+            temp_speed=88;
+        }
+
+        aspeed=temp_speed;
+    }
+    else
+    {
+        //bare fists.
+        aspeed = 115;
+    }
+
+    //old formula.
+    /*
     if(items[7].itemnum!=0 && items[7].count > 0)
     {
         UINT wpnspd = 0;
@@ -2475,6 +2499,7 @@ unsigned int CPlayer::GetAttackSpeed( )
     {
         aspeed = 115;
     }
+    */
 
     UINT weapontype = 0;
     weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;

@@ -192,3 +192,53 @@ bool CCharServer::DiscoAllAvatars(UINT userid )
 
     return true;
 }
+
+//LMA: The goal is to check a string is made of valid chars and extensions.
+bool CCharServer::CheckValidName(CCharClient* thisclient, const char* my_name)
+{
+    char mychar[65];
+    int nb_car=0;
+
+    nb_car=strlen(my_name);
+    if (nb_car>=65||nb_car<=0)
+    {
+        Log(MSG_HACK,"%s tried to create a too long avatar %s (%i)",thisclient->charname,my_name,nb_car);
+        return false;
+    }
+
+    sprintf (mychar,"%s",my_name);
+
+    //uppercase time.
+   for (int k=0;k<nb_car;k++)
+    {
+        int c=toupper(mychar[k]);
+        mychar[k]=c;
+    }
+
+    const char* valid_chars="AZERTYUIOPQSDFGHJKLMWXCVBN0123456789";
+    int i = strspn (mychar,valid_chars);
+
+    if(i!=nb_car)
+    {
+        Log(MSG_HACK,"%s tried to create a not correct avatar name %s",thisclient->charname,my_name);
+        return false;
+    }
+
+    //Now we test some not valid sentences, like GM, ADMIN and so on...
+    //the [6] here is the max size of a content, for example ADMIN is 5 so you need to add an extra 1 for NULL, so 6.
+    char str[][6] = { "GM" , "ADMIN" , "DEV" };
+    int nb_to_check=3;  //nb of extensions to check (see above).
+    for (int n=0 ; n<nb_to_check ; n++)
+    {
+        if(strstr(mychar,str[n])!=NULL)
+        {
+            Log(MSG_HACK,"%s tried to create an avatar with a reserved extension %s is in %s",thisclient->charname,str[n],my_name);
+            return false;
+        }
+
+    }
+
+
+    return true;
+}
+

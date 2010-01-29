@@ -293,6 +293,16 @@ bool CCharServer::pakCreateChar( CCharClient* thisclient, CPacket* P )
 		return true;
 	}
 	DB->QFree( );
+
+	//LMA: checking name validity.
+    if(!CheckValidName(thisclient, newname.c_str()))
+    {
+        BEGINPACKET( pak, 0x713);
+		ADDWORD    ( pak, 2 );
+		thisclient->SendPacket( &pak );
+		return true;
+    }
+
 	result = DB->QStore("SELECT id FROM characters WHERE char_name='%s'", newname.c_str());
     if(result==NULL) return false;
 	if ( mysql_num_rows( result ) > 0 )

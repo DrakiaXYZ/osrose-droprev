@@ -109,6 +109,7 @@ class CCharServer : public CServerSocket
     	bool pakLoginConnected  ( CCharClient* thisclient, CPacket* P );
     	bool pakLoginDSClient( CCharClient* thisclient, CPacket* P );
         bool DiscoAllAvatars(UINT userid ); //LMA: Against same account hack.
+        bool CheckValidName(CCharClient* thisclient, const char* my_name);    //LMA: Checking avatar name to avoid GM tags and not valid chars.
         int GetNbUserID( UINT userid ); //LMA: Against same account hack.
     	bool pak7e5 ( CCharClient* thisclient, CPacket* P );
         bool pakChatrooms ( CCharClient* thisclient, CPacket* P );

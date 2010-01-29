@@ -807,7 +807,7 @@ char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
 
     if(family>=1&&family<=9)
     {
-        if(idorg>EquipList[family].max)
+        if(idorg>=EquipList[family].max)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
@@ -848,7 +848,7 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 
     if(family>=1&&family<=9)
     {
-        if(idorg>EquipList[family].max)
+        if(idorg>=EquipList[family].max)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
@@ -859,7 +859,7 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 
     if(family==10)
     {
-        if(idorg>UseList.max)
+        if(idorg>=UseList.max)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
@@ -870,7 +870,7 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 
     if(family==11)
     {
-        if(idorg>JemList.max)
+        if(idorg>=JemList.max)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
@@ -881,7 +881,7 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 
     if(family==12)
     {
-        if(idorg>NaturalList.max)
+        if(idorg>=NaturalList.max)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
@@ -892,7 +892,7 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 
     if(family==13)
     {
-        if(idorg>maxQuestItems)
+        if(idorg>=maxQuestItems)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
@@ -903,7 +903,7 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 
     if(family==14)
     {
-        if(idorg>PatList.max)
+        if(idorg>=PatList.max)
         {
             Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
             return STLNameList[1];
