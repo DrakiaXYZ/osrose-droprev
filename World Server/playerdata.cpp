@@ -482,6 +482,10 @@ bool CPlayer::loaddata( )
     pc_rebate=0;
     pc_up=0;
 
+    //LMA: summon jauge:
+    summon_jauge=50;
+    cur_jauge=0;
+
     for (int i=0;i<MAX_ALL_SKILL;i++)
     {
         if (cskills[i].thisskill==NULL)
@@ -500,7 +504,16 @@ bool CPlayer::loaddata( )
             pc_up=50;
         }
 
+        //LMA: summon jauge.
+        if (cskills[i].thisskill->buff[0]==62)
+        {
+            summon_jauge+=cskills[i].thisskill->value1[0];
+        }
+
     }
+
+    Log(MSG_INFO,"summon jauge %i",summon_jauge);
+
 
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem,sp_value FROM items WHERE owner=%i", CharInfo->charid);
     if(result==NULL) return false;
@@ -889,6 +902,7 @@ void CPlayer::saveskills( )
 
     int pc_temp=0;
     int pc_union=0;
+    int val_summon=0;
     char basic[1024];
     char drive[1024];
     char sclass[1024];
@@ -912,12 +926,18 @@ void CPlayer::saveskills( )
            sprintf(&slevel[strlen(slevel)], ",%i",cskills[i].level);
         }
 
-        //LMA: % dealer rebate.
+        //LMA: % dealer rebate and summon jauge.
         if (cskills[i].thisskill!=NULL)
         {
             if (cskills[i].thisskill->buff[0]==59)
             {
                 pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+            //LMA: summon jauge.
+            if (cskills[i].thisskill->buff[0]==62)
+            {
+                val_summon+=cskills[i].thisskill->value1[0];
             }
 
         }
@@ -944,6 +964,12 @@ void CPlayer::saveskills( )
             if (cskills[i].thisskill->buff[0]==59)
             {
                 pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+            //LMA: summon jauge.
+            if (cskills[i].thisskill->buff[0]==62)
+            {
+                val_summon+=cskills[i].thisskill->value1[0];
             }
 
         }
@@ -979,6 +1005,12 @@ void CPlayer::saveskills( )
                 pc_union=50;
             }
 
+            //LMA: summon jauge.
+            if (cskills[i].thisskill->buff[0]==62)
+            {
+                val_summon+=cskills[i].thisskill->value1[0];
+            }
+
         }
 
     }
@@ -997,6 +1029,12 @@ void CPlayer::saveskills( )
             if (cskills[i].thisskill->buff[0]==59)
             {
                 pc_temp+=cskills[i].thisskill->value2[0];
+            }
+
+            //LMA: summon jauge.
+            if (cskills[i].thisskill->buff[0]==62)
+            {
+                val_summon+=cskills[i].thisskill->value1[0];
             }
 
         }
@@ -1019,12 +1057,20 @@ void CPlayer::saveskills( )
                 pc_temp+=cskills[i].thisskill->value2[0];
             }
 
+            //LMA: summon jauge.
+            if (cskills[i].thisskill->buff[0]==62)
+            {
+                val_summon+=cskills[i].thisskill->value1[0];
+            }
+
         }
 
     }
 
     pc_rebate=pc_temp;
     pc_up=pc_union;
+    summon_jauge=50+val_summon;
+    Log(MSG_INFO,"New jauge is %i",summon_jauge);
 
     //LMA: Saving Skills Data for a player.
     GServer->DB->QExecute("UPDATE characters SET class_skills='%s',class_skills_level='%s',basic_skills='%s',driving_skills='%s',unique_skills='%s',mileage_skills='%s',unique_skills_level='%s',mileage_skills_level='%s' WHERE id=%i",

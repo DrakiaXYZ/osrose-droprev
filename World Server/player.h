@@ -128,6 +128,10 @@ class CPlayer: public CCharacter
     //LMA: % for dealer (when buying from NPC).
     int pc_rebate;
 
+    //LMA: summon jauge.
+    int summon_jauge;
+    int cur_jauge;
+
     //LMA: union points bonus.
     int pc_up;
 

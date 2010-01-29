@@ -47,6 +47,7 @@ class CMonster : public CCharacter
         unsigned int team;  //LMA: PVP team or friendly.
     	unsigned int montype;
     	unsigned int owner;
+    	unsigned int owner_user_id; //LMA: used by summons for the summon jauge.
     	unsigned int hitcount;    //LMA: hit count for some monsters (MC and so on...) Arnold.
     	unsigned int maxhitcount;    //LMA: max hit count for some monsters (MC and so on...) Arnold.
     	bool stay_still;             //LMA: if yes, the monster will never move from the place it had been placed.

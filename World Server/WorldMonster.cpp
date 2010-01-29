@@ -56,6 +56,7 @@ CMonster::CMonster( fPoint MonsterPosition, UINT MonsterType, UINT MonsterMap, U
     aip_clientid=0;
     sp_aip=0;
     owner = Owner;
+    owner_user_id=0;
     thisparty = NULL;
     if(owner==0) CharType = TMONSTER;
     else CharType = TSUMMON;

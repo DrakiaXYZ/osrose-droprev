@@ -183,10 +183,37 @@ bool CWorldServer::DoSkillScript( CCharacter* character, CSkills* thisskill )
             //fPoint position = RandInCircle( character->Position->current, 5 );
             fPoint position = RandInCircle( character->Position->current, 0 );
 
+            //LMA: We must first check that the player can spawn this monster (summon jauge).
+            if(character->IsPlayer())
+            {
+                CPlayer* tempplayer=(CPlayer*) character;
+                if (tempplayer->cur_jauge>=tempplayer->summon_jauge)
+                {
+                    Log(MSG_WARNING,"Player %s tries to summon %i but his jauge is full (%i>=%i)",tempplayer->CharInfo->charname,thisskill->svalue1,tempplayer->cur_jauge,tempplayer->summon_jauge);
+                    return false;
+                }
+
+                if((GServer->NPCData[thisskill->svalue1]->tab1+tempplayer->cur_jauge)>tempplayer->summon_jauge)
+                {
+                    Log(MSG_WARNING,"Player %s tries to summon %i but won't have enough jauge (%i+%u>%i)",tempplayer->CharInfo->charname,thisskill->svalue1,tempplayer->cur_jauge,GServer->NPCData[thisskill->svalue1]->tab1,tempplayer->summon_jauge);
+                    return false;
+                }
+
+            }
+
             CMap* map = MapList.Index[character->Position->Map];
             CMonster* thismonster=map->AddMonster( thisskill->svalue1, position, character->clientid );
             if (thismonster!=NULL)
             {
+                //LMA: updating summon jauge.
+                if(character->IsPlayer())
+                {
+                    CPlayer* tempplayer=(CPlayer*) character;
+                    tempplayer->cur_jauge+=GServer->NPCData[thisskill->svalue1]->tab1;
+                    thismonster->owner_user_id=tempplayer->Session->userid;
+                    Log(MSG_INFO,"new jauge value %i/%i",tempplayer->cur_jauge,tempplayer->summon_jauge);
+                }
+
                thismonster->skillid=thisskill->id;
                if (!thismonster->IsBonfire())
                   break;

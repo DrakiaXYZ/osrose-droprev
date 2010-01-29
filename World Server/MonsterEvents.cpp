@@ -170,8 +170,40 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
         lastDegenTime = clock();
         if (Stats->HP < 1||ownerclient == NULL||ownerclient->IsDead())//orphan check
         {
+            //LMA: We update the jauge.
+            if(ownerclient != NULL)
+            {
+                ownerclient->cur_jauge-=GServer->NPCData[monster->montype]->tab1;
+                if(ownerclient->cur_jauge<=0)
+                {
+                    ownerclient->cur_jauge=0;
+                }
+
+                Log(MSG_INFO,"summon died (took %u), jauge is now %i/%i",GServer->NPCData[monster->montype]->tab1,ownerclient->cur_jauge,ownerclient->summon_jauge);
+            }
+            else
+            {
+                //LMA: We have to look for the owner with his userid, perhaps he warped...
+                if(monster->owner_user_id>0)
+                {
+                    CPlayer* tempplayer=GServer->GetClientByUserID(monster->owner_user_id);
+                    if(tempplayer!=NULL)
+                    {
+                        tempplayer->cur_jauge-=GServer->NPCData[monster->montype]->tab1;
+                        if(tempplayer->cur_jauge<=0)
+                        {
+                            tempplayer->cur_jauge=0;
+                        }
+
+                        Log(MSG_INFO,"summon died (owner found by userid) (took %u), jauge is now %i/%i",GServer->NPCData[monster->montype]->tab1,tempplayer->cur_jauge,tempplayer->summon_jauge);
+                    }
+
+                }
+
+            }
+
             //he's dead.
-            //Log(MSG_INFO,"Summon should be dead now");
+            Log(MSG_INFO,"Summon should be dead now, orphan");
             BEGINPACKET( pak, 0x799 );
             ADDWORD    ( pak, monster->clientid );
             ADDWORD    ( pak, monster->clientid );
@@ -186,6 +218,7 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
             if(Stats->HP >0)
             {
                 //LMA: Trying to update real HP amount.
+                Log(MSG_INFO,"Summon is alive");
                 BEGINPACKET( pak, 0x79f );
                 ADDWORD    ( pak, monster->clientid );
                 ADDDWORD   ( pak, Stats->HP );
@@ -197,6 +230,38 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
     }
     else if (Stats->HP < 1)
     {
+        //LMA: We update the jauge.
+        if(ownerclient != NULL)
+        {
+            ownerclient->cur_jauge-=GServer->NPCData[monster->montype]->tab1;
+            if(ownerclient->cur_jauge<=0)
+            {
+                ownerclient->cur_jauge=0;
+            }
+
+            Log(MSG_INFO,"summon died (took %u), jauge is now %i/%i",GServer->NPCData[monster->montype]->tab1,ownerclient->cur_jauge,ownerclient->summon_jauge);
+        }
+        else
+        {
+            //LMA: We have to look for the owner with his userid, perhaps he warped...
+            if(monster->owner_user_id>0)
+            {
+                CPlayer* tempplayer=GServer->GetClientByUserID(monster->owner_user_id);
+                if(tempplayer!=NULL)
+                {
+                    tempplayer->cur_jauge-=GServer->NPCData[monster->montype]->tab1;
+                    if(tempplayer->cur_jauge<=0)
+                    {
+                        tempplayer->cur_jauge=0;
+                    }
+
+                    Log(MSG_INFO,"summon died (owner found by userid 2) (took %u), jauge is now %i/%i",GServer->NPCData[monster->montype]->tab1,tempplayer->cur_jauge,tempplayer->summon_jauge);
+                }
+
+            }
+
+        }
+
         //Log(MSG_INFO,"Summon should be dead now 2");
         BEGINPACKET( pak, 0x799 );
         ADDWORD    ( pak, monster->clientid );
