@@ -170,8 +170,8 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
         lastDegenTime = clock();
         if (Stats->HP < 1||ownerclient == NULL||ownerclient->IsDead())//orphan check
         {
-            //LMA: We update the jauge.
-            if(ownerclient != NULL)
+            //LMA: We update the jauge, only if it was a skill summon
+            if(ownerclient != NULL&&monster->owner_user_id>0)
             {
                 ownerclient->cur_jauge-=GServer->NPCData[monster->montype]->tab1;
                 if(ownerclient->cur_jauge<=0)
@@ -230,8 +230,8 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
     }
     else if (Stats->HP < 1)
     {
-        //LMA: We update the jauge.
-        if(ownerclient != NULL)
+        //LMA: We update the jauge (only for skill summons)
+        if(ownerclient != NULL&&monster->owner_user_id>0)
         {
             ownerclient->cur_jauge-=GServer->NPCData[monster->montype]->tab1;
             if(ownerclient->cur_jauge<=0)
