@@ -476,7 +476,9 @@ bool CPlayer::loaddata( )
 
 	//LMA: Saving Skills if needed.
     if (do_save)
+    {
         saveskills();
+    }
 
     //LMA: % rebate and bonus union points
     pc_rebate=0;
@@ -510,6 +512,8 @@ bool CPlayer::loaddata( )
             summon_jauge+=cskills[i].thisskill->value1[0];
         }
 
+        //LMA: we reset the skills cooldown.
+        cskills[i].cooldown_skill=0;
     }
 
     Log(MSG_INFO,"summon jauge %i",summon_jauge);

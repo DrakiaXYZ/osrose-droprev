@@ -301,6 +301,7 @@ struct SKILLS
 {
 	unsigned id;
 	unsigned level;
+	time_t cooldown_skill;   //LMA: cooldown for skills.
 	CSkills* thisskill;
 };
 

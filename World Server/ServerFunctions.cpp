@@ -1592,6 +1592,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
                 thisclient->cskills[index].id=skill;
                 thisclient->cskills[index].level=1;
                 thisclient->cskills[index].thisskill = thisskill;
+                thisclient->cskills[index].cooldown_skill = 0;
 
                 if (takeSP)
                 {

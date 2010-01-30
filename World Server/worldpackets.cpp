@@ -3039,7 +3039,12 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 	   ADDDWORD   ( pak, character->Stats->HP );    //LMA: DDWORD :)
 	   thisclient->client->SendPacket( &pak );
     }
+
 	CSkills* thisskill = GetSkillByID( skillid );
+    if(thisskill==NULL)
+    {
+        return true;
+    }
 
     //We Check if The Skill need a Bow, Gun, Launcher or Crossbow and check the number of Arrow, Bullet or Canon the player have is < 1
     bool need_arrows=false;
@@ -3075,13 +3080,24 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
         }
     }
 
-	if(thisskill==NULL)
-	   return true;
 	if(thisskill->target==9 && !character->IsDead())
 	{
         ClearBattle( thisclient->Battle );
         return true;
     }
+
+    //LMA: time to check the cooldown time.
+    time_t etime=time(NULL);
+    if (etime<thisclient->cskills[skillnum].cooldown_skill)
+    {
+        Log(MSG_HACK,"Player %s tried to pakStartSkill skill %u but cooldown wasn't finished %u<%u",thisclient->CharInfo->charname,skillid,etime,thisclient->cskills[skillnum].cooldown_skill);
+        return true;
+    }
+
+    //We set the time the player can cast this skill next time.
+    thisclient->cskills[skillnum].cooldown_skill=etime+thisskill->cooldown;
+    Log(MSG_WARNING,"Next pakStartSkill skill %u available at %u (is %u",skillid,etime,thisclient->cskills[skillnum].cooldown_skill);
+
     if( isSkillTargetFriendly( thisskill ) )
     {
         Log(MSG_INFO,"Buff because friendly");
@@ -3582,6 +3598,18 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
 	unsigned int skilltarget = thisskill->target;
     unsigned int skillrange = thisskill->aoeradius;
 
+    //LMA: time to check the cooldown time.
+    time_t etime=time(NULL);
+    if (etime<thisclient->cskills[num].cooldown_skill)
+    {
+        Log(MSG_HACK,"Player %s tried to pakSkillSelf skill %u but cooldown wasn't finished %u<%u",thisclient->CharInfo->charname,skillid,etime,thisclient->cskills[num].cooldown_skill);
+        return true;
+    }
+
+    //We set the time the player can cast this skill next time.
+    thisclient->cskills[num].cooldown_skill=etime+thisskill->cooldown;
+    Log(MSG_WARNING,"Next pakSkillSelf skill %u available at %u (is %u",skillid,etime,thisclient->cskills[num].cooldown_skill);
+
 	if( thisskill->aoe == 0 )
 	{
         thisclient->StartAction( NULL, BUFF_SELF, skillid );
@@ -4071,6 +4099,7 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
 
        thisclient->cskills[pos].level+=1;
        thisclient->cskills[pos].thisskill = thisskill;
+       thisclient->cskills[pos].cooldown_skill=0;
 
        //thisclient->UpgradeSkillInfo(pos,thisclient->cskills[pos].id,1);
        thisclient->saveskills();
@@ -4735,8 +4764,21 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
     //Log(MSG_INFO,"[pakSkillAOE] skillid=%i",skillid);
     CSkills* thisskill = GetSkillByID( skillid );
     if(thisskill==NULL) return true;
+
     if(thisskill->aoe==1)
     {
+        //LMA: time to check the cooldown time.
+        time_t etime=time(NULL);
+        if (etime<thisclient->cskills[num].cooldown_skill)
+        {
+            Log(MSG_HACK,"Player %s tried to pakSkillAOE skill %u but cooldown wasn't finished %u<%u",thisclient->CharInfo->charname,skillid,etime,thisclient->cskills[num].cooldown_skill);
+            return true;
+        }
+
+        //We set the time the player can cast this skill next time.
+        thisclient->cskills[num].cooldown_skill=etime+thisskill->cooldown;
+        Log(MSG_WARNING,"Next pakSkillAOE skill %u available at %u (is %u",skillid,etime,thisclient->cskills[num].cooldown_skill);
+
         thisclient->StartAction( NULL , AOE_TARGET, skillid );
     }
 
