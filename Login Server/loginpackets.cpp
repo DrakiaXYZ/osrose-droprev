@@ -68,23 +68,26 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
     BEGINPACKET( pak, 0x708 );
 
     //LMA: Escaping.
-    char * lma_username = new char[temp_string.size() + 1];
+    /*char * lma_username = new char[temp_string.size() + 1];
     strcpy(lma_username,temp_string.c_str());
     char * new_username = new char[temp_string.size()*3 +1];
     mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
-    thisclient->username.assign(new_username);
+    thisclient->username.assign(new_username);*/
     //LMA: end escaping
+
+    //LMA: new way.
+    EscapeMySQL(temp_string.c_str(),thisclient->username);
 
     MYSQL_RES *result = DB->QStore( "SELECT id,password,accesslevel,online,active FROM accounts WHERE username='%s'", thisclient->username.c_str() );
     if(result==NULL)
     {
-        delete[] lma_username;
-        delete[] new_username;
+        /*delete[] lma_username;
+        delete[] new_username;*/
         return false;
     }
 
-    delete[] lma_username;
-    delete[] new_username;
+    /*delete[] lma_username;
+    delete[] new_username;*/
 
     if( mysql_num_rows( result ) == 1 )
     {
@@ -335,3 +338,20 @@ bool CLoginServer::pakGameGuard( CLoginClient* thisclient, CPacket *P )
     thisclient->hasGameGuard = true;
     return true;
 }
+
+
+//LMA: escaping.
+bool CLoginServer::EscapeMySQL(const char* data,string & mystring)
+{
+    char * lma_username = new char[strlen(data) + 1];
+    strcpy(lma_username,data);
+    char * new_username = new char[strlen(data)*3 +1];
+    mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
+    mystring.assign(new_username);
+    delete[] lma_username;
+    delete[] new_username;
+
+
+    return true;
+}
+
