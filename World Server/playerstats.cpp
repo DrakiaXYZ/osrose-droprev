@@ -215,7 +215,8 @@ unsigned int CPlayer::GetAccury( )
     UINT Accury = 0;
     UINT pAccury = 0;//Passive Skill % Value
     UINT vAccury = 0;//Passive Skill Value
-    UINT extra_refine[10] = { 0, 4, 7, 10, 14, 20, 26, 33, 40, 50};
+    //UINT extra_refine[10] = { 0, 4, 7, 10, 14, 20, 26, 33, 40, 50}; //old Way Value Add (list_grade.stb)
+    UINT extra_refine[10] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100}; //New Way % Add (list_grade.stb)
 
     if(Status->Stance != DRIVING)       //Walking, Running, Fighting, ...  Stats
     {
@@ -226,15 +227,16 @@ unsigned int CPlayer::GetAccury( )
         else if(items[7].count !=0)
         {
             Accury = (UINT)floor(((Attr->Con+Attr->Econ+10)*0.8) + ((GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality*0.6) + (items[7].durability*0.8)));
-        }
 
-        if(items[7].refine>0)
-        {
-            UINT refine = (UINT)floor(items[7].refine/16);
-
-            if(refine>0 && refine<10)
+            if(items[7].refine>0)
             {
-                Accury += extra_refine[refine];
+                UINT refine = (UINT)floor(items[7].refine/16);
+
+                if(refine>0 && refine<10)
+                {
+                    //Accury += extra_refine[refine]; //old Way Value Add (list_grade.stb)
+                    Accury += (UINT)floor(extra_refine[refine] * 0.01 * (GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality * 0.6)); //New Way % Add (list_grade.stb)
+                }
             }
         }
 
