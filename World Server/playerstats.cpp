@@ -59,14 +59,13 @@ unsigned int CPlayer::GetDodge( )
             {
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine>0 && refine<10)//Dr From Refine
+                if(refine>0 && refine<10)//Dr From Refine (value from LIST_GRADE.stb)
                 {
-                    UINT extra_refine_drv[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};//uncomment this line and comment the other listed below for match client value
-                    //UINT extra_refine_drv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value : don't Match with Client Value you need to comment this line to match client value
-                    //UINT extra_refine_drp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//% : don't Match with Client Value you need to comment this line to match client value
+                    UINT extra_refine_drv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
+                    UINT extra_refine_drp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
 
                     Dodge += (UINT)floor(extra_refine_drv[refine]);
-                    //Dodge += (UINT)floor(extra_refine_drp[refine] * 0.01 * (items[i].durability * 0.3) );//don't Match with Client Value you need to comment this line to match client value
+                    Dodge += (UINT)floor(extra_refine_drp[refine] * 0.01 * (items[i].durability * 0.3) );
                 }
             }
         }
