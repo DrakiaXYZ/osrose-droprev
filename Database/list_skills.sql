@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: osrose
 Target Host: localhost
 Target Database: osrose
-Date: 12/26/2009 7:26:09 PM
+Date: 2/11/2010 7:14:03 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -12,14 +12,14 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for list_skills
 -- ----------------------------
 CREATE TABLE `list_skills` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL auto_increment,
   `classid` int(11) NOT NULL,
   `skillid` int(11) NOT NULL,
   `skill_level` varchar(4) NOT NULL,
-  `description` varchar(50) DEFAULT NULL,
-  `isactive` int(11) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=412 DEFAULT CHARSET=utf8;
+  `description` varchar(50) default NULL,
+  `isactive` int(11) NOT NULL default '1',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=419 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -434,4 +434,11 @@ INSERT INTO `list_skills` VALUES ('407', '0', '5508', '1', 'Mileage-Protection B
 INSERT INTO `list_skills` VALUES ('408', '0', '5509', '1', 'Mileage-Marksmen Blessing', '1');
 INSERT INTO `list_skills` VALUES ('409', '0', '5510', '1', 'Mileage-Intense Blessing', '1');
 INSERT INTO `list_skills` VALUES ('410', '0', '5596', '1', 'Quest-Pharaoh Stance', '1');
-INSERT INTO `list_skills` VALUES ('411', '0', '2882', '1', 'Unique-Wayfinder Skill', '1');
+INSERT INTO `list_skills` VALUES ('411', '222', '5557', '1', 'Mileage-Advanced Hustle Charm', '1');
+INSERT INTO `list_skills` VALUES ('412', '222', '5558', '1', 'Mileage-Advanced Precision Charm', '1');
+INSERT INTO `list_skills` VALUES ('413', '222', '5559', '1', 'Mileage-Advanced Resilience Charm', '1');
+INSERT INTO `list_skills` VALUES ('414', '222', '5560', '1', 'Mileage-Advanced Battle Charm', '1');
+INSERT INTO `list_skills` VALUES ('415', '222', '5561', '1', 'Mileage-Advanced Critical Charm', '1');
+INSERT INTO `list_skills` VALUES ('416', '222', '5562', '1', 'Mileage-Advanced Evasive Charm', '1');
+INSERT INTO `list_skills` VALUES ('417', '222', '5563', '1', 'Mileage-Advanced Clobber Charm', '1');
+INSERT INTO `list_skills` VALUES ('418', '222', '5564', '1', 'Mileage-Advanced Valkyrie Charm', '1');
