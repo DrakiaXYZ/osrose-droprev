@@ -82,6 +82,13 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 return false;
             }
             memcpy( nick, &P->Buffer[3], P->Size-9 );
+
+            if(!CheckEscapeMySQL(nick,-1,true))
+            {
+                Log(MSG_WARNING,"A nick (friendlist) contains incorrect caracter (see warnings above)");
+                return false;
+            }
+
             CCharClient* otherclient = (CCharClient*) GetClientByName (nick);
             if(otherclient!=NULL)
             {
@@ -107,6 +114,7 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
 
                 newfriend1->id = otherclient->charid; //friendid
                 strcpy(newfriend1->name, otherclient->charname); //friend name
+
                 thisclient->FriendList.push_back( newfriend1 );
                 RESETPACKET( pak, 0x7e1 );
                 ADDBYTE    ( pak, 0x02 );
@@ -118,8 +126,7 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 thisclient->SendPacket(&pak);
 
                 //Add me to his friend list (sql)
-                if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",
-                       thisclient->charid,otherclient->charid,otherclient->charname))
+                if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",thisclient->charid,otherclient->charid,otherclient->charname))
                     return false;
                 CFriendList * newfriend2 = new (nothrow) CFriendList;
                 if(newfriend2==NULL)

@@ -223,14 +223,19 @@ CDrop* CMonster::GetDrop( )
     //Code for these 'side drops' is still under development and will follow soon
     //GServer->PYGetDrop( this, 1 );
 
+    if (IsDead())
+    {
+        drop_dead=true;
+    }
+
     //LMA: And system
     if(!GServer->Config.drop_rev)
     {
-        GServer->GetPYDrop( this, 1 );
+        return GServer->GetPYDrop( this, 1 );
     }
     else
     {
-        GServer->GetPYDropAnd( this, 1 );
+        return GServer->GetPYDropAnd( this, 1 );
     }
 
 }

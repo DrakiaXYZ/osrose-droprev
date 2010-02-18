@@ -66,7 +66,8 @@ class CLoginServer : public CServerSocket
     	bool pakGetServers( CLoginClient* thisclient, CPacket* P );
     	bool pakGetIP( CLoginClient* thisclient, CPacket* P );
     	bool pakGameGuard( CLoginClient* thisclient, CPacket* P );
-        bool EscapeMySQL(const char* data,string & mystring);   //LMA: used to escape MySQL.
+        bool EscapeMySQL(const char* data,string & mystring,int nb_car_max=-1,bool check_same=false);   //LMA: used to escape MySQL.
+        bool CheckEscapeMySQL(const char* data,int nb_car_max,bool check_same);   //LMA: checking escaping.
 
         // Variables
         string   filename;

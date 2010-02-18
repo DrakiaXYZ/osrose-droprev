@@ -790,7 +790,7 @@ bool CWorldServer::LoadSkillData( )
         newskill->mp = STB_SKILL.rows[i][17];
         newskill->costtype[1] = STB_SKILL.rows[i][18]; // All driveby skills have 2 costs
         newskill->costamount[1] = STB_SKILL.rows[i][19]; // The second is normally cart gauge
-        newskill->cooldown = STB_SKILL.rows[i][20];   // The time it takes to be able to use the skill again.
+        newskill->cooldown = STB_SKILL.rows[i][20]/5;   // The time it takes to be able to use the skill again. (LMA: /5...)
         //newskill->success=STB_SKILL.rows[i][69];    //Dunno what this field is really but it sure isn't success rate <_<
 
         newskill->weapon[0] = STB_SKILL.rows[i][30];    // Item Type must be equipped (Only 1)

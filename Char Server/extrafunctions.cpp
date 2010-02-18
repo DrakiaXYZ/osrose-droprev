@@ -242,3 +242,68 @@ bool CCharServer::CheckValidName(CCharClient* thisclient, const char* my_name)
     return true;
 }
 
+//LMA: escaping.
+bool CCharServer::EscapeMySQL(const char* data,string & mystring,int nb_car_max,bool check_same)
+{
+    //checking data length
+    if(nb_car_max!=-1)
+    {
+        if (strlen(data)>nb_car_max)
+        {
+            Log(MSG_WARNING,"Escape:: Data too big (%s) %u>%i",data,strlen(data),nb_car_max);
+            return false;
+        }
+    }
+
+    char * lma_username = new char[strlen(data) + 1];
+    strcpy(lma_username,data);
+    char * new_username = new char[strlen(data)*3 +1];
+    mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
+    mystring.assign(new_username);
+    delete[] lma_username;
+    delete[] new_username;
+
+    //Is data escaped the same as the non escaped? Useful for login for example.
+    if(strcmp(data,mystring.c_str()))
+    {
+        Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+
+//LMA: escaping (this version only checks escaped and unescaped versions of a string are the same).
+bool CCharServer::CheckEscapeMySQL(const char* data,int nb_car_max,bool check_same)
+{
+    string mystring;
+
+    //checking data length
+    if(nb_car_max!=-1)
+    {
+        if (strlen(data)>nb_car_max)
+        {
+            Log(MSG_WARNING,"Escape:: Data too big (%s) %u>%i",data,strlen(data),nb_car_max);
+            return false;
+        }
+    }
+
+    char * lma_username = new char[strlen(data) + 1];
+    strcpy(lma_username,data);
+    char * new_username = new char[strlen(data)*3 +1];
+    mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
+    mystring.assign(new_username);
+    delete[] lma_username;
+    delete[] new_username;
+
+    //Is data escaped the same as the non escaped? Useful for login for example.
+    if(strcmp(data,mystring.c_str())!=0)
+    {
+        Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
+        return false;
+    }
+
+
+    return true;
+}

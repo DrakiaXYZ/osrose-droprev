@@ -574,6 +574,13 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
                 Log(MSG_INFO,"Drop time, there should be %i drops",nb_drops);
             }
 
+            //No drop if already dead and drop done.
+            if(Enemy->drop_dead)
+            {
+                Log(MSG_WARNING,"Trying to make a monster (CID %u, type %u) drop again but already did.",Enemy->clientid,Enemy->char_montype);
+                nb_drops=0;
+            }
+
             for (int k=0;k<nb_drops;k++)
             {
                 thisdrop = Enemy->GetDrop( );
@@ -1394,6 +1401,13 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
                 CPlayer* plkiller=(CPlayer*) this;
                 nb_drops=plkiller->bonusddrop;
                 Log(MSG_INFO,"Drop time, there should be %i drops",nb_drops);
+            }
+
+            //No drop if already dead and drop done.
+            if(Enemy->drop_dead)
+            {
+                Log(MSG_WARNING,"Trying to make a monster (CID %u, type %u) drop again but already did.",Enemy->clientid,Enemy->char_montype);
+                nb_drops=0;
             }
 
             for (int k=0;k<nb_drops;k++)

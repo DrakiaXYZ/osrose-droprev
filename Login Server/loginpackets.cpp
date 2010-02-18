@@ -48,11 +48,15 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
     //LMA: new way.
     //thisclient->username.assign( (const char*)&P->Buffer, 32, (P->Size-6-32)>16?16:P->Size-6-32 );
     string temp_string;
+    string temp_password;
     temp_string.reserve(17);
+    temp_password.reserve(33);
     temp_string.assign( (const char*)&P->Buffer, 32, (P->Size-6-32)>16?16:P->Size-6-32 );
     //LMA: end.
 
-    thisclient->password.assign( (const char*)&P->Buffer, 0, 32 );
+    //thisclient->password.assign( (const char*)&P->Buffer, 0, 32 );
+    temp_password.assign((const char*)&P->Buffer, 0, 32 );
+    EscapeMySQL(temp_password.c_str(),thisclient->password,-1,true);    //client sends already in MD5 form (or should...)
 
     if ( !thisclient->hasGameGuard && Config.checkGameGuard )
     {
@@ -76,7 +80,10 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
     //LMA: end escaping
 
     //LMA: new way.
-    EscapeMySQL(temp_string.c_str(),thisclient->username);
+    if(!EscapeMySQL(temp_string.c_str(),thisclient->username,16,true))
+    {
+        return false;
+    }
 
     MYSQL_RES *result = DB->QStore( "SELECT id,password,accesslevel,online,active FROM accounts WHERE username='%s'", thisclient->username.c_str() );
     if(result==NULL)
@@ -339,10 +346,19 @@ bool CLoginServer::pakGameGuard( CLoginClient* thisclient, CPacket *P )
     return true;
 }
 
-
 //LMA: escaping.
-bool CLoginServer::EscapeMySQL(const char* data,string & mystring)
+bool CLoginServer::EscapeMySQL(const char* data,string & mystring,int nb_car_max,bool check_same)
 {
+    //checking data length
+    if(nb_car_max!=-1)
+    {
+        if (strlen(data)>nb_car_max)
+        {
+            Log(MSG_WARNING,"Escape:: Data too big (%s) %u>%i",data,strlen(data),nb_car_max);
+            return false;
+        }
+    }
+
     char * lma_username = new char[strlen(data) + 1];
     strcpy(lma_username,data);
     char * new_username = new char[strlen(data)*3 +1];
@@ -350,6 +366,46 @@ bool CLoginServer::EscapeMySQL(const char* data,string & mystring)
     mystring.assign(new_username);
     delete[] lma_username;
     delete[] new_username;
+
+    //Is data escaped the same as the non escaped? Useful for login for example.
+    if(strcmp(data,mystring.c_str())!=0)
+    {
+        Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+//LMA: escaping (this version only checks escaped and unescaped versions of a string are the same).
+bool CLoginServer::CheckEscapeMySQL(const char* data,int nb_car_max,bool check_same)
+{
+    string mystring;
+
+    //checking data length
+    if(nb_car_max!=-1)
+    {
+        if (strlen(data)>nb_car_max)
+        {
+            Log(MSG_WARNING,"Escape:: Data too big (%s) %u>%i",data,strlen(data),nb_car_max);
+            return false;
+        }
+    }
+
+    char * lma_username = new char[strlen(data) + 1];
+    strcpy(lma_username,data);
+    char * new_username = new char[strlen(data)*3 +1];
+    mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
+    mystring.assign(new_username);
+    delete[] lma_username;
+    delete[] new_username;
+
+    //Is data escaped the same as the non escaped? Useful for login for example.
+    if(strcmp(data,mystring.c_str())!=0)
+    {
+        Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
+        return false;
+    }
 
 
     return true;

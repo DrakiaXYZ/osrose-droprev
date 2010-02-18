@@ -3094,9 +3094,17 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
         return true;
     }
 
+    //checking if player has enough MP too.
+    UINT needed_mp=(thisskill->mp - (thisskill->mp * thisclient->Stats->MPReduction / 100));
+    if (thisclient->Stats->MP<needed_mp)
+    {
+        Log(MSG_HACK,"Player %s tried to pakStartSkill skill %u but didn't have enough MP %u<%u",thisclient->CharInfo->charname,skillid,thisclient->Stats->MP,needed_mp);
+        return true;
+    }
+
     //We set the time the player can cast this skill next time.
     thisclient->cskills[skillnum].cooldown_skill=etime+thisskill->cooldown;
-    Log(MSG_WARNING,"Next pakStartSkill skill %u available at %u (is %u",skillid,etime,thisclient->cskills[skillnum].cooldown_skill);
+    Log(MSG_WARNING,"Next pakStartSkill skill %u available at %u (is %u)",skillid,thisclient->cskills[skillnum].cooldown_skill,etime);
 
     if( isSkillTargetFriendly( thisskill ) )
     {
@@ -3606,9 +3614,17 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
         return true;
     }
 
+    //checking if player has enough MP too.
+    UINT needed_mp=(thisskill->mp - (thisskill->mp * thisclient->Stats->MPReduction / 100));
+    if (thisclient->Stats->MP<needed_mp)
+    {
+        Log(MSG_HACK,"Player %s tried to pakSkillSelf skill %u but didn't have enough MP %u<%u",thisclient->CharInfo->charname,skillid,thisclient->Stats->MP,needed_mp);
+        return true;
+    }
+
     //We set the time the player can cast this skill next time.
     thisclient->cskills[num].cooldown_skill=etime+thisskill->cooldown;
-    Log(MSG_WARNING,"Next pakSkillSelf skill %u available at %u (is %u",skillid,etime,thisclient->cskills[num].cooldown_skill);
+    Log(MSG_WARNING,"Next pakSkillSelf skill %u available at %u (is %u)",skillid,thisclient->cskills[num].cooldown_skill,etime);
 
 	if( thisskill->aoe == 0 )
 	{
@@ -4775,9 +4791,17 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
             return true;
         }
 
+        //checking if player has enough MP too.
+        UINT needed_mp=(thisskill->mp - (thisskill->mp * thisclient->Stats->MPReduction / 100));
+        if (thisclient->Stats->MP<needed_mp)
+        {
+            Log(MSG_HACK,"Player %s tried to pakSkillAOE skill %u but didn't have enough MP %u<%u",thisclient->CharInfo->charname,skillid,thisclient->Stats->MP,needed_mp);
+            return true;
+        }
+
         //We set the time the player can cast this skill next time.
         thisclient->cskills[num].cooldown_skill=etime+thisskill->cooldown;
-        Log(MSG_WARNING,"Next pakSkillAOE skill %u available at %u (is %u",skillid,etime,thisclient->cskills[num].cooldown_skill);
+        Log(MSG_WARNING,"Next pakSkillAOE skill %u available at %u (is %u)",skillid,thisclient->cskills[num].cooldown_skill,etime);
 
         thisclient->StartAction( NULL , AOE_TARGET, skillid );
     }

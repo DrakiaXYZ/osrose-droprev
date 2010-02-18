@@ -110,6 +110,8 @@ class CCharServer : public CServerSocket
     	bool pakLoginDSClient( CCharClient* thisclient, CPacket* P );
         bool DiscoAllAvatars(UINT userid ); //LMA: Against same account hack.
         bool CheckValidName(CCharClient* thisclient, const char* my_name);    //LMA: Checking avatar name to avoid GM tags and not valid chars.
+        bool EscapeMySQL(const char* data,string & mystring,int nb_car_max,bool check_same);   //LMA: escaping.
+        bool CheckEscapeMySQL(const char* data,int nb_car_max,bool check_same);    //LMA: escaping (this version only checks escaped and unescaped versions of a string are the same).
         int GetNbUserID( UINT userid ); //LMA: Against same account hack.
     	bool pak7e5 ( CCharClient* thisclient, CPacket* P );
         bool pakChatrooms ( CCharClient* thisclient, CPacket* P );

@@ -53,6 +53,7 @@ class CCharacter
         CCharacter* findChar;
         //int damagecounter;
         long long damagecounter;
+        bool drop_dead; //LMA: he dropped when he died.
 
         //LMA: maps grids
         int last_map;

@@ -506,6 +506,13 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 return false;
             }
             memcpy( nick, &P->Buffer[1], P->Size-7 );
+
+            if(!CheckEscapeMySQL(nick,-1,true))
+            {
+                Log(MSG_WARNING,"A nick (kick clan) contains incorrect caracter (see warnings above)");
+                return false;
+            }
+
            CClans* thisclan = GetClanByID(thisclient->clanid);
            if(thisclan==NULL)
            {
@@ -574,6 +581,13 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             }
             memcpy( nick, &P->Buffer[1], P->Size-7 );
             Log(MSG_INFO,"[CS] clan, %s is trying to up %s",thisclient->charname,nick);
+
+            if(!CheckEscapeMySQL(nick,-1,true))
+            {
+                Log(MSG_WARNING,"A nick (up rank) contains incorrect caracter (see warnings above)");
+                return false;
+            }
+
             int clan_rank=0;
             int level=0;
             int job=0;
@@ -677,6 +691,12 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             memcpy( nick, &P->Buffer[1], P->Size-7 );
             Log(MSG_INFO,"[CS] clan, %s is trying to down %s",thisclient->charname,nick);
 
+            if(!CheckEscapeMySQL(nick,-1,true))
+            {
+                Log(MSG_WARNING,"A nick (down rank) contains incorrect caracter (see warnings above)");
+                return false;
+            }
+
             //LMA: no case.
             //if(strcmp(nick,thisclient->charname)==0)
             if(stricmp(nick,thisclient->charname)==0)
@@ -777,6 +797,13 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             CClans* thisclan = GetClanByID(thisclient->clanid);
             if(thisclan!=NULL)
             {
+                //LMA: checking size.
+                if(strlen(news)>200)
+                {
+                    Log(MSG_WARNING,"Clan ID %u news is too long (%s), %u",thisclan->id,news,strlen(news));
+                    return false;
+                }
+
                 strcpy(thisclan->news,news);
                 BEGINPACKET( pak, 0x7e0 );
                 ADDBYTE    ( pak, 0x34 );
@@ -866,6 +893,12 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 return false;
             }
             memcpy( nick, &P->Buffer[1], P->Size-7 );
+
+            if(!CheckEscapeMySQL(nick,-1,true))
+            {
+                Log(MSG_WARNING,"A nick (give master) contains incorrect caracter (see warnings above)");
+                return false;
+            }
 
             //LMA: no case.
             //if(strcmp(nick,thisclient->charname)==0)

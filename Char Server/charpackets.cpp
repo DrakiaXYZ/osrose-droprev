@@ -28,6 +28,14 @@ bool CCharServer::pakDoIdentify( CCharClient* thisclient, CPacket* P )
 	MYSQL_ROW row;
 	thisclient->userid = GETDWORD((*P), 0x00);
 	memcpy( thisclient->password, &P->Buffer[4], 32 );
+
+	//LMA: checking is password is ok.
+	if(!CheckEscapeMySQL(thisclient->password,33,true))
+	{
+	    Log(MSG_WARNING,"A password contains incorrect caracters or is too long (see warnings above)");
+	    return false;
+	}
+
 	result = DB->QStore("SELECT username,lastsvr,accesslevel,platinum FROM accounts WHERE id=%i AND password='%s'", thisclient->userid, thisclient->password);
 	if(result==NULL) return false;
 	if (mysql_num_rows( result ) != 1)
@@ -44,6 +52,13 @@ bool CCharServer::pakDoIdentify( CCharClient* thisclient, CPacket* P )
 		thisclient->accesslevel = atoi(row[2]);
 		thisclient->platinum = atoi(row[3]);
 		DB->QFree( );
+
+        if(!CheckEscapeMySQL(thisclient->username,-1,true))
+        {
+            Log(MSG_WARNING,"A username contains incorrect caracters (see warnings above)");
+            return false;
+        }
+
 	}
 
 	//LMA: Adding a log for admins. Account ids shouldn't be less than 78
@@ -178,6 +193,13 @@ bool CCharServer::pakRequestWorld( CCharClient* thisclient, CPacket* P )
 	MYSQL_RES *result;
 	memset( &thisclient->charname, '\0', 17 );
 	memcpy( thisclient->charname, &P->Buffer[3], (P->Size-6-4)>16?16:(P->Size-6-4) );
+
+    if(!CheckEscapeMySQL(thisclient->charname,17,true))
+    {
+        Log(MSG_WARNING,"A charname contains incorrect caracters or incorrect size (see warnings above)");
+        return false;
+    }
+
 	Log( MSG_INFO,"User %s(%i) selected char '%s'", thisclient->username, thisclient->userid, thisclient->charname);
 	if(!DB->QExecute("UPDATE accounts SET lastchar='%s' WHERE id=%i", thisclient->charname, thisclient->userid))
 	   return false;
@@ -213,7 +235,7 @@ bool CCharServer::pakRequestWorld( CCharClient* thisclient, CPacket* P )
 	ADDBYTE    ( pak, 0 );
 	thisclient->SendPacket( &pak );
 	DB->QFree( );
-//CHAR INFORMATION        0       1    2    3      4
+    //CHAR INFORMATION        0       1    2    3      4
 	result = DB->QStore("SELECT clanid,clan_rank,id,level,classid,rewardpoints FROM characters WHERE char_name='%s'", thisclient->charname);
 	if(result==NULL) return false;
 	if(mysql_num_rows(result)!=1)
@@ -465,6 +487,13 @@ bool CCharServer::pakDeleteChar( CCharClient* thisclient, CPacket* P )
 {
 	if(!thisclient->isLoggedIn) return false;
 	char* name = (char*)&P->Buffer[2];
+
+    if(!CheckEscapeMySQL(name,-1,true))
+    {
+        Log(MSG_WARNING,"A name (delete / resurrect) contains incorrect caracter (see warnings above)");
+        return false;
+    }
+
     MYSQL_RES *result;
 	MYSQL_ROW row;
 	result = DB->QStore("SELECT account_name FROM characters WHERE char_name='%s' LIMIT 1", name);
@@ -484,20 +513,25 @@ bool CCharServer::pakDeleteChar( CCharClient* thisclient, CPacket* P )
     unsigned long int DeleteTime = 0;
     switch(action)
     {
-        case 0x00://Resurect
+        case 0x00://Resurrect
         {
             DeleteTime = 0;
-            if(!DB->QExecute(" UPDATE characters SET deletetime=0 WHERE char_name='%s'",
-                    (char*)&P->Buffer[2] ))
+            //if(!DB->QExecute(" UPDATE characters SET deletetime=0 WHERE char_name='%s'",(char*)&P->Buffer[2] ))
+            if(!DB->QExecute(" UPDATE characters SET deletetime=0 WHERE char_name='%s'",name))
+            {
                 return false;
+            }
+
         }
         break;
         case 0x01://Delete
         {
             DeleteTime = GetServerTime( ) + Config.DeleteTime;
-            if(!DB->QExecute(" UPDATE characters SET deletetime=%i WHERE char_name='%s'",
-                    DeleteTime, (char*)&P->Buffer[2] ))
+            //if(!DB->QExecute(" UPDATE characters SET deletetime=%i WHERE char_name='%s'",DeleteTime, (char*)&P->Buffer[2] ))
+            if(!DB->QExecute(" UPDATE characters SET deletetime=%i WHERE char_name='%s'",DeleteTime,name))
+            {
                 return false;
+            }
 
         }
         break;

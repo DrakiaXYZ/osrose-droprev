@@ -858,12 +858,21 @@ void CCharacter::RefreshBuff( )
                  ADDDWORD   ( pak, 16 );
                  if( !IsSummon( ) && !IsPlayer( ))
                  {
-                     thisdrop = GetDrop( );
-                     if( thisdrop!=NULL)
-                     {
-                         CMap* map = GServer->MapList.Index[thisdrop->posMap];
-                         map->AddDrop( thisdrop );
-                     }
+                    //LMA: No drop if already dead and drop done.
+                    if(drop_dead)
+                    {
+                        Log(MSG_WARNING,"Trying to make a monster (CID %u, type %u) drop again but already did.",clientid,char_montype);
+                    }
+                    else
+                    {
+                         thisdrop = GetDrop( );
+                         if( thisdrop!=NULL)
+                         {
+                             CMap* map = GServer->MapList.Index[thisdrop->posMap];
+                             map->AddDrop( thisdrop );
+                         }
+
+                    }
 
                  }
 
@@ -910,12 +919,22 @@ void CCharacter::RefreshBuff( )
                  ADDDWORD   ( pak, 16 );
                  if( !IsSummon( ) && !IsPlayer( ))
                  {
-                     thisdrop = GetDrop( );
-                     if( thisdrop!=NULL)
-                     {
-                         CMap* map = GServer->MapList.Index[thisdrop->posMap];
-                         map->AddDrop( thisdrop );
-                     }
+                    //LMA: No drop if already dead and drop done.
+                    if(drop_dead)
+                    {
+                        Log(MSG_WARNING,"Trying to make a monster (CID %u, type %u) drop again but already did.",clientid,char_montype);
+                    }
+                    else
+                    {
+                         thisdrop = GetDrop( );
+                         if( thisdrop!=NULL)
+                         {
+                             CMap* map = GServer->MapList.Index[thisdrop->posMap];
+                             map->AddDrop( thisdrop );
+                         }
+
+                    }
+
                  }
                  //GServer->SendToVisible( &pak, this, thisdrop );
                  GServer->SendToVisible( &pak, this);

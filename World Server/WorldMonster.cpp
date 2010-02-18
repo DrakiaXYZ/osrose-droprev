@@ -23,6 +23,7 @@
 // Monster Contructor
 CMonster::CMonster( fPoint MonsterPosition, UINT MonsterType, UINT MonsterMap, UINT Owner, UINT spawnid )
 {
+    drop_dead=false;    //LMA: hasn't drop yet.
     montype = MonsterType;
     SpawnTime = clock( );
     lastSighCheck = clock( );
