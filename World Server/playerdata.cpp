@@ -96,6 +96,12 @@ bool CPlayer::loaddata( )
     //LMA: shout hack.
     next_shout=0;
     spam_shout=false;
+    spam_chat=false;
+    spam_whisper=false;
+    next_chat=0;
+    next_whisper=0;
+    nb_chats=0;
+    nb_whispers=0;
 
     Shop->ShopType=atoi(row[37]);
     Shop->mil_shop_time=atoi(row[38]);

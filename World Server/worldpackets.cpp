@@ -1633,6 +1633,36 @@ bool CWorldServer::pakAddStats( CPlayer* thisclient, CPacket* P )
 // Normal Chat
 bool CWorldServer::pakNormalChat( CPlayer* thisclient, CPacket* P )
 {
+    //LMA: to avoid chat spamming (1 second between each reset and 5 chat per second max).
+    time_t etime=time(NULL);
+    if (etime<thisclient->next_chat)
+    {
+        if (!thisclient->spam_chat)
+        {
+            thisclient->nb_chats++;
+        }
+
+        //A player can chat 5 times a second... Should be enough :)
+        if (thisclient->nb_chats>5)
+        {
+            //Only one hack message...
+            if (!thisclient->spam_chat)
+            {
+                Log(MSG_HACK,"Possible chat hack by player %s",thisclient->CharInfo->charname);
+            }
+
+            thisclient->spam_chat=true;
+        }
+
+        return true;
+    }
+    else
+    {
+        thisclient->nb_chats=0;
+        thisclient->next_chat=time(NULL)+1;   //Next second check.
+        thisclient->spam_chat=false;
+    }
+
 	if (P->Buffer[0]=='/')
     {
 		return pakGMCommand( thisclient, P );
@@ -2033,6 +2063,36 @@ bool CWorldServer::pakShout ( CPlayer* thisclient, CPacket* P )
 // Whispering
 bool CWorldServer::pakWhisper ( CPlayer* thisclient, CPacket* P )
 {
+    //LMA: to avoid whisper spamming (1 second between each reset and 5 whisper per second max).
+    time_t etime=time(NULL);
+    if (etime<thisclient->next_whisper)
+    {
+        if (!thisclient->spam_whisper)
+        {
+            thisclient->nb_whispers++;
+        }
+
+        //A player can whisper 5 times a second... Should be enough :)
+        if (thisclient->nb_whispers>5)
+        {
+            //Only one hack message...
+            if (!thisclient->spam_whisper)
+            {
+                Log(MSG_HACK,"Possible whisper hack by player %s",thisclient->CharInfo->charname);
+            }
+
+            thisclient->spam_whisper=true;
+        }
+
+        return true;
+    }
+    else
+    {
+        thisclient->nb_whispers=0;
+        thisclient->next_whisper=time(NULL)+1;   //Next second check.
+        thisclient->spam_whisper=false;
+    }
+
 	char msgto[17];
 	memset( &msgto, '\0', 17 );
 	strncpy( msgto, (char*)&(*P).Buffer[0],16 );

@@ -54,6 +54,12 @@ class CPlayer: public CCharacter
    //LMA: last shout.
     time_t next_shout;
     bool spam_shout;
+    bool spam_whisper;
+    bool spam_chat;
+    time_t next_chat;
+    time_t next_whisper;
+    int nb_chats;
+    int nb_whispers;
 
     // Fairy
     bool Fairy;
