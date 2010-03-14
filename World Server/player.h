@@ -232,7 +232,7 @@ class CPlayer: public CCharacter
     bool SaveQuest( QUESTS* myquest );       //LMA: Saving quests data (Mysql 4.1+ function).
     bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
     bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
-    bool CheckStats(int slot); //LMA: Checking if a stat is ok to equip an item.
+    bool CheckStats(int slot, int dest_slot); //LMA: Checking if a stat is ok to equip an item.
 
     // ExJam Quest Code
     void savequests( CPlayer* thisclient );

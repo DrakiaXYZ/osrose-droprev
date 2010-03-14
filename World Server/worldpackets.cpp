@@ -1196,7 +1196,7 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
     }
 
     //LMA: When trying to equip, we check some stats.
-    if(destslot>0&&destslot<12&&!thisclient->CheckStats(srcslot))
+    if(destslot>0&&destslot<12&&!thisclient->CheckStats(srcslot,destslot))
     {
         return true;
     }

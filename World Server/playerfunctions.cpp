@@ -2144,11 +2144,92 @@ int CPlayer::GetQuestVar(short nVarType, short nVarNO){
 
 
 //LMA: Checking if a stat is ok to equip an item.
-bool CPlayer::CheckStats(int slot)
+bool CPlayer::CheckStats(int slot, int dest_slot)
 {
     if(slot==0||items[slot].itemtype==0||items[slot].itemnum==0)
     {
         return true;
+    }
+
+    //Checking slots:
+    int good_slot=0;
+    switch(items[slot].itemtype)
+    {
+        case 1:
+        {
+            good_slot=1;
+        }
+        break;
+        case 2:
+        {
+            good_slot=2;
+        }
+        break;
+        case 3:
+        {
+            good_slot=3;
+        }
+        break;
+        case 4:
+        {
+            good_slot=5;
+        }
+        break;
+        case 5:
+        {
+            good_slot=6;
+        }
+        break;
+        case 6:
+        {
+            good_slot=4;
+        }
+        break;
+        case 7:
+        {
+            //jewels 9-11
+            if (slot!=9&&slot!=10&&slot!=11)
+            {
+                Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped (should be a jewel).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot);
+                return false;
+            }
+
+        }
+        break;
+        case 8:
+        {
+            good_slot=7;
+        }
+        break;
+        case 9:
+        {
+            good_slot=8;
+        }
+        break;
+        case 14:
+        {
+            //135-139
+            if (slot!=135&&slot!=136&&slot!=137&&slot!=139&&slot!=139)
+            {
+                Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped (should be a PAT).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot);
+                return false;
+            }
+
+        }
+        break;
+        default:
+        {
+            //We can't equip 10, 11, 12, 13.
+            Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped.",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot);
+            return false;
+        }
+        break;
+    }
+
+    if(good_slot!=0&&dest_slot!=good_slot)
+    {
+        Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped in slot %i (asked slot %i).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot,good_slot,dest_slot);
+        return false;
     }
 
     //Checking Job:
