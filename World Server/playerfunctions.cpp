@@ -2143,3 +2143,90 @@ int CPlayer::GetQuestVar(short nVarType, short nVarNO){
 }
 
 
+//LMA: Checking if a stat is ok to equip an item.
+bool CPlayer::CheckStats(int slot)
+{
+    if(slot==0||items[slot].itemtype==0||items[slot].itemnum==0)
+    {
+        return true;
+    }
+
+    //Checking Job:
+    //LMA: weird values in STB... not used for now.
+    /*for(int k=0;k<3;k++)
+    {
+        GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->occupation[k]
+    }*/
+
+    //checking unions (not done, weird values too).
+
+    //Checking stats (TODO, add them all :( ):
+    for(int k=0;k<2;k++)
+    {
+        int cdt=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->condition1[k];
+        int value=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->stat1[k];
+        int player_value=0;
+
+        if(cdt==0)
+        {
+            continue;
+        }
+
+        switch(cdt)
+        {
+            case sLevel:
+            {
+                player_value=Stats->Level;
+            }
+            break;
+            case sStrength:
+            {
+                player_value=Attr->Str;
+            }
+            break;
+            case sDexterity:
+            {
+                player_value=Attr->Dex;
+            }
+            break;
+            case sIntelligence:
+            {
+                player_value=Attr->Int;
+            }
+            break;
+            case sConcentration:
+            {
+                player_value=Attr->Con;
+            }
+            break;
+            case sCharm:
+            {
+                player_value=Attr->Cha;
+            }
+            break;
+            case sSensibility:
+            {
+                player_value=Attr->Sen;
+            }
+            break;
+            default:
+            {
+                Log(MSG_WARNING,"CheckStats:: unknown stat %i value %i for item %u::%u, index %i",cdt,value,items[slot].itemtype,items[slot].itemnum,k);
+                value=0;
+            }
+            break;
+        }
+
+        if(value>player_value)
+        {
+            Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but stat %i is wrong (%i>%i)",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot,cdt,value,player_value);
+            return false;
+        }
+
+    }
+
+    //should be ok...
+
+
+    return true;
+}

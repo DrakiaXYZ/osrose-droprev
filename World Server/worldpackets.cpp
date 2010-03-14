@@ -1195,6 +1195,12 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
 
     }
 
+    //LMA: When trying to equip, we check some stats.
+    if(destslot>0&&destslot<12&&!thisclient->CheckStats(srcslot))
+    {
+        return true;
+    }
+
     if (destslot < 13 && GServer->EquipList[thisclient->items[srcslot].itemtype].Index[thisclient->items[srcslot].itemnum]->level > thisclient->Stats->Level)
        return true;
 	if( destslot==0 ) destslot = thisclient->GetNewItemSlot( thisclient->items[srcslot] );
@@ -4623,6 +4629,41 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 case 14:materialnumber = PatList.Index[item.itemnum]->material;break;
             }
         }
+
+        //LMA: We have the material number, we try to get the numbers of materials expected.
+        UINT mat_needed[4];
+        int nb_mat_needed=0;
+        int nb_items_packet=0;
+        for(int j=0;j<4;j++)
+        {
+            mat_needed[j]=0;
+
+            if(ProductList.Index[materialnumber]->amount[j]>0)
+            {
+                nb_mat_needed++;
+            }
+
+        }
+
+        //checking if we have the nb of slots expected.
+		for(char used=5; used != 13; used +=2)
+        {
+            WORD material= GETWORD((*P), used);
+            if (material<=0)
+            {
+                continue;
+            }
+
+            nb_items_packet++;
+        }
+
+        if (nb_items_packet!=nb_mat_needed)
+        {
+            Log(MSG_HACK,"Craft:: Player %s tried to craft %u::%u receipe %u but needs %i materials and packet only sent %i",thisclient->CharInfo->charname,item.itemtype,item.itemnum,materialnumber,nb_mat_needed,nb_items_packet);
+            return true;
+        }
+        //LMA end
+
 
 		int	m = 0;
 

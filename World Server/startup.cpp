@@ -2127,7 +2127,13 @@ bool CWorldServer::LoadEquip( )
 
             //job1 to job3
             for(int k=0;k<3;k++)
+            {
+                //Weird values... Same for unions (23 and 26)
                 newequip->occupation[k] = STB_ITEM[j].rows[i][(16+k)];
+            }
+
+            //LMA: not correct there are only 2 conditions and 2 values...
+            /*
             for(int k=0;k<2;k++)
                 newequip->condition1[k] = STB_ITEM[j].rows[i][(19+k)];
             for(int k=0;k<2;k++)
@@ -2136,6 +2142,11 @@ bool CWorldServer::LoadEquip( )
                 newequip->stat1[k] = STB_ITEM[j].rows[i][(24+k)];
             for(int k=0;k<2;k++)
                 newequip->stat2[k] = STB_ITEM[j].rows[i][(27+k)];
+            */
+            newequip->condition1[0] = STB_ITEM[j].rows[i][19];
+            newequip->stat1[0] = STB_ITEM[j].rows[i][20];
+            newequip->condition1[1] = STB_ITEM[j].rows[i][21];
+            newequip->stat1[1] = STB_ITEM[j].rows[i][22];
 
             //LMA: Used for refine.
             newequip->itemgradeID=STB_ITEM[j].rows[i][45];
