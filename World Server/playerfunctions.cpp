@@ -2188,9 +2188,9 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
         case 7:
         {
             //jewels 9-11
-            if (slot!=9&&slot!=10&&slot!=11)
+            if (dest_slot!=9&&dest_slot!=10&&dest_slot!=11)
             {
-                Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped (should be a jewel).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot);
+                Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i (dest slot %i) but can't be equiped (should be a jewel).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot,dest_slot);
                 return false;
             }
 
@@ -2209,9 +2209,9 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
         case 14:
         {
             //135-139
-            if (slot!=135&&slot!=136&&slot!=137&&slot!=139&&slot!=139)
+            if (dest_slot!=135&&dest_slot!=136&&dest_slot!=137&&dest_slot!=138&&dest_slot!=139)
             {
-                Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped (should be a PAT).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot);
+                Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i (dest slot %i) but can't be equiped (should be a PAT).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot,dest_slot);
                 return false;
             }
 
