@@ -26,7 +26,13 @@ bool CWorldServer::LoadSTBData( )
     //LMA: loading Pegasus data.
     if(Config.is_pegasus==1)
     {
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        STBStoreDataNPC( "3DDataPeg\\STB\\LIST_NPC.STB", &STB_NPC );
+        #else
         STBStoreData( "3DDataPeg\\STB\\LIST_NPC.STB", &STB_NPC );
+        #endif
+
         STBStoreData( "3DDataPeg\\STB\\LIST_SKILL.STB", &STB_SKILL );
         STBStoreData( "3DDataPeg\\STB\\LIST_STATUS.STB", &STB_STATUS );
         STBStoreData( "3DDataPeg\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
@@ -53,7 +59,12 @@ bool CWorldServer::LoadSTBData( )
     }
     else
     {
+        #ifdef QHACK
+        STBStoreDataNPC( "3DData\\STB\\LIST_NPC.STB", &STB_NPC );
+        #else
         STBStoreData( "3DData\\STB\\LIST_NPC.STB", &STB_NPC );
+        #endif
+
         STBStoreData( "3DData\\STB\\LIST_SKILL.STB", &STB_SKILL );
         STBStoreData( "3DData\\STB\\LIST_STATUS.STB", &STB_STATUS );
         STBStoreData( "3DData\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
@@ -636,12 +647,27 @@ bool CWorldServer::LoadNPCData( )
         newnpc->sidechance=0;   //hidden
         newnpc->STLId=STB_NPC.rows[i][40];
 
-        //LMA: Various skills for monsters (won't be used anymore, will be done by AIP, for now left for compatibility).
-        for(int i=0;i<4;i++)
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        newnpc->die_quest=STB_NPC.rows[i][41];
+
+        //Adding the quest to the list.
+        if(newnpc->die_quest!=0&&(MapStackQuest.find(newnpc->die_quest)!=MapStackQuest.end()))
         {
-          newnpc->askills[i]=0;
-          newnpc->bskills[i]=0;
-          newnpc->dskills[i]=0;
+            MapStackQuest.insert ( pair<dword,int>(newnpc->die_quest,1) );
+        }
+        else if(newnpc->die_quest!=0)
+        {
+            MapStackQuest[newnpc->die_quest]++;
+        }
+        #endif
+
+        //LMA: Various skills for monsters (won't be used anymore, will be done by AIP, for now left for compatibility).
+        for(int m=0;m<4;m++)
+        {
+          newnpc->askills[m]=0;
+          newnpc->bskills[m]=0;
+          newnpc->dskills[m]=0;
         }
 
         newnpc->lastskill=0;
@@ -658,7 +684,13 @@ bool CWorldServer::LoadNPCData( )
 
     }
 
+    //LMA: test for quest hack (stackable).
+    #ifdef QHACK
+    STBFreeDataChar(&STB_NPC);
+    #else
     STBFreeData(&STB_NPC);
+    #endif
+
     Log( MSG_LOAD, "NPC Data loaded          STB" );
 
 

@@ -21,6 +21,12 @@
 #ifndef __ROSE_DATATYPES__
 #define __ROSE_DATATYPES__
 
+//LMA: TEST HACK QUEST
+#ifndef QHACK
+#define QHACK
+#endif
+//LMA END
+
 //For QSD system.
 #include "datatypes_compat.h"
 
@@ -584,6 +590,11 @@ struct CNPCData {
     UINT sidechance;  //hidden
     UINT refNPC;    //LMA: AIP?
     UINT STLId; //LMA: STL ID
+
+    //LMA: test for quest hack (stackable).
+    #ifdef QHACK
+    dword die_quest;
+    #endif
 };
 
 // Store the damage for monster to give exp

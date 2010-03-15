@@ -55,6 +55,12 @@ class CCharacter
         long long damagecounter;
         bool drop_dead; //LMA: he dropped when he died.
 
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        dword die_quest;
+        #endif
+        //LMA END
+
         //LMA: maps grids
         int last_map;
         int last_coords;
@@ -88,6 +94,12 @@ class CCharacter
         bool UseSkill( CSkills* skill, CCharacter *Target = NULL ); //for gm command
         bool TakeExp( CCharacter *Target ); //taking exp from a dead player.
         void UWKill(CCharacter* Enemy); //LMA: Union War kill.
+
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        void QuestKill(dword die_quest); //LMA: Adding a kill to the special quest kill list for a player.
+        #endif
+        //LMA END
 
         //functions
         bool IsMonster( );

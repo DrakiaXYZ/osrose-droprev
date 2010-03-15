@@ -20,7 +20,22 @@
 */
 #ifndef _ROSE_PLAYER_
 #define _ROSE_PLAYER_
+
+//LMA: TEST HACK QUEST
+#define QHACK
+//LMA: End
+
 #include "character.h"
+
+//LMA: test for quest hack (stackable).
+#ifdef QHACK
+struct CquestCheck
+{
+    dword questid;
+    clock_t die_time;
+};
+#endif
+//LMA: end
 
 class CPlayer: public CCharacter
 {
@@ -91,6 +106,11 @@ class CPlayer: public CCharacter
     time_t timer_no_exp;
     bool no_exp;
 
+    //LMA: test for quest hack (stackable).
+    #ifdef QHACK
+    CquestCheck arr_questid[10];
+    #endif
+    //LMA: end
 
     //Medal of Fortune(id.1300/type.10)_One additional drop chance for defeating a monster is added (Double Drop -> ddrop)
     int wait_validation_ddrop;

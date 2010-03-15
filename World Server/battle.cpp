@@ -541,6 +541,15 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
             UWKill(Enemy);
         }
 
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        if(!is_already_dead&&Enemy->die_quest!=0&&Enemy->IsMonster()&&IsPlayer())
+        {
+            QuestKill(Enemy->die_quest);
+        }
+        #endif
+        //LMA END
+
         //LMA: TESTDEATH :: We try to force the DEATH
         //ADDDWORD   ( pak, Enemy->Stats->MaxHP );
         ADDDWORD   ( pak, hitpower );
@@ -1388,6 +1397,15 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             UWKill(Enemy);
         }
 
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        if(!is_already_dead&&Enemy->die_quest!=0&&Enemy->IsMonster()&&IsPlayer())
+        {
+            QuestKill(Enemy->die_quest);
+        }
+        #endif
+        //LMA END
+
         Log(MSG_INFO,"Enemy is dead");
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, 16 );
@@ -1766,4 +1784,57 @@ void CCharacter::UWKill(CCharacter* Enemy)
 
   return;
 }
+
+
+//LMA: test for quest hack (stackable).
+#ifdef QHACK
+//LMA: Adding a kill to the special quest kill list for a player.
+void CCharacter::QuestKill(dword die_quest)
+{
+    if(!IsPlayer()||die_quest==0)
+    {
+        return;
+    }
+
+    CPlayer* plkiller=(CPlayer*) this;
+
+    //looking for a "free" slot.
+    clock_t mytime=clock();
+    clock_t oldest_time=mytime;
+    int oldest=0;
+
+    for(int k=0;k<10;k++)
+    {
+        if(plkiller->arr_questid[k].questid==0)
+        {
+            oldest=k;
+            break;
+        }
+
+        //looking for time (is it too old?)
+        if(mytime>plkiller->arr_questid[k].die_time)
+        {
+            oldest=k;
+            break;
+        }
+
+        //is it the oldest? if they are all too recent, it'll be set to 0.
+        if(plkiller->arr_questid[k].die_time<oldest_time)
+        {
+            oldest_time=plkiller->arr_questid[k].die_time;
+            oldest=k;
+        }
+
+    }
+
+    plkiller->arr_questid[oldest].questid=die_quest;
+    plkiller->arr_questid[oldest].die_time=mytime+(CLOCKS_PER_SEC/2);
+    Log(MSG_WARNING,"Killing time, offset %i time %u questid %u",oldest,plkiller->arr_questid[oldest].die_time,die_quest);
+
+
+    return;
+}
+#endif
+
+
 

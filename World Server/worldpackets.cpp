@@ -3631,6 +3631,49 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
       return false;
   }
 
+  //LMA: TEST HACK QUEST
+  #ifdef QHACK
+  bool is_ok=false;
+  //We test if a quest is a stackable one and then if the player is waiting for one of these...
+  //Is the quest in the "die monster" list...
+  if (MapStackQuest.find(hash)!=MapStackQuest.end())
+  {
+    clock_t mytime=clock();
+
+    for (int k=0;k<10;k++)
+    {
+        if(thisclient->arr_questid[k].questid!=hash)
+        {
+          continue;
+        }
+
+        //checking the time now (1/2 second between death packet and quest packet, max).
+        if (thisclient->arr_questid[k].die_time>=mytime)
+        {
+            thisclient->arr_questid[k].questid=0;
+            is_ok=true;
+            break;
+        }
+
+    }
+
+    if(!is_ok)
+    {
+        Log(MSG_HACK,"Player %s tried to use stackable questid %u but didn't expect it.",thisclient->CharInfo->charname,hash);
+        int success=QUEST_FAILURE;    //sending failure to the client.
+        BEGINPACKET ( pak, 0x730);
+        ADDBYTE ( pak, success);
+        ADDBYTE ( pak, 0);
+        ADDDWORD( pak, hash);
+        thisclient->client->SendPacket(&pak);
+        return true;
+    }
+
+  }
+
+  #endif
+  //LMA END.
+
   int success = thisclient->ExecuteQuestTrigger(hash);
 
   BEGINPACKET ( pak, 0x730);

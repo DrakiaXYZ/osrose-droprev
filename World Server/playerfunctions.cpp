@@ -2226,7 +2226,7 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
         break;
     }
 
-    if(good_slot!=0&&dest_slot!=good_slot)
+    if(good_slot!=0&&(dest_slot!=good_slot))
     {
         Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but can't be equiped in slot %i (asked slot %i).",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot,good_slot,dest_slot);
         return false;

@@ -123,6 +123,11 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->is_tactical=is_tactic;
     monster->suicide=false;
 
+    //LMA: test for quest hack (stackable).
+    #ifdef QHACK
+    monster->die_quest=thisnpc->die_quest;
+    #endif
+    //LMA END
 
     for(int i=0;i<20;i++)
     {

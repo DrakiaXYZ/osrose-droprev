@@ -20,6 +20,7 @@
 */
 #ifndef __ROSE_SERVERS__
 #define __ROSE_SERVERS__
+
 #include "datatypes.h"
 #include "../common/sockets.h"
 #include "worldmonster.h"
@@ -471,6 +472,12 @@ class CWorldServer : public CServerSocket
         map<UINT,vector<UINT> > NPC_AIP;       //LMA: NPC AIP.
         map<UINT,vector<CMDrops*> > DropsAnd;       //LMA: Drops And system.
 
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        map<UINT,int> MapStackQuest;       //LMA: map of stackable quests.
+        #endif
+        //LMA: end
+
         fpAiCond aiCondFunc[32];
         fpAiAct aiActFunc[38];
 
@@ -597,7 +604,15 @@ class CWorldServer : public CServerSocket
         CLTBstring              **LtbstringQSD;         //LMA: LTB for QSD
         int                     maxltbaip;              //LMA: max aip ltb
         int                     maxltbqsd;              //LMA: max qsd ltb
+
+        //LMA: test for quest hack (stackable).
+        #ifdef QHACK
+        CSTBDataChar			STB_NPC;				// NPC data
+        #else
         CSTBData				STB_NPC;				// NPC data
+        #endif
+
+
         CSTBData                STB_SKILL;              // Skill data
         CSTBData                STB_STATUS;             // Status Data
         //CSTBData				STB_QUEST;				// Quest data - already declared in line 393
@@ -609,7 +624,6 @@ class CWorldServer : public CServerSocket
         //CSTBData                upgradeData;            // Upgrade - refine data (LMA: we use a csv file now).
         CSTBData                BreakData;              // Break - Used for Break list, chests and blue crafts.
         CSTBDataChar            ZoneData;               // LMA: zone Data.
-
 
     	clock_t				   lastServerStep;			// Last Update
     	clock_t                LastUpdateTime;          // Store the last update World Time

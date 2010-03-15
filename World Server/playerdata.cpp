@@ -664,6 +664,16 @@ bool CPlayer::loaddata( )
         GServer->FairyList.push_back( thisfairy );
     }
 
+    //LMA: test for quest hack (stackable).
+    #ifdef QHACK
+    die_quest=0;
+    for(int k=0;k<10;k++)
+    {
+        arr_questid[k].questid=0;
+        arr_questid[k].die_time=0;
+    }
+    #endif
+    //LMA: end
 
 	return true;
 }
