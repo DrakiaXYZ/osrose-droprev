@@ -3638,6 +3638,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   //Is the quest in the "die monster" list...
   if (MapStackQuest.find(hash)!=MapStackQuest.end())
   {
+    Log(MSG_WARNING,"Player %s sent special questid %u",hash);
     clock_t mytime=clock();
 
     for (int k=0;k<10;k++)
@@ -3652,6 +3653,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
         {
             thisclient->arr_questid[k].questid=0;
             is_ok=true;
+            Log(MSG_WARNING,"Player %s had a valid questid %u waiting in slot %i",hash,k);
             break;
         }
 
@@ -3660,6 +3662,16 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
     if(!is_ok)
     {
         Log(MSG_HACK,"Player %s tried to use stackable questid %u but didn't expect it.",thisclient->CharInfo->charname,hash);
+        for (int k=0;k<10;k++)
+        {
+            if(thisclient->arr_questid[k].questid==0)
+            {
+                continue;
+            }
+
+            Log(MSG_WARNING,"qid for %s[%i]=%u (time %u), now=%u",thisclient->CharInfo->charname,k,thisclient->arr_questid[k].questid,thisclient->arr_questid[k].die_time,mytime);
+        }
+
         int success=QUEST_FAILURE;    //sending failure to the client.
         BEGINPACKET ( pak, 0x730);
         ADDBYTE ( pak, success);
