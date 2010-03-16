@@ -231,7 +231,19 @@ bool CWorldServer::pakCreateClan ( CPlayer* thisclient, CPacket* P )
     name=(char*)&P->Buffer[5];
     slogan=(char*)&P->Buffer[strlen(name)+6];
 
-    //Check if name already exists
+    //LMA: Check if name already exists and is short enough.
+    if(!CheckValidName(thisclient,name))
+    {
+        return true;
+    }
+
+    //LMA: Checking if it needs to be escaped.
+    if(!CheckEscapeMySQL(name,50,true))
+    {
+        return true;
+    }
+
+    //LMA: checking if the name is ok.
 	MYSQL_RES *result = DB->QStore("SELECT name FROM list_clan WHERE name='%s'", name);
     if(result==NULL) return true;
 	if ( mysql_num_rows( result ) > 0 )
@@ -262,6 +274,14 @@ bool CWorldServer::pakCreateClan ( CPlayer* thisclient, CPacket* P )
 	mysql_real_escape_string(DB->Mysql, new_slogan,lma_slogan,strlen(lma_slogan));
 	//mysql_real_escape_string(DB->Mysql, new_slogan,"abcdefghijk",11);
     Log(MSG_INFO,"[WS] New clan %s created, slogan detected=%s, cleaned=%s ",name,slogan,new_slogan);
+
+    //LMA: checking slogan's size.
+    if(strlen(new_slogan)>=100)
+    {
+        Log(MSG_HACK,"%s tried to create clan %s with too long slogan %s (%i>=100)",thisclient->CharInfo->charname,name,new_slogan,strlen(new_slogan));
+        return true;
+    }
+
     DB->QExecute( "INSERT into list_clan (logo,back,name,cp,grade,slogan,news) values (%i,%i,'%s',0,1,'%s','')",icon,background,name,new_slogan);
 	thisclient->Clan->clanid = mysql_insert_id(DB->Mysql);
 	thisclient->Clan->clanrank = 6;

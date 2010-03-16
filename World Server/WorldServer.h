@@ -243,6 +243,10 @@ class CWorldServer : public CServerSocket
         void TakeItemMallList(CPlayer* thisclient,int qty,int slot); //LMA: takes an item from Item Mall to player's inventory
         void RefreshFairy( );
 
+        bool CheckValidName(CPlayer* thisclient, const char* my_name);    //LMA: Checking avatar name to avoid GM tags and not valid chars.
+        bool EscapeMySQL(const char* data,string & mystring,int nb_car_max,bool check_same);   //LMA: escaping.
+        bool CheckEscapeMySQL(const char* data,int nb_car_max,bool check_same);    //LMA: escaping (this version only checks escaped and unescaped versions of a string are the same).
+
         // PY extra stats lookup
         UINT GetExtraStats( UINT modifier );
         // PY end

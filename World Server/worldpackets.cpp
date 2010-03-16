@@ -248,6 +248,14 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	MYSQL_ROW row;
 	thisclient->Session->userid = GETDWORD((*P), 0);
 	memcpy( thisclient->Session->password, &P->Buffer[4], 32 );
+
+	//LMA: checking the password:
+    if(!CheckEscapeMySQL(thisclient->Session->password,32,true))
+    {
+        Log(MSG_HACK,"wrong password %s (size %i>32 or data) for user id %i",thisclient->Session->password,strlen(thisclient->Session->password),thisclient->Session->userid);
+        return true;
+    }
+
 	MYSQL_RES *result = DB->QStore("SELECT username,lastchar,accesslevel,zulystorage FROM accounts WHERE id=%i AND password='%s'", thisclient->Session->userid, thisclient->Session->password);
     if(result==NULL) return false;
 	if (mysql_num_rows( result ) != 1)

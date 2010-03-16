@@ -2904,3 +2904,120 @@ bool CWorldServer::ForceDiscClient( unsigned int userid )
 
     return true;
 }
+
+
+//LMA: The goal is to check a string is made of valid chars and extensions.
+bool CWorldServer::CheckValidName(CPlayer* thisclient, const char* my_name)
+{
+    char mychar[50];
+    int nb_car=0;
+
+    nb_car=strlen(my_name);
+    if (nb_car>=50||nb_car<=0)
+    {
+        Log(MSG_HACK,"%s tried to create a too long clan %s (%i>=50)",thisclient->CharInfo->charname,my_name,nb_car);
+        return false;
+    }
+
+    sprintf (mychar,"%s",my_name);
+
+    //uppercase time.
+   for (int k=0;k<nb_car;k++)
+    {
+        int c=toupper(mychar[k]);
+        mychar[k]=c;
+    }
+
+    const char* valid_chars="AZERTYUIOPQSDFGHJKLMWXCVBN0123456789";
+    int i = strspn (mychar,valid_chars);
+
+    if(i!=nb_car)
+    {
+        Log(MSG_HACK,"%s tried to create a not correct clan name %s",thisclient->CharInfo->charname,my_name);
+        return false;
+    }
+
+    //Now we test some not valid sentences, like GM, ADMIN and so on...
+    //the [6] here is the max size of a content, for example ADMIN is 5 so you need to add an extra 1 for NULL, so 6.
+    char str[][6] = { "GM" , "ADMIN" , "DEV" };
+    int nb_to_check=3;  //nb of extensions to check (see above).
+    for (int n=0 ; n<nb_to_check ; n++)
+    {
+        if(strstr(mychar,str[n])!=NULL)
+        {
+            Log(MSG_HACK,"%s tried to create a clan with a reserved extension %s is in %s",thisclient->CharInfo->charname,str[n],my_name);
+            return false;
+        }
+
+    }
+
+
+    return true;
+}
+
+//LMA: escaping.
+bool CWorldServer::EscapeMySQL(const char* data,string & mystring,int nb_car_max,bool check_same)
+{
+    //checking data length
+    if(nb_car_max!=-1)
+    {
+        if (strlen(data)>nb_car_max)
+        {
+            Log(MSG_WARNING,"Escape:: Data too big (%s) %u>%i",data,strlen(data),nb_car_max);
+            return false;
+        }
+    }
+
+    char * lma_username = new char[strlen(data) + 1];
+    strcpy(lma_username,data);
+    char * new_username = new char[strlen(data)*3 +1];
+    mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
+    mystring.assign(new_username);
+    delete[] lma_username;
+    delete[] new_username;
+
+    //Is data escaped the same as the non escaped? Useful for login for example.
+    if(strcmp(data,mystring.c_str()))
+    {
+        Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+
+//LMA: escaping (this version only checks escaped and unescaped versions of a string are the same).
+bool CWorldServer::CheckEscapeMySQL(const char* data,int nb_car_max,bool check_same)
+{
+    string mystring;
+
+    //checking data length
+    if(nb_car_max!=-1)
+    {
+        if (strlen(data)>nb_car_max)
+        {
+            Log(MSG_WARNING,"Escape:: Data too big (%s) %u>%i",data,strlen(data),nb_car_max);
+            return false;
+        }
+    }
+
+    char * lma_username = new char[strlen(data) + 1];
+    strcpy(lma_username,data);
+    char * new_username = new char[strlen(data)*3 +1];
+    mysql_real_escape_string(DB->Mysql, new_username,lma_username,strlen(lma_username));
+    mystring.assign(new_username);
+    delete[] lma_username;
+    delete[] new_username;
+
+    //Is data escaped the same as the non escaped? Useful for login for example.
+    if(strcmp(data,mystring.c_str())!=0)
+    {
+        Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
+        return false;
+    }
+
+
+    return true;
+}
+

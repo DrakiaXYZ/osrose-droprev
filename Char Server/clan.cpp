@@ -820,6 +820,16 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 strcpy(lma_news,news);
                 char * new_news = new char[strlen(lma_news)*3 +1];
                 mysql_real_escape_string(DB->Mysql, new_news,lma_news,strlen(lma_news));
+
+                if(strlen(new_news)>=200)
+                {
+                    Log(MSG_WARNING,"Clan %i (%s) tried to put a too long news %s (%i>200)",thisclan->id,thisclan->name,new_news,strlen(new_news));
+                    delete[] lma_news;
+                    delete[] new_news;
+                    delete []news;
+                    return true;
+                }
+
                 if(!DB->QExecute("UPDATE list_clan SET news='%s' WHERE id=%i", new_news, thisclan->id))
                 {
                     delete[] lma_news;
