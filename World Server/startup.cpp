@@ -56,6 +56,7 @@ bool CWorldServer::LoadSTBData( )
         //STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
         STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
         STBStoreDataChar("3DDataPeg\\STB\\LIST_ZONE.STB", &ZoneData);  //LMA: Getting Zone Data.
+        STBStoreData("3DDataPeg\\STB\\LIST_CLASS.STB", &ListClass);    //LMA: used to store the class list, actually to check equip requirements.
     }
     else
     {
@@ -88,6 +89,7 @@ bool CWorldServer::LoadSTBData( )
         //STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
         STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
         STBStoreDataChar("3DData\\STB\\LIST_ZONE.STB", &ZoneData);  //LMA: Getting Zone Data.
+        STBStoreData("3DData\\STB\\LIST_CLASS.STB", &ListClass);    //LMA: used to store the class list, actually to check equip requirements.
     }
 
     //LMA: Loading STL too :)
@@ -344,6 +346,9 @@ bool CWorldServer::InitDefaultValues()
     StatsList=new CItemStas*[STB_ITEM[10].rowcount];
     maxStats=STB_ITEM[10].rowcount;
 
+    //LMA: job requirements.
+    ClassList=new vector<UINT>*[ListClass.rowcount];
+    maxClass=ListClass.rowcount;
 
     //Null break
     CBreakList* nullBreak=new CBreakList;
@@ -2160,7 +2165,11 @@ bool CWorldServer::LoadEquip( )
             //job1 to job3
             for(int k=0;k<3;k++)
             {
-                //Weird values... Same for unions (23 and 26)
+                //LMA: Weird values... Same for unions (23 and 26)
+                //values from 1 to 5 mean unions!
+                //0=visitor
+                //others are to be checked against list_class.stb.
+                //actually needed for itemtype from 1 to 9.
                 newequip->occupation[k] = STB_ITEM[j].rows[i][(16+k)];
             }
 
@@ -2665,6 +2674,33 @@ bool CWorldServer::LoadItemStats( )
     }
 
     Log( MSG_LOAD, "Item Stats Loaded" );
+    return true;
+}
+
+//LMA: Job requirements.
+bool CWorldServer::LoadJobReq( )
+{
+    Log( MSG_LOAD, "JobReq - STB   " );
+    for(unsigned int i=0;i<ListClass.rowcount;i++)
+    {
+        if(ListClass.rows[i][0]==0)
+        {
+            continue;
+        }
+
+        for(int k=1;k<11;k++)
+        {
+            if(ListClass.rows[i][k]==0)
+            {
+                break;
+            }
+
+            ClassList[i]->push_back(ListClass.rows[i][k]);
+        }
+
+    }
+
+    Log( MSG_LOAD, "JobReq Loaded" );
     return true;
 }
 

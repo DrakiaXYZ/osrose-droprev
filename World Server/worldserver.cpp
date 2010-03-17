@@ -356,6 +356,7 @@ bool CWorldServer::OnServerReady( )
     LoadJemItem( );
     LoadEquip( );
     LoadItemStats( );
+    LoadJobReq( );
     // PY new Stat Lookup table
     LoadStatLookup( );
     // PY end

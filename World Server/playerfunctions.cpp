@@ -2308,6 +2308,102 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
 
     //should be ok...
 
+    //LMA: Checking jobs now.
+    bool is_ok=false;
+    int nb_0=0;
+    int job_id=0;
+    for (int k=0;k<3;k++)
+    {
+        job_id=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->occupation[k];
+        if (job_id==0)
+        {
+            nb_0++;
+            continue;
+        }
+
+        if (!CheckJobs(job_id))
+        {
+            continue;
+        }
+
+        is_ok=true;
+        break;
+    }
+
+    //sometimes there are no requirements (or visitor so usueless...)
+    if(nb_0==3)
+    {
+        is_ok=true;
+    }
+
+    if(!is_ok)
+    {
+        Log(MSG_HACK,"Player %s tried to equip item %u::%u slot %i but job check failed (idx %i, %i, %i (see list_class.stb), job %i)",CharInfo->charname,items[slot].itemtype,items[slot].itemnum,slot,
+            GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->occupation[0],
+            GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->occupation[1],
+            GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->occupation[2],
+            CharInfo->Job);
+        return false;
+    }
+
 
     return true;
 }
+
+
+//LMA: Checking job requirements.
+bool CPlayer::CheckJobs(int item_job)
+{
+    if (item_job<0)
+    {
+        Log(MSG_WARNING,"CheckJobs:: wrong item_job (negative) %i",item_job);
+        return false;
+    }
+
+    //Special case, union.
+    if(item_job>0&&item_job<=5)
+    {
+        if(CharInfo->unionid==item_job)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    //jobs.
+    if (item_job>=GServer->maxClass)
+    {
+        Log(MSG_WARNING,"CheckJobs:: wrong item_job %i>=%u",item_job,GServer->maxClass);
+        return false;
+    }
+
+    bool is_ok=false;
+    int nb_slots=GServer->ClassList[item_job]->size();
+    if (nb_slots==0)
+    {
+        //nothing to check, we still return true.
+        Log(MSG_WARNING,"CheckJobs:: nothing to check for item_job %i?",item_job);
+        return true;
+    }
+
+    //it works like "OK".
+    for(int k=0;k<nb_slots;k++)
+    {
+        if(GServer->ClassList[item_job]->at(k)!=CharInfo->Job)
+        {
+            continue;
+        }
+
+        is_ok=true;
+        break;
+    }
+
+
+    return is_ok;
+}
+
+

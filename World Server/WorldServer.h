@@ -435,6 +435,7 @@ class CWorldServer : public CServerSocket
     	bool LoadJemItem( );
     	bool LoadEquip( );
     	bool LoadItemStats( );
+    	bool LoadJobReq( ); //LMA: Job requirements.
     	bool LoadStatLookup( );
         bool LoadTeleGateData( );
         bool LoadCustomTeleGate( );
@@ -576,6 +577,8 @@ class CWorldServer : public CServerSocket
         CQuestItemData          **QuestItemData;
         int                     maxNPC;                 //Nb NPC/Mobs
         int                     maxQuestItems;          //Nb quest Items.
+        vector<UINT>            **ClassList;            //LMA: to store class requirements.
+        int                     maxClass;               //LMA: Nb of class requirements.
 
         vector<CParty*>         PartyList;              // Party List
         vector<CFairy*>         FairyList;              // Fairy List
@@ -628,6 +631,7 @@ class CWorldServer : public CServerSocket
         //CSTBData                upgradeData;            // Upgrade - refine data (LMA: we use a csv file now).
         CSTBData                BreakData;              // Break - Used for Break list, chests and blue crafts.
         CSTBDataChar            ZoneData;               // LMA: zone Data.
+        CSTBData                ListClass;              // LMA: used to store the class list, actually to check equip requirements.
 
     	clock_t				   lastServerStep;			// Last Update
     	clock_t                LastUpdateTime;          // Store the last update World Time

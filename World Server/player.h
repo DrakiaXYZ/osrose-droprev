@@ -253,6 +253,7 @@ class CPlayer: public CCharacter
     bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
     bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
     bool CheckStats(int slot, int dest_slot); //LMA: Checking if a stat is ok to equip an item.
+    bool CheckJobs(int item_job);  //LMA: checking job requirements.
 
     // ExJam Quest Code
     void savequests( CPlayer* thisclient );
