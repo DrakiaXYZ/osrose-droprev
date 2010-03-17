@@ -3245,6 +3245,26 @@ bool CWorldServer::LoadConfig( )
     else
        Log (MSG_INFO, "Handling naRose STB, AIP, QSD, database.");
 
+    #ifdef QHACK
+        Log(MSG_INFO,"Quest Hack trapping activated.");
+    #endif
+
+    #ifdef DEBUGMSG
+        DEBUGF("osRose worldserver launched.");
+        DEBUGS("osRose worldserver launched.");
+
+        #ifndef _DEBUG
+            Log(MSG_INFO,"Debug messages will be outputed to windows stack.");
+        #else
+            Log(MSG_INFO,"Debug messages will be outputed here because of debug build.");
+        #endif
+
+    #endif
+
+    #ifdef _DEBUG
+        Log(MSG_WARNING,"osRose is currently running in debug build!");
+    #endif
+
     DB->QFree( );
 
    //Checking UW values, are they ok?

@@ -52,6 +52,47 @@ extern bool PRINT_LOG;
 #define LOG_WORLDPACKETS "worldpackets.log"
 #define LOG_DEFAULTPACKETS "packets.log"
 
+//LMA: new debug message types, using Windows stack, you can use dbgview.exe
+//to get the messages. Simply do something like (quite like Log command):
+//DEBUGF("this is a test message %s ver %i","osrose",282);
+//Nothing is logged in files using those commands!
+//Comment define DEBUGMSG to disable it.
+#define DEBUGMSG
+#ifdef DEBUGMSG
+    #ifdef _DEBUG
+        //gdb eats those messages in debug mode, so we handle them differently.
+        //btw, _DEBUG is defined in CB debug project option.
+        //this one gives the file and line as well as the msg.
+        #define DEBUGF(a...)    do{char buffer[1024]; \
+                                    char bufferRem[200]; \
+                                   snprintf(buffer,1024, "%s (F:%s, L:%i)",__FILE__, __FUNCTION__,__LINE__); \
+                                   snprintf(bufferRem,200, ##a); \
+                                   snprintf(buffer,1024,"%s, %s",buffer,bufferRem); \
+                                   Log(MSG_DEBUG,"%s",buffer);}while(0)
+        //More simple debug output.
+        #define DEBUGS(a...)    do{char buffer[200]; \
+                                   snprintf(buffer,200, ##a); \
+                                   Log(MSG_DEBUG,"%s",buffer);}while(0)
+    #else
+        //this one gives the file and line as well as the msg.
+        #define DEBUGF(a...)    do{char buffer[1024]; \
+                                    char bufferRem[200]; \
+                                   snprintf(buffer,1024, "%s (F:%s, L:%i)",__FILE__, __FUNCTION__,__LINE__); \
+                                   snprintf(bufferRem,200, ##a); \
+                                   snprintf(buffer,1024,"%s, %s",buffer,bufferRem); \
+                                   OutputDebugString(buffer);}while(0)
+        //More simple debug output.
+        #define DEBUGS(a...)    do{char buffer[200]; \
+                                   snprintf(buffer,200, ##a); \
+                                   OutputDebugString(buffer);}while(0)
+    #endif
+#else
+    //if define DEBUGMSG is commented, the commands are trapped but nothing is outputed.
+    #define DEBUGF(a...)
+    #define DEBUGS(a...)
+#endif
+//LMA end.
+
 // Error Types
 enum msg_type {
 	MSG_NONE,
