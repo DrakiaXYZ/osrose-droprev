@@ -79,6 +79,9 @@ CWorldServer::~CWorldServer( )
         delete ClientList.at(i);
     }
 
+    delete [] StatsList;
+    delete [] ClassList;
+
     delete EquipList[0].nullequip;
     delete JemList.nulljem;
     delete NaturalList.nullnatural;

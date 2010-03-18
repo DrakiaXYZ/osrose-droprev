@@ -2683,7 +2683,11 @@ bool CWorldServer::LoadJobReq( )
     Log( MSG_LOAD, "JobReq - STB   " );
     for(unsigned int i=0;i<ListClass.rowcount;i++)
     {
-        if(ListClass.rows[i][0]==0)
+        vector<UINT>* myvector=new vector<UINT>;
+        myvector->clear();
+        ClassList[i]=myvector;
+
+        if(ListClass.rows[i][1]==0)
         {
             continue;
         }
