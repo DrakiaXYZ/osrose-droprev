@@ -311,6 +311,7 @@ struct CROSEServerConfig
     int Command_Setqvar; // by Drakia
     int Command_Settime;
     int Command_SetUW;  //LMA: Forcing UW.
+    int Command_SetGemQuest;  //LMA: forcing gem quest.
     int Command_SetUWnb;    //LMA: Forcing UW nb players.
     int Command_ShopType;
     int Command_Shutdown;

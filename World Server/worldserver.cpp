@@ -373,6 +373,10 @@ bool CWorldServer::OnServerReady( )
     //In t + 5 minutes (deactivated, use gm command instead).
     //pakGMForceUW(NULL,5);
 
+    //LMA: forcing gem quets
+    GemQuestForce=0;
+    GemQuestReset=0;
+
 
     //LMA: for debug (load old skill system and compares to new one).
     /*
@@ -697,6 +701,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Setqvar = ConfigGetInt ( "commands.ini", "setqvar", 299 );
     Config.Command_Settime = ConfigGetInt    ( "commands.ini", "settime", 299 );
     Config.Command_SetUW = ConfigGetInt    ( "commands.ini", "setuw", 299 );
+    Config.Command_SetGemQuest = ConfigGetInt    ( "commands.ini", "setgemquest", 299 );
     Config.Command_SetUWnb = ConfigGetInt    ( "commands.ini", "setuwnb", 299 );
     Config.Command_ShopType = ConfigGetInt    ( "commands.ini", "shoptype", 299 );
     Config.Command_Shutdown = ConfigGetInt    ( "commands.ini", "shutdown", 299 );

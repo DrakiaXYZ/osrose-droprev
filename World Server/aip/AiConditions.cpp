@@ -891,6 +891,7 @@ AICOND(023)
 //Check Date Time (4)
 AICOND(024)
 {
+    Log(MSG_INFO,"AIP Cdt 024 for aipId %i",AipId);
 	GETAICONDDATA(024);
 
 
@@ -902,9 +903,48 @@ AICOND(024)
     	if(sTIME.wDay != data->btDate)
     		return AI_FAILURE;
     }
+
     word wMin = ((sTIME.wHour * 60) + sTIME.wMinute);
     word wFrom = (data->btHour1 * 60) + data->btMin1;
     word wTo = (data->btHour2 * 60) + data->btMin2;
+
+    //LMA: patch for the gem quest, 1104 = historian Jones.
+    if(AipId==1104&&GServer->GemQuestForce!=0)
+    {
+        //In this case we discard the end quest times.
+        if(wFrom==22||wFrom==00)
+        {
+            return AI_FAILURE;
+        }
+
+        SYSTEMTIME TimeFrom;
+        SYSTEMTIME TimeTo;
+        TimeFrom.wHour=0;
+        TimeFrom.wMinute=0;
+        TimeFrom.wSecond=0;
+        TimeTo.wHour=0;
+        TimeTo.wMinute=0;
+        TimeTo.wSecond=0;
+
+        if(wFrom==19)
+        {
+            //quest start time check (19:56:00 to 19:58:00)
+            TimeFrom.wMinute=GServer->GemQuestForce;
+            TimeTo.wMinute=TimeFrom.wMinute+2;
+        }
+        else
+        {
+            //quest LTB shout (20:00:00 to 20:01:00)
+            TimeFrom.wMinute=GServer->GemQuestForce+4;
+            TimeTo.wMinute=TimeFrom.wMinute+1;
+        }
+
+        //The rest should be handled by normal code...
+        wFrom=((TimeFrom.wHour * 60) + TimeFrom.wMinute);
+        wTo=((TimeTo.wHour * 60) + TimeTo.wMinute);
+    }
+    //end of trick for gem quest.
+
 
     //LMA: Trick to Force UW...
     if(GServer->UWForceFrom!=0)

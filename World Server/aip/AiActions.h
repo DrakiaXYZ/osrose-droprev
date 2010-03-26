@@ -20,8 +20,11 @@
 */
 
 // Props to ExJam for this code :D
-#define AIACT(act) int F_AI_ACT_ ## act (class CWorldServer* server, class CCharacter* entity, byte* raw)
-typedef int (*fpAiAct)(class CWorldServer*, class CCharacter*, byte*);
+//LMA: we add the AIPId so it's easier to do some patching and easier on logs as well.
+/*#define AIACT(act) int F_AI_ACT_ ## act (class CWorldServer* server, class CCharacter* entity, byte* raw)
+typedef int (*fpAiAct)(class CWorldServer*, class CCharacter*, byte*);*/
+#define AIACT(act) int F_AI_ACT_ ## act (class CWorldServer* server, class CCharacter* entity, byte* raw,int AipId)
+typedef int (*fpAiAct)(class CWorldServer*, class CCharacter*, byte*, int);
 #define GETAIACTDATA(act) STR_AI_ACT_ ## act * data = (STR_AI_ACT_ ## act *)raw;
 
 

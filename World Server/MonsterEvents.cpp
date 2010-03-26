@@ -337,7 +337,9 @@ void CMonster::DoAi(int ainumberorg,char type)
             //if (command > 30 || command < 0) continue;
             if (command > 32 || command < 0) continue;
 
-            success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
+            //LMA: adding the AIPId
+            //success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
+            success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data,ainumber);
             if(ainumber == AIWatch)LogDebug( "aiCondition %03u returned %d", command, success);
 
             //LMA: Special case (quite a stupid one if you're asking me)
@@ -388,7 +390,9 @@ void CMonster::DoAi(int ainumberorg,char type)
                 int command = script->Actions[script->offset_ltb]->opcode;
                 if (command > 38 || command < 0) continue;
 
-                success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[script->offset_ltb]->data);
+                //LMA: adding the AIPId
+                //success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[script->offset_ltb]->data);
+                success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[script->offset_ltb]->data,ainumber);
                 if(ainumber == AIWatch)LogDebug( "aiAction forced: %03u returned %d", command, success);
 
                 if(lma_debug)
@@ -410,7 +414,9 @@ void CMonster::DoAi(int ainumberorg,char type)
                 int command = script->Actions[i]->opcode;
                 if (command > 38 || command < 0) continue;
 
-                success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
+                //LMA: adding the AIPId
+                //success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
+                success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data,ainumber);
                 if(ainumber == AIWatch)LogDebug( "aiAction: %03u returned %d", command, success);
 
                 if(lma_debug)

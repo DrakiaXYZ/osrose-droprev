@@ -20,8 +20,12 @@
 */
 
 // Props to ExJam for this code :D
-#define AICOND(cond) int F_AI_COND_ ## cond (class CWorldServer* server, class CCharacter* entity, byte* raw)
+//LMA: we add the AIPId so it's easier to do some patching and easier on logs as well.
+/*#define AICOND(cond) int F_AI_COND_ ## cond (class CWorldServer* server, class CCharacter* entity, byte* raw)
 typedef int (*fpAiCond)(class CWorldServer*, class CCharacter*, byte*);
+*/
+#define AICOND(cond) int F_AI_COND_ ## cond (class CWorldServer* server, class CCharacter* entity, byte* raw,int AipId)
+typedef int (*fpAiCond)(class CWorldServer*, class CCharacter*, byte*, int);
 #define GETAICONDDATA(cond) STR_AI_COND_ ## cond * data = (STR_AI_COND_ ## cond *)raw;
 
 AICOND(000);AICOND(001);AICOND(002);

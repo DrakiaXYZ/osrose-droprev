@@ -876,7 +876,7 @@ AIACT(018)
 AIACT(019)
 {
 	//Run and attack "m_pNearCHAR" //Identical to 012
-	return F_AI_ACT_012(server, entity, raw);
+	return F_AI_ACT_012(server, entity, raw,AipId);
 }
 
 //Spawn Monster (5)
@@ -1161,6 +1161,12 @@ AIACT(025)
     if(monster->thisnpc->refNPC==1113&&data->btVarIDX==2)
     {
         GServer->DB->QExecute("UPDATE list_config SET uwside=%i",GServer->ObjVar[monster->thisnpc->refNPC][data->btVarIDX]);
+    }
+
+    //LMA: Special case for gem quest (spawn reset)
+    if (AipId==1104&&monster->thisnpc->refNPC==1104&&data->btVarIDX==13&&GServer->GemQuestReset>0&&GServer->ObjVar[1104][13]>GServer->GemQuestReset)
+    {
+        GServer->ObjVar[1104][13]=0;
     }
 
 

@@ -377,6 +377,7 @@ class CWorldServer : public CServerSocket
         bool pakGMObjVar(CPlayer* thisclient, int npctype, int output=1); //LMA: ObjVar for a NPC.
         bool pakGMSetObjVar(CPlayer* thisclient, int npctype, int index, int value);    //LMA: set an ObjVar for a NPC.
         bool pakGMForceUW(CPlayer* thisclient, int time); //LMA: forcing Union Wars.
+        bool pakGMForceGemQuest(CPlayer* thisclient, int time); //LMA: forcing gem quest.
         bool pakGMForceUWPlayers(CPlayer* thisclient, int nb_players);   //LMA: forcing Union Wars (nb players).
         bool pakGMExportSTBSTL(CPlayer* thisclient);    //LMA: export STB and STL to a .sql file.
         bool pakGMSpawnList(CPlayer* thisclient, int range); //LMA: New spawn handling
@@ -560,6 +561,8 @@ class CWorldServer : public CServerSocket
     	IfoObject               WarpGate;               //LMA: Warp Gate for Union.
     	int                     LastTempleAccess[2];    //LMA: For temple Access.
     	word                    UWForceFrom;            //LMA: Forcing Union Wars (test)
+    	word                    GemQuestForce;          //LMA: Forcing gem quest.
+    	int                     GemQuestReset;          //LMA: Forcing gem quest to reset spawn counter.
     	int                     UWNbPlayers;            //LMA: Forcing Nb players required for UW.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list

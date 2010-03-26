@@ -2731,6 +2731,92 @@ else if (strcmp(command, "itemstat")==0)
             }
         }
     }
+   else if(strcmp(command, "gemquest")==0)
+    {
+        if(Config.Command_SetGemQuest > thisclient->Session->accesslevel)
+           return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+         if(strcmp(tmp, "reset")==0)
+         {
+             if(GServer->ObjVar[1104][0]!=1)
+             {
+                 SendPM(thisclient, "Gem quest isn't active.");
+                 return true;
+             }
+
+             GServer->ObjVar[1104][13]=0;
+             SendPM(thisclient, "Gem quest spawn counter reseted.");
+             return true;
+         }
+         else if(strcmp(tmp, "stop")==0)
+         {
+             if(GServer->ObjVar[1104][0]!=1)
+             {
+                 SendPM(thisclient, "Gem quest isn't active.");
+                 return true;
+             }
+
+             GServer->ObjVar[1104][0]=0;
+             GServer->ObjVar[1104][12]=0;
+             GServer->ObjVar[1104][13]=0;
+             GServer->GemQuestForce=0;
+             GServer->GemQuestReset=0;
+             //changing the dialogID.
+             pakGMSetObjVar(thisclient,1104,0,0);
+             SendPM(thisclient, "Gem quest spawn stopped.");
+             return true;
+         }
+         else if(strcmp(tmp, "info")==0)
+         {
+             if(GServer->ObjVar[1104][0]!=1)
+             {
+                 SendPM(thisclient, "Gem quest isn't active.");
+                 return true;
+             }
+
+             SendPM(thisclient, "Gem quest active, spawn counter: %i, auto reset set to %i",GServer->ObjVar[1104][13],GServer->GemQuestReset);
+             return true;
+         }
+         else if(strcmp(tmp, "start")==0)
+         {
+             if(GServer->ObjVar[1104][0]!=0)
+             {
+                 SendPM(thisclient, "Gem quest is already active.");
+                 return true;
+             }
+
+            if ((tmp = strtok(NULL, " "))==NULL)
+            {
+                return true;
+            }
+
+            int time = atoi(tmp);
+            if (time<0)
+            {
+                return true;
+            }
+
+            GServer->GemQuestReset=0;
+            if ((tmp = strtok(NULL, " "))!=NULL)
+            {
+                GServer->GemQuestReset=atoi(tmp);
+                if (GServer->GemQuestReset<=0)
+                {
+                    GServer->GemQuestReset=0;
+                }
+
+            }
+
+             SendPM( thisclient, "gem quest will forced to start in %i minutes, auto reset set to %i",time,GServer->GemQuestReset);
+             pakGMForceGemQuest(thisclient,time);
+
+
+             return true;
+         }
+
+
+        return true;
+    }
    else if(strcmp(command, "setuw")==0)
     {
         if(Config.Command_SetUW > thisclient->Session->accesslevel)
@@ -5618,6 +5704,36 @@ bool CWorldServer::pakGMForceUW(CPlayer* thisclient, int time)
 
     return true;
 }
+
+//LMA: We force gem quest
+bool CWorldServer::pakGMForceGemQuest(CPlayer* thisclient, int time)
+{
+    if (time<=0)
+    {
+        GemQuestForce=0;
+        return true;
+    }
+
+    //Checking if gem quest is already in motion or not...
+    //1104=historian Jones
+    if(GServer->ObjVar[1104][0]!=0)
+    {
+        SendPM(thisclient,"Gem quest already started!");
+        return true;
+    }
+
+    GServer->ObjVar[1104][12]=0;
+    GServer->ObjVar[1104][13]=0;
+
+    SYSTEMTIME sTIME;
+    GetLocalTime(&sTIME);
+    sTIME.wMinute+=time;
+    GemQuestForce=(sTIME.wHour * 60) + sTIME.wMinute;
+
+
+    return true;
+}
+
 
 
 //LMA: We force Nb players requirement.
