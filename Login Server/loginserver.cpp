@@ -26,6 +26,7 @@ CLoginServer::CLoginServer( string fn )
     filename = fn;
     LoadConfigurations( (char*)filename.c_str() );
     GServer = this;
+    GServer->console_started=false;
 }
 
 // Destructor

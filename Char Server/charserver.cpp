@@ -25,6 +25,7 @@ CCharServer::CCharServer( string fn )
 {
     LoadConfigurations( (char*)fn.c_str() );
     GServer = this;
+    GServer->console_started=false;
 }
 
 // Deconstructor

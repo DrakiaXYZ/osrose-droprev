@@ -37,6 +37,8 @@ CWorldServer::CWorldServer( string fn )
     MapMutex = PTHREAD_MUTEX_INITIALIZER; //fast mutex
     SQLMutex = PTHREAD_MUTEX_INITIALIZER;
     PlayerMutex = PTHREAD_MUTEX_INITIALIZER;
+
+    console_started=false;  //LMA: not in console mode.
 }
 
 // Destructor

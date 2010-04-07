@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
     srand( rand()*time(NULL) );
 
     //LMA: TEST DEACTIVATING ERROR TRAPPING
+    //Uncomment following line to use "console" mode (control+C).
     //StartSignal( );
 
 	LOG_THISSERVER = LOG_WORLD_SERVER;

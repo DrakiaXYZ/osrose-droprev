@@ -409,6 +409,7 @@ class CServerSocket : public CBaseSocket
     	pthread_t consoleThread;
 
     	// console thread function
+    	bool console_started;   //LMA: is console already started or not?
     	void startConsole( );
         static void *Console( PVOID );
         virtual bool handleCommand( char* );

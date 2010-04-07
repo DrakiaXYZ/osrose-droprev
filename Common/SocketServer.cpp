@@ -410,7 +410,7 @@ void CServerSocket::startConsole( )
     pthread_create( &consoleThread, NULL, Console, (PVOID)this );
 }
 
-void* CServerSocket::Console( PVOID cserver )
+/*void* CServerSocket::Console( PVOID cserver )
 {
     //When the console is open, all the servers messages will not be printed (but still will be saved to files)
     Log( MSG_INFO, "Console started." );
@@ -422,16 +422,76 @@ void* CServerSocket::Console( PVOID cserver )
         char command[100];
         memset( &command,'\0', 100 );
         std::cout << "# ";
-        std::cin.getline( command, 100 );
+        std::cin.getline( command, 100);
         if(strcasecmp( command, "exit" )==0)
+        {
             running = false;
+        }
         else
+        {
             if(!server->handleCommand( command ))
+            {
                 running = false;
+            }
+
+        }
+
     }
     PRINT_LOG = true;
     Log( MSG_INFO, "Console closed." );
+}*/
+
+
+//LMA: New version of the Console... Handling double Control+C bug and some others.
+void* CServerSocket::Console( PVOID cserver )
+{
+    //When the console is open, all the servers messages will not be printed (but still will be saved to files)
+    CServerSocket* server = static_cast<CServerSocket*>(cserver);
+    bool running = true;
+    PRINT_LOG = false;
+    Log( MSG_INFO, "Console started." );
+
+    while(running)
+    {
+        char command[100];
+        memset( &command,'\0', 100 );
+        std::cout << "# " << std::flush;
+
+        std::cin.clear();
+        std::cin.sync();
+        std::cin.ignore(std::cin.rdbuf()->in_avail(),'\n');
+        std::cin.getline( command, 100);
+        if(strcasecmp( command, "exit" )==0)
+        {
+            running = false;
+        }
+        else
+        {
+            if(strlen(command)>0)
+            {
+                if(!server->handleCommand( command ))
+                {
+                    running = false;
+                }
+
+            }
+            else
+            {
+                running=false;
+            }
+
+        }
+
+    }
+
+    std::cin.clear();
+    std::cin.sync();
+    std::cin.ignore(std::cin.rdbuf()->in_avail(),'\n');
+    server->console_started=false;
+    PRINT_LOG = true;
+    Log( MSG_INFO, "\nConsole closed." );
 }
+
 
 bool CServerSocket::handleCommand( char* cmd )
 {
