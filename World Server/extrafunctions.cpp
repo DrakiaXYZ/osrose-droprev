@@ -2640,6 +2640,18 @@ UINT CWorldServer::gi(UINT itemvalue, short type)
 
     }
 
+    /*itemtype= itemvalue/10000;
+    if (itemtype>=1&&itemtype<=14)
+    {
+        itemnum=itemvalue % 10000;
+        if(type==0)
+        {
+            return itemtype;
+        }
+
+        return itemnum;
+    }*/
+
     itemtype= itemvalue/100000;
     if (itemtype>=1&&itemtype<=14)
     {
