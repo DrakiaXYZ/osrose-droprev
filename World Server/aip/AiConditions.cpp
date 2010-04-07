@@ -891,7 +891,7 @@ AICOND(023)
 //Check Date Time (4)
 AICOND(024)
 {
-    Log(MSG_INFO,"AIP Cdt 024 for aipId %i",AipId);
+    //Log(MSG_INFO,"AIP Cdt 024 for aipId %i",AipId);
 	GETAICONDDATA(024);
 
 

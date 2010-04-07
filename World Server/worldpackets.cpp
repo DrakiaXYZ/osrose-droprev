@@ -3646,7 +3646,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   //Is the quest in the "die monster" list...
   if (MapStackQuest.find(hash)!=MapStackQuest.end())
   {
-    Log(MSG_WARNING,"Player %s sent special questid %u",hash);
+    Log(MSG_WARNING,"Player %s sent special questid %u",thisclient->CharInfo->charname,hash);
     clock_t mytime=clock();
 
     for (int k=0;k<10;k++)
@@ -3661,7 +3661,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
         {
             thisclient->arr_questid[k].questid=0;
             is_ok=true;
-            Log(MSG_WARNING,"Player %s had a valid questid %u waiting in slot %i",hash,k);
+            Log(MSG_WARNING,"Player %s had a valid questid %u waiting in slot %i",thisclient->CharInfo->charname,hash,k);
             break;
         }
 

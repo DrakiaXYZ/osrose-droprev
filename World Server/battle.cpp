@@ -167,7 +167,7 @@ void CCharacter::DoAttack( )
             else
             {
 
-                if(IsPlayer())
+                /*if(IsPlayer())
                 {
                     if(!IsTargetReached( Enemy ))
                         Log(MSG_INFO,"Player %i hasn't reached his enemy (%i) yet (%.2f,%.2f) (%.2f,%.2f)",this->clientid,this->Battle->atktarget,this->Position->current.x,this->Position->current.y,this->Position->destiny.x,this->Position->destiny.y);
@@ -176,7 +176,7 @@ void CCharacter::DoAttack( )
                 {
                     if(!IsTargetReached( Enemy ))
                         Log(MSG_INFO,"Monster %i hasn't reached his enemy (%i) yet (%.2f,%.2f) (%.2f,%.2f)",this->clientid,this->Battle->atktarget,this->Position->current.x,this->Position->current.y,this->Position->destiny.x,this->Position->destiny.y);
-                }
+                }*/
 
             }
 

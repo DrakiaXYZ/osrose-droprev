@@ -522,7 +522,7 @@ bool CPlayer::loaddata( )
         cskills[i].cooldown_skill=0;
     }
 
-    Log(MSG_INFO,"summon jauge %i",summon_jauge);
+    Log(MSG_INFO,"%s:: summon jauge %i",CharInfo->charname,summon_jauge);
 
 
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem,sp_value FROM items WHERE owner=%i", CharInfo->charid);

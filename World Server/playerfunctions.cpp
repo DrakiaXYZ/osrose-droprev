@@ -2232,15 +2232,6 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
         return false;
     }
 
-    //Checking Job:
-    //LMA: weird values in STB... not used for now.
-    /*for(int k=0;k<3;k++)
-    {
-        GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->occupation[k]
-    }*/
-
-    //checking unions (not done, weird values too).
-
     //Checking stats (TODO, add them all :( ):
     for(int k=0;k<2;k++)
     {
@@ -2305,8 +2296,6 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
         }
 
     }
-
-    //should be ok...
 
     //LMA: Checking jobs now.
     bool is_ok=false;
