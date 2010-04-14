@@ -1170,6 +1170,12 @@ void CPlayer::savequests( CPlayer* thisclient )
 //LMA: getting the family skill.
 int CPlayer::GoodSkill(int skill_id)
 {
+    if (skill_id>GServer->maxSkills)
+    {
+        Log(MSG_WARNING,"Bad skill_id in GoodSkill (%i>%u)",skill_id,GServer->maxSkills);
+        return -1;
+    }
+
     int type=GServer->SkillList[skill_id]->skill_tab;
 
     if (type==11)
@@ -1190,6 +1196,12 @@ int CPlayer::GoodSkill(int skill_id)
 //LMA: Find a skill offset for cskills...
 int CPlayer::FindSkillOffset(int family)
 {
+    if (family>4)
+    {
+        Log(MSG_WARNING,"Bad family in FindSkillOffset (%i)",family);
+        return -1;
+    }
+
     int begin[5];
     int end[5];
 
@@ -1203,12 +1215,6 @@ int CPlayer::FindSkillOffset(int family)
     end[2]=362;
     end[3]=120;
     end[4]=320;
-
-    if (family>4)
-    {
-        Log(MSG_WARNING,"Bad family in FindSkillOffset (%i)",family);
-        return -1;
-    }
 
     int res=cur_max_skills[family];
 
@@ -1225,6 +1231,12 @@ int CPlayer::FindSkillOffset(int family)
 //LMA: Find a skill in cskills...
 bool CPlayer::FindSkill(int family,UINT skill)
 {
+    if (family>4)
+    {
+        Log(MSG_WARNING,"Bad family in FindSkill (%i) for skill %i",family, skill);
+        return true;
+    }
+
     int begin[5];
     int end[5];
 
@@ -1238,12 +1250,6 @@ bool CPlayer::FindSkill(int family,UINT skill)
     end[2]=362;
     end[3]=120;
     end[4]=320;
-
-    if (family>4)
-    {
-        Log(MSG_WARNING,"Bad family in FindSkill (%i) for skill %i",family, skill);
-        return true;
-    }
 
     for (int k=begin[family];k<end[family];k++)
     {

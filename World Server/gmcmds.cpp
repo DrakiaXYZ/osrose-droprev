@@ -5468,13 +5468,26 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         return true;
     }
 
-    //LMA: We delete previous skills to avoid errors (only the class ones)...
+    //LMA: We delete previous skills to avoid errors (basic, class, unique and mileage ones, so all)...
     //They will be sorted correctly (if needed) at next startup...
     for (int k=0;k<320;k++)
     {
         otherclient->cskills[k].id = 0;
         otherclient->cskills[k].level = 0;
         otherclient->cskills[k].thisskill=NULL;
+    }
+
+    //LMA: resetting the skill offsets.
+    int cur_cskills[5];
+    cur_cskills[0]=0;
+    cur_cskills[1]=60;
+    cur_cskills[2]=320;
+    cur_cskills[3]=90;
+    cur_cskills[4]=120;
+
+    for (int i=0;i<5;i++)
+    {
+        otherclient->cur_max_skills[i]=cur_cskills[i];
     }
 
     while( row = mysql_fetch_row(result) )
@@ -5487,8 +5500,30 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
             break;
         }
 
-        otherclient->cskills[nb_skills-1].id = atoi(row[0]);
-        otherclient->cskills[nb_skills-1].level = atoi(row[1]);
+        //LMA: old version.
+        /*otherclient->cskills[nb_skills-1].id = atoi(row[0]);
+        otherclient->cskills[nb_skills-1].level = atoi(row[1]);*/
+
+        //LMA: New version, we sort the skills from the start...
+        int skillid=atoi(row[0]);
+        int skilllvl=atoi(row[1]);
+        int family=otherclient->GoodSkill(skillid);
+        if(family==-1)
+        {
+            Log(MSG_WARNING,"pakGMAllSkill:: couldn't say the family for skill %i",skillid);
+            continue;
+        }
+
+        //looking for the right offset.
+        int offset=otherclient->FindSkillOffset(family);
+        if(offset==-1)
+        {
+            Log(MSG_WARNING,"pakGMAllSkill:: couldn't get offset for family %i",family);
+            continue;
+        }
+
+        otherclient->cskills[offset].id = skillid;
+        otherclient->cskills[offset].level = skilllvl;
     }
 
     DB->QFree( );
