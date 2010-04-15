@@ -5458,7 +5458,9 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     //LMA: MySQL time.
     MYSQL_ROW row;
     MYSQL_RES *result=NULL;
-    result = DB->QStore("SELECT skillid, skill_level FROM list_skills WHERE classid=%i OR classid=0 AND isactive=1",classid);
+    //LMA: classid=0 for all classes skills (like uniques, mileages...).
+    //LMA: classid=3 for basic skills.
+    result = DB->QStore("SELECT skillid, skill_level FROM list_skills WHERE (classid=%i OR classid=3 OR classid=0) AND isactive=1 ORDER BY skillid ASC",classid);
     if(result==NULL) return true;
 
     if(mysql_num_rows(result)==0)
@@ -5470,7 +5472,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 
     //LMA: We delete previous skills to avoid errors (basic, class, unique and mileage ones, so all)...
     //They will be sorted correctly (if needed) at next startup...
-    for (int k=0;k<320;k++)
+    for (int k=0;k<MAX_ALL_SKILL;k++)
     {
         otherclient->cskills[k].id = 0;
         otherclient->cskills[k].level = 0;
@@ -5479,11 +5481,18 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 
     //LMA: resetting the skill offsets.
     int cur_cskills[5];
+    int end[5];
+    bool first_pm=true;
     cur_cskills[0]=0;
     cur_cskills[1]=60;
     cur_cskills[2]=320;
     cur_cskills[3]=90;
     cur_cskills[4]=120;
+    end[0]=60;
+    end[1]=90;
+    end[2]=362;
+    end[3]=120;
+    end[4]=320;
 
     for (int i=0;i<5;i++)
     {
@@ -5494,9 +5503,10 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     {
         is_ok=true;
         nb_skills++;
-        if(nb_skills>=320)
+        if(nb_skills>=MAX_ALL_SKILL)
         {
             Log(MSG_WARNING,"Too many skills, aborting");
+            SendPM(thisclient,"Too many skills, aborting");
             break;
         }
 
@@ -5510,7 +5520,14 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         int family=otherclient->GoodSkill(skillid);
         if(family==-1)
         {
-            Log(MSG_WARNING,"pakGMAllSkill:: couldn't say the family for skill %i",skillid);
+            Log(MSG_WARNING,"pakGMAllSkill:: couldn't get the family for skill %i",skillid);
+
+            if(first_pm)
+            {
+                SendPM(thisclient,"Couldn't get the family for skill %i, check server's logs",skillid);
+                first_pm=false;
+            }
+
             continue;
         }
 
@@ -5518,7 +5535,27 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         int offset=otherclient->FindSkillOffset(family);
         if(offset==-1)
         {
-            Log(MSG_WARNING,"pakGMAllSkill:: couldn't get offset for family %i",family);
+            if (family>=0&&family<5)
+            {
+                Log(MSG_WARNING,"pakGMAllSkill:: bad offset for family %i (too many skills? Has %i now, max is %i.)",family,otherclient->cur_max_skills[family],end[family]);
+                if(first_pm)
+                {
+                    SendPM(thisclient,"bad offset for family %i (too many skills? Has %i now, max is %i.), check server's logs",family,otherclient->cur_max_skills[family],end[family]);
+                    first_pm=false;
+                }
+
+            }
+            else
+            {
+                Log(MSG_WARNING,"pakGMAllSkill:: bad offset for family %i (wrong family)",family);
+                if(first_pm)
+                {
+                    SendPM(thisclient,"bad offset for family %i (wrong family), check server's logs",family);
+                    first_pm=false;
+                }
+
+            }
+
             continue;
         }
 
