@@ -75,7 +75,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Rodath', 1086, 5, 90.000, 5
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Mel', 1087, 5, 270.000, 5247.07, 5279.96, 187,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Gamp', 1084, 6, 270.000, 5248.14, 5279.20, 187,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Referee] Leum', 1113, 9, 0.000, 5199.99, 5390.04, 213,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Referee] Pirre', 1114, 9, 180.000, 5201.59, 4765.69, 214,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Referee] Pirre', 1114, 9, 180.500, 5200.09, 4704.69, 214,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Nell', 1085, 11, 84.016, 4953.37, 4992.35, 184,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Nell', 1085, 11, 10.865, 4978.48, 5478.60, 184,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Nell', 1085, 11, 337.957, 5455.57, 5478.99, 184,0,0,0);
