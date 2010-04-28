@@ -91,7 +91,12 @@ bool CPlayer::CheckPlayerLevelUP( )
 	    Stats->Level++;
 	    Stats->HP = GetMaxHP( );
 	    Stats->MP = GetMaxHP( );
-	    CharInfo->StatPoints += 10 + (Stats->Level/2);
+
+	    //LMA: We change the formula due to Rescudo (adapted):
+	    //CharInfo->StatPoints += 10 + (Stats->Level/2);
+        CharInfo->StatPoints +=9;
+        CharInfo->StatPoints += Stats->Level - ((Stats->Level - 1) / 5);
+
 	    if(Stats->Level>=10)
 	    {
 	        CharInfo->SkillPoints += 1;

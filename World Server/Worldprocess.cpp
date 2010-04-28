@@ -44,7 +44,8 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
         MonsterDamage* thisplayer = thismon->PlayersDamage.at(i);
 		CPlayer* thisclient = GetClientByCID( thisplayer->charid, thismon->Position->Map );
 
-		if( thisplayer->damage>0 && thisclient!=NULL )
+        //LMA: Player mustn't be dead.
+		if( thisplayer->damage>0 && thisclient!=NULL && !thisclient->IsDead())
         {
     		if( thisclient->Battle->target == thismon->clientid )
             {

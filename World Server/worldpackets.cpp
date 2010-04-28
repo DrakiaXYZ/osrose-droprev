@@ -1197,17 +1197,23 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
         srcslot=tempslot;
         if(thisclient->items[srcslot].itemtype==0||thisclient->items[srcslot].itemnum==0)
         {
-            Log(MSG_WARNING,"Problem (2) when trying to change slot %i to %i (item not there anymore?)",srcslot,destslot);
+            //Log(MSG_WARNING,"Problem (2) when trying to change slot %i to %i (item not there anymore?)",srcslot,destslot);
             return true;
         }
 
     }
 
+    //Log(MSG_INFO,"pakChangeEquip %i->%i before check",thisclient->CharInfo->charname,srcslot,destslot);
+
     //LMA: When trying to equip, we check some stats.
     if(destslot>0&&destslot<12&&!thisclient->CheckStats(srcslot,destslot))
     {
+        //Log(MSG_WARNING,"PakChangeEquip:: Equip refused (see ahead)",thisclient->CharInfo->charname);
         return true;
     }
+
+    //Log(MSG_INFO,"pakChangeEquip:: %s after check",thisclient->CharInfo->charname);
+
 
     if (destslot < 13 && GServer->EquipList[thisclient->items[srcslot].itemtype].Index[thisclient->items[srcslot].itemnum]->level > thisclient->Stats->Level)
        return true;

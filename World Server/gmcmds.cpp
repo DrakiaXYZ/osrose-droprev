@@ -3860,45 +3860,103 @@ bool CWorldServer::pakGMLevel( CPlayer* thisclient, int level, char* name )
 {
     CPlayer* otherclient = GetClientByCharName( name );
     if (otherclient == NULL)
+    {
         return true;
+    }
+
     if (((int)otherclient->Stats->Level + level) > 0)
+    {
         otherclient->Stats->Level += level;
+    }
     else
+    {
         otherclient->Stats->Level = 1;
+    }
+
     if (otherclient->Stats->Level > Config.MaxLevel)
+    {
         otherclient->Stats->Level = Config.MaxLevel;
-    if (otherclient->Stats->Level > 250)
+    }
+
+    //if (otherclient->Stats->Level > 250)
     //    otherclient->Stats->Level = 250;
-          SendPM (thisclient, "Relogin For Get new Level");
+    SendPM (thisclient, "Relogin For Get new Level");
     otherclient->CharInfo->Exp = 0;
-    if (level < 0) {
+
+    if (level < 0)
+    {
         otherclient->CharInfo->StatPoints = 0;
         otherclient->CharInfo->SkillPoints = 0;
+
         if(otherclient->Stats->Level > 1)
         {
-            for(int s = 2; s <= otherclient->Stats->Level; s++)
+            //LMA: Rescudo's new formula for Stat points (adapted).
+            /*for(int s = 2; s <= otherclient->Stats->Level; s++)
             {
                 otherclient->CharInfo->StatPoints += 10;
                 otherclient->CharInfo->StatPoints += s / 2;
+
                 if (s >= 10)
+                {
                     otherclient->CharInfo->SkillPoints++;
+                }
+
+            }*/
+
+            for (int s = 0; s <= otherclient->Stats->Level; s++ )
+            {
+                if(s<level)
+                {
+                    otherclient->CharInfo->StatPoints +=9;
+                }
+
+                otherclient->CharInfo->StatPoints += s - ((s - 1) / 5);
+
+                if (s >= 10)
+                {
+                    otherclient->CharInfo->SkillPoints++;
+                }
+
             }
+
         }
+
         pakGMStat(otherclient, "str", 15);
         pakGMStat(otherclient, "dex", 15);
         pakGMStat(otherclient, "con", 15);
         pakGMStat(otherclient, "int", 15);
         pakGMStat(otherclient, "cha", 10);
         pakGMStat(otherclient, "sen", 10);
-    } else {
-        for(int s = (otherclient->Stats->Level - level + 1); s <= otherclient->Stats->Level; s++)
+    }
+    else
+    {
+        //LMA: Rescudo's new formula for Stat points (adapted).
+        /*for(int s = (otherclient->Stats->Level - level + 1); s <= otherclient->Stats->Level; s++)
         {
             otherclient->CharInfo->StatPoints += 10;
             otherclient->CharInfo->StatPoints += s / 2;
+
             if (s >= 10)
+            {
                 otherclient->CharInfo->SkillPoints++;
+            }
+
+        }*/
+
+        for (int s = (otherclient->Stats->Level - level + 1); s <= otherclient->Stats->Level; s++ )
+        {
+            otherclient->CharInfo->StatPoints +=9;
+            otherclient->CharInfo->StatPoints += s - ((s - 1) / 5);
+
+            if (s >= 10)
+            {
+                otherclient->CharInfo->SkillPoints++;
+            }
+
         }
+
     }
+
     BEGINPACKET( pak, 0x79e );
     ADDWORD( pak, otherclient->clientid );
     ADDWORD( pak, otherclient->Stats->Level );
