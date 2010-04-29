@@ -3888,7 +3888,7 @@ bool CWorldServer::pakGMLevel( CPlayer* thisclient, int level, char* name )
         otherclient->CharInfo->StatPoints = 0;
         otherclient->CharInfo->SkillPoints = 0;
 
-        if(otherclient->Stats->Level > 1)
+        if(otherclient->Stats->Level >= 1)
         {
             //LMA: Rescudo's new formula for Stat points (adapted).
             /*for(int s = 2; s <= otherclient->Stats->Level; s++)
