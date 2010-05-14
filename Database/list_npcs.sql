@@ -112,7 +112,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Lutis', 1051, 21, 160.03
 INSERT INTO `list_npcs` VALUES (0, '[Cleric] Karitte', 1053, 21, 95.984, 5112.44, 5385.08, 153,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Shannon', 1052, 21, 353.933, 5357.27, 5282.19, 152,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Melendino', 1473, 22, 212.618, 5095.21, 5312.66, 16,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Lost Boy] Huey', 1021, 22, 283.797, 5357.55, 5394.47, 142,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Boy in the Hut]Huey', 1021, 22, 283.797, 5357.55, 5394.47, 142,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Little Street Vendor] Pony', 1035, 22, 165.707, 5751.58, 5189.86, 135,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Peron', 1511, 22, 9.228, 5832.20, 5315.54, 301,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Visitor Guide] Arua''s Fairy', 1030, 22, 193.124, 5845.23, 5321.77, 130,0,0,0);
