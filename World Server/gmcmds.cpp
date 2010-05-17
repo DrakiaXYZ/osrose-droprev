@@ -1081,8 +1081,10 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         if(loc == 1) // Adventure Plains
         {
             map = 22;
-            x = 5098;
-            y = 5322;
+            x = 5800; //old map
+            y = 5200; // old map
+            //x = 5098; // new map
+            //y = 5322; // new map
         }
         else if(loc == 2) // Canyon City of Zant
         {
@@ -2527,8 +2529,8 @@ else if (strcmp(command, "itemstat")==0)
         else
         {
             SendPM(thisclient, "Please input a number after the savetown command, below is a list of places and their appropriate number");
-            SendPM(thisclient, "1 = Adventurers plains");
-            SendPM(thisclient, "2 = The city of Zant");
+            SendPM(thisclient, "1 = Adventurers Plains");
+            SendPM(thisclient, "2 = The City of Zant");
             SendPM(thisclient, "3 = Junon Polis");
             SendPM(thisclient, "4 = The City of Eucar");
             SendPM(thisclient, "5 = Xita Refuge");

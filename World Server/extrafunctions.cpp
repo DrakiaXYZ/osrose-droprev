@@ -1266,7 +1266,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     //Adventure's Plains - Drop only - [credits to tomiz]
                     case 350:
                         useitem->usetype = 22;
-                        useitem->usevalue = 51105310;
+                        useitem->usevalue = 58005200; //Original AP
+                        // useitem->usevalue = 51105310; // new AP
                     break;
                     //Zant
                     case 351:
