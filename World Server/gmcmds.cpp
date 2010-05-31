@@ -1432,10 +1432,17 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemid =atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemtype =atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemamount =atoi(tmp);
+
+        //LMA: new naRose's refine system (2010/05)
         if ((tmp = strtok(NULL, " "))==NULL)
+        {
             itemrefine =0;
+        }
         else
-            itemrefine = atoi(tmp)<10?atoi(tmp)*16:9*16;
+        {
+            itemrefine = atoi(tmp)<16?atoi(tmp)*16:15*16;
+        }
+
         if ((tmp = strtok(NULL, " "))==NULL)
             itemls =100;
         else
@@ -3571,7 +3578,7 @@ bool CWorldServer::pakGMItemQuest( CPlayer* thisclient, UINT itemid, UINT itemty
     item.durability        = 40;
     item.itemnum        = itemid;
     item.itemtype        = itemtype;
-    item.lifespan        = 100;  // changed from itemls to 100, no need for lifespan on a item that is spawned - rl2171
+    item.lifespan        = 100;  // changed from items to 100, no need for lifespan on a item that is spawned - rl2171
     item.refine            = itemrefine;
     item.stats            = itemstats;
     item.socketed        = itemsocket;

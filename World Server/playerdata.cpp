@@ -557,6 +557,7 @@ bool CPlayer::loaddata( )
 
 		CalculateSignature(itemnum);  //Calculate signature.
 
+        //LMA: up to refine 15 now (2010/05)...
         switch (items[itemnum].refine)
         {
             case 0:
@@ -569,6 +570,12 @@ bool CPlayer::loaddata( )
             case 112:
             case 128:
             case 144:
+            case 160:
+            case 176:
+            case 192:
+            case 208:
+            case 224:
+            case 240:
             {
                 //Ok.
             }

@@ -3175,6 +3175,12 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     }
 
     //checking if player has enough MP too.
+    //LMA: Special test, it seems sometimes the MP value is off after a level up??
+    if(thisclient->Stats->MP>thisclient->Stats->MaxMP)
+    {
+        thisclient->Stats->MP=thisclient->Stats->MaxMP;
+    }
+
     UINT needed_mp=(thisskill->mp - (thisskill->mp * thisclient->Stats->MPReduction / 100));
     if (thisclient->Stats->MP<needed_mp)
     {
@@ -3750,6 +3756,12 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
     }
 
     //checking if player has enough MP too.
+    //LMA: Special test, it seems sometimes the MP value is off after a level up??
+    if(thisclient->Stats->MP>thisclient->Stats->MaxMP)
+    {
+        thisclient->Stats->MP=thisclient->Stats->MaxMP;
+    }
+
     UINT needed_mp=(thisskill->mp - (thisskill->mp * thisclient->Stats->MPReduction / 100));
     if (thisclient->Stats->MP<needed_mp)
     {
@@ -4962,6 +4974,12 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
         }
 
         //checking if player has enough MP too.
+        //LMA: Special test, it seems sometimes the MP value is off after a level up??
+        if(thisclient->Stats->MP>thisclient->Stats->MaxMP)
+        {
+            thisclient->Stats->MP=thisclient->Stats->MaxMP;
+        }
+
         UINT needed_mp=(thisskill->mp - (thisskill->mp * thisclient->Stats->MPReduction / 100));
         if (thisclient->Stats->MP<needed_mp)
         {
@@ -5838,6 +5856,9 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
         case 0x05://Refine
         {
+            #ifdef REFINENEW
+
+            #else
             BYTE item = GETBYTE((*P),3);
             BYTE material = GETBYTE((*P),4);
 
@@ -6087,6 +6108,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             ADDDWORD   ( pak, 0x002f0000 );
             ADDDWORD   ( pak, 0x00000017 );
             thisclient->client->SendPacket( &pak );
+            #endif
+
         }
         break;
         case 0x06: // Drill

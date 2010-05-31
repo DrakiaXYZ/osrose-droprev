@@ -62,7 +62,11 @@
 #define LTBENGLISH 2
 
 //LMA: Refine Rules:
-#define NB_REF_RULES 17
+#ifdef REFINENEW
+    #define NB_REF_RULES 31
+#else
+    #define NB_REF_RULES 17
+#endif
 
 //LMA: for monster slicer and drop_me
 //define to use it.
@@ -596,9 +600,16 @@ class CWorldServer : public CServerSocket
         CExtraStats             StatLookup[MAX_EXTRA_STATS];        //PY: Item Stats
 
         //UINT                    upgrade[2][10];
-        UINT                    upgrade[10][2];         //LMA: new way
+
+        #ifdef REFINENEW
+            UINT                    upgrade[16];         //LMA: new way (after 2010/05)
+            UINT                    refine_grade[NB_REF_RULES];    //lma: refining rules.
+        #else
+            UINT                    upgrade[10][2];         //LMA: new way (before 2010/05)
+            UINT                    refine_grade[NB_REF_RULES][2];    //lma: refining rules.
+        #endif
+
         //UINT                    refine_grade[15][2];    //lma: refining rules.
-        UINT                    refine_grade[NB_REF_RULES][2];    //lma: refining rules.
         CEquipList              EquipList[10];
         CJemList                JemList;
         CNaturalList            NaturalList;

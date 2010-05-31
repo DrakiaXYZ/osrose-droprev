@@ -1970,7 +1970,102 @@ bool CWorldServer::LoadMonsters( )
 	return true;
 }
 
+#ifdef REFINENEW
+//LMA: 2010/05, new refine system.
 //Refine code.
+bool CWorldServer::LoadUpgrade( )
+{
+
+    Log( MSG_LOAD, "Refine Data [NEW] - CSV      " );
+    for (int k=0;k<16;k++)
+    {
+        upgrade[k]=100;
+    }
+
+    FILE* fh = NULL;
+    fh = fopen("data/refine_new.csv", "r");
+    if(fh==NULL)
+    {
+        Log(MSG_ERROR, "\nError loading file data/refine_new.csv" );
+        return false;
+    }
+    char line[500];
+    fgets( line, 500, fh );// this is the column name
+    while(!feof(fh))
+    {
+        memset( &line, '\0', 500 );
+        fgets( line, 500, fh );
+
+        int id = GetUIntValue(",", &line);
+        int pc_usual = GetUIntValue(",");
+
+        //refine can be from 1 to 15 now.
+        if(id>15||id<1)
+        {
+            Log(MSG_WARNING,"Incorrect refine %i",id);
+            continue;
+        }
+
+        if(pc_usual>100)
+            pc_usual=100;
+
+        upgrade[id]=pc_usual;
+        Log(MSG_INFO,"Refine %% :: ID %i= %i %%",id,upgrade[id]);
+    }
+
+    fclose(fh);
+
+    //LMA: Time for refining rules.
+    for (int k=0;k<NB_REF_RULES;k++)
+    {
+        refine_grade[k]=0;
+    }
+
+    //The first 1-15 batch is for ALL items.
+    //The second batch is for item mall items.
+    //1 or 2 means it degrades from 1 (or 2) when refine fails.
+    //-1 means it breaks on fail.
+
+    fh = fopen("data/refine_rules_new.csv", "r");
+    if(fh==NULL)
+    {
+        Log(MSG_ERROR, "\nError loading file data/refine_new.csv" );
+        return false;
+    }
+    fgets( line, 500, fh );// this is the column name
+    while(!feof(fh))
+    {
+        memset( &line, '\0', 500 );
+        fgets( line, 500, fh );
+
+        int id = GetUIntValue(",", &line);
+        int lvl_degrade = GetIntValue(",");
+
+        if(id>=NB_REF_RULES||id<1)
+        {
+            Log(MSG_WARNING,"Incorrect refine rules ID: %i, must be <%u, change NB_REF_RULES",id,NB_REF_RULES);
+            continue;
+        }
+
+        if(lvl_degrade<0)
+        {
+            lvl_degrade=-1;
+        }
+
+        refine_grade[id]=lvl_degrade;
+
+        Log(MSG_INFO,"Refine degrade :: ID %i= looses ? %i",id,refine_grade[id]);
+    }
+
+    fclose(fh);
+
+   	Log( MSG_LOAD, "Refine Data loaded" );
+
+
+	return true;
+}
+#else
+//Refine code (until before 2010/05)
 bool CWorldServer::LoadUpgrade( )
 {
 
@@ -2082,6 +2177,8 @@ bool CWorldServer::LoadUpgrade( )
 
 	return true;
 }
+#endif
+
 
 bool CWorldServer::CleanConnectedList( )
 {

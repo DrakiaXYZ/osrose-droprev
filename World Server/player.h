@@ -21,6 +21,9 @@
 #ifndef _ROSE_PLAYER_
 #define _ROSE_PLAYER_
 
+//LMA: new refine system
+#define REFINENEW
+
 //LMA: TEST HACK QUEST
 #define QHACK
 //LMA: End

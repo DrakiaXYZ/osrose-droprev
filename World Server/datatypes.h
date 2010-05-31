@@ -21,6 +21,11 @@
 #ifndef __ROSE_DATATYPES__
 #define __ROSE_DATATYPES__
 
+//LMA: new refine system
+#ifndef REFINENEW
+#define REFINENEW
+#endif
+
 //LMA: TEST HACK QUEST
 #ifndef QHACK
 #define QHACK
