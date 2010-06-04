@@ -361,6 +361,7 @@ class CWorldServer : public CServerSocket
         bool pakGMTeleOtherPlayer( CPlayer *thisclient, char* name, int map, float x, float y );
         bool pakGMZuly( CPlayer* thisclient, int mode, int amount, char* charname );
         bool pakGMEventType(CPlayer* thisclient, int npctype, int dialog, long int type); //Event
+        bool pakGMEventName(CPlayer* thisclient, char* eventname, int is_on); //Event (by its name)
         bool pakGMEventIFO(CPlayer* thisclient, int ifoType,int eventID);   //LMA: for Ifo Objects
     	bool pakGMTele( CPlayer* thisclient, int map, float x, float y, int no_qsd=0);
     	bool pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam=0 );
@@ -527,6 +528,7 @@ class CWorldServer : public CServerSocket
         bool LoadUpgrade( );
         bool LoadNPCs( );
         bool LoadNPCsSpecial( );
+        bool LoadNPCsEvents( ); //LMA: loading events.
         bool CleanConnectedList( );
 
         CQuest* GetQuestByID( unsigned long int id );

@@ -242,6 +242,7 @@ struct CROSEServerConfig
     int Command_DSpawn;
     int Command_ESpawn;
     int Command_Event;    //event
+    int Command_EventName;    //event name
     int Command_EventIfo;   //LMA: Event for IFO.
     int Command_Exp;
     int Command_Face;

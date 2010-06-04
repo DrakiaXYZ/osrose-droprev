@@ -430,6 +430,7 @@ bool CWorldServer::OnServerReady( )
     //LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
     LoadNPCs( );
     LoadNPCsSpecial( );  //Special NPC load
+    LoadNPCsEvents();   //LMA: loading pre defined events.
     LoadMonsters( );
     LoadUpgrade( );
     //LoadLTB();  //LMA: Loading LTB for AIP.
@@ -641,6 +642,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_DSpawn = ConfigGetInt    ( "commands.ini", "dspawn", 299 );
     Config.Command_ESpawn = ConfigGetInt    ( "commands.ini", "espawn", 299 );
     Config.Command_Event = ConfigGetInt    ( "commands.ini", "event", 299 );     //Event
+    Config.Command_EventName = ConfigGetInt    ( "commands.ini", "eventname", 299 );     //Event Name
     Config.Command_EventIfo = ConfigGetInt    ( "commands.ini", "eventifo", 299 );     //LMA: Events for IFO Objects
     Config.Command_Exp = ConfigGetInt    ( "commands.ini", "exp", 299 );
     Config.Command_Face = ConfigGetInt    ( "commands.ini", "face", 299 );

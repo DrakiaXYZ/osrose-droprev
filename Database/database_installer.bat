@@ -107,6 +107,8 @@ echo PY:: extra stats
 echo PY:: skillbooks 
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
 
+echo Basic Events (originals)
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_events.sql
 
 
 

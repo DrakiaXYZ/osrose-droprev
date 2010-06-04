@@ -846,6 +846,24 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /event %i %i %i" ,thisclient->CharInfo->charname, npctype,dialog,type);
         return pakGMEventType(thisclient,npctype,dialog,type);
     }
+else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
+    {
+        if(Config.Command_EventName > thisclient->Session->accesslevel)
+	       return true;
+        if ((tmp = strtok(NULL, " "))==NULL)
+                return true;
+        char* name=tmp;
+        if ((tmp = strtok(NULL, " "))==NULL)
+                return true;
+        int is_on=atoi(tmp);
+        if (is_on!=0)
+        {
+            is_on=1;
+        }
+
+        Log( MSG_GMACTION, " %s : /eventname %s %i" ,thisclient->CharInfo->charname, name,is_on);
+        return pakGMEventName(thisclient,name,is_on);
+    }
    else if (strcmp(command, "eventifo")==0) //LMA: For IFO Objects
     {
         if(Config.Command_EventIfo > thisclient->Session->accesslevel)
@@ -3829,6 +3847,77 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
 
     //Saving in database
     DB->QExecute("UPDATE list_npcs SET tempdialogid=%i, eventid=%i WHERE type=%i", dialog, type,npctype);
+
+
+	return true;
+}
+
+//Event function (by event name)
+bool CWorldServer::pakGMEventName(CPlayer* thisclient, char* eventname, int is_on)
+{
+    if(!CheckEscapeMySQL(eventname,-1,true))
+    {
+        Log(MSG_WARNING,"%s:: Wrong event name %s",thisclient->CharInfo->charname,eventname);
+        return true;
+    }
+
+    int npctype=0;
+
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT type,dialogid,eventid FROM list_events WHERE activekeyword='%s' ",eventname);
+    if(result==NULL) return false;
+    while(row = mysql_fetch_row(result))
+    {
+        npctype=atoi(row[0]);
+        CNPC* thisnpc = GetNPCByType(npctype);
+        if(thisnpc == NULL)
+        {
+            Log(MSG_WARNING,"%s:: Wrong NPC %u for event name %s",thisclient->CharInfo->charname,npctype,eventname);
+            DB->QFree( );
+            delete thisnpc;
+            return true;
+        }
+
+        if(is_on!=1)
+        {
+            //deactivation of the event.
+            thisnpc->dialog=thisnpc->thisnpc->dialogid;
+            thisnpc->event=0;
+            BEGINPACKET( pak, 0x790 );
+            ADDWORD    ( pak, thisnpc->clientid );
+            ADDWORD    ( pak, thisnpc->event );
+            GServer->SendToAllInMap(&pak,thisnpc->posMap);
+            //changing objvar as well.
+
+            SendPM(thisclient,"Deactivating Event %s, NPC %u",eventname,npctype);
+        }
+        else
+        {
+            thisnpc->dialog = atoi(row[1]);
+            thisnpc->event = atoi(row[2]);
+
+            BEGINPACKET( pak, 0x790 );
+            ADDWORD    ( pak, thisnpc->clientid );
+            ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
+            GServer->SendToAllInMap(&pak,thisnpc->posMap);
+
+            //changing objvar as well.
+            SendPM(thisclient,"Activating Event %s, NPC %u",eventname,npctype);
+        }
+
+        GServer->ObjVar[npctype][0]=thisnpc->event;
+
+    }
+
+    DB->QFree( );
+
+    if (npctype==0)
+    {
+        return true;
+    }
+
+    //Deactivating or actvating all the event.
+    DB->QExecute("UPDATE list_events SET Active='%u' WHERE activekeyword='%s' ",is_on,eventname);
 
 
 	return true;

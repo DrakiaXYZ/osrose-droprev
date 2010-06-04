@@ -1571,16 +1571,18 @@ bool CWorldServer::LoadNPCs( )
 //LMA: Special NPCs (Events or whatever...)
 bool CWorldServer::LoadNPCsSpecial( )
 {
-    Log( MSG_LOAD, "NPC Special spawn           " );
+    Log( MSG_LOAD, "NPC Special           " );
     MYSQL_ROW row;
-    MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name,isactive FROM list_npcs_special");
+    MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name,isactive FROM list_npcs_special where isactive='1' ");
     if(result==NULL) return false;
     while(row = mysql_fetch_row(result))
     {
         //LMA: Active NPC?
         int is_active=atoi(row[9]);
         if(is_active==0)
+        {
             continue;
+        }
 
         CNPC* thisnpc = new (nothrow) CNPC;
         if(thisnpc==NULL)
@@ -1626,7 +1628,41 @@ bool CWorldServer::LoadNPCsSpecial( )
     }
 
     DB->QFree( );
-    Log( MSG_LOAD, "NPC spawn Data loaded" );
+    Log( MSG_LOAD, "NPC Special loaded" );
+    return true;
+}
+
+//LMA: Special Events (original ones)
+//We modify the original NPCs by the new ones...
+bool CWorldServer::LoadNPCsEvents( )
+{
+    Log( MSG_LOAD, "NPC Special Events          " );
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT type,dialogid,eventid,activekeyword FROM list_events WHERE Active='1' ");
+    if(result==NULL) return false;
+    while(row = mysql_fetch_row(result))
+    {
+        CNPC* thisnpc = GetNPCByType(atoi(row[0]));
+        if( thisnpc->thisnpc == NULL)
+        {
+           Log(MSG_LOAD,"The NPC %i has not been found!, it won't be displayed",thisnpc->npctype);
+            delete thisnpc;
+            continue;
+        }
+
+        //NpcNameList[thisnpc->npctype]=strdup(row[3]);    //LMA: NPC Name list.
+        //thisnpc->dialog=thisnpc->thisnpc->dialogid;
+        //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
+        //thisnpc->thisnpc->dialogid = atoi(row[1]); //This is global to NPC type (original dialog)
+        thisnpc->event=atoi(row[2]);                //LMA Event.
+        thisnpc->thisnpc->eventid=thisnpc->event;   //LMA Event (left for compatibility).
+        thisnpc->dialog=atoi(row[1]);               //LMA tempdialog ID, used for events for example
+        thisnpc->lastAiUpdate=clock();
+        Log(MSG_INFO,"Loading Event %s:: NPC %u, dialog %u, event %u",row[3],atoi(row[0]),thisnpc->dialog,thisnpc->event);
+    }
+
+    DB->QFree( );
+    Log( MSG_LOAD, "NPC Special Events" );
     return true;
 }
 
