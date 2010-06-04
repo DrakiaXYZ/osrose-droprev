@@ -145,11 +145,45 @@ bool CCharServer::pakGetCharacters( CCharClient* thisclient, CPacket* P )
 			items[itemnum].durability = atoi(row[3]);
 			items[itemnum].lifespan = atoi(row[4]);
 
-            //LMA: little check, refine from 1 to 9 are not valid...
-            if(items[itemnum].refine>0&&items[itemnum].refine<=9)
+            //LMA: now with 2010/05, naRose handles until refine 15
+            //LMA: little check, refine from 1 to 15 are not valid since it's refine*16 that's we're supposed to store now...
+            if(items[itemnum].refine>0&&items[itemnum].refine<=15)
             {
                 Log(MSG_WARNING,"Invalid refine %i for item (%i:%i) for %s",items[itemnum].refine,items[itemnum].itemtype,items[itemnum].itemnum,thisclient->username);
                 items[itemnum].refine*=16;
+            }
+
+            //Another check, just to be sure.
+            //LMA: up to refine 15 now (2010/05)...
+            switch (items[itemnum].refine)
+            {
+                case 0:
+                case 16:
+                case 32:
+                case 48:
+                case 64:
+                case 80:
+                case 96:
+                case 112:
+                case 128:
+                case 144:
+                case 160:
+                case 176:
+                case 192:
+                case 208:
+                case 224:
+                case 240:
+                {
+                    //Ok.
+                }
+                break;
+                default:
+                {
+                    Log(MSG_WARNING,"Invalid refine %i for item (%i:%i) for %s",items[itemnum].refine,items[itemnum].itemtype,items[itemnum].itemnum,thisclient->username);
+                    items[itemnum].refine=0;
+                }
+                break;
+
             }
 
 		}

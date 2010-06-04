@@ -440,6 +440,7 @@ class CWorldServer : public CServerSocket
     	bool LoadJemItem( );
     	bool LoadEquip( );
     	bool LoadItemStats( );
+    	bool LoadGrades();  //LMA: loading refines (grades) bonuses.
     	bool LoadJobReq( ); //LMA: Job requirements.
     	bool LoadStatLookup( );
         bool LoadTeleGateData( );
@@ -577,6 +578,9 @@ class CWorldServer : public CServerSocket
         CSkills                 **SkillList;
         int                     maxSkills;              //Nb Skills
 
+        CGrade                 **GradeList;
+        int                     maxGrades;              //Nb grades (refines)
+
         vector<CMDrops*>        MDropList;              // Drops List
         vector<CMDrops*>        SkillbookList;          // Skillbook drop list (hidden)
 
@@ -646,6 +650,7 @@ class CWorldServer : public CServerSocket
         CSTBData                BreakData;              // Break - Used for Break list, chests and blue crafts.
         CSTBDataChar            ZoneData;               // LMA: zone Data.
         CSTBData                ListClass;              // LMA: used to store the class list, actually to check equip requirements.
+        CSTBData                ListGrade;              // LMA: used to store the refine bonuses (% and +).
 
     	clock_t				   lastServerStep;			// Last Update
     	clock_t                LastUpdateTime;          // Store the last update World Time

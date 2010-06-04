@@ -570,12 +570,14 @@ bool CPlayer::loaddata( )
             case 112:
             case 128:
             case 144:
+            #ifdef REFINENEW
             case 160:
             case 176:
             case 192:
             case 208:
             case 224:
             case 240:
+            #endif
             {
                 //Ok.
             }

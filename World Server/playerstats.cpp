@@ -59,14 +59,19 @@ unsigned int CPlayer::GetDodge( )
             {
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine>0 && refine<10)//Dr From Refine (value from LIST_GRADE.stb)
+                //LMA: using the refine STB now.
+                //Dr From Refine (value from LIST_GRADE.stb)
+                if(refine>0 && refine<GServer->maxGrades)
                 {
-                    UINT extra_refine_drv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
-                    UINT extra_refine_drp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
+                    //UINT extra_refine_drv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
+                    //UINT extra_refine_drp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
+                    //Dodge += (UINT)floor(extra_refine_drv[refine]);
+                    //Dodge += (UINT)floor(extra_refine_drp[refine] * 0.01 * (items[i].durability * 0.3) );
 
-                    Dodge += (UINT)floor(extra_refine_drv[refine]);
-                    Dodge += (UINT)floor(extra_refine_drp[refine] * 0.01 * (items[i].durability * 0.3) );
+                    Dodge += GServer->GradeList[refine]->dodge_addbonus;
+                    Dodge += (UINT)floor(GServer->GradeList[refine]->dodge_percent * 0.01 * (items[i].durability * 0.3) );
                 }
+
             }
         }
     }
@@ -214,8 +219,14 @@ unsigned int CPlayer::GetAccury( )
     UINT Accury = 0;
     UINT pAccury = 0;//Passive Skill % Value
     UINT vAccury = 0;//Passive Skill Value
+
     //UINT extra_refine[10] = { 0, 4, 7, 10, 14, 20, 26, 33, 40, 50}; //old Way Value Add (list_grade.stb)
-    UINT extra_refine[10] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100}; //New Way % Add (list_grade.stb)
+    //UINT extra_refine[10] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100}; //New Way % Add (list_grade.stb)
+
+    //LMA:
+    //TODO: refine 15 is the max now! Bogus values for now (old way anyway, we use STb now).
+    //UINT extra_refine[10] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100}; //New Way % Add (list_grade.stb)
+    //UINT extra_refine[16] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100,120,140,160,180,190,197};
 
     if(Status->Stance != DRIVING)       //Walking, Running, Fighting, ...  Stats
     {
@@ -225,17 +236,31 @@ unsigned int CPlayer::GetAccury( )
         }
         else if(items[7].count !=0)
         {
-            Accury = (UINT)floor(((Attr->Con+Attr->Econ+10)*0.8) + ((GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality*0.6) + (items[7].durability*0.8)));
+            //LMA:
+            //TODO:  basic formula seems to be wrong now (?) for the weapon.
+            //8::18 with 100% dura is acc 218, 0% dura is 188, depends on grade too?
+            UINT weapon_acc=0;
+            weapon_acc=(UINT)floor(((GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality*0.6) + (items[7].durability*0.8)));
+            Accury = (UINT)floor(((Attr->Con+Attr->Econ+10)*0.8)) + weapon_acc;
 
             if(items[7].refine>0)
             {
                 UINT refine = (UINT)floor(items[7].refine/16);
 
-                if(refine>0 && refine<10)
+                //LMA: new way (using STB)
+                if(refine>0 && refine<GServer->maxGrades)
+                {
+                    Accury += GServer->GradeList[refine]->acc_addbonus + (UINT)floor(GServer->GradeList[refine]->acc_percent * 0.01 * weapon_acc);
+                }
+
+                //LMA: old way.
+                /*
+                if(refine>0 && refine<16)
                 {
                     //Accury += extra_refine[refine]; //old Way Value Add (list_grade.stb)
                     Accury += (UINT)floor(extra_refine[refine] * 0.01 * (GServer->EquipList[WEAPON].Index[items[7].itemnum]->quality * 0.6)); //New Way % Add (list_grade.stb)
-                }
+                }*/
+
             }
         }
 
@@ -783,13 +808,17 @@ unsigned int CPlayer::GetMagicDefense( )
             {
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine>0 && refine<10)
+                //LMA: using STB now.
+                if(refine>0 && refine<GServer->maxGrades)
                 {
-                    UINT extra_refine_mdefv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value : For Match with Client Value you need this line
+                    /*UINT extra_refine_mdefv[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value : For Match with Client Value you need this line
                     //UINT extra_refine_mdefp[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//% : don't match with client but should be good value, comment this line to match client
 
                     MagicDefense += (UINT)floor(extra_refine_mdefv[refine]);//Value : For Match with Client Value you need this line
-                    //MagicDefense += (UINT)floor(extra_refine_mdefp[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence );//% : don't match with client but should be good value, comment this line to match client
+                    //MagicDefense += (UINT)floor(extra_refine_mdefp[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence );//% : don't match with client but should be good value, comment this line to match client*/
+
+                    MagicDefense +=GServer->GradeList[refine]->mdef_addbonus;
+                    MagicDefense += (UINT)floor(GServer->GradeList[refine]->mdef_percent * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->magicresistence );
                 }
             }
         }
@@ -952,7 +981,11 @@ unsigned int CPlayer::GetAttackPower( )
     {
         if(items[7].itemnum!=0 && items[7].count>0 && items[7].durability>0)
         {
-            UINT extra_refine[10] = {0, 7, 14, 21, 31, 41, 51, 65, 80 , 100};
+            //LMA:
+            //TODO: refine 15 is possible now! bogus values for refines after 9.
+            //UINT extra_refine[10] = {0, 7, 14, 21, 31, 41, 51, 65, 80 , 100};
+            //LMA: using STB now.
+            //UINT extra_refine[16] = {0, 7, 14, 21, 31, 41, 51, 65, 80 , 100,120,140,160,180,190,197};
 
             weaponatk = GServer->EquipList[WEAPON].Index[items[7].itemnum]->attackpower;
             weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
@@ -961,11 +994,19 @@ unsigned int CPlayer::GetAttackPower( )
             {
                 UINT refine = (UINT)floor(items[7].refine/16);
 
-                if(refine>0 && refine<10)
+                if(refine>0 && refine<GServer->maxGrades)
+                {
+                    weaponatk += (UINT)floor(GServer->GradeList[refine]->atk_percent * 0.01 * weaponatk)+GServer->GradeList[refine]->atk_addbonus;
+                }
+
+                //LMA: old way
+                /*if(refine>0 && refine<16)
                 {
                     weaponatk += (UINT)floor(extra_refine[refine] * 0.01 * weaponatk);
-                }
+                }*/
+
             }
+
         }
         else
         {
@@ -2206,13 +2247,16 @@ unsigned int CPlayer::GetDefense( )
             {
                 UINT refine = (UINT)floor(items[i].refine/16);
 
-                if(refine>0 && refine<10)
+                //LMA: using STB now.
+                if(refine>0 && refine<GServer->maxGrades)
                 {
-                    UINT extra_refinev[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
+                    /*UINT extra_refinev[10] = {0, 1, 2, 3, 5, 7, 9, 12, 15, 18};//Value
                     UINT extra_refinep[10] = {0, 6, 12, 18, 27, 36, 45, 57, 70, 85};//%
-
                     defense += (UINT)floor(extra_refinev[refine]);
-                    defense += (UINT)floor(extra_refinep[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );
+                    defense += (UINT)floor(extra_refinep[refine] * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );*/
+
+                    defense += GServer->GradeList[refine]->def_addbonus;
+                    defense += (UINT)floor(GServer->GradeList[refine]->def_percent * 0.01 * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->defense );
                 }
             }
         }

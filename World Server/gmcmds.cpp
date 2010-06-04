@@ -1440,7 +1440,11 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         }
         else
         {
+            #ifdef REFINENEW
             itemrefine = atoi(tmp)<16?atoi(tmp)*16:15*16;
+            #else
+            itemrefine = atoi(tmp)<10?atoi(tmp)*16:9*16;
+            #endif
         }
 
         if ((tmp = strtok(NULL, " "))==NULL)

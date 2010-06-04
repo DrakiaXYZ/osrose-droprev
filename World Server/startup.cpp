@@ -57,6 +57,7 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
         STBStoreDataChar("3DDataPeg\\STB\\LIST_ZONE.STB", &ZoneData);  //LMA: Getting Zone Data.
         STBStoreData("3DDataPeg\\STB\\LIST_CLASS.STB", &ListClass);    //LMA: used to store the class list, actually to check equip requirements.
+        STBStoreData("3DDataPeg\\STB\\LIST_GRADE.STB", &ListGrade);    //LMA: used to store the refine bonuses (% and +).
     }
     else
     {
@@ -90,6 +91,7 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
         STBStoreDataChar("3DData\\STB\\LIST_ZONE.STB", &ZoneData);  //LMA: Getting Zone Data.
         STBStoreData("3DData\\STB\\LIST_CLASS.STB", &ListClass);    //LMA: used to store the class list, actually to check equip requirements.
+        STBStoreData("3DData\\STB\\LIST_GRADE.STB", &ListGrade);    //LMA: used to store the refine bonuses (% and +).
     }
 
     //LMA: Loading STL too :)
@@ -349,6 +351,10 @@ bool CWorldServer::InitDefaultValues()
     //LMA: job requirements.
     ClassList=new vector<UINT>*[ListClass.rowcount];
     maxClass=ListClass.rowcount;
+
+    //LMA: Refine bonuses (+ and %)
+    GradeList=new CGrade*[ListGrade.rowcount];
+    maxGrades=ListGrade.rowcount;
 
     //Null break
     CBreakList* nullBreak=new CBreakList;
@@ -1976,7 +1982,7 @@ bool CWorldServer::LoadMonsters( )
 bool CWorldServer::LoadUpgrade( )
 {
 
-    Log( MSG_LOAD, "Refine Data [NEW] - CSV      " );
+    Log( MSG_LOAD, "NEW Refine Data - CSV      " );
     for (int k=0;k<16;k++)
     {
         upgrade[k]=100;
@@ -2010,7 +2016,7 @@ bool CWorldServer::LoadUpgrade( )
             pc_usual=100;
 
         upgrade[id]=pc_usual;
-        Log(MSG_INFO,"Refine %% :: ID %i= %i %%",id,upgrade[id]);
+        //Log(MSG_INFO,"Refine %% :: ID %i= %i %%",id,upgrade[id]);
     }
 
     fclose(fh);
@@ -2054,12 +2060,12 @@ bool CWorldServer::LoadUpgrade( )
 
         refine_grade[id]=lvl_degrade;
 
-        Log(MSG_INFO,"Refine degrade :: ID %i= looses ? %i",id,refine_grade[id]);
+        //Log(MSG_INFO,"Refine degrade :: ID %i= looses ? %i",id,refine_grade[id]);
     }
 
     fclose(fh);
 
-   	Log( MSG_LOAD, "Refine Data loaded" );
+   	Log( MSG_LOAD, "NEW Refine Data loaded" );
 
 
 	return true;
@@ -2771,6 +2777,32 @@ bool CWorldServer::LoadItemStats( )
     }
 
     Log( MSG_LOAD, "Item Stats Loaded" );
+    return true;
+}
+
+//LMA: Loading grades bonuses (% and +)
+bool CWorldServer::LoadGrades( )
+{
+    Log( MSG_LOAD, "Grades - STB   " );
+    for(unsigned int i=0;i<ListGrade.rowcount;i++)
+    {
+        CGrade* tempGrade=new (nothrow) CGrade;
+        GradeList[i]=tempGrade;
+        GradeList[i]->atk_addbonus=ListGrade.rows[i][0];
+        GradeList[i]->atk_percent=ListGrade.rows[i][1];
+        GradeList[i]->acc_addbonus=ListGrade.rows[i][2];
+        GradeList[i]->acc_percent=ListGrade.rows[i][3];
+        GradeList[i]->def_addbonus=ListGrade.rows[i][4];
+        GradeList[i]->def_percent=ListGrade.rows[i][5];
+        GradeList[i]->mdef_addbonus=ListGrade.rows[i][6];
+        GradeList[i]->mdef_percent=ListGrade.rows[i][7];
+        GradeList[i]->dodge_addbonus=ListGrade.rows[i][8];
+        GradeList[i]->dodge_percent=ListGrade.rows[i][9];
+    }
+
+    Log( MSG_LOAD, "Grades Loaded - STB" );
+
+
     return true;
 }
 

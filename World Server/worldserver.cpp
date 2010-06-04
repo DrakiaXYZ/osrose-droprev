@@ -83,6 +83,7 @@ CWorldServer::~CWorldServer( )
 
     delete [] StatsList;
     delete [] ClassList;
+    delete [] GradeList;
 
     delete EquipList[0].nullequip;
     delete JemList.nulljem;
@@ -361,6 +362,7 @@ bool CWorldServer::OnServerReady( )
     LoadJemItem( );
     LoadEquip( );
     LoadItemStats( );
+    LoadGrades();   //LMA: loading refine (grades) bonuses.
     LoadJobReq( );
     // PY new Stat Lookup table
     LoadStatLookup( );

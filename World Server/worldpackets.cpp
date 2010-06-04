@@ -5857,8 +5857,497 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
         case 0x05://Refine
         {
             #ifdef REFINENEW
+                //LMA: Refine version after the 2010/05
+                BYTE item = GETBYTE((*P),3);
+                //BYTE material = GETBYTE((*P),4);
+
+                //LMA: 4 slots now
+                BYTE material_list[4];
+                BYTE nb_material_list[4];
+                for (int k=0;k<4;k++)
+                {
+                    material_list[k]=0;
+                    nb_material_list[k]=0;
+                }
+
+                material_list[0]=GETBYTE((*P),4);
+                material_list[1]=GETBYTE((*P),5);
+                material_list[2]=GETBYTE((*P),6);
+                material_list[3]=GETBYTE((*P),7);
+
+                nb_material_list[0]=GETBYTE((*P),8);
+                nb_material_list[1]=GETBYTE((*P),10);
+                nb_material_list[2]=GETBYTE((*P),12);
+                nb_material_list[3]=GETBYTE((*P),14);
+
+                if(!CheckInventorySlot( thisclient, item))
+                {
+                    Log(MSG_WARNING,"%s (refine):: wrong slot for item in slot %i",thisclient->CharInfo->charname,item);
+                    return false;
+                }
+
+                for (int k=0;k<4;k++)
+                {
+                    if(material_list[k]==0)
+                    {
+                        nb_material_list[k]=0;
+                    }
+
+                    if(nb_material_list[k]==0)
+                    {
+                        material_list[k]=0;
+                    }
+
+                    if(material_list[k]>0&&!CheckInventorySlot( thisclient, material_list[k]))
+                    {
+                        Log(MSG_WARNING,"%s (refine):: wrong slot for material %i in slot %i",thisclient->CharInfo->charname,k,material_list[k]);
+                        return false;
+                    }
+
+                }
+
+
+                //LMA: We need to get the "real" item needed for upgrade.
+                if (thisclient->items[item].itemtype==0||thisclient->items[item].itemtype>14||thisclient->items[item].itemnum==0||thisclient->items[item].itemnum>=EquipList[thisclient->items[item].itemtype].max)
+                {
+                    Log(MSG_HACK,"Player %s tried to refine an item with wrong values slot %u, item %u::%u",thisclient->CharInfo->charname,item,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+                    return false;
+                }
+
+                UINT gradeIndex=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->itemgradeID;
+
+                if(gradeIndex==0||gradeIndex>=ProductList.max)
+                {
+                    Log(MSG_HACK,"Player %s can't refine %u::%u, index %u",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum,gradeIndex);
+                    return false;
+                }
+
+                UINT zulyamount=0;
+                int quality=0;
+
+                UINT needed_amount=ProductList.Index[gradeIndex]->amount[0];
+                UINT needed_itemtype=gi(ProductList.Index[gradeIndex]->item[0],0);
+                UINT needed_itemnum=gi(ProductList.Index[gradeIndex]->item[0],1);
+
+                //LMA: special case venurune & nepturune
+                int pc_offset=0;
+                bool venurune=false;
+                bool nepturune=false;
+                bool plutorune=false;
+                bool powder=false;
+                int value_powder=0;
+                int nb_powder=0;
+
+                //LMA: check the itemtype (12) and items for materials.
+                //bind and stuff.
+                if(thisclient->items[material_list[0]].itemtype!=needed_itemtype)
+                {
+                    Log(MSG_WARNING,"%s (refine):: wrong itemtype for a refine (%i).",thisclient->CharInfo->charname,thisclient->items[material_list[0]].itemtype);
+                    return true;
+                }
+
+                //Other materials.
+                for(int k=1;k<4;k++)
+                {
+                    if(material_list[k]==0)
+                    {
+                        continue;
+                    }
+
+                    if(thisclient->items[material_list[k]].itemtype!=12)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: wrong itemtype for a refine (%i) slot %i.",thisclient->CharInfo->charname,thisclient->items[material_list[k]].itemtype,k);
+                        return true;
+                    }
+
+                    if (thisclient->items[material_list[k]].itemnum>=NaturalList.max)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: Item %u::%u > max natural for refine (%u) slot %k.",thisclient->CharInfo->charname,thisclient->items[material_list[k]].itemtype,thisclient->items[material_list[k]].itemnum,NaturalList.max,k);
+                        return true;
+                    }
+
+                    if(nb_material_list[k]>thisclient->items[material_list[k]].count)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: Not enough of item %u::%u in inventory (%u>%u).",thisclient->CharInfo->charname,thisclient->items[material_list[k]].itemtype,thisclient->items[material_list[k]].itemnum,nb_material_list[k]>thisclient->items[material_list[k]].count);
+                        return true;
+                    }
+
+                }
+
+                //Slot by slot, first two materials are mandatory (talis/bin/apotrope and catalysts).
+                if (nb_material_list[0]==0||nb_material_list[1]==0)
+                {
+                    Log(MSG_WARNING,"%s (refine):: mandatory materials not there (%u=%i, %u=%i).",thisclient->CharInfo->charname,material_list[0],nb_material_list[0],material_list[1],nb_material_list[1]);
+                    return true;
+                }
+
+                //Checking talis/bind/apotrope.
+                if(NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type!=427)
+                {
+                    Log(MSG_WARNING,"%s (refine):: Talis/bind/apo incorrect type (%u::%u, type %u!=427).",thisclient->CharInfo->charname,needed_itemtype,thisclient->items[material_list[0]].itemnum,NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type);
+                    return true;
+                }
+                else
+                {
+                    if(needed_itemnum!=thisclient->items[material_list[0]].itemnum||needed_amount>thisclient->items[material_list[0]].count)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: incorrect refine type or amount (%u * %u::%u) != or < (%u * %u::%u).",thisclient->CharInfo->charname,needed_amount,needed_itemtype,needed_itemnum,thisclient->items[material_list[0]].count,thisclient->items[material_list[0]].itemtype,thisclient->items[material_list[0]].itemnum);
+                        return true;
+                    }
+
+                }
+
+                //catalyst (powder)
+                if(NaturalList.Index[thisclient->items[material_list[1]].itemnum]->type!=408)
+                {
+                    Log(MSG_WARNING,"%s (refine):: Catalyst incorrect type (12::%u, type %u!=408).",thisclient->CharInfo->charname,thisclient->items[material_list[1]].itemnum,NaturalList.Index[thisclient->items[material_list[1]].itemnum]->type);
+                    return true;
+                }
+                else
+                {
+                    if(nb_material_list[1]>20)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: Too many Catalysts in packet %u>2.",thisclient->CharInfo->charname,nb_material_list[1]);
+                        return true;
+                    }
+
+                    powder=true;
+                    pc_offset+=NaturalList.Index[thisclient->items[material_list[1]].itemnum]->quality*nb_material_list[1];    //we work on 1000 so we don't /10.
+
+                    if(511>thisclient->items[material_list[1]].itemnum||521<thisclient->items[material_list[1]].itemnum)
+                    {
+                        Log(MSG_WARNING,"Player %s uses wrong item (%u::%u instead of 12::(511-521)) to refine %u::%u",thisclient->CharInfo->charname,thisclient->items[material_list[1]].itemtype,thisclient->items[material_list[1]].itemnum,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+                        return false;
+                    }
+
+                }
+
+                //refine enhancement (venurune only)
+                if (nb_material_list[2]>0)
+                {
+                    if(nb_material_list[2]>2)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: Too many Venurune in packet %u>2.",thisclient->CharInfo->charname,nb_material_list[2]);
+                        return true;
+                    }
+
+                    if(NaturalList.Index[thisclient->items[material_list[2]].itemnum]->type!=410)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: Venurune incorrect type (12::%u, type %u!=410).",thisclient->CharInfo->charname,thisclient->items[material_list[2]].itemnum,NaturalList.Index[thisclient->items[material_list[2]].itemnum]->type);
+                        return true;
+                    }
+                    else
+                    {
+                        venurune=true;
+                        pc_offset+=(50*nb_material_list[2]);    //we work on 1000 so not 5.
+
+                        if(445!=thisclient->items[material_list[2]].itemnum)
+                        {
+                            Log(MSG_WARNING,"Player %s uses wrong item (%u::%u instead of 12::445) to refine %u::%u",thisclient->CharInfo->charname,thisclient->items[material_list[2]].itemtype,thisclient->items[material_list[2]].itemnum,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+                            return false;
+                        }
+
+                    }
+
+                }
+
+                //refine enhancement (venurune only)
+                if (nb_material_list[3]>0)
+                {
+                    if(nb_material_list[3]!=1)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: Too many plutorune or nepturune in packet %u>1.",thisclient->CharInfo->charname,nb_material_list[3]);
+                        return true;
+                    }
+
+                    if(NaturalList.Index[thisclient->items[material_list[3]].itemnum]->type!=409)
+                    {
+                        Log(MSG_WARNING,"%s (refine):: plutorune or nepturune incorrect type (12::%u, type %u!=409).",thisclient->CharInfo->charname,thisclient->items[material_list[3]].itemnum,NaturalList.Index[thisclient->items[material_list[3]].itemnum]->type);
+                        return true;
+                    }
+                    else
+                    {
+
+                        //nepturune OR plutorune.
+                        if(thisclient->items[material_list[3]].itemnum==456)
+                        {
+                            //nepturune.
+                            nepturune=true;
+                            pc_offset+=50;    //5% bonus (we work on 1000)
+                        }
+                        else if(thisclient->items[material_list[3]].itemnum==457)
+                        {
+                            //plutorune.
+                            plutorune=true;
+                            pc_offset+=0;
+                        }
+                        else
+                        {
+                            Log(MSG_WARNING,"%s (refine):: Item %u::%u type 409 is not handled.",thisclient->CharInfo->charname,thisclient->items[material_list[3]].itemtype,thisclient->items[material_list[3]].itemnum);
+                            return true;
+                        }
+
+                    }
+
+                }
+
+                //LMA: item amount
+                /*
+                if(thisclient->items[item].count<1 || thisclient->items[material].count<needed_amount)
+                {
+                    BEGINPACKET( pak, 0x7bc );
+                    ADDBYTE    ( pak, 0x12 );
+                    ADDBYTE    ( pak, 0x00 );
+                    thisclient->client->SendPacket( &pak );
+                    Log(MSG_HACK,"Player %s hasn't enough item %i*(%u::%u) for refine",thisclient->CharInfo->charname,needed_amount,needed_itemtype,needed_itemnum);
+                    return true;
+                }
+                */
+
+                //LMA: taking the money, we need the quality.
+                if(thisclient->items[item].itemtype<=0||thisclient->items[item].itemtype>=11)
+                {
+                    Log(MSG_WARNING,"Error, player %s tryes to refine item %u::%u (wrong itemtype)",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+                }
+                else
+                {
+                    if(thisclient->items[item].itemnum>=EquipList[thisclient->items[item].itemtype].max)
+                    {
+                        Log(MSG_WARNING,"Error, player %s tryes to refine itemn %u::%u but >= %u ",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum,EquipList[thisclient->items[item].itemtype].max);
+                    }
+                    else
+                    {
+                        quality=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->quality;
+                    }
+
+                }
+
+                //end of zuly check.
+
+                unsigned int nextlevel = ( thisclient->items[item].refine / 16 ) + 1;
+                if( nextlevel > 15 )
+                {
+                    return true;
+                }
+
+                //LMA: How much zuly? :)
+                if(quality>0&&nextlevel>1)
+                {
+                    float basis=(pow(quality,3)*(float)((float)127/(float)7685496)+pow(quality,2)*(float)((float)435665/(float)1097928)+quality*(float)((float)31437683/(float)3842748)-(float)((float)77200/(float)24633));
+                    float quant=((float)(nextlevel-1)*nextlevel)/2;
+                    zulyamount=(UINT)(basis*quant);
+                    Log(MSG_INFO,"Trying to get %u Z for quality %i (basis %f, quant %f)",zulyamount,quality,basis,quant);
+                }
+
+                if(zulyamount>0)
+                {
+                    if (thisclient->CharInfo->Zulies<zulyamount)
+                    {
+                        SendPM(thisclient,"You don't have enough money to refine, %u needed");
+                        Log(MSG_WARNING,"Error, player %s tryes to refine item %u::%u but hasn't enough money, %u needed, he has %li",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum,zulyamount,thisclient->CharInfo->Zulies);
+                        return true;
+                    }
+
+                    //taking the money (packet not needed).
+                    thisclient->CharInfo->Zulies-=zulyamount;
+                    /*
+                    BEGINPACKET( pak, 0x71d );
+                    ADDQWORD( pak, thisclient->CharInfo->Zulies );
+                    thisclient->client->SendPacket( &pak );*/
+                }
+
+                //Extra %?
+                int max_pc=upgrade[nextlevel]*10;   //LMA: we work on 1000 so %*10
+                max_pc+=pc_offset;
+
+                unsigned int prefine = rand()%1000;
+                bool success = false;
+
+                if( prefine <= max_pc )
+                {
+                    success = true;
+                }
+
+                BEGINPACKET( pak, 0x7bc );
+                if( success )
+                {
+                    //Refine is a success.
+                    thisclient->items[item].refine = nextlevel*16;
+                    ADDBYTE    ( pak, 0x10 );// 0x10 successful
+                }
+                else
+                {
+                    //LMA: new way, Getting item grade.
+                    int grade=0;
+                    if(thisclient->items[item].itemtype>9)
+                    {
+                        Log(MSG_WARNING,"Weird itemtype for refine %i::%i for %s",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname);
+                    }
+                    else
+                    {
+                        if(thisclient->items[item].itemnum>=EquipList[thisclient->items[item].itemtype].max)
+                        {
+                            Log(MSG_WARNING,"Weird itemnum for refine %i::%i for %s (>= %u)",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname,EquipList[thisclient->items[item].itemtype].max);
+                        }
+                        else
+                        {
+                            grade=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->itemgrade;
+                        }
+
+                    }
+
+                    if(grade>NB_REF_RULES)
+                    {
+                        Log(MSG_WARNING,"Weird grade for refine %i::%i for %s, %u",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname,grade);
+                        grade=0;
+                    }
+
+                    //TODO: Test if it's really Item Mall (13).
+                    int im_offset=0;
+                    int lvl_degrade=0;
+                    if(grade==13)
+                    {
+                        im_offset=15;
+                    }
+
+                    lvl_degrade=refine_grade[im_offset+nextlevel];
+
+                    if (refine_grade[im_offset+nextlevel]<0)
+                    {
+                        //According to some stones, we go from break to won't break but degrade 1.
+                        if (plutorune||nepturune)
+                        {
+                            lvl_degrade=1;
+                        }
+
+                    }
+                    else if(refine_grade[im_offset+nextlevel]==0)
+                    {
+                        //Nothing to do.
+                        //Won't break.
+                    }
+                    else
+                    {
+                        //degrade x. Though some stones cancel 1 lvl. of degrade.
+                        if (plutorune||nepturune)
+                        {
+                            lvl_degrade-=1;
+                        }
+
+                    }
+
+                    switch(lvl_degrade)
+                    {
+                        case -1:
+                        {
+                            //Break time :(
+                            ClearItem( thisclient->items[item] );
+                        }
+                        break;
+
+                        case 0:
+                        {
+                            //Won't break on failure, won't degrade.
+                            thisclient->items[item].refine = (nextlevel-1) * 16;
+                        }
+                        break;
+
+                        default:
+                        {
+                            //degrade from "x" lvl., but won't break.
+                            int new_lvl=0;
+                            new_lvl=(nextlevel-1)-lvl_degrade;
+                            if (new_lvl<0)
+                            {
+                                new_lvl=0;
+                            }
+
+                            thisclient->items[item].refine = new_lvl * 16;
+                        }
+                        break;
+                    }
+
+                    //Packet.
+                    ADDBYTE    ( pak, 0x11 );// 0x11 Fail
+
+                }
+
+                //thisclient->items[material].count--; // geo edit, moved this up two lines
+                /*thisclient->items[material].count-=needed_amount;   //LMA: item amount
+                if(thisclient->items[material].count<1)
+                {
+                    ClearItem( thisclient->items[material] );
+                }*/
+
+                BYTE nb_mats=1; //item counts as 1
+                for (int k=0;k<4;k++)
+                {
+                    if (material_list[k]!=0)
+                    {
+                        nb_mats++;
+                    }
+
+                    thisclient->items[material_list[k]].count-=nb_material_list[k];   //LMA: item amount
+                    if(thisclient->items[material_list[k]].count<1)
+                    {
+                        ClearItem( thisclient->items[material_list[k]] );
+                    }
+
+                }
+
+                //TODO: get a real packet to see how we send the 4 (?) materials to send back to client even if they were not present.
+                nb_mats++;  //extra slot.
+                ADDBYTE    ( pak, nb_mats );//items a actualizar
+
+                //Mats.
+                for (int k=0;k<4;k++)
+                {
+                    if (material_list[k]==0)
+                    {
+                        continue;
+                    }
+
+                    ADDBYTE    ( pak, material_list[k] );
+                    ADDDWORD   ( pak, BuildItemHead( thisclient->items[material_list[k]] ) );
+                    ADDDWORD   ( pak, BuildItemData( thisclient->items[material_list[k]] ) );
+                    ADDDWORD( pak, 0x00000000 );    //LMA: item mall signature.
+                    ADDWORD ( pak, 0x0000 );
+                }
+
+                //refined item.
+                ADDBYTE    ( pak, item );
+                ADDDWORD   ( pak, BuildItemHead( thisclient->items[item] ) );
+                ADDDWORD   ( pak, BuildItemData( thisclient->items[item] ) );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+
+                //Jauge?
+                ADDBYTE    ( pak, 0x00 );
+                ADDDWORD   ( pak, 0x002f0000 );
+                ADDDWORD   ( pak, 0x00000017 );
+                ADDWORD ( pak, 0x0000 );
+                thisclient->client->SendPacket( &pak );
+
+                //Old version.
+                /*ADDBYTE    ( pak, 0x03 );//items a actualizar
+                ADDBYTE    ( pak, material );
+                ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
+                ADDDWORD   ( pak, BuildItemData( thisclient->items[material] ) );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+                ADDBYTE    ( pak, item );
+                ADDDWORD   ( pak, BuildItemHead( thisclient->items[item] ) );
+                ADDDWORD   ( pak, BuildItemData( thisclient->items[item] ) );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+                ADDBYTE    ( pak, 0x00 );
+                ADDDWORD   ( pak, 0x002f0000 );
+                ADDDWORD   ( pak, 0x00000017 );
+                thisclient->client->SendPacket( &pak );*/
+
 
             #else
+            //LMA: Refine version before the 2010/05
             BYTE item = GETBYTE((*P),3);
             BYTE material = GETBYTE((*P),4);
 
