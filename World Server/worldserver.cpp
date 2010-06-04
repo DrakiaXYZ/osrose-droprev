@@ -411,10 +411,14 @@ bool CWorldServer::OnServerReady( )
     // end of new drops data
 
     //LoadChestData( ); //LMA: loaded now by STB in LoadBreakChestBlueList.
+
+    #ifdef PYCUSTOM
     // PY custom events start
     LoadCustomTeleGate( );
     LoadCustomEvents( );
     // PY custom events end
+    #endif
+
     LoadNPCData( );
     LoadQuestItemData( );
     LoadTeleGateData( );
@@ -423,7 +427,7 @@ bool CWorldServer::OnServerReady( )
     LoadAipData();  //LMA: loading AIP.
     TimerForNPC();  //LMA: loading timers for NPCs and Monsters.
     LoadMobGroups( );
-    LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
+    //LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
     LoadNPCs( );
     LoadNPCsSpecial( );  //Special NPC load
     LoadMonsters( );

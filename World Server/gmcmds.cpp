@@ -2174,12 +2174,17 @@ else if (strcmp(command, "itemstat")==0)
         }
 	else if (strcmp(command, "prize")==0)
     {
+        #ifdef PYCUSTOM
          if ((tmp = strtok(NULL, " "))==NULL)return true;
          {
              UINT prizeid = atoi(tmp);
              thisclient->PrizeExchange(thisclient, prizeid);
              return true;
          }
+         #else
+         SendPM(thisclient,"PY custom events are not in this build. Check source code.");
+         #endif
+
     }
     else if(strcmp(command, "p")==0)  //*** READ THE PACKET.TXT AND SEND IT
     {
@@ -2440,13 +2445,21 @@ else if (strcmp(command, "itemstat")==0)
              LoadConfigurations( "commands.ini" );
          else if(strcmp(tmp, "cquests")==0)
          {
+             #ifdef PYCUSTOM
              LoadCustomEvents( );
              LoadCustomTeleGate( );
+             #else
+             SendPM(thisclient,"the PY custom events are not enabled in this build, check code.");
+             #endif
          }
          else if(strcmp(tmp, "events")==0)
          {
+             #ifdef PYCUSTOM
              GServer->LoadCustomEvents( );
              GServer->LoadCustomTeleGate( );
+             #else
+             SendPM(thisclient,"the PY custom events are not enabled in this build, check code.");
+             #endif
          }
          else if(strcmp(tmp, "quests")==0)
          {
@@ -2455,7 +2468,9 @@ else if (strcmp(command, "itemstat")==0)
          }
          else if(strcmp(tmp, "spawns")==0)
          {
-             GServer->LoadMonsterSpawn();
+             //LMA: outdated.
+             SendPM(thisclient,"GM command outdated.");
+             //GServer->LoadMonsterSpawn();
          }
          //else if(strcmp(tmp, "equip")==0)
          //{

@@ -205,10 +205,14 @@ class CPlayer: public CCharacter
     bool CheckPlayerLevelUP( );
     bool CheckDoubleEquip( );  //LMA: Core fix for double weapon and shield
     bool CheckZulies( );
+
+    #ifdef PYCUSTOM
     bool CheckPortal( );  //custom events
     bool CheckEvents( );  //custom events
-  //bool CheckCustomQuest( );
+    //bool CheckCustomQuest( );
     bool PrizeExchange(CPlayer* thisclient, UINT prizeid );  //custom events
+    #endif
+
     bool CheckItems ( );
     void SetStats( );
     bool GetPlayerInfo( );

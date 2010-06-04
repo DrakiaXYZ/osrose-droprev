@@ -175,8 +175,12 @@ PVOID MapProcess( PVOID TS )
                     player->PlayerHeal( );
                     player->Regeneration( );
                     player->CheckPlayerLevelUP( );
+
+                    #ifdef PYCUSTOM
+                    //LMA: define PYCUSTOM in the .h to enable custom events. Rebuild your server then.
                     player->CheckPortal( );  //Custom Events
                     player->CheckEvents( );  //Custom Events
+                    #endif
 
                     player->CheckDoubleEquip(); //LMA: Core fix for double weapon and shield
                     player->CheckZulies( );

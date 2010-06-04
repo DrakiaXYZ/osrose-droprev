@@ -444,11 +444,15 @@ class CWorldServer : public CServerSocket
     	bool LoadJobReq( ); //LMA: Job requirements.
     	bool LoadStatLookup( );
         bool LoadTeleGateData( );
+
+        #ifdef PYCUSTOM
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
-        bool LoadMonsterSpawn( );
+        #endif
+
+        //bool LoadMonsterSpawn( );
         bool LoadMobGroups( );
-        bool LoadMobGroupsSpecial( );   //LMA: Special Spawns (Halloween for example)
+        //bool LoadMobGroupsSpecial( );   //LMA: Special Spawns (Halloween for example)
         bool LoadRespawnData( );
 
         // QSD Fuctions

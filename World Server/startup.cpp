@@ -1211,6 +1211,7 @@ bool CWorldServer::LoadMobGroups()
 }
 
 //LMA: Special Spawns (like Halloween or whatever...)
+/*
 bool CWorldServer::LoadMobGroupsSpecial()
 {
   Log(MSG_LOAD, "MobGroupsSpecial data    " );
@@ -1307,11 +1308,11 @@ bool CWorldServer::LoadMobGroupsSpecial()
       thismob->mapdrop=NULL;
       thismob->mobdrop=NULL;
 
-    /*
+
     //Org code
-      thismob->mapdrop = GetDropData( thisgroup->map );
-      thismob->mobdrop= GetDropData( thismob->thisnpc->dropid );
-      */
+      //thismob->mapdrop = GetDropData( thisgroup->map );
+      //thismob->mobdrop= GetDropData( thismob->thisnpc->dropid );
+
 
       if (thismob->tactical)
         thisgroup->tacMobs.push_back(thismob);
@@ -1335,8 +1336,10 @@ bool CWorldServer::LoadMobGroupsSpecial()
 
     return true;
 }
+*/
 
-
+/*
+//LMA: outdated.
 bool CWorldServer::LoadMonsterSpawn( )
 {
 	Log( MSG_LOAD, "SpawnZones data             " );
@@ -1453,6 +1456,7 @@ bool CWorldServer::LoadMonsterSpawn( )
 	Log( MSG_LOAD, "SpawnZones Data loaded" );
 	return true;
 }
+*/
 
 bool CWorldServer::LoadNPCs( )
 {
@@ -2870,6 +2874,7 @@ bool CWorldServer::LoadStatLookup( )
 }
 //PY end
 
+#ifdef PYCUSTOM
 bool CWorldServer::LoadCustomTeleGate()
 {
     Log( MSG_LOAD, "Loading Custom Telegate data" );
@@ -2905,7 +2910,6 @@ bool CWorldServer::LoadCustomTeleGate()
     Log( MSG_LOAD, "Custom Telegate Data Loaded" );
     return true;
 }
-
 
 bool CWorldServer::LoadCustomEvents( )
 {
@@ -2966,7 +2970,7 @@ bool CWorldServer::LoadCustomEvents( )
     Log( MSG_LOAD, "Custom Events data loaded" );
     return true;
 }
-
+#endif
 
 //LMA: Loading breaks, chests and blue crafts from list_break.stb
 bool CWorldServer::LoadBreakChestBlueList()

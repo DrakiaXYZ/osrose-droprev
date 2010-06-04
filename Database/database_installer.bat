@@ -64,8 +64,6 @@ echo creating list_quest_qsd table
 echo creating list_mobgroups table !!! THIS CAN BE VERY LONG !!!
 echo Note: !!! THIS CAN BE VERY LONG !!!
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups.sql
-echo creating list_mobgroups_special table
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups_special.sql
 echo creating list_config table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% <list_config.sql
 
@@ -77,8 +75,6 @@ echo updating list_npcs_special
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_npcs_special.sql
 echo updating list_respawnzones
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_respawnzones.sql
-echo updating spawnareas
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_spawnareas.sql
 echo updating telegates
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_telegates.sql
 echo updating storage
@@ -91,20 +87,27 @@ echo item_drops_and
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_drops_and.sql
 echo ban_list
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < ban_list.sql
-echo custom events
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customevents.sql
-echo custom gates
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customgates.sql
-echo extra stats
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
-echo skillbooks
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
 echo wishlist
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < wishlist.sql
 echo GM Cart, CG list
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_cart_cg.sql
 echo GM allskill
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skills.sql
+
+
+echo Those files are specific to PY custom events.
+echo PY:: custom events
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customevents.sql
+echo PY:: custom gates
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customgates.sql
+
+echo Those files are specific to PY drop system ("old one")
+echo PY:: extra stats
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
+echo PY:: skillbooks 
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
+
+
 
 
 :end

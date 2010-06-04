@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: roseondrop
 -- ------------------------------------------------------
--- Server version	5.0.67-community-nt
+-- Server version	5.0.67-community-nt-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,4 +24,4 @@
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-09-25  9:17:06
+-- Dump completed on 2010-06-03  4:42:21
