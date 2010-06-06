@@ -103,7 +103,7 @@ class CWorldServer : public CServerSocket
     	void DeleteClientSocket( CClientSocket* thisclient );
     	bool OnServerReady( );
     	void SpawnMonsters( );
-    	void LoadConfigurations( char* );
+    	void LoadConfigurations( const char* file);
         void LoadCommandLevels( void );
         void ServerLoop( );
         bool isBanned( sockaddr_in* ClientInfo );
@@ -158,7 +158,7 @@ class CWorldServer : public CServerSocket
         bool pakGMKillInRange( CPlayer* thisclient, int range );
         bool pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd, int npctype, int ltbid );    //LMA: LTB use.
     	bool pakGMHide( CPlayer* thisclient, int mode );
-    	void SendToVisible( CPacket* pak, CPlayer* thisclient, bool thisclient=true );
+    	void SendToVisible( CPacket* pak, CPlayer* thisclient, bool dothisclient=true );
     	void SendToVisible( CPacket* pak, CPlayer* thisclient, CPlayer* xotherclient );
     	void SendToVisibleAIP( CPacket* pak, CMonster* thismon, CDrop* thisdrop );  //LMA: used for AIP.
 
@@ -352,7 +352,7 @@ class CWorldServer : public CServerSocket
     	bool GMShowTargetInfo( CPlayer* thisclient );
     	bool pakGMServerInfo( CPlayer* thisclient );
     	bool pakGMHeal( CPlayer* thisclient );
-    	bool pakGMStat( CPlayer* thisclient, char* statname, int statvalue );
+    	bool pakGMStat( CPlayer* thisclient, const char* statname, int statvalue );
         bool pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT itemid , UINT itemtype , UINT itemamount , UINT itemrefine , UINT itemls, UINT itemstats , UINT itemsocket) ;
         bool pakGMItem( CPlayer* thisclient, UINT itemid , UINT itemtype , UINT itemamount , UINT itemrefine , UINT itemls, UINT itemstats , UINT itemsocket );
 
@@ -539,7 +539,7 @@ class CWorldServer : public CServerSocket
 
         // Server Functions
         //bool SendPM( CPlayer* thisclient, char msg[200] );
-        bool SendPM( CPlayer* thisclient, char* Format, ... );
+        bool SendPM( CPlayer* thisclient, const char* Format, ... );
         bool SendGlobalMSG( CPlayer* thisclient, char msg[200] );
 
         //LMA: AIP and custom events.

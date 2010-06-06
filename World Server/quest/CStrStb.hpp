@@ -25,14 +25,14 @@ class CStrStb
 {
 public:
 	CStrStb():_Data(0){}
-	CStrStb(char* filename) : _Data(0){ LoadSTB(filename); }
+	CStrStb(const char* filename) : _Data(0){ LoadSTB(filename); }
 	~CStrStb(){CleanUp();}
 
-	bool LoadSTB(char* path)
+	bool LoadSTB(const char* path)
     {
 		CleanUp();
 
-		CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
+		CRoseFile* fh = new CRoseFile((CFILE_CHAR*) path, FM_READ | FM_BINARY);
 		if(!fh->IsOpen()){
 			delete fh;
 			return false;

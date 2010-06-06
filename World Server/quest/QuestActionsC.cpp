@@ -415,7 +415,7 @@ QUESTREWDC(011)
 QUESTREWDC(012)
 {
 	GETREWDDATA(012);
-	//TODO: check length + check msg ID...
+
     if(data->iStrID>=GServer->maxltbqsd)
     {
         //Log(MSG_INFO,"QUESTREWDC(012) QSD LTB index error %i>=%i",data->iStrID,GServer->maxltbqsd);

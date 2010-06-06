@@ -86,7 +86,7 @@ int CDatabase::Reconnect( )
 
 
 //LMA: Special Update case, returns nb affected rows.
-int CDatabase::QExecuteUpdate( char *Format,... )
+int CDatabase::QExecuteUpdate( const char *Format,... )
 {
     bool Qfail = true;
     //char query[1024];
@@ -118,7 +118,7 @@ int CDatabase::QExecuteUpdate( char *Format,... )
 }
 
 // execute query
-bool CDatabase::QExecute( char *Format,... )
+bool CDatabase::QExecute( const char *Format,... )
 {
     bool Qfail = true;
     //char query[1024];
@@ -153,7 +153,7 @@ bool CDatabase::QExecute( char *Format,... )
     return true;
 }
 
-MYSQL_RES* CDatabase::QStore( char *Format, ...)
+MYSQL_RES* CDatabase::QStore( const char *Format, ...)
 {
     bool Qfail = true;
     //char query[1024];
@@ -192,7 +192,7 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
     return result;
 }
 
-MYSQL_RES* CDatabase::QUse( char *Format, ...)
+MYSQL_RES* CDatabase::QUse( const char *Format, ...)
 {
     bool Qfail = true;
     //char query[1024];

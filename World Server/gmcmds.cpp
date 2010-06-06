@@ -484,8 +484,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.MaxLevel = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET maxlevel=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET maxlevel=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -494,8 +494,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.EXP_RATE = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET exp_rate=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET exp_rate=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -504,8 +504,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.DROP_RATE = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET drop_rate=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET drop_rate=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -514,8 +514,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.DROP_TYPE = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET drop_type=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET drop_type=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -524,8 +524,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.ZULY_RATE = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET zuly_rate=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET zuly_rate=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -534,8 +534,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.SaveTime = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET savetime=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET savetime=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -544,8 +544,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.Partygap = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET Partygap=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET Partygap=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -554,8 +554,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.MaxStat = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET MaxStat=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET MaxStat=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -564,8 +564,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.PlayerDmg = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET player_damage=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET player_damage=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -574,8 +574,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.MonsterDmg = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET monster_damage=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET monster_damage=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -584,8 +584,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.Cfmode = newval;
-                char* confname = "default";
-                GServer->DB->QExecute("UPDATE list_config SET cfmode=%i WHERE conf='%s'",newval,confname);
+                //char* confname = "default";
+                GServer->DB->QExecute("UPDATE list_config SET cfmode=%i WHERE conf='%s'",newval,"default");
                 is_ok=true;
             }
          }
@@ -2985,8 +2985,7 @@ else if (strcmp(command, "itemstat")==0)
     }
    else if(strcmp(command, "spawnlist")==0)
     {
-        //TODO: command for this one.
-        if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
+        if (Config.Command_SpawnList > thisclient->Session->accesslevel)
             return true;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int range=atoi(tmp);
 	    if (range<0)
@@ -2999,8 +2998,7 @@ else if (strcmp(command, "itemstat")==0)
 	}
    else if(strcmp(command, "spawndetail")==0)
     {
-        //TODO: command for this one.
-        if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
+        if (Config.Command_SpawnDetail > thisclient->Session->accesslevel)
             return true;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int map=atoi(tmp);
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int id=atoi(tmp);
@@ -3042,8 +3040,7 @@ else if (strcmp(command, "itemstat")==0)
 	#endif
    else if(strcmp(command, "spawnrefresh")==0)
     {
-        //TODO: command for this one.
-        if (Config.Command_SpeedModif > thisclient->Session->accesslevel)
+        if (Config.Command_SpawnRefresh > thisclient->Session->accesslevel)
             return true;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int map=atoi(tmp);
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int id=atoi(tmp);
@@ -4185,20 +4182,20 @@ bool CWorldServer::pakGMInfo(CPlayer* thisclient, char* name)
 	char* jobname;
 
 	if(otherclient != 0) {
-		if((otherclient->CharInfo->Job - 0) == 0) { jobname = "Visitor"; }
-		else if((otherclient->CharInfo->Job - 0) == 111) { jobname = "Soldier"; }
-		else if((otherclient->CharInfo->Job - 0) == 121) { jobname = "Knight"; }
-		else if((otherclient->CharInfo->Job - 0) == 122) { jobname = "Champion"; }
-		else if((otherclient->CharInfo->Job - 0) == 211) { jobname = "Muse"; }
-		else if((otherclient->CharInfo->Job - 0) == 221) { jobname = "Mage"; }
-		else if((otherclient->CharInfo->Job - 0) == 222) { jobname = "Cleric"; }
-		else if((otherclient->CharInfo->Job - 0) == 311) { jobname = "Hawker"; }
-		else if((otherclient->CharInfo->Job - 0) == 321) { jobname = "Raider"; }
-		else if((otherclient->CharInfo->Job - 0) == 322) { jobname = "Scout"; }
-		else if((otherclient->CharInfo->Job - 0) == 411) { jobname = "Dealer"; }
-		else if((otherclient->CharInfo->Job - 0) == 421) { jobname = "Bourgeois"; }
-		else if((otherclient->CharInfo->Job - 0) == 422) { jobname = "Artisan"; }
-		else { jobname = "Unknown"; }
+		if((otherclient->CharInfo->Job - 0) == 0) { jobname = (char*) "Visitor"; }
+		else if((otherclient->CharInfo->Job - 0) == 111) { jobname = (char*) "Soldier"; }
+		else if((otherclient->CharInfo->Job - 0) == 121) { jobname = (char*) "Knight"; }
+		else if((otherclient->CharInfo->Job - 0) == 122) { jobname = (char*) "Champion"; }
+		else if((otherclient->CharInfo->Job - 0) == 211) { jobname = (char*) "Muse"; }
+		else if((otherclient->CharInfo->Job - 0) == 221) { jobname = (char*) "Mage"; }
+		else if((otherclient->CharInfo->Job - 0) == 222) { jobname = (char*) "Cleric"; }
+		else if((otherclient->CharInfo->Job - 0) == 311) { jobname = (char*) "Hawker"; }
+		else if((otherclient->CharInfo->Job - 0) == 321) { jobname = (char*) "Raider"; }
+		else if((otherclient->CharInfo->Job - 0) == 322) { jobname = (char*) "Scout"; }
+		else if((otherclient->CharInfo->Job - 0) == 411) { jobname = (char*) "Dealer"; }
+		else if((otherclient->CharInfo->Job - 0) == 421) { jobname = (char*) "Bourgeois"; }
+		else if((otherclient->CharInfo->Job - 0) == 422) { jobname = (char*) "Artisan"; }
+		else { jobname = (char*) "Unknown"; }
 
 		BEGINPACKET(pak, 0x702);
 
@@ -4858,7 +4855,7 @@ bool CWorldServer::pakGMDoEmote( CPlayer* thisclient, int emotionid )
 }
 
 // Change GM Stats (Coded by Minoc)
-bool CWorldServer::pakGMStat( CPlayer* thisclient, char* statname, int statvalue )
+bool CWorldServer::pakGMStat( CPlayer* thisclient, const char* statname, int statvalue )
 {
     int statid;
     if (strcmp( statname, "Str" )==0 || strcmp( statname, "str" )==0)

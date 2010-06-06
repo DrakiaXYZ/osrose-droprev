@@ -223,8 +223,7 @@ unsigned int CPlayer::GetAccury( )
     //UINT extra_refine[10] = { 0, 4, 7, 10, 14, 20, 26, 33, 40, 50}; //old Way Value Add (list_grade.stb)
     //UINT extra_refine[10] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100}; //New Way % Add (list_grade.stb)
 
-    //LMA:
-    //TODO: refine 15 is the max now! Bogus values for now (old way anyway, we use STb now).
+    //LMA: refine 15 is the max now! Bogus values for now (old way anyway, we use STb now).
     //UINT extra_refine[10] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100}; //New Way % Add (list_grade.stb)
     //UINT extra_refine[16] = { 0, 7, 14, 21, 31, 41, 51, 65, 80, 100,120,140,160,180,190,197};
 

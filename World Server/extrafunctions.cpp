@@ -655,7 +655,7 @@ char* CWorldServer::GetNPCNameByType(UINT id)
     if(NpcNameList.find(id)==NpcNameList.end())
     {
         Log(MSG_INFO,"npc %i not found",id);
-        return "";
+        return (char*) "";
     }
 
     //Log(MSG_INFO,"npc %i found %s",id,NpcNameList[id]);
@@ -802,7 +802,7 @@ char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
     //no prefix for them.
     if(family>=10||family==7)
     {
-        return "";
+        return (char*) "";
     }
 
     if(family>=1&&family<=9)
@@ -818,7 +818,7 @@ char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
 
     if(id==0)
     {
-        return "";
+        return (char*) "";
     }
 
     UINT idu=16*100000+id;

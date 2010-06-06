@@ -142,8 +142,8 @@ bool CWorldServer::LoadSTBData( )
     }
 
     //adding some special values :)
-    STLNameList[0]="No STL";
-    STLNameList[1]="STL Error";
+    STLNameList[0]=(char*) "No STL";
+    STLNameList[1]=(char*) "STL Error";
 
     //LMA: exporting to test ;)
     /*
@@ -3129,7 +3129,6 @@ bool CWorldServer::LoadBreakChestBlueList()
         }
         else
         {
-            //TODO: nb min
             //newbreak->numToGive = BreakData.rows[i][62];
             //newbreak->total = BreakData.rows[i][63];
             newbreak->reward_min = 1;

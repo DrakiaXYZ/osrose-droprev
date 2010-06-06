@@ -25,7 +25,7 @@
 #include <ctype.h>
 
 // Find the entry
-bool ConfigGetEntry( char *pcFile, char *pcNameMust, char* &pcResult )
+bool ConfigGetEntry( const char *pcFile, const char *pcNameMust, char* &pcResult )
 {
 	char pcBuffer[ 512 ];
 	char *pcName, *pcPar, *pcPoint;
@@ -89,7 +89,7 @@ bool ConfigGetEntry( char *pcFile, char *pcNameMust, char* &pcResult )
 // -----------------------------------------------------------------------------------------
 // Returns a text
 // -----------------------------------------------------------------------------------------
-char *ConfigGetString( char *pcFile, char *pcName, char *pcDefault )
+char *ConfigGetString( const char *pcFile, const char *pcName, const char *pcDefault )
 {
 	char *pcRet, *pcRetReal, *pcRetOld;
 	if ( !ConfigGetEntry( pcFile, pcName, pcRet ) ) return strdup( pcDefault );
@@ -108,7 +108,7 @@ char *ConfigGetString( char *pcFile, char *pcName, char *pcDefault )
 }
 
 // Returns a number
-unsigned ConfigGetInt( char *pcFile, char *pcName, unsigned uDefault )
+unsigned ConfigGetInt( const char *pcFile, const char *pcName, unsigned uDefault )
 {
 	char *pcRet;
 	unsigned uRet;

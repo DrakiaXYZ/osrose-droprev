@@ -170,7 +170,10 @@ PVOID MapProcess( PVOID TS )
                         player->UpdatePosition(false);
                     if(player->IsOnBattle( ))
                         player->DoAttack( );
-                    player->CheckItems( );
+
+                    //LMA: not used anymore.
+                    //player->CheckItems( );
+
                     player->RefreshBuff( );
                     player->PlayerHeal( );
                     player->Regeneration( );
@@ -278,7 +281,6 @@ PVOID MapProcess( PVOID TS )
                     }*/
 
                     //LMA: AIP CODE
-
                     if(monster->hitcount == 0xFF)//this is a delay for new monster spawns this might olso fix invisible monsters(if they attack directly on spawning the client dosn't get the attack packet(its not in it's visible list yet))
                     {
                         if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
@@ -288,6 +290,7 @@ PVOID MapProcess( PVOID TS )
                             monster->DoAi(monster->thisnpc->AI, 0);
                             monster->lastAiUpdate=clock();
                         }
+
                     }
                     //END AIP CODE
 
@@ -357,8 +360,12 @@ PVOID MapProcess( PVOID TS )
                     //General monsters===============================================================
                     //LMA: moved to beginning...
                     //if(!monster->PlayerInRange( )) continue;
-                    if(!monster->UpdateValues( )) continue;
-                        monster->UpdatePosition(monster->stay_still);
+                    if(!monster->UpdateValues( ))
+                    {
+                        continue;
+                    }
+
+                    monster->UpdatePosition(monster->stay_still);
 
                     if(monster->IsOnBattle( ))
                     {
@@ -591,14 +598,14 @@ PVOID MapProcess( PVOID TS )
                             if(GServer->LastTempleAccess[0]!=GServer->ObjVar[npc->npctype][0]||GServer->LastTempleAccess[1]!=GServer->ObjVar[npc->npctype][1])
                             {
                                 GServer->DB->QExecute("UPDATE list_npcs SET eventid=%i, extra_param=%i WHERE type=1075",GServer->ObjVar[1075][0],GServer->ObjVar[1075][1]);
-                                Log(MSG_WARNING,"Doing an update for Williams each 5 minutes, values changed (%i->%i, %i->%i)",
+                                /*Log(MSG_WARNING,"Doing an update for Williams each 5 minutes, values changed (%i->%i, %i->%i)",
                                 GServer->LastTempleAccess[0],GServer->ObjVar[npc->npctype][0],
-                                GServer->LastTempleAccess[1],GServer->ObjVar[npc->npctype][1]);
+                                GServer->LastTempleAccess[1],GServer->ObjVar[npc->npctype][1]);*/
                             }
-                            else
+                            /*else
                             {
                                 Log(MSG_WARNING,"Doing an update for Williams each 5 minutes.");
-                            }
+                            }*/
 
                             GServer->LastTempleAccess[0]=GServer->ObjVar[npc->npctype][0];
                             GServer->LastTempleAccess[1]=GServer->ObjVar[npc->npctype][1];
@@ -624,7 +631,6 @@ PVOID MapProcess( PVOID TS )
                          delete monster;
                          npc->lastAiUpdate = clock();
                      }
-
 
                 }
 

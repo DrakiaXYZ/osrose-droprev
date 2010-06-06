@@ -6272,13 +6272,6 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
                 }
 
-                //thisclient->items[material].count--; // geo edit, moved this up two lines
-                /*thisclient->items[material].count-=needed_amount;   //LMA: item amount
-                if(thisclient->items[material].count<1)
-                {
-                    ClearItem( thisclient->items[material] );
-                }*/
-
                 BYTE nb_mats=1; //item counts as 1
                 for (int k=0;k<4;k++)
                 {
@@ -6295,9 +6288,9 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
                 }
 
-                //TODO: get a real packet to see how we send the 4 (?) materials to send back to client even if they were not present.
+                //Sending back the materials.
                 nb_mats++;  //extra slot.
-                ADDBYTE    ( pak, nb_mats );//items a actualizar
+                ADDBYTE    ( pak, nb_mats );    //Nb items.
 
                 //Mats.
                 for (int k=0;k<4;k++)

@@ -71,7 +71,7 @@ class CCharServer : public CServerSocket
 
         //LMA BEGIN
         //MySQL Pinging
-        bool CCharServer::PingMySQL( MYSQL_RES*  DB );
+        bool PingMySQL( MYSQL_RES*  DB );
         //LMA END
 
 

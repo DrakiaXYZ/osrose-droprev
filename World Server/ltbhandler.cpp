@@ -24,7 +24,7 @@
 #include "ltbhandler.h"
 
 
-void LTBStoreData(char* filename, LTBData* data)
+void LTBStoreData(const char* filename, LTBData* data)
 {
     long int first_data=0;
     long int cur_offset=0;

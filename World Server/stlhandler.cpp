@@ -25,7 +25,7 @@
 
 
 //Reading and storing a STL in a single map :)
-int STLStoreData(char* filename, int family)
+int STLStoreData(const char* filename, int family)
 {
     entry** index;
     map<UINT, entry> table;

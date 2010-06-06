@@ -1370,22 +1370,32 @@ bool CPlayer::CheckItems()
 bool CPlayer::CheckZulies()
 {
     //save character info so that we can look at it later in the database
-    CPlayer* thisclient = GServer->GetClientByCharName( CharInfo->charname );
+    //CPlayer* thisclient = GServer->GetClientByCharName( CharInfo->charname );
     if((CharInfo->Zulies < 0) || (CharInfo->Storage_Zulies < 0))
     {
-        thisclient->savedata();
+        Log(MSG_HACK,"HACK:: %s has been kicked because of negative Zuly.",CharInfo->charname);
+
+        //thisclient->savedata();
+        savedata();
+
         //now kick the player out
         BEGINPACKET( pak, 0x702 );
         ADDSTRING( pak, "You have been disconnected from the server for Zuly hacking!" );
         ADDBYTE( pak, 0 );
-        thisclient->client->SendPacket( &pak );
+        //thisclient->client->SendPacket( &pak );
+        client->SendPacket( &pak );
 
         RESETPACKET( pak, 0x707 );
         ADDWORD( pak, 0 );
-        thisclient->client->SendPacket( &pak );
+        //thisclient->client->SendPacket( &pak );
+        client->SendPacket( &pak );
 
-        thisclient->client->isActive = false;
+        //thisclient->client->isActive = false;
+        client->isActive = false;
+
     }
+
+
   return true;
 }
 
@@ -1493,7 +1503,9 @@ void CPlayer::RebuildItemMall()
 bool CPlayer::CheckDoubleEquip()
 {
     if(items[8].itemnum==0)
-       return true;
+    {
+        return true;
+    }
 
     UINT weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
     switch(weapontype)
@@ -1512,7 +1524,10 @@ bool CPlayer::CheckDoubleEquip()
             // we should unequip the shield
             UINT newslot = GetNewItemSlot( items[8] );
             if(newslot==0xffff)
+            {
                 return true;
+            }
+
             items[newslot] = items[8];
             ClearItem( items[8] );
             UpdateInventory( newslot, 8 );

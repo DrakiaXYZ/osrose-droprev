@@ -87,7 +87,7 @@ bool CCharServer::OnServerReady( )
                	Config.LoginIP = row[2];
             break;
             default://localhost
-               	Config.LoginIP = "127.0.0.1";
+               	Config.LoginIP = (char*) "127.0.0.1";
             break;
         }
     	Config.LoginPort =  atoi(row[1]);

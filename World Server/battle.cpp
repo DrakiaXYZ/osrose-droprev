@@ -922,7 +922,7 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     CMap* map = GServer->MapList.Index[Position->Map];
 
     //osprose
-    //TODO: pvp ?
+    //LMA: pvp ?
     UINT save_atktype=Battle->atktype;
 
     if(IsPlayer() || IsSummon())

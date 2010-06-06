@@ -469,7 +469,7 @@ bool CWorldServer::OnServerReady( )
                	Config.CharIP = row[2];
             break;
             default://localhost
-               	Config.CharIP = "127.0.0.1";
+               	Config.CharIP = (char*) "127.0.0.1";
             break;
         }
     	Config.CharPort =  atoi(row[1]);
@@ -574,7 +574,7 @@ bool CWorldServer::isBanned( sockaddr_in* ClientInfo )
 }
 
 // Load Server configuration
-void CWorldServer::LoadConfigurations( char* file )
+void CWorldServer::LoadConfigurations( const char* file )
 {
     //Database
 	Config.SQLServer.pcServer   = ConfigGetString ( file, "mysql_host", "localhost" );
@@ -715,6 +715,9 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_SetUWnb = ConfigGetInt    ( "commands.ini", "setuwnb", 299 );
     Config.Command_ShopType = ConfigGetInt    ( "commands.ini", "shoptype", 299 );
     Config.Command_Shutdown = ConfigGetInt    ( "commands.ini", "shutdown", 299 );
+    Config.Command_SpawnList = ConfigGetInt    ( "commands.ini", "spawnlist", 299 );
+    Config.Command_SpawnDetail = ConfigGetInt    ( "commands.ini", "spawndetail", 299 );
+    Config.Command_SpawnRefresh = ConfigGetInt    ( "commands.ini", "spawnrefresh", 299 );
     Config.Command_SpeedModif = ConfigGetInt    ( "commands.ini", "speedmodif", 299 );
     Config.Command_SSpawn = ConfigGetInt    ( "commands.ini", "sspawn", 299 );
     Config.Command_Stat = ConfigGetInt    ( "commands.ini", "stat", 299 );

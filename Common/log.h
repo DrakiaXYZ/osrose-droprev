@@ -114,14 +114,14 @@ enum msg_type {
 };
 
 // Logging function
-void Log( msg_type flag, char* Format, ... );
+void Log( msg_type flag, const char* Format, ... );
 
 
 extern FILE *fhSp1;
-void LogSp( enum msg_type flag, char *Format, ... );
+void LogSp( enum msg_type flag, const char *Format, ... );
 void LogHandleSp(int type);
 void LogDebugPriority(int priority=3, bool warning=false);
-void LogDebug(char *Format, ... );
+void LogDebug(const char *Format, ... );
 
 
 #endif

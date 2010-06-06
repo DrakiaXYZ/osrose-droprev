@@ -105,7 +105,7 @@ class CMonster : public CCharacter
 
         //unsigned int GetMaxHP( );
         unsigned long long GetMaxHP( );
-        bool CMonster::ForceMaxHP( );   //LMA: Forcing maxHP
+        bool ForceMaxHP( );   //LMA: Forcing maxHP
 
         float GetAttackDistance();
 

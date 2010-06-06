@@ -226,10 +226,10 @@ bool CWorldServer::pakCreateClan ( CPlayer* thisclient, CPacket* P )
 	//MYSQL_ROW row;
     int background = GETWORD((*P),1);
     int icon = GETWORD((*P),3);
-    char *name = "";
-    char *slogan = "";
-    name=(char*)&P->Buffer[5];
-    slogan=(char*)&P->Buffer[strlen(name)+6];
+    //char *name = "";
+    //char *slogan = "";
+    char *name=(char*)&P->Buffer[5];
+    char *slogan=(char*)&P->Buffer[strlen(name)+6];
 
     //LMA: Check if name already exists and is short enough.
     if(!CheckValidName(thisclient,name))

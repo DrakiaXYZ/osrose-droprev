@@ -128,7 +128,7 @@ void CMonster::SpawnMonster( CPlayer* player, CMonster* thismon )
                 ADDDWORD( pak, 0x00000064 );
             }
 
-            //TODO: LMA, test if necessary or not anymore...
+            //LMA: test if necessary or not anymore... (AIP should handle it).
             /*
             else if(thismon->montype>=1474&&thismon->montype<=1489)
             {

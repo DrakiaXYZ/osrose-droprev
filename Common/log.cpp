@@ -72,7 +72,7 @@ void textcolor(int color)
 }
 
 // This function logs based on flags
-void Log( enum msg_type flag, char *Format, ... )
+void Log( enum msg_type flag, const char *Format, ... )
 {
 	va_list ap;	      // For arguments
     va_start( ap, Format );
@@ -198,7 +198,7 @@ void Log( enum msg_type flag, char *Format, ... )
 
 
 //LMA: (used for export only).
-void LogSp( enum msg_type flag, char *Format, ... )
+void LogSp( enum msg_type flag, const char *Format, ... )
 {
 	va_list ap;	      // For arguments
     va_start( ap, Format );
@@ -242,7 +242,7 @@ void LogDebugPriority(int priority, bool warning)
 }
 
 //LMA: Log for debug purposes (in another file).
-void LogDebug(char *Format, ... )
+void LogDebug(const char *Format, ... )
 {
     //1= on screen
     //2= on screen + file

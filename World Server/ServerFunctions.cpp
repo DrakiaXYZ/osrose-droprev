@@ -21,7 +21,7 @@
 #include "worldserver.h"
 
 // from Paul_T
-bool CWorldServer::SendPM( CPlayer* thisclient, char* Format, ... )
+bool CWorldServer::SendPM( CPlayer* thisclient, const char* Format, ... )
 {
     char buf[512];
     va_list ap;

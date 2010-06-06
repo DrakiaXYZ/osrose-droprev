@@ -25,7 +25,7 @@
 // -----------------------------------------------------------------------------------------
 // STB reading shit
 // -----------------------------------------------------------------------------------------
-int STBStoreData( char* filename, CSTBData* data )
+int STBStoreData( const char* filename, CSTBData* data )
 {
 	char tmpfield[512];
 	unsigned dataoffset = 0;
@@ -87,7 +87,7 @@ void STBFreeData( CSTBData* data )
 
 
 //LMA: Special for Zone (unsigned long).
-int STBStoreDataChar( char* filename, CSTBDataChar* data )
+int STBStoreDataChar( const char* filename, CSTBDataChar* data )
 {
 	char tmpfield[512];
 	unsigned dataoffset = 0;
@@ -175,7 +175,7 @@ void STBFreeDataChar( CSTBDataChar* data )
 //LMA: test for quest hack (stackable).
 #ifdef QHACK
 //LMA: Special for NPCs (unsigned long).
-int STBStoreDataNPC( char* filename, CSTBDataChar* data )
+int STBStoreDataNPC( const char* filename, CSTBDataChar* data )
 {
 	char tmpfield[512];
 	unsigned dataoffset = 0;

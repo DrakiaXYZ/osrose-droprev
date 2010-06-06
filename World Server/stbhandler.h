@@ -34,13 +34,13 @@ struct CSTBDataChar {
 	unsigned long** rows;
 };
 
-int STBStoreData( char* filename, CSTBData* data );
+int STBStoreData( const char* filename, CSTBData* data );
 void STBFreeData( CSTBData* data );
-int STBStoreDataChar( char* filename, CSTBDataChar* data ); //LMA: returning unsigned long
+int STBStoreDataChar( const char* filename, CSTBDataChar* data ); //LMA: returning unsigned long
 void STBFreeDataChar( CSTBDataChar* data );
 
 //LMA: test for quest hack (stackable).
 #ifdef QHACK
-int STBStoreDataNPC( char* filename, CSTBDataChar* data ); //LMA: returning unsigned long
+int STBStoreDataNPC( const char* filename, CSTBDataChar* data ); //LMA: returning unsigned long
 #endif
 //LMA: end

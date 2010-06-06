@@ -317,6 +317,9 @@ struct CROSEServerConfig
     int Command_ShopType;
     int Command_Shutdown;
     int Command_SpeedModif;
+    int Command_SpawnList; //LMA: for spawn GM command.
+    int Command_SpawnDetail; //LMA: for spawn GM command.
+    int Command_SpawnRefresh; //LMA: for spawn GM command.
     int Command_SSpawn;
     int Command_Stat;
     int Command_Summon;

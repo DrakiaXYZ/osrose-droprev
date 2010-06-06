@@ -204,7 +204,7 @@ bool CPlayer::loaddata( )
     int coff[MAX_CLASS_SKILL];
     int uoff[MAX_UNIQUE_SKILL];
     int moff[MAX_MILEAGE_SKILL];
-    char* tab_names[]={"class","driving","basic","unique","mileage"};
+    const char* tab_names[]={"class","driving","basic","unique","mileage"};
 
     int good_family=0;
     cur_cskills[0]=0;
