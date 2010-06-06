@@ -1123,7 +1123,7 @@ void CPlayer::GiveCP(unsigned int points)
 
     RESETPACKET( pak, 0x7e0 );
  	ADDBYTE    ( pak, 0xfe );
-	ADDWORD    ( pak, CharInfo->charid);  //charid
+	ADDDWORD    ( pak, CharInfo->charid);  //charid
 	ADDDWORD    ( pak, points);  //Clan points (to be added)
 	cryptPacket( (char*)&pak, GServer->cct );
 	send( GServer->csock, (char*)&pak, pak.Size, 0 );

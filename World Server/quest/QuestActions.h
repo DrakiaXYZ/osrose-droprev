@@ -220,8 +220,8 @@ struct STR_REWD_024 {
 };
 
 struct STR_REWD_025 {
-	short nPOINT;
-	//int nPOINT;
+	//short nPOINT;
+	int nPOINT;
 	byte btOP;
 };
 

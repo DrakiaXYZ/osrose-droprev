@@ -1207,7 +1207,6 @@ QUESTREWD(025)
     GETREWDDATA(025);
     int points=data->nPOINT;
 
-
     //Loading "real" CP points.
     client->Clan->CP=GServer->getClanPoints(client->Clan->clanid);
 
@@ -1229,10 +1228,12 @@ QUESTREWD(025)
     //sending packet.
     BEGINPACKET( pak, 0x7e0 );
     ADDBYTE    ( pak, 0xfe );
-    ADDWORD    ( pak, client->CharInfo->charid);  //charid
+    ADDDWORD    ( pak, client->CharInfo->charid);  //charid
     ADDDWORD    ( pak, points);  //Clan points (to be added)
     cryptPacket( (char*)&pak, GServer->cct );
     send( GServer->csock, (char*)&pak, pak.Size, 0 );
+
+    Log(MSG_WARNING,"We added %i CP",points);
 
     RESETPACKET( pak, 0x7e0 );
     ADDBYTE    ( pak, 0x35 );

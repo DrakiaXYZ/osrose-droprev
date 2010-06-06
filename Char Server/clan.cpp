@@ -1258,7 +1258,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
 
                 if(otherclient!=NULL)
                 {
-                     Log(MSG_INFO,"[CS] Forcing clan info for %i, %s, total clan points %li",lma_id,otherclient->charname,lma_points);
+                     Log(MSG_INFO,"[CS] Forcing clan info for %i, %s, adding clan points %li",lma_id,otherclient->charname,lma_points);
                      //test
                      lma_mask(otherclient);
                      SendClanPoints(otherclient,0);
@@ -1266,7 +1266,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 }
                 else
                 {
-                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %i, not found, total clan points %li!",lma_id,lma_points);
+                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %i, not found, adding clan points %li!",lma_id,lma_points);
                 }
 
              }
