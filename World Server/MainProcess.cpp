@@ -30,6 +30,9 @@ PVOID MapProcess( PVOID TS )
 
     //LMA: temp monster used for NPCs.
     fPoint tempPos;
+    tempPos.x=0;
+    tempPos.y=0;
+    tempPos.z=0;
     CMonster* NPCmonster = new (nothrow) CMonster( tempPos, 0, 0, 0, 0  );
 
     while(GServer->ServerOnline)
@@ -584,7 +587,7 @@ PVOID MapProcess( PVOID TS )
                          }
 
                          //LMA: before this temp monster was created and deleted every time, now we only do it once...
-                         //new code
+                         //new code, we overwrite the temp monster each time rather than creating / deleting him each time.
                         NPCmonster->Position->source = npc->pos;
                         NPCmonster->Position->current = npc->pos;
                         NPCmonster->Position->destiny = npc->pos;
@@ -593,6 +596,7 @@ PVOID MapProcess( PVOID TS )
                          NPCmonster->Position->lastMoveTime = clock( );
                          NPCmonster->SpawnTime = clock( );
                          NPCmonster->lastSighCheck = clock( );
+                         NPCmonster->lastLifeUpdate = time(NULL);
 
                          //old code:
                          //CMonster* NPCmonster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
