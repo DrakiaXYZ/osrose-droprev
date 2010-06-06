@@ -833,22 +833,34 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
     //float charm = 0;
     float charm = (float)thisclient->Attr->Cha / 5;
 
-    //LMA: Gray drops
     float leveldif = (float)thismon->thisnpc->level - (float)thisclient->Stats->Level;
+    Log(MSG_INFO,"leveldif %.2f",leveldif);
+
+    //LMA: Gray drops
     if (thisclient->bonusgraydrop!=0)
     {
         Log(MSG_INFO,"GetPYDropAnd:: Gray medal detected");
         leveldif=20.0;
     }
 
-    float droprate = (float)GServer->Config.DROP_RATE + charm;  //basic server rate + extra for player charm
+    //basic server rate + extra for player charm
+    float droprate = (float)GServer->Config.DROP_RATE + charm;
     float dropchance = (droprate + (droprate * 0.01 * leveldif));
-    //Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
-    if(dropchance < 10) dropchance = 10; //always a small chance of a drop even when the mob is more than 20 levels beneath your own
-    //Log(MSG_INFO,"dropchance %.2f",dropchance);
+    Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
+
+    if(dropchance < 10)
+    {
+        //always a small chance of a drop even when the mob is more than 20 levels beneath your own
+        dropchance = 10;
+    }
+
+    Log(MSG_INFO,"dropchance %.2f",dropchance);
     if(thismon->thisnpc->level == 1)
+    {
         dropchance = 80;
-    //Log(MSG_INFO,"dropchance %.2f",dropchance);
+    }
+
+    Log(MSG_INFO,"dropchance %.2f",dropchance);
     UINT lma_save_rand=0;
     lma_save_rand=GServer->RandNumber(0, 100);
     if (lma_save_rand>dropchance)
@@ -859,7 +871,7 @@ CDrop* CWorldServer::GetPYDropAnd( CMonster* thismon, UINT droptype )
         return NULL; // no drop here. not this time anyway.
     }
 
-    //Log(MSG_INFO,"drop possible, %i <= %.2f",lma_save_rand,dropchance);
+    Log(MSG_INFO,"drop possible, %i <= %.2f",lma_save_rand,dropchance);
 
     //CItemType prob[MDropList.size()];
     bool isdrop = false;

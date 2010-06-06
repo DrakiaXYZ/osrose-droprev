@@ -167,7 +167,7 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
              //20070621-211100
             //mod for CF
             //Adding bonusxp (mileage)
-            UINT prev_xp=thisclient->CharInfo->Exp;
+            //UINT prev_xp=thisclient->CharInfo->Exp;
 
             //LMA: Xp nullifier.
             if(!thisclient->no_exp)
