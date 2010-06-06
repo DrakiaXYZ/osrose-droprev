@@ -359,6 +359,54 @@ bool CWorldServer::IsVisibleNPCType( CPlayer* thisclient, UINT npc_type )
 	return false;
 }
 
+#ifdef STATICID
+// This function gets a new clientID for a npc, monster or mob
+//LMA: serial version with a mutex as well...
+unsigned CWorldServer::GetNewClientID( )
+{
+    pthread_mutex_lock( &GServer->PlayerMutex );
+    pthread_mutex_lock( &GServer->MapMutex );
+
+	for (unsigned i=last_cid; i<0xffff; i++)
+    {
+		if (ClientIDList[i]!=0 && time(NULL)-ClientIDList[i]>10)
+        {
+			ClientIDList[i] = 0;
+			//Log(MSG_INFO,"XCID NEW %u",i);
+			last_cid=i+1;
+			pthread_mutex_unlock( &GServer->PlayerMutex );
+			pthread_mutex_unlock( &GServer->MapMutex );
+			return i;
+		}
+
+	}
+
+	//Not found at the first pass, let's loop again.
+	for (unsigned i=1; i<=last_cid; i++)
+    {
+		if (ClientIDList[i]!=0 && time(NULL)-ClientIDList[i]>10)
+        {
+			ClientIDList[i] = 0;
+			//Log(MSG_INFO,"XCID (2) NEW %u",i);
+			last_cid=i+1;
+			pthread_mutex_unlock( &GServer->PlayerMutex );
+			pthread_mutex_unlock( &GServer->MapMutex );
+			return i;
+		}
+
+	}
+
+    //TODO: cleaning function there?
+    Log(MSG_INFO,"XCID ERR");
+
+
+    pthread_mutex_unlock( &GServer->PlayerMutex );
+    pthread_mutex_unlock( &GServer->MapMutex );
+
+
+	return 0;
+}
+#else
 // This function gets a new clientID for a npc, monster or mob
 unsigned CWorldServer::GetNewClientID( )
 {
@@ -375,6 +423,7 @@ unsigned CWorldServer::GetNewClientID( )
     Log(MSG_INFO,"XCID ERR");
 	return 0;
 }
+#endif
 
 //LMA: Getting a Party ID.
 unsigned CWorldServer::GetNewPartyID( )
@@ -440,10 +489,22 @@ void CWorldServer::CheckClientID(unsigned type, unsigned index)
 void CWorldServer::ClearClientID( unsigned int id )
 {
     if(id<0||id>0xffffff)
+    {
         return;
+    }
+
+    #ifdef STATICID
+    pthread_mutex_lock( &GServer->PlayerMutex );
+    pthread_mutex_lock( &GServer->MapMutex );
+    #endif
 
 	ClientIDList[id] = (unsigned)time(NULL);
 	//Log(MSG_INFO,"XCID, clearing CID %u",id);
+
+    #ifdef STATICID
+    pthread_mutex_unlock( &GServer->PlayerMutex );
+    pthread_mutex_unlock( &GServer->MapMutex );
+    #endif
 
 
 	return;

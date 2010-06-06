@@ -24,6 +24,11 @@
 //LMA: new refine system
 #define REFINENEW
 
+//LMA: test static client ID.
+#ifndef STATICID
+#define STATICID
+#endif
+
 //LMA: TEST HACK QUEST
 #define QHACK
 //LMA: End

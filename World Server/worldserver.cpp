@@ -23,10 +23,18 @@
 // Constructor
 CWorldServer::CWorldServer( string fn )
 {
+    #ifdef STATICID
+    //LMA: Client ID Static.
+    last_cid=1;
+    #endif
+
     filename = fn;
     LoadConfigurations( (char*)fn.c_str() );
 	for(unsigned i=0; i<0xffff; i++)
-        ClientIDList[i] = 1;
+	{
+	    ClientIDList[i] = 1;
+	}
+
     //Clear or Vector list
     PartyList.clear();
     MDropList.clear();

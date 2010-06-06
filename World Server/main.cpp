@@ -21,7 +21,13 @@
 #define REVISION 32
 #include "worldserver.h"
 
+#ifdef STATICID
+//LMA: Static for CID.
+unsigned CWorldServer::last_cid=1;
+#endif
+
 CWorldServer* GServer;
+
 bool PRINT_LOG = true;
 unsigned char LOG_THISSERVER;
 

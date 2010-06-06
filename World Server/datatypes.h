@@ -26,6 +26,11 @@
 #define REFINENEW
 #endif
 
+//LMA: test static client ID.
+#ifndef STATICID
+#define STATICID
+#endif
+
 //LMA: TEST HACK QUEST
 #ifndef QHACK
 #define QHACK

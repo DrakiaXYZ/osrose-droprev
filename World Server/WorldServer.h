@@ -81,6 +81,7 @@ extern UINT fmmonstertype;
 extern UINT ftypeskill;
 extern UINT fskill;
 
+
 //LMA: test
 	struct SQuestDatum1 {
 		int size;
@@ -94,6 +95,10 @@ extern UINT fskill;
 class CWorldServer : public CServerSocket
 {
     public:
+        //LMA: static client ID
+        #ifdef STATICID
+        static unsigned last_cid;
+        #endif
     	//------------------ MAIN (worldserver.cpp)
     	CWorldServer ( string );
         CClientSocket* CreateClientSocket( );
