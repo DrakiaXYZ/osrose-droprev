@@ -364,8 +364,9 @@ bool CWorldServer::IsVisibleNPCType( CPlayer* thisclient, UINT npc_type )
 //LMA: serial version with a mutex as well...
 unsigned CWorldServer::GetNewClientID( )
 {
-    pthread_mutex_lock( &GServer->PlayerMutex );
-    pthread_mutex_lock( &GServer->MapMutex );
+    //LMA: if the thread is already blocked, it should return EBUSY else 0
+    UINT res_blockP=pthread_mutex_trylock(&GServer->PlayerMutex);
+    UINT res_blockM=pthread_mutex_trylock(&GServer->MapMutex);
 
 	for (unsigned i=last_cid; i<0xffff; i++)
     {
@@ -374,8 +375,16 @@ unsigned CWorldServer::GetNewClientID( )
 			ClientIDList[i] = 0;
 			//Log(MSG_INFO,"XCID NEW %u",i);
 			last_cid=i+1;
-			pthread_mutex_unlock( &GServer->PlayerMutex );
-			pthread_mutex_unlock( &GServer->MapMutex );
+            if (res_blockP==0)
+            {
+                pthread_mutex_unlock( &GServer->PlayerMutex );
+            }
+
+            if(res_blockM==0)
+            {
+                pthread_mutex_unlock( &GServer->MapMutex );
+            }
+
 			return i;
 		}
 
@@ -389,8 +398,16 @@ unsigned CWorldServer::GetNewClientID( )
 			ClientIDList[i] = 0;
 			//Log(MSG_INFO,"XCID (2) NEW %u",i);
 			last_cid=i+1;
-			pthread_mutex_unlock( &GServer->PlayerMutex );
-			pthread_mutex_unlock( &GServer->MapMutex );
+            if (res_blockP==0)
+            {
+                pthread_mutex_unlock( &GServer->PlayerMutex );
+            }
+
+            if(res_blockM==0)
+            {
+                pthread_mutex_unlock( &GServer->MapMutex );
+            }
+
 			return i;
 		}
 
@@ -399,9 +416,15 @@ unsigned CWorldServer::GetNewClientID( )
     //TODO: cleaning function there?
     Log(MSG_INFO,"XCID ERR");
 
+    if (res_blockP==0)
+    {
+        pthread_mutex_unlock( &GServer->PlayerMutex );
+    }
 
-    pthread_mutex_unlock( &GServer->PlayerMutex );
-    pthread_mutex_unlock( &GServer->MapMutex );
+    if(res_blockM==0)
+    {
+        pthread_mutex_unlock( &GServer->MapMutex );
+    }
 
 
 	return 0;
@@ -494,16 +517,36 @@ void CWorldServer::ClearClientID( unsigned int id )
     }
 
     #ifdef STATICID
-    pthread_mutex_lock( &GServer->PlayerMutex );
-    pthread_mutex_lock( &GServer->MapMutex );
+    Log(MSG_INFO,"In clear CID %i",id);
+    //LMA: if the thread is already blocked, it should return EBUSY
+    //else 0
+    UINT res_blockP=pthread_mutex_trylock(&GServer->PlayerMutex);
+    UINT res_blockM=pthread_mutex_trylock(&GServer->MapMutex);
     #endif
 
-	ClientIDList[id] = (unsigned)time(NULL);
+    if(ClientIDList[id]>1)
+    {
+        Log(MSG_INFO,"CID %i has already been cleared?",id);
+    }
+    else
+    {
+        ClientIDList[id] = (unsigned)time(NULL);
+    }
+
 	//Log(MSG_INFO,"XCID, clearing CID %u",id);
 
     #ifdef STATICID
-    pthread_mutex_unlock( &GServer->PlayerMutex );
-    pthread_mutex_unlock( &GServer->MapMutex );
+    if (res_blockP==0)
+    {
+        pthread_mutex_unlock( &GServer->PlayerMutex );
+    }
+
+    if(res_blockM==0)
+    {
+        pthread_mutex_unlock( &GServer->MapMutex );
+    }
+
+    Log(MSG_INFO,"Out clear CID %i",id);
     #endif
 
 

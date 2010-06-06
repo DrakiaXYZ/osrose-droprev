@@ -28,6 +28,10 @@ PVOID MapProcess( PVOID TS )
     clock_t time_skill=0;
     bool only_npc=false;    //LMA: AIP is done by NPC even when no player in map.
 
+    //LMA: temp monster used for NPCs.
+    fPoint tempPos;
+    CMonster* NPCmonster = new (nothrow) CMonster( tempPos, 0, 0, 0, 0  );
+
     while(GServer->ServerOnline)
     {
         loopcount++;            //geobot: refresh only every 100 cycles
@@ -579,15 +583,27 @@ PVOID MapProcess( PVOID TS )
                              continue;
                          }
 
-                         CMonster* monster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
-                         monster->aip_npctype=npc->npctype;
-                         monster->aip_clientid=npc->clientid;
-                         monster->thisnpc = thisnpc;
+                         //LMA: before this temp monster was created and deleted every time, now we only do it once...
+                         //new code
+                        NPCmonster->Position->source = npc->pos;
+                        NPCmonster->Position->current = npc->pos;
+                        NPCmonster->Position->destiny = npc->pos;
+                         NPCmonster->montype=npc->npctype;
+                         NPCmonster->Position->Map=map->id;
+                         NPCmonster->Position->lastMoveTime = clock( );
+                         NPCmonster->SpawnTime = clock( );
+                         NPCmonster->lastSighCheck = clock( );
+
+                         //old code:
+                         //CMonster* NPCmonster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
+                         NPCmonster->aip_npctype=npc->npctype;
+                         NPCmonster->aip_clientid=npc->clientid;
+                         NPCmonster->thisnpc = thisnpc;
 
                          int lma_previous_eventID=npc->thisnpc->eventid;
                          //Log(MSG_INFO,"XCIDAIBEGIN NPC %i map %i cid %i",npc->npctype,map->id,npc->clientid);
 
-                         monster->DoAi(monster->thisnpc->AI, 1);
+                         NPCmonster->DoAi(NPCmonster->thisnpc->AI, 1);
                          //Log(MSG_INFO,"XCIDAIEND NPC %i map %i cid %i",npc->npctype,map->id,npc->clientid);
 
                         //Williams (temple of Oblivion)
@@ -612,13 +628,13 @@ PVOID MapProcess( PVOID TS )
                         }
 
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
-                         if (lma_previous_eventID!=monster->thisnpc->eventid)
+                         if (lma_previous_eventID!=NPCmonster->thisnpc->eventid)
                          {
-                            //Log(MSG_WARNING,"(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            //Log(MSG_WARNING,"(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,NPCmonster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
                             LogDebugPriority(3);
-                            LogDebug("(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            LogDebug("(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,NPCmonster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
                             LogDebugPriority(4);
-                            npc->thisnpc->eventid=monster->thisnpc->eventid;
+                            npc->thisnpc->eventid=NPCmonster->thisnpc->eventid;
                             npc->event=npc->thisnpc->eventid;
                             //LMA: We have to change the event ID here since we didn't send the clientID :(
                             BEGINPACKET( pak, 0x790 );
@@ -627,8 +643,10 @@ PVOID MapProcess( PVOID TS )
                             GServer->SendToAllInMap(&pak,map->id);
                          }
 
-                        GServer->ClearClientID(monster->clientid);
-                         delete monster;
+                        //LMA: We don't clear anymore, too much hassle :(
+                        //We declare the temporary monster just once...
+                        /*GServer->ClearClientID(NPCmonster->clientid);
+                         delete NPCmonster;*/
                          npc->lastAiUpdate = clock();
                      }
 
@@ -666,6 +684,10 @@ PVOID MapProcess( PVOID TS )
         #endif
     }
     pthread_exit( NULL );
+
+    //LMA: we delete the temporary monster.
+    GServer->ClearClientID(NPCmonster->clientid);
+    delete NPCmonster;
 }
 
 
