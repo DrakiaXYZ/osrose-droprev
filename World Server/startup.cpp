@@ -2327,10 +2327,18 @@ bool CWorldServer::LoadEquip( )
             for(int k=0;k<2;k++)
                 newequip->stat2[k] = STB_ITEM[j].rows[i][(27+k)];
             */
+
+            //LMA: equip conditions (job, str...)
             newequip->condition1[0] = STB_ITEM[j].rows[i][19];
-            newequip->stat1[0] = STB_ITEM[j].rows[i][20];
-            newequip->condition1[1] = STB_ITEM[j].rows[i][21];
-            newequip->stat1[1] = STB_ITEM[j].rows[i][22];
+            newequip->condition1[1] = STB_ITEM[j].rows[i][20];
+            newequip->condition2[0] = STB_ITEM[j].rows[i][21];
+            newequip->condition2[1] = STB_ITEM[j].rows[i][22];
+
+            //Equip stat (max HP...)
+            newequip->stat1[0] = STB_ITEM[j].rows[i][24];
+            newequip->stat1[1] = STB_ITEM[j].rows[i][25];
+            newequip->stat2[0] = STB_ITEM[j].rows[i][27];
+            newequip->stat2[1] = STB_ITEM[j].rows[i][28];
 
             //LMA: Used for refine.
             newequip->itemgradeID=STB_ITEM[j].rows[i][45];

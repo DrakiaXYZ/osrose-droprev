@@ -565,6 +565,32 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
 	   ADDSTRING(pak, Shop->name);
 	   ADDBYTE( pak, 0x00);       //LMA 139+
     }
+
+    //LMA: Maxxon fix when a player is buffed.
+    if (!IsDead())
+    {
+        //TODO: add the other buffs values?
+        // correct some errors due to the map-process has not updated the players buffs yet
+        // when the player is dead (it removes the buffs when the player is dead)
+        // i send with the following WORDS the value the skill adds.
+        if (Status->HP_up != 0xff)
+        {
+            ADDWORD (pak, MagicStatus[Status->HP_up].Value);    // added for test, send when P/MP UP (probably only when HP UP)
+        }
+
+        if (Status->Dash_up != 0xff)
+        {
+            ADDWORD (pak, MagicStatus[Status->Dash_up].Value);  // added for test, send when Dash
+        }
+
+        if (Status->Haste_up != 0xff)
+        {
+            ADDWORD (pak, MagicStatus[Status->Haste_up].Value); // added for test, send when Haste Attack
+        }
+
+    }
+    //LMA: End of fix.
+
     if(Clan->clanid!=0)
     {
         ADDDWORD( pak, Clan->clanid );

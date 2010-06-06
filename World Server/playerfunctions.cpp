@@ -2257,9 +2257,22 @@ bool CPlayer::CheckStats(int slot, int dest_slot)
     //Checking stats (TODO, add them all :( ):
     for(int k=0;k<2;k++)
     {
-        int cdt=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->condition1[k];
-        int value=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->stat1[k];
+        int cdt=0;
+        int value=0;
         int player_value=0;
+
+        if(k==0)
+        {
+            cdt=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->condition1[0];
+            //int value=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->stat1[k];
+            value=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->condition1[1];
+        }
+        else
+        {
+            cdt=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->condition2[0];
+            //int value=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->stat1[k];
+            value=GServer->EquipList[items[slot].itemtype].Index[items[slot].itemnum]->condition2[1];
+        }
 
         if(cdt==0)
         {

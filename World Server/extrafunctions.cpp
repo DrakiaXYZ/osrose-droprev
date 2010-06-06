@@ -1183,13 +1183,18 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 {
     if(thisclient->items[slot].count<1)
+    {
         return NULL;
+    }
+
     CUseInfo* useitem = new (nothrow) CUseInfo;
     if(useitem==NULL)
     {
+        delete useitem;
         Log(MSG_WARNING, "Error allocing memory GetUseItemInfo");
-        return useitem;
+        return NULL;
     }
+
     useitem->itemnum = 0;
     useitem->itemtype = 0;
     useitem->usescript = 0;
@@ -1210,7 +1215,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
     */
     //END LMA TEST
 
-    Log(MSG_INFO,"Using item %i:%i, type %i",useitem->itemtype,useitem->itemnum,type);
+    Log(MSG_INFO,"%s:: Using item (%i:%i), type %i",thisclient->CharInfo->charname,useitem->itemtype,useitem->itemnum,type);
 
     switch(type)
     {

@@ -740,18 +740,43 @@ bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
     if(Stats->MP<0) Stats->MP=0;
     if(Battle->contatk)
     {
-        Log(MSG_INFO,"after skill, going to normal_attack");
-        Battle->atktype = NORMAL_ATTACK;
-        Battle->skilltarget = 0;
-        Battle->atktarget = Battle->target;
-        Battle->skillid = 0;
+        //LMA: Special case. If the player does a first attack as a skill, he doesn't go to normal attack mode.
+        if (IsPlayer())
+        {
+            //he was already fighting the monster in normal_attack mode and did a skill, now he has to resume normal_attack.
+            if(Battle->skilltarget!=0&&(Battle->atktarget==Battle->skilltarget))
+            {
+                Log(MSG_INFO,"after skill, player is resuming normal_attack with %u",Battle->target);
+                Battle->atktype = NORMAL_ATTACK;
+                Battle->skilltarget = 0;
+                Battle->atktarget = Battle->target;
+                Battle->skillid = 0;
+            }
+            else
+            {
+                //Stop...
+                Log(MSG_INFO,"after skill, player is doing nothing.");
+                ClearBattle(Battle);
+            }
+
+        }
+        else
+        {
+            Log(MSG_INFO,"after skill, monster is going to normal_attack %u",Battle->target);
+            Battle->atktype = NORMAL_ATTACK;
+            Battle->skilltarget = 0;
+            Battle->atktarget = Battle->target;
+            Battle->skillid = 0;
+        }
+
     }
     else
     {
         //osprose
         //ClearBattle( Battle );
-        Log(MSG_INFO,"after skill, nothing special...");
+        Log(MSG_INFO,"after skill, nothing special, not in contact / range?...");
     }
+
     GServer->DoSkillScript( this, skill );       //So far only used for summons
     Battle->lastAtkTime = clock( );
     return true;

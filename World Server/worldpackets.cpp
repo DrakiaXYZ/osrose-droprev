@@ -3795,20 +3795,29 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
 bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
 {
     if(thisclient->Shop->open)
+    {
         return true;
+    }
+
     BYTE slot = GETBYTE((*P),0);
     if(!CheckInventorySlot( thisclient, slot))
+    {
         return false;
+    }
+
     if( thisclient->items[slot].count<=0 )
+    {
         return true;
+    }
+
     CUseInfo* thisuse = GetUseItemInfo( thisclient, slot);
     if(thisuse == NULL)
     {
-        Log(MSG_WARNING,"[%i]Invalid Item, Item: %i. - Type: %i",
-        thisclient->clientid, thisclient->items[slot].itemnum,
-        thisclient->items[slot].itemtype);
+        Log(MSG_WARNING,"%s [%i]:: Invalid Item, Item: (%i::%i).",thisclient->CharInfo->charname,
+        thisclient->clientid,thisclient->items[slot].itemtype,thisclient->items[slot].itemnum);
         return true;
     }
+
     bool flag = false;
     switch(thisuse->usescript)
     {
@@ -3963,7 +3972,12 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             fPoint thispoint;
             CMap* map = MapList.Index[thisclient->Position->Map];
             CCharacter* character = map->GetCharInMap( clientid );
-            if(character==NULL) return true;
+            if(character==NULL)
+            {
+                delete thisuse;
+                return true;
+            }
+
             thisclient->StartAction( character, SKILL_BUFF, thisuse->usevalue );
             flag = true;
         }
@@ -4054,7 +4068,12 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             fPoint thispoint;
             CMap* map = MapList.Index[thisclient->Position->Map];
             CCharacter* character = map->GetCharInMap( clientid );
-            if(character==NULL) return true;
+            if(character==NULL)
+            {
+                delete thisuse;
+                return true;
+            }
+
             thisclient->StartAction( character, SKILL_ATTACK, thisuse->usevalue );
             flag = true;
         }
@@ -4069,6 +4088,7 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             CCharacter* character = map->GetCharInMap( clientid );
             if(character==NULL)
             {
+                delete thisuse;
                 return true;
             }
 
@@ -4125,7 +4145,10 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             }
 
             if(l_b==0&&l_e==0)
+            {
+                delete thisuse;
                 return true;
+            }
 
             //let's delete some skills...
             int nb_skills_points=0;
@@ -4177,6 +4200,8 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
         thisclient->client->SendPacket( &pak );
     }
     delete thisuse;
+
+
     return true;
 }
 
@@ -5369,9 +5394,12 @@ bool CWorldServer::pakOpenShop( CPlayer* thisclient, CPacket* P )
      //They added six extra 0x00 between items and prices + shop name...
      UINT lma_offset=6;
 
-
-    if( thisclient->Shop->open )
+    //You can't open a shop when you have already one or you're driving.
+    if(thisclient->Ride->Drive||thisclient->Shop->open)
+    {
         return true;
+    }
+
     BYTE nselling = GETBYTE((*P),0);
     BYTE nbuying = GETBYTE((*P),1);
     if(nselling>30 || nbuying>30)
@@ -5740,7 +5768,7 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
 // Close Shop
 bool CWorldServer::pakCloseShop( CPlayer* thisclient, CPacket* P )
 {
-    //LMA: to solve the "gem" visible bug?
+    //LMA: to solve the "gem" visible bug.
     if(thisclient->Shop->open)
     {
         BEGINPACKET( pak, 0x7c3 );
