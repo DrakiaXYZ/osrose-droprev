@@ -485,21 +485,14 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
 
     Enemy->Stats->HP -=  (long long) hitpower;
 
-    //LMA: logs.
-    if(Position->Map==8||Position->Map==40||Position->Map==9)
-    {
-        if(Enemy->IsPlayer())
-        {
-            //Log(MSG_INFO,"Player is hit %li, HP goes to %I64i",hitpower,Enemy->Stats->HP);
-        }
-
-    }
-    //End of logs.
-
     if (Enemy->IsMonster())
+    {
         Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
+    }
     else
+    {
         Log(MSG_INFO,"Normal Attack, Player HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
+    }
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update
@@ -775,6 +768,15 @@ bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
         //osprose
         //ClearBattle( Battle );
         Log(MSG_INFO,"after skill, nothing special, not in contact / range?...");
+
+        //he was already fighting the monster in normal_attack mode and did a skill, now he has to resume normal_attack.
+        if(Battle->skilltarget!=0&&(Battle->atktarget!=Battle->skilltarget))
+        {
+            //Stop...
+            Log(MSG_INFO,"after skill, player is doing nothing (first attack).");
+            ClearBattle(Battle);
+        }
+
     }
 
     GServer->DoSkillScript( this, skill );       //So far only used for summons
@@ -1506,7 +1508,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
 
         //If enemy is still alive
         Log(MSG_INFO,"The enemy is still alive");
-        ADDDWORD   ( pak, 4 );
+        //ADDDWORD   ( pak, 4 );
+        ADDDWORD   ( pak, 0x00 );
         GServer->SendToVisible( &pak, Enemy );
 
         //osprose
@@ -1528,6 +1531,18 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             ADDBYTE    ( pak, skill->nbuffs );
             GServer->SendToVisible( &pak, Enemy );
         }
+
+        //LMA: test, trying to send back the monster HP amount.
+        if(Enemy->IsMonster())
+        {
+            //LMA: Trying to update real HP amount.
+            Log(MSG_INFO,"Sending back monster HP amount");
+            BEGINPACKET( pak, 0x79f );
+            ADDWORD    ( pak, Enemy->clientid );
+            ADDDWORD   ( pak, Enemy->Stats->HP );
+            GServer->SendToVisible( &pak, Enemy );
+        }
+
     }
     if (deBuff) return;
     //Send skill animation to the world
@@ -1544,10 +1559,10 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     GServer->SendToVisible( &pak, this );
 
     //osprose
-    Battle->bufftarget = 0;
+    /*Battle->bufftarget = 0;
     Battle->skilltarget = 0;
     Battle->skillid = 0;
-    Battle->atktype = NORMAL_ATTACK;
+    Battle->atktype = NORMAL_ATTACK;*/
     //osprose end
 
     return;

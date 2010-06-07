@@ -78,7 +78,9 @@ AIACT(003)
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(003) monster moves randomly");
+	{
+	    Log(MSG_INFO,"AIACT(003) monster moves randomly");
+	}
 
     monster->UpdatePosition(monster->stay_still);
 	int iDist = data->iDistance;// * 2;//Get it to our coord system!
@@ -123,7 +125,9 @@ AIACT(004)
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(004) monster moves");
+	{
+	    Log(MSG_INFO,"AIACT(004) monster moves");
+	}
 
     monster->UpdatePosition(monster->stay_still);
 
@@ -170,7 +174,9 @@ AIACT(005)
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(005) monster moves");
+	{
+	    Log(MSG_INFO,"AIACT(005) monster moves");
+	}
 
     monster->UpdatePosition(monster->stay_still);
 	entity->findChar->UpdatePosition(monster->stay_still);
@@ -237,7 +243,9 @@ AIACT(006)
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(006) monster moves");
+	{
+	    Log(MSG_INFO,"AIACT(006) monster moves");
+	}
 
     CMap* map= GServer->MapList.Index[entity->Position->Map];
     CCharacter* Target = NULL;
@@ -562,7 +570,9 @@ AIACT(012)
     LogDebug( "AIACT(012)%i",entity->nearChar->clientid);
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(012) Start Attack");
+	{
+	    Log(MSG_INFO,"AIACT(012) Start Attack");
+	}
 
 
 	return AI_SUCCESS;
@@ -713,7 +723,9 @@ AIACT(015)
     monster->StartAction( target, NORMAL_ATTACK, 0 );
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(015) monster retaliates");
+	{
+	    Log(MSG_INFO,"AIACT(015) monster retaliates");
+	}
 
 
     return AI_SUCCESS;
@@ -759,7 +771,9 @@ AIACT(016)
 
 
 	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(016) monster runs away");
+	{
+	    Log(MSG_INFO,"AIACT(016) monster runs away");
+	}
 
 
 	return AI_SUCCESS;

@@ -687,7 +687,7 @@ void CCharacter::RefreshBuff( )
                     //printf("removing stun\n");
                 }
                 break;
-                case 7: case 8: case 9: case 10: case 11: //poisoned
+                case 7: case 8: case 9: case 10: case 11: case 89: //poisoned
                 {
                     Status->Poisoned = 0xff;
                     //printf("removing poison\n");
@@ -816,6 +816,10 @@ void CCharacter::RefreshBuff( )
                     //printf("Purify Done\n");
                 }
                 break;
+                default:
+                {
+                    Log(MSG_WARNING,"Unknow skill status in charfunctions %u.",MagicStatus[i].Status);
+                }
             }
 
             MagicStatus[i].Status = 0;
@@ -825,12 +829,13 @@ void CCharacter::RefreshBuff( )
             MagicStatus[i].Value = 0;
             bflag = true;
         }
-        else if (MagicStatus[i].Status >= 7 && MagicStatus[i].Status <= 11 && etime > 1*CLOCKS_PER_SEC) //Do poison dmg every 1.5 seconds
+        else if ( ((MagicStatus[i].Status >= 7 && MagicStatus[i].Status <= 11) || MagicStatus[i].Status == 89) && etime > 1*CLOCKS_PER_SEC) //Do poison dmg every 1.5 seconds
         {
-             Stats->HP -= MagicStatus[i].Status; //Actually take 7, 8, 9, 10 or 11 from the health. Based on the Status itself
+             Stats->HP -= MagicStatus[i].Status; //Actually take 7, 8, 9, 10 or 11 from the health. Based on the Status itself, LMA: can be 89 noc too.
              MagicStatus[i].BuffTime += 1*CLOCKS_PER_SEC;
              MagicStatus[i].Duration -= 1;
              //printf("did %i poison dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
+             //Log(MSG_WARNING,"did %i poison dmg to the player / monster, still %i seconds and %I64i HP remain", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
 
             //LMA: If dead, let's the client resynch
             if(IsDead())

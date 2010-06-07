@@ -328,7 +328,7 @@ void CMap::RespawnMonster( )
 
        //LMA: debugging spawn problem
        lma_debug=false;
-       if(thisgroup->id==5246)
+       if(thisgroup->id==4589)
        {
            lma_debug=true;
            Log(MSG_INFO,"Spawn %u:: Respawn time?",thisgroup->id);

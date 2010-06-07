@@ -391,6 +391,12 @@ PVOID MapProcess( PVOID TS )
 
                         if(monster->thisnpc->AiTimer<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
+                            /*Log(MSG_INFO,"Sending back monster HP amount");
+                            BEGINPACKET( pak, 0x79f );
+                            ADDWORD    ( pak, monster->clientid );
+                            ADDDWORD   ( pak, monster->Stats->HP );
+                            GServer->SendToVisible( &pak, monster );*/
+
                             //LogDebug("DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
 
                             if(!monster->IsBonfire())
@@ -409,7 +415,7 @@ PVOID MapProcess( PVOID TS )
                         }
                         else
                         {
-                             //Log(MSG_INFO,"Monster doing attack");
+                             //Log(MSG_INFO,"Monster doing attack instead of AIP.");
                              monster->DoAttack( );
 
                              //LMA: We clear battle for bonfires.
@@ -434,6 +440,12 @@ PVOID MapProcess( PVOID TS )
 
                         if(monster->thisnpc->AiTimer<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
+                            /*Log(MSG_INFO,"Sending back monster HP amount");
+                            BEGINPACKET( pak, 0x79f );
+                            ADDWORD    ( pak, monster->clientid );
+                            ADDDWORD   ( pak, monster->Stats->HP );
+                            GServer->SendToVisible( &pak, monster );*/
+
                             //LogDebug("DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
                             monster->DoAi(monster->thisnpc->AI, 1);
                             monster->lastAiUpdate = clock();

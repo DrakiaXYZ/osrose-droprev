@@ -252,6 +252,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     ActiveQuest = 0;
     lastRegenTime = 0;
     lastSaveTime = clock( );
+    lastShowTime=0;
     firstlogin=clock();     //LMA for fairy
     lastGG = 0;
     VisiblePlayers.clear( );

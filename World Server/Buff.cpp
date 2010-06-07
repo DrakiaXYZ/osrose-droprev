@@ -152,7 +152,7 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
     {
         switch( thisskill->status[i])
         {
-            case 7: case 8: case 9: case 10: case 11: //poisoned
+            case 7: case 8: case 9: case 10: case 11: case 89: //poisoned
             {
                 //Log( MSG_INFO, "checkabuffs: Poisoned Status detected %i", thisskill->status[i] );
                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Poisoned, character->Status->Poisoned,true, true );
@@ -776,6 +776,12 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 }
             }
             break;
+            default:
+            {
+                Log(MSG_WARNING,"Unknown skill status: %i offset %i in skill %u.",thisskill->status[i],i,thisskill->id);
+            }
+            break;
+
         }
     }
     return bflag;
@@ -829,11 +835,14 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         case 55: case 56: case 58: case 59:
         case 60: case 61: case 62: case 63: case 64: case 65: case 66:  case 67: case 68: case 69:
         case 70: case 71: case 72: case 73: case 74: case 75: case 76: case 77: case 78: case 79:
-        case 80: case 86:
+        case 80: case 86: case 89:
             Buff = false;
         break;
         default:
-             Buff = true;
+        {
+            Log(MSG_WARNING,"Unknown status can't tell if a buff or not %u offset %u for skill %u",thisskill->status[i],i,thisskill->id);
+            Buff = true;
+        }
         break;
 
     }

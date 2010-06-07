@@ -31,7 +31,7 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
 
     //LMA TEST
     bool lma_debug=false;
-   if(thismon->Position->respawn==5246)
+   if(thismon->Position->respawn==4589)
    {
        lma_debug=true;
        Log(MSG_INFO,"GiveExp Spawn %u CID %u",thismon->Position->respawn,thismon->clientid);

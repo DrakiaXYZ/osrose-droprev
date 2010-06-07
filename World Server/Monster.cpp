@@ -204,7 +204,9 @@ void CMonster::Move( )
 	GServer->SendToVisible(&pak, this);
 
     if(Position->Map==8)
-        Log(MSG_INFO,"Move (%.2f;%.2f) to (%.2f;%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+    {
+        Log(MSG_INFO,"Monster %u Move (%.2f;%.2f) to (%.2f;%.2f)",clientid,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+    }
 }
 
 // Move a mob (specified point)
@@ -225,5 +227,8 @@ void CMonster::MoveTo( fPoint nPos, bool randcircle )
 	GServer->SendToVisible(&pak, this );
 
     if(Position->Map==8)
-        Log(MSG_INFO,"MoveTo (%.2f;%.2f) to (%.2f;%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+    {
+        Log(MSG_INFO,"Monster %u MoveTo (%.2f;%.2f) to (%.2f;%.2f)",clientid,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+    }
+
 }

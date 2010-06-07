@@ -1494,7 +1494,11 @@ bool CWorldServer::pakStartAttack( CPlayer* thisclient, CPacket* P )
     }
 
     WORD clientid = GETWORD((*P),0x00);
-    if ( thisclient->Battle->target == clientid ) return true;
+    if ( thisclient->Battle->target == clientid )
+    {
+        Log(MSG_WARNING,"%s:: Already targeting CID %u",thisclient->CharInfo->charname,clientid);
+        return true;
+    }
 
     int weapontype = EquipList[WEAPON].Index[thisclient->items[7].itemnum]->type;
     if( weapontype == BOW && thisclient->items[132].count<1 )

@@ -292,8 +292,8 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
     }
 	//osprose end.
 
-
-    if(Position->Map==8)
+    //LMA: position in map 8
+    /*if(Position->Map==8)
     {
         float tempdist = GServer->distance(Position->current,Position->destiny);
 
@@ -307,7 +307,7 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
             //Log(MSG_LOAD,"Monster (%.2f:%.2f)->(%.2f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
         }
 
-    }
+    }*/
 
     //LMA maps: special case (arrive in Game)
     //and he changed map (GM or scroll or teleporter or boat?)

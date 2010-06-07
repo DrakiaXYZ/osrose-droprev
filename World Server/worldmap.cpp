@@ -295,7 +295,7 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
 
     //LMA TEST
     bool lma_debug=false;
-   if(monster->Position->respawn==5246)
+   if(monster->Position->respawn==4589)
    {
        lma_debug=true;
        Log(MSG_INFO,"DeleteMonster Spawn %u CID %u",monster->Position->respawn,monster->clientid);
