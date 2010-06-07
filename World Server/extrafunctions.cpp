@@ -636,13 +636,26 @@ CPlayer* CWorldServer::GetClientByCID( UINT id, UINT map )
 	return NULL;
 }
 
-// Seach a client by Charname
-CPlayer* CWorldServer::GetClientByCharName( char* name  )
+// Search a client by Charname
+CPlayer* CWorldServer::GetClientByCharName( char* name)
 {
     for(UINT i=0;i<ClientList.size();i++)
     {
         CPlayer* thisclient = (CPlayer*) ClientList.at(i)->player;
         if (strncmp(thisclient->CharInfo->charname,name, 16)==0)
+            return thisclient;
+	}
+	return NULL;
+}
+
+
+//LMA: Search a client by Charname (Case insensitive search)
+CPlayer* CWorldServer::GetClientByCharNameCI( char* name  )
+{
+    for(UINT i=0;i<ClientList.size();i++)
+    {
+        CPlayer* thisclient = (CPlayer*) ClientList.at(i)->player;
+        if (strnicmp(thisclient->CharInfo->charname,name, 16)==0)
             return thisclient;
 	}
 	return NULL;

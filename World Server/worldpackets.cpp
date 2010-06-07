@@ -859,12 +859,24 @@ bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
 {
 	BYTE itemid = GETBYTE((*P), 0x0);
 	if(!CheckInventorySlot(thisclient, itemid ))
-	   return false;
+	{
+        return false;
+	}
+
 	DWORD amount = GETDWORD((*P), 0x1);
 	if (itemid == 0)
     {
-		if ( amount<1 ) return true;
-		if ( thisclient->CharInfo->Zulies < amount ) return true;
+		if ( amount<1 )
+		{
+		    return true;
+		}
+
+		if ( thisclient->CharInfo->Zulies < amount )
+		{
+		    Log(MSG_WARNING,"%s tries to drop too many Zuly %u (he has %I64i)",thisclient->CharInfo->charname,amount,thisclient->CharInfo->Zulies);
+		    return true;
+		}
+
 		CDrop* thisdrop = new CDrop;
 		assert(thisdrop);
 		thisdrop->clientid = GetNewClientID();
@@ -886,7 +898,7 @@ bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
         //LMA: is there something to drop to begin with?
         if(thisclient->items[itemid].itemtype==0||thisclient->items[itemid].itemnum==0)
         {
-            Log(MSG_WARNING,"Player %s tries to drop empty item %u::%u in slot %u",thisclient->CharInfo->charname,thisclient->items[itemid].itemtype,thisclient->items[itemid].itemnum,itemid);
+            Log(MSG_WARNING,"%s tries to drop empty item from slot %u",thisclient->CharInfo->charname,itemid);
             return true;
         }
 
@@ -894,7 +906,13 @@ bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
         bool flag = false;
         if(thisclient->items[itemid].itemtype >=10 && thisclient->items[itemid].itemtype <= 13)
         {
-            if(thisclient->items[itemid].count<amount) return true;
+            if(thisclient->items[itemid].count<amount)
+            {
+                Log(MSG_WARNING,"%s tries to %i*(%u::%u) slot %u but he has only %u",thisclient->CharInfo->charname,amount,thisclient->items[itemid].itemtype,thisclient->items[itemid].itemnum,itemid,thisclient->items[itemid].count);
+                return true;
+            }
+
+
            thisclient->items[itemid].count -= amount;
            flag= (thisclient->items[itemid].count <= 0);
         }
@@ -902,6 +920,7 @@ bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
         {
            flag= true;
         }
+
 		CDrop* thisdrop = new CDrop;
 		assert(thisdrop);
 		thisdrop->clientid = GetNewClientID();
@@ -915,10 +934,16 @@ bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
 		thisdrop->owner = 0;
 		CMap* map = MapList.Index[thisdrop->posMap];
 		map->AddDrop( thisdrop );
+
 		if (flag)
-		   ClearItem(thisclient->items[itemid]);
+		{
+		    ClearItem(thisclient->items[itemid]);
+		}
+
         thisclient->UpdateInventory( itemid );
 	}
+
+
 	return true;
 }
 
@@ -1687,7 +1712,6 @@ bool CWorldServer::pakNormalChat( CPlayer* thisclient, CPacket* P )
     {
 		return pakGMCommand( thisclient, P );
         //std::cout << thisclient->CharInfo->charname << ": " << P->Buffer << "\n";
-
     }
     else
     {
@@ -1697,6 +1721,8 @@ bool CWorldServer::pakNormalChat( CPlayer* thisclient, CPacket* P )
 		ADDBYTE( pak, 0 );
 		SendToVisible( &pak, thisclient );
 	}
+
+
 	return true;
 };
 
@@ -2116,7 +2142,10 @@ bool CWorldServer::pakWhisper ( CPlayer* thisclient, CPacket* P )
 	char msgto[17];
 	memset( &msgto, '\0', 17 );
 	strncpy( msgto, (char*)&(*P).Buffer[0],16 );
-	CPlayer* otherclient = GetClientByCharName( msgto );
+
+	//LMA: Case insensitive search
+	//CPlayer* otherclient = GetClientByCharName( msgto );
+	CPlayer* otherclient = GetClientByCharNameCI( msgto );
 	if(otherclient!=NULL)
 	{
 	   BEGINPACKET( pak, 0x0784 );
@@ -2127,6 +2156,7 @@ bool CWorldServer::pakWhisper ( CPlayer* thisclient, CPacket* P )
 	   otherclient->client->SendPacket( &pak );
 	   return true;
 	}
+
 	BEGINPACKET( pak, 0x0784 );
 	ADDSTRING( pak, msgto );
 	ADDBYTE( pak, 0 );

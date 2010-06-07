@@ -39,7 +39,10 @@ PVOID MapProcess( PVOID TS )
     {
         loopcount++;            //geobot: refresh only every 100 cycles
         if (loopcount<100)
-           continue;
+        {
+            continue;
+        }
+
         loopcount=0;
 
         pthread_mutex_lock( &GServer->PlayerMutex );

@@ -188,6 +188,7 @@ class CWorldServer : public CServerSocket
     	CRespawnPoint* GetRespawnByID( UINT id );
     	CPlayer* GetClientByCID( UINT id, UINT map=0 );
     	CPlayer* GetClientByCharName( char* name );
+    	CPlayer* GetClientByCharNameCI( char* name ); //LMA: search but case insensitive
     	CPlayer* GetClientByID( UINT id, UINT map=0 );
     	//CTeleGate* GetTeleGateByID( UINT id );
     	CTeleGate* GetTeleGateByID( UINT id, UINT offset=0);  //LMA: Telegates, with extra gate.
