@@ -187,7 +187,7 @@ CPlayer* CMap::GetPlayerInMap( UINT id )
 }
 
 // Search a client by charid
-CPlayer* CMap::GetCharIDInMap( UINT id )
+CPlayer* CMap::GetCharIDInMap( DWORD id )
 {
     for(UINT i=0;i<PlayerList.size();i++)
     {

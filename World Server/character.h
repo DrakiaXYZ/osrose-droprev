@@ -159,7 +159,7 @@ class CCharacter
         virtual unsigned int GetSen( );
         virtual unsigned int GetCon( );
         virtual unsigned getWeaponType( );
-        virtual bool AddClanPoints(unsigned int count);
+        //virtual bool AddClanPoints(unsigned int count);
         virtual CClientSocket* getClient();
 };
 

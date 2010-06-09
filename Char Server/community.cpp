@@ -25,8 +25,9 @@ bool CCharServer::ChangeMessengerStatus (CCharClient* thisclient, CCharClient* o
 {
         BEGINPACKET( pak, 0x7e1 );
         ADDBYTE    ( pak, 0x08 );
-        ADDWORD    ( pak, thisclient->charid );
-        ADDWORD    ( pak, 0x0000 );
+        //ADDWORD    ( pak, thisclient->charid );
+        //ADDWORD    ( pak, 0x0000 );
+        ADDDWORD    ( pak, thisclient->charid );
         ADDBYTE    ( pak, status );
         otherclient->SendPacket(&pak);
         return true;
@@ -94,9 +95,11 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
             {
                 BEGINPACKET( pak, 0x7e1 );
                 ADDBYTE    ( pak, 0x02 );
-                ADDWORD    ( pak, thisclient->charid );
+                /*ADDWORD    ( pak, thisclient->charid );
                 ADDBYTE    ( pak, 0x00 );
-                ADDWORD    ( pak, 0x0000 );
+                ADDWORD    ( pak, 0x0000 );*/
+                ADDDWORD    ( pak, thisclient->charid );
+                ADDBYTE    ( pak, 0x00 );
                 ADDSTRING  ( pak, thisclient->charname );
                 ADDBYTE    ( pak, 0x00);
                 otherclient->SendPacket(&pak);
@@ -118,9 +121,11 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 thisclient->FriendList.push_back( newfriend1 );
                 RESETPACKET( pak, 0x7e1 );
                 ADDBYTE    ( pak, 0x02 );
-                ADDWORD    ( pak, otherclient->charid );
+                /*ADDWORD    ( pak, otherclient->charid );
                 ADDBYTE    ( pak, 0x00 );
-                ADDWORD    ( pak, 0x0000 );
+                ADDWORD    ( pak, 0x0000 );*/
+                ADDDWORD    ( pak, otherclient->charid );
+                ADDBYTE    ( pak, 0x00 );
                 ADDSTRING  ( pak, otherclient->charname );
                 ADDBYTE    ( pak, 0x00);
                 thisclient->SendPacket(&pak);
@@ -136,7 +141,7 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 otherclient->FriendList.push_back( newfriend2 );
                 Log(MSG_INFO,"accept %s ok",nick);
             }
-            else//not founded
+            else//not found
             {
                BEGINPACKET( pak, 0x7e1 );
                ADDBYTE    ( pak, 0x04 );
@@ -181,7 +186,8 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
         break;
         case 0x05://delete user.
         {
-            WORD id = GETWORD ((*P),1);
+            //WORD id = GETWORD ((*P),1);
+            DWORD id = GETDWORD ((*P),1);
             if(!DB->QExecute("DELETE FROM list_friend WHERE id=%i and idfriend=%i",thisclient->charid,id))
             {
                 Log(MSG_INFO,"user failed to delete friend slot %i",thisclient->charname,id);
@@ -199,7 +205,8 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
         break;
         case 0xfa://messenger logout
         {
-            WORD id = GETWORD ((*P),1);
+            //WORD id = GETWORD ((*P),1);
+            DWORD id = GETDWORD ((*P),1);
             CCharClient* ctherclient = (CCharClient*) GetClientByID(id);
             if(ctherclient==NULL)
                 return true;
@@ -227,7 +234,8 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
 // Messenger Chat
 bool CCharServer::pakMessengerChat ( CCharClient* thisclient, CPacket* P )
 {
-    WORD id = GETWORD((*P),0);
+    //WORD id = GETWORD((*P),0);
+    DWORD id = GETDWORD((*P),0);
     char* message = new char[P->Size-41];
     if(message==NULL)
     {
@@ -239,8 +247,9 @@ bool CCharServer::pakMessengerChat ( CCharClient* thisclient, CPacket* P )
     if(otherclient!=NULL)
     {
         BEGINPACKET( pak, 0x7e2 );
-        ADDWORD    ( pak, thisclient->charid );
-        ADDWORD    ( pak, 0x0000 );
+        /*ADDWORD    ( pak, thisclient->charid );
+        ADDWORD    ( pak, 0x0000 );*/
+        ADDDWORD    ( pak, thisclient->charid );
         ADDSTRING  ( pak, thisclient->charname );
         UINT namesize = strlen(thisclient->charname);
         for (int i=0;i<30-namesize;i++)

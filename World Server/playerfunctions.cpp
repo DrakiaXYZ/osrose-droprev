@@ -1399,6 +1399,7 @@ bool CPlayer::CheckZulies()
   return true;
 }
 
+/*
 bool CPlayer::AddClanPoints(unsigned int count)
 {
      if ( Clan== NULL ) return true;
@@ -1406,7 +1407,8 @@ bool CPlayer::AddClanPoints(unsigned int count)
 	BEGINPACKET( pak, 0x7e0 );
 	ADDBYTE    ( pak, 0xfb ); //action to update clan informacion (charserver)
 	ADDWORD    ( pak, Clan->clanid );
-	ADDWORD    ( pak, CharInfo->charid );
+	//ADDWORD    ( pak, CharInfo->charid );
+	ADDDWORD    ( pak, CharInfo->charid );
 	ADDWORD    ( pak, clientid );
 	ADDWORD    ( pak, count );
 	cryptPacket( (char*)&pak, GServer->cct );
@@ -1414,6 +1416,7 @@ bool CPlayer::AddClanPoints(unsigned int count)
 
 	printf("added %i clan points\n", count);
 }
+*/
 
 CClientSocket* CPlayer::getClient()
 {

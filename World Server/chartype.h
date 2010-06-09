@@ -220,7 +220,7 @@ struct USEDITEM
 struct INFO
 {
 	char charname[17];
-	unsigned int charid;
+	DWORD charid;
     long int rewardpoints;    //LMA: reward points
     int unionid;              //LMA: Union
     int unionfame;            //LMA: Union
@@ -268,7 +268,7 @@ struct RIDE
 {
     bool Drive;
     bool Ride;
-    UINT charid;
+    DWORD charid;
 };
 
 struct TRADE

@@ -31,7 +31,8 @@ class CCharClient : public CClientSocket
     	int clan_rank;
     	UINT level;
     	UINT job;
-        UINT charid;
+        //UINT charid;
+        DWORD charid;
 
         //LMA: reward points...
         long int reward_points;
@@ -63,7 +64,7 @@ class CCharServer : public CServerSocket
         // Extra functions
         CChanels* GetChannelByID( UINT id );
         CCharClient* GetClientByUserID( UINT id );
-      	CCharClient* GetClientByID( UINT id );
+      	CCharClient* GetClientByID( DWORD id );
     	CCharClient* GetClientByName( char *name );
     	CCharClient* GetClientByUserName( char *username );
     	CClans* GetClanByID( int id );

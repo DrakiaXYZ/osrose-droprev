@@ -90,7 +90,7 @@ CPlayer* CParty::GetMember( UINT id )
     return NULL;
 }
 
-CPlayer* CParty::GetMemberByCharID( UINT id )
+CPlayer* CParty::GetMemberByCharID( DWORD id )
 {
     for(UINT i=0;i<Members.size( );i++)
     {

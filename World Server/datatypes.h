@@ -411,7 +411,8 @@ struct CPartyExp
     unsigned long long exp;
     UINT num;
     /*UINT partymember[50];*/
-    UINT partymember[7];            //LMA: Only 7 people allowed in a party.
+    //UINT partymember[7];            //LMA: Only 7 people allowed in a party.
+    DWORD partymember[7];            //LMA: Only 7 people allowed in a party.
     UINT maxlevel;
     int cheat_min_lvl; //LMA: cheat test max lvl
     int cheat_max_lvl; //LMA: cheat test min lvl
@@ -610,7 +611,8 @@ struct CNPCData {
 // Store the damage for monster to give exp
 struct MonsterDamage
 {
-    UINT charid;
+    //UINT charid;
+    DWORD charid;
     //long int damage;
     long long damage;
 };
@@ -1174,7 +1176,8 @@ struct MPosition // Monster position
 struct MDrop    // monster drops
 {
     bool drop;
-    unsigned int firsthit;
+    //unsigned int firsthit;
+    DWORD firsthit;
     unsigned int firstlevel;
 	CMDrops* mobdrop;
 	CMDrops* mapdrop;
@@ -1297,7 +1300,8 @@ struct CExtraStats
 
 struct CFairy
 {
-    UINT ListIndex;
+    //UINT ListIndex;
+    DWORD ListIndex;
 	clock_t LastTime;
     UINT WaitTime;
     bool assigned;

@@ -29,8 +29,11 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
         case 0xf0:
         {
             MYSQL_ROW row;
-            int charid = GETWORD((*P),1);
-            int clanid = GETWORD((*P),3);
+            /*int charid = GETWORD((*P),1);
+            int clanid = GETWORD((*P),3);*/
+            DWORD charid = GETWORD((*P),1);
+            int clanid = GETWORD((*P),5);
+
             CPlayer* otherclient = GetClientByCID ( charid );
             if(otherclient==NULL)
                 return true;
@@ -65,8 +68,11 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
         case 0xfa://new member added
         {
         	MYSQL_ROW row;
-            int charid = GETWORD((*P),1);
+            /*int charid = GETWORD((*P),1);
+            int clanid = GETWORD((*P),3);*/
+            DWORD charid = GETDWORD((*P),1);
             int clanid = GETWORD((*P),3);
+
             CPlayer* otherclient = GetClientByCID ( charid );
             if(otherclient==NULL)
                 return true;
@@ -140,7 +146,8 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
         case 0xfd://disorg
         {
             unsigned int clanid = GETWORD((*P),1);
-            unsigned int charid = GETWORD((*P),3);
+            //unsigned int charid = GETWORD((*P),3);
+            DWORD charid = GETDWORD((*P),3);
             CPlayer* tclient = GetClientByCID( charid );
             if(tclient==NULL)
                 return true;
@@ -297,7 +304,8 @@ bool CWorldServer::pakCreateClan ( CPlayer* thisclient, CPacket* P )
 	BEGINPACKET( pak, 0x7e0 );
 	ADDBYTE    ( pak, 0xfa ); //action to update clan informacion (charserver)
 	ADDWORD    ( pak, thisclient->Clan->clanid );
-	ADDWORD    ( pak, thisclient->CharInfo->charid );
+	//ADDWORD    ( pak, thisclient->CharInfo->charid );
+	ADDDWORD    ( pak, thisclient->CharInfo->charid );
 	ADDWORD    ( pak, thisclient->clientid );
 	cryptPacket( (char*)&pak, cct );
 	send( csock, (char*)&pak, pak.Size, 0 );

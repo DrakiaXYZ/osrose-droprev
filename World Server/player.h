@@ -304,7 +304,7 @@ class CPlayer: public CCharacter
     unsigned int GetSen( );
     unsigned int GetCon( );
     unsigned getWeaponType();
-    bool AddClanPoints(unsigned int count);
+    //bool AddClanPoints(unsigned int count);
     void RebuildItemMall(); //LMA: Rebuild player's itemmall.
     CClientSocket* getClient();
 };

@@ -4264,7 +4264,8 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
 
         RESETPACKET( pak, 0x7e0 );
      	ADDBYTE    ( pak, 0xff );
-    	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
+    	//ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
+    	ADDDWORD    ( pak, otherclient->CharInfo->charid);  //charid
     	ADDDWORD    ( pak, thisclient->CharInfo->rewardpoints);  //reward points (TOTAL)
     	cryptPacket( (char*)&pak, GServer->cct );
     	send( csock, (char*)&pak, pak.Size, 0 );
@@ -4273,7 +4274,8 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
     {
         BEGINPACKET( pak, 0x7e0 );
  	    ADDBYTE    ( pak, 0xff );
-    	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
+    	//ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
+    	ADDDWORD    ( pak, otherclient->CharInfo->charid);  //charid
     	ADDDWORD    ( pak, thisclient->CharInfo->rewardpoints);  //reward points (TOTAL)
     	cryptPacket( (char*)&pak, GServer->cct );
     	send( csock, (char*)&pak, pak.Size, 0 );
@@ -4291,7 +4293,8 @@ bool CWorldServer::pakGMRaiseCG(CPlayer* thisclient)
 
     BEGINPACKET( pak, 0x7e0 );
     ADDBYTE    ( pak, 0xfb );
-    ADDWORD    ( pak, thisclient->CharInfo->charid);  //charid
+    //ADDWORD    ( pak, thisclient->CharInfo->charid);  //charid
+    ADDDWORD    ( pak, thisclient->CharInfo->charid);  //charid
     ADDDWORD    ( pak, thisclient->Clan->grade);  //new grade.
     cryptPacket( (char*)&pak, GServer->cct );
     send( csock, (char*)&pak, pak.Size, 0 );

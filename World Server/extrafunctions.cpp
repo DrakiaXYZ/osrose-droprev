@@ -623,7 +623,7 @@ CPlayer* CWorldServer::GetClientByID( UINT id, UINT map )
 }
 
 // Search a Client by CharID
-CPlayer* CWorldServer::GetClientByCID( UINT id, UINT map )
+CPlayer* CWorldServer::GetClientByCID( DWORD id, UINT map )
 {
     if(map!=0)
         return MapList.Index[map]->GetCharIDInMap( id );

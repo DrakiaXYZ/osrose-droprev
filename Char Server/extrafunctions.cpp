@@ -35,7 +35,7 @@ CCharClient* CCharServer::GetClientByUserID( UINT userid )
 }
 
 // Search the client by char id
-CCharClient* CCharServer::GetClientByID( UINT charid )
+CCharClient* CCharServer::GetClientByID( DWORD charid )
 {
     for(UINT i=0;i<ClientList.size( );i++)
 	{

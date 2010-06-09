@@ -57,7 +57,7 @@ class CMap
     CCharacter* GetCharInMap( unsigned int id );
     CPlayer* GetPlayerInMap( UINT id );
     CMonster* GetMonsterInMap( UINT id );
-    CPlayer* GetCharIDInMap( UINT id );
+    CPlayer* GetCharIDInMap( DWORD id );
     CDrop* GetDropInMap( UINT id );
     CNPC* GetNPCInMap( UINT id );
     CNPC* GetNPCInMapQSD( UINT id );

@@ -32,7 +32,7 @@ class CParty
         UINT PartyId;
         void RefreshMax();
         CPlayer* GetMember( UINT id );
-        CPlayer* GetMemberByCharID( UINT charid );
+        CPlayer* GetMemberByCharID( DWORD charid );
         void SendToMembers( CPacket* pak, CPlayer* exclient=NULL );
         void SendToVisible( CPacket* pak, CPlayer* thisclient );
         bool AddPlayer( CPlayer* player );

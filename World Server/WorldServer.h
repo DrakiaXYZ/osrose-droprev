@@ -186,7 +186,7 @@ class CWorldServer : public CServerSocket
     	void CheckForLevelUp ( CPlayer* thisclient );
         bool isSkillTargetFriendly( CSkills* thisskill );
     	CRespawnPoint* GetRespawnByID( UINT id );
-    	CPlayer* GetClientByCID( UINT id, UINT map=0 );
+    	CPlayer* GetClientByCID( DWORD id, UINT map=0 );
     	CPlayer* GetClientByCharName( char* name );
     	CPlayer* GetClientByCharNameCI( char* name ); //LMA: search but case insensitive
     	CPlayer* GetClientByID( UINT id, UINT map=0 );

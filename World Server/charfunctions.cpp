@@ -1001,10 +1001,12 @@ unsigned CCharacter::getWeaponType()
 {
 }
 
+/*
 // [VIRTUAL]
 bool CCharacter::AddClanPoints(unsigned int count)
 {
 }
+*/
 
 // [VIRTUAL]
 CClientSocket* CCharacter::getClient()

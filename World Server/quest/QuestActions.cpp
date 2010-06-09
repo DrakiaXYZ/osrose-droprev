@@ -1166,7 +1166,8 @@ QUESTREWD(023){
         //load clan info in char server
 	    BEGINPACKET( pak, 0x7e0 );
 	    ADDBYTE    ( pak, 0xfb ); //action to update clan information (charserver)
-	    ADDWORD    ( pak, client->CharInfo->charid );   //LMA: adding client ID.
+	    //ADDWORD    ( pak, client->CharInfo->charid );   //LMA: adding client ID.
+	    ADDDWORD    ( pak, client->CharInfo->charid );   //LMA: adding client ID.
 	    //ADDWORD    ( pak, player->Clan->clanid ); //LMA: should be useless...
 	    ADDWORD    ( pak, player->Clan->grade );
         //GServer->SendISCPacket( &pak );

@@ -1057,10 +1057,15 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
 	        RESETPACKET( pak, 0x7e1 );//Update world clan information
 	        ADDBYTE    ( pak, 0xfd );//action (disorg)
 	        ADDWORD    ( pak, clanid );
-	        ADDWORD    ( pak, thisclient->charid );
+	        //ADDWORD    ( pak, thisclient->charid );   //W->DW
+	        ADDDWORD    ( pak, thisclient->charid );
+
  	        CChanels* thischannel = GetChannelByID( thisclient->channel );
  	        if(thischannel!=NULL)
-        	    send( thischannel->sock, (char*)&pak, pak.Size, 0 );
+ 	        {
+ 	            send( thischannel->sock, (char*)&pak, pak.Size, 0 );
+ 	        }
+
             thisclient->clanid = 0;
             thisclient->clan_rank = 1;
             Log(MSG_INFO,"[CS] clan, %s disorg clan",thisclient->charname);
@@ -1099,6 +1104,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                     delete []nick;
                     return false;
                 }
+
                 newmember->id = thisclient->charid;
                 strcpy(newmember->name,thisclient->charname);
                 newmember->clan_rank = 1;
@@ -1131,7 +1137,8 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
 
 	       RESETPACKET( pak, 0x7e1 );//update clan info in world
 	       ADDBYTE( pak, 0xfa );
-	       ADDWORD( pak, thisclient->charid );
+	       //ADDWORD( pak, thisclient->charid );
+	       ADDDWORD( pak, thisclient->charid ); //W->DW
 	       ADDWORD( pak, thisclient->clanid );
 	       cryptPacket( (char*)&pak, NULL );
  	       CChanels* thischannel = GetChannelByID( thisclient->channel );
@@ -1183,8 +1190,11 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
         case 0xfa://message from worldserver to load the new clan information
         {
            int id = GETWORD((*P),1); // clanid
-           int charid = GETWORD((*P),3);  // charid
-           int clientid = GETWORD((*P),5); // clientid
+           /*int charid = GETWORD((*P),3);  // charid
+           int clientid = GETWORD((*P),5); // clientid*/
+            DWORD charid = GETDWORD((*P),3);  // charid
+           int clientid = GETWORD((*P),7); // clientid
+
            CCharClient* otherclient = (CCharClient*) GetClientByID ( charid );
            if(otherclient==NULL)
                return true;
@@ -1252,13 +1262,13 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                   //We have to reload player's information...
                   /*int lma_id = GETWORD((*P),1); // client ID
                   long int lma_points = GETDWORD((*P),3); // clan points (TOTAL)*/
-                  int lma_id = GETDWORD((*P),1); // client ID
+                  DWORD lma_id = GETDWORD((*P),1); // client ID
                   long int lma_points = GETDWORD((*P),5); // clan points (TOTAL)
                 CCharClient* otherclient = GetClientByID( lma_id );
 
                 if(otherclient!=NULL)
                 {
-                     Log(MSG_INFO,"[CS] Forcing clan info for %i, %s, adding clan points %li",lma_id,otherclient->charname,lma_points);
+                     Log(MSG_INFO,"[CS] Forcing clan info for %u, %s, adding clan points %li",lma_id,otherclient->charname,lma_points);
                      //test
                      lma_mask(otherclient);
                      SendClanPoints(otherclient,0);
@@ -1266,7 +1276,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 }
                 else
                 {
-                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %i, not found, adding clan points %li!",lma_id,lma_points);
+                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %u, not found, adding clan points %li!",lma_id,lma_points);
                 }
 
              }
@@ -1275,13 +1285,13 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
              {
                   //LMA: adding reward points (bogus command)
                   //We have to reload player's information...
-                  int lma_id = GETWORD((*P),1); // client ID
-                  long int lma_points = GETDWORD((*P),3); // reward points (TOTAL)
+                  DWORD lma_id = GETDWORD((*P),1); // client ID
+                  long int lma_points = GETDWORD((*P),5); // reward points (TOTAL)
                 CCharClient* otherclient = GetClientByID( lma_id );
 
                 if(otherclient!=NULL)
                 {
-                     Log(MSG_INFO,"[CS] Forcing clan info for %i, %s, total points %li",lma_id,otherclient->charname,lma_points);
+                     Log(MSG_INFO,"[CS] Forcing clan info for %u, %s, total points %li",lma_id,otherclient->charname,lma_points);
                      //test
                      lma_mask(otherclient);
                      SendRewardPoints(otherclient,0);
@@ -1289,7 +1299,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 }
                 else
                 {
-                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %i, not found, total points %li!",lma_id,lma_points);
+                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %u, not found, total points %li!",lma_id,lma_points);
                 }
 
              }
@@ -1297,9 +1307,10 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
         case 0xfb:
             {
                 //LMA: Used for Clan Grade upgrade...
-                int lma_id = GETWORD((*P),1); // client ID
-                //int clan_id = GETWORD((*P),3); // clan ID
-                int clan_grade = GETWORD((*P),3); // clan grade
+                //int lma_id = GETWORD((*P),1); // char ID
+                //int clan_grade = GETWORD((*P),3); // clan grade
+                DWORD lma_id = GETWORD((*P),1); // char ID
+                int clan_grade = GETWORD((*P),5); // clan grade
                 CCharClient* otherclient = GetClientByID( lma_id );
                 if(otherclient!=NULL)
                 {
@@ -1308,11 +1319,11 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                     //TODO: TEST! Is it refreshed?
                     SendRewardPoints(otherclient,0);
                     //SendRewardPoints(otherclient,lma_points);
-                    Log(MSG_INFO,"[CS] Forcing clan grade for %i, clan grade %i!",lma_id,clan_grade);
+                    Log(MSG_INFO,"[CS] Forcing clan grade for %u, clan grade %i!",lma_id,clan_grade);
                 }
                 else
                 {
-                    Log(MSG_INFO,"[CS] ERROR Forcing clan grade for %i, not found, clan grade %i!",lma_id,clan_grade);
+                    Log(MSG_INFO,"[CS] ERROR Forcing clan grade for %u, not found, clan grade %i!",lma_id,clan_grade);
                 }
 
             }

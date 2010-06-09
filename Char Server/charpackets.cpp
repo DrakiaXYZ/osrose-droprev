@@ -588,8 +588,11 @@ bool CCharServer::pakDeleteChar( CCharClient* thisclient, CPacket* P )
 bool CCharServer::pakUpdateLevel( CCharClient* thisclient, CPacket* P )
 {
     if(!thisclient->isLoggedIn) return false;
-    WORD charid = GETWORD((*P),0);
-    WORD level = GETWORD((*P),2);
+    /*WORD charid = GETWORD((*P),0);
+    WORD level = GETWORD((*P),2);*/
+    //LMA: W->DW for CharID (Panda).
+    DWORD charid = GETDWORD((*P),0);
+    WORD level = GETWORD((*P),4);
     for(UINT i=0;i<ClientList.size();i++)
     {
         CCharClient* player = (CCharClient*) ClientList.at(i);

@@ -8,7 +8,8 @@
 // List of clan members
 struct CClanMembers
 {
-    UINT id;
+    //UINT id;
+    DWORD id;
     char name[50];
     int clan_rank;
 };
@@ -38,7 +39,8 @@ struct CCharacter {
 // List of friends
 struct CFriendList
 {
-    int id;
+    //int id;
+    DWORD id;
     char name[17];
 };
 

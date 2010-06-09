@@ -136,8 +136,9 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
         //send packet to change messenger status (offline)
     	BEGINPACKET( pak, 0x7e1 );
     	ADDBYTE    ( pak, 0xfa );
-    	ADDWORD    ( pak, player->CharInfo->charid );
-    	ADDBYTE    ( pak, 0x00 );
+    	//ADDWORD    ( pak, player->CharInfo->charid );
+    	ADDDWORD    ( pak, player->CharInfo->charid );
+    	//ADDBYTE    ( pak, 0x00 );
     	cryptPacket( (char*)&pak, NULL );
     	send( csock, (char*)&pak, pak.Size, 0 );
     }
@@ -517,7 +518,8 @@ bool CWorldServer::OnServerReady( )
 bool CWorldServer::SendLevelUPtoChar(CPlayer *thisclient)
 {
 	BEGINPACKET( pak, 0x79e );
-	ADDWORD( pak, thisclient->CharInfo->charid );
+	//ADDWORD( pak, thisclient->CharInfo->charid );
+	ADDDWORD( pak, thisclient->CharInfo->charid );
 	ADDWORD( pak, thisclient->Stats->Level );
 	cryptPacket( (char*)&pak, NULL );
 	send( csock, (char*)&pak, pak.Size, 0 );
