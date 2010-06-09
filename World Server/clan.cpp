@@ -28,10 +28,11 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
     {
         case 0xf0:
         {
+            //LMA: is this one really used at all?
             MYSQL_ROW row;
             /*int charid = GETWORD((*P),1);
             int clanid = GETWORD((*P),3);*/
-            DWORD charid = GETWORD((*P),1);
+            DWORD charid = GETDWORD((*P),1);
             int clanid = GETWORD((*P),5);
 
             CPlayer* otherclient = GetClientByCID ( charid );
@@ -63,7 +64,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
             ADDSTRING  ( pak, otherclient->Clan->clanname );
             ADDBYTE    ( pak, 0x00 );
             SendToVisible( &pak, otherclient );
-            Log(MSG_INFO,"[WS] pakClanManager 0x7e0, case 0xf0 (new member too?) %s",otherclient->CharInfo->charname);
+            Log(MSG_INFO,"[WS] pakClanManager 0x7e1, case 0xf0 (new member too?) %s",otherclient->CharInfo->charname);
         }
         case 0xfa://new member added
         {
@@ -104,7 +105,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
             ADDSTRING  ( pak, otherclient->Clan->clanname );
             ADDBYTE    ( pak, 0x00 );
             SendToVisible( &pak, otherclient );
-            Log(MSG_INFO,"[WS] pakClanManager 0x7e0, new member %s",otherclient->CharInfo->charname);
+            Log(MSG_INFO,"[WS] pakClanManager 0x7e1, new member %s",otherclient->CharInfo->charname);
         }
         break;
         case 0xfb://Member Kicked
@@ -126,7 +127,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
                 ADDQWORD   ( pak, 0 );
                 ADDWORD    ( pak, 0x0001 );
                 SendToVisible( &pak, otherclient );
-                Log(MSG_INFO,"[WS] pakClanManager 0x7e0, member kicked, %s",nick);
+                Log(MSG_INFO,"[WS] pakClanManager 0x7e1, member kicked, %s",nick);
            }
         }
         break;
@@ -139,7 +140,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
            if(otherclient!=NULL)
            {
                 otherclient->Clan->clanrank = newrank;
-                Log(MSG_INFO,"[WS] pakClanManager 0x7e0, change rank for %s to %i",nick,newrank);
+                Log(MSG_INFO,"[WS] pakClanManager 0x7e1, change rank for %s to %i",nick,newrank);
            }
         }
         break;
@@ -163,7 +164,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
             ADDQWORD   ( pak, 0 );
             ADDWORD    ( pak, 0x0001 );
             SendToVisible( &pak, tclient );
-            Log(MSG_INFO,"[WS] pakClanManager 0x7e0, disorg");
+            Log(MSG_INFO,"[WS] pakClanManager 0x7e1, disorg");
         }
         break;
         case 0xfe://Member Leave
@@ -185,7 +186,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
                 ADDQWORD   ( pak, 0 );
                 ADDWORD    ( pak, 0x0001 );
                 SendToVisible( &pak, otherclient );
-                Log(MSG_INFO,"[WS] pakClanManager 0x7e0, member left");
+                Log(MSG_INFO,"[WS] pakClanManager 0x7e1, member left");
            }
         }
         break;
@@ -213,13 +214,13 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
                     ADDSTRING  ( pak, player->Clan->clanname );
                     ADDBYTE    ( pak, 0x00 );
                     SendToVisible( &pak, player );
-                    Log(MSG_INFO,"[WS] pakClanManager 0x7e0, update clan mark");
+                    Log(MSG_INFO,"[WS] pakClanManager 0x7e1, update clan mark");
                 }
             }
         }
         break;
         default:
-            Log( MSG_INFO, "Clan manager unknown action %i", action );
+            Log( MSG_INFO, "[WS] Clan manager 0x7e1 unknown action %i", action );
     }
     return true;
 }

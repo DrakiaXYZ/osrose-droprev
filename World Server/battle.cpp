@@ -1533,7 +1533,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         }
 
         //LMA: test, trying to send back the monster HP amount.
-        if(Enemy->IsMonster())
+        /*if(Enemy->IsMonster())
         {
             //LMA: Trying to update real HP amount.
             Log(MSG_INFO,"Sending back monster HP amount");
@@ -1541,7 +1541,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             ADDWORD    ( pak, Enemy->clientid );
             ADDDWORD   ( pak, Enemy->Stats->HP );
             GServer->SendToVisible( &pak, Enemy );
-        }
+        }*/
 
     }
     if (deBuff) return;

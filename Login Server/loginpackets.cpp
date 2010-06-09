@@ -153,8 +153,38 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
                     thisclient->isLoggedIn = true;
                     DB->QFree( );
                     //OK!
-                    ADDDWORD( pak, 0x0c000000 );
-                    ADDBYTE( pak, 0 );
+
+                    //LMA: Xadet "patch" for GM tricks (Alt+5, Alt+K)
+                    //Old code.
+                    /*ADDDWORD( pak, 0x0c000000 );
+                    ADDBYTE( pak, 0 );*/
+
+                    //new code.
+                    ADDBYTE( pak, 0x00 );
+
+                    if(thisclient->accesslevel==300)
+                    {
+                        //GM level 1
+                        ADDWORD( pak, 256 );
+                    }
+                    else if(thisclient->accesslevel==400)
+                    {
+                        //GM level 2
+                        ADDWORD( pak, 512 );
+                    }
+                    else if(thisclient->accesslevel==500)
+                    {
+                        //admin.
+                        ADDWORD( pak, 768 );
+                    }
+                    else
+                    {
+                        //standard user.
+                        ADDWORD( pak, 100 );
+                    }
+
+                    ADDWORD( pak, 0x00 );
+
                     result = DB->QStore( "SELECT id,name FROM channels WHERE type=1" );
                     if(result==NULL) return false;
                     while( row = mysql_fetch_row(result) )
