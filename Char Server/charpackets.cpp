@@ -216,6 +216,14 @@ bool CCharServer::pakGetCharacters( CCharClient* thisclient, CPacket* P )
 		ADDWORD   ( pak, items[8].refine );		// SUBWEAPON REFINE
 	}
 	thisclient->SendPacket( &pak );
+
+	//LMA: we clean the chat ID.
+	if (thisclient->chatroom_id!=0)
+	{
+	    DisconnectClientFromChat(thisclient);
+	}
+
+
 	return true;
 }
 
@@ -532,6 +540,13 @@ bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
 	}
 
 	char* chat = new (nothrow) char[P->Size];
+    if(chat==NULL)
+    {
+        Log(MSG_ERROR, "Error allocing memory" );
+        return false;
+    }
+    memcpy( chat, &P->Buffer, P->Size );
+
 	if (strlen(chat)==0)
 	{
 	    return true;
@@ -543,7 +558,8 @@ bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
 
     for (int k=0;k<nb_users;k++)
     {
-        if (mychatroom->People_list.at(k)->charid==thisclient->charid||!mychatroom->People_list.at(k)->is_active)
+        //This case shouldn't happen...
+        if (!mychatroom->People_list.at(k)->is_active)
         {
             continue;
         }
@@ -555,7 +571,7 @@ bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
         }
 
         BEGINPACKET( pak, 0x7e4);
-        ADDWORD    ( pak, thisclient->charid );
+        ADDWORD    ( pak, thisclient->userid );
         ADDSTRING  (pak, chat);
         ADDBYTE    ( pak, 0x00 );
         otherclient->SendPacket(&pak);
@@ -571,7 +587,8 @@ bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
 //LMA: Getting a chatroom ID.
 DWORD CCharServer::GetChatroomID ( DWORD last_id )
 {
-    for (WORD k=last_id+1;k<0xffff;k++)
+    //for (WORD k=last_id+1;k<0xffff;k++)
+    for (WORD k=last_id+1;k<0xff;k++)
     {
         if(chatroom_list.find(k)==chatroom_list.end())
         {
@@ -592,7 +609,8 @@ DWORD CCharServer::GetChatroomID ( DWORD last_id )
     Log(MSG_WARNING,"Impossible to find a free chatroom ID!");
 
 
-    return 0xffff;
+    //return 0xffff;
+    return 0xff;
 }
 
 
@@ -626,9 +644,17 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
                 map<DWORD,CChatroom*>::iterator it;
                 for ( it=chatroom_list.begin() ; it != chatroom_list.end(); it++ )
                 {
+                    if ((*it).second->is_protected)
+                    {
+                        ADDBYTE    ( pak, 0x01 );
+                    }
+                    else
+                    {
+                        ADDBYTE    ( pak, 0x00 );
+                    }
+
                     ADDWORD    ( pak, (*it).second->chatroom_id);
-                    ADDBYTE    ( pak, 0x00);
-                    ADDBYTE    ( pak, (*it).second->People_list.size());  //Nb of people inside. It's useless for now, let's put 1
+                    ADDBYTE    ( pak, (*it).second->People_list.size());  //Nb of people inside.
                     ADDSTRING  ( pak, (*it).second->chatroom_name.c_str());
                     ADDBYTE    ( pak, 0x00);
                 }
@@ -644,7 +670,8 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	        //Creating a chatroom.
 
 	        //chatrooms are full already.
-            if (last_chatroom_id==0xffff)
+            //if (last_chatroom_id==0xffff)
+            if (last_chatroom_id==0xff)
             {
                 BEGINPACKET( pak, 0x7e3 );
                 ADDBYTE    ( pak, 0x22 );
@@ -652,8 +679,22 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
                 return true;
             }
 
+            BYTE protection_asked=GETBYTE((*P),1);
             BYTE max_people=GETBYTE((*P),2);
-	        string chatroom_name = (char*) &P[P->Size-3];
+	        string chatroom_name = (char*) &P->Buffer[3];
+	        string password="";
+
+	        if(protection_asked==1)
+	        {
+	            password = (char*) &P->Buffer[3+chatroom_name.size()+1];
+	            if (password.size()>4)
+	            {
+	                Log(MSG_WARNING,"Player %s tried to give a weird password %s to his chatroom.",thisclient->charname,password.c_str());
+	                password="";
+	                protection_asked=0;
+	            }
+
+	        }
 
 	        if (thisclient->chatroom_id!=0||max_people==0||chatroom_name.size()==0)
 	        {
@@ -678,6 +719,15 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	        newchatroom->chatroom_name=chatroom_name;
 	        newchatroom->creation_time=time(NULL);
 	        newchatroom->nb_max=max_people;
+            newchatroom->password="";
+	        newchatroom->is_protected=false;
+
+	        if (protection_asked==1)
+	        {
+	            newchatroom->password=password;
+                newchatroom->is_protected=true;
+	        }
+
 	        newchatroom->People_list.clear();
 
 	        //adding the owner for now.
@@ -716,6 +766,30 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
                 ADDBYTE    ( pak, 0x22 );
                 thisclient->SendPacket( &pak );
 	            return true;
+	        }
+
+	        //checking the password if needed.
+	        if (chatroom_list[chatroom_id]->is_protected==1)
+	        {
+	            if (P->Size<5)
+	            {
+	                Log(MSG_WARNING,"The chatroom has a password and the player %s didn't send one.",thisclient->charname);
+                    BEGINPACKET( pak, 0x7e3 );
+                    ADDBYTE    ( pak, 0x22 );
+                    thisclient->SendPacket( &pak );
+                    return true;
+	            }
+
+                string password = (char*) &P->Buffer[4];
+                if (password!=chatroom_list[chatroom_id]->password)
+                {
+                    Log(MSG_WARNING,"Player %s tried to connect to chatroom %s with a wrong password %s != %s",thisclient->charname,chatroom_list[chatroom_id]->chatroom_name.c_str(),password.c_str(),chatroom_list[chatroom_id]->password.c_str());
+                    BEGINPACKET( pak, 0x7e3 );
+                    ADDBYTE    ( pak, 0x22 );
+                    thisclient->SendPacket( &pak );
+                    return true;
+                }
+
 	        }
 
 	        CChatroom* mychatroom=chatroom_list[chatroom_id];
@@ -788,6 +862,30 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 
             thisclient->SendPacket( &pak );
             thisclient->chatroom_id=mychatroom->chatroom_id;
+
+            //We must tell the others someone came in...
+	        for (int k=0;k<nb_users;k++)
+	        {
+	            if (mychatroom->People_list.at(k)->charid==thisclient->charid)
+	            {
+	                continue;
+	            }
+
+                CCharClient* otherclient=GetClientByID(mychatroom->People_list.at(k)->charid);
+                if (otherclient==NULL)
+                {
+                    continue;
+                }
+
+                BEGINPACKET( pak, 0x7e3);
+                ADDBYTE     ( pak, 0x14);
+	            ADDWORD     ( pak, thisclient->userid );
+	            ADDDWORD    ( pak, thisclient->charid );
+                ADDSTRING   ( pak, thisclient->charname);
+                ADDBYTE     ( pak, 0x00);
+                otherclient->SendPacket( &pak );
+	        }
+
 	    }
 	    break;
 
@@ -937,5 +1035,6 @@ bool CCharServer::pakLoginDSClient( CCharClient* thisclient, CPacket* P )
     }
     return true;
 }
+
 
 

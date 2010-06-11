@@ -51,6 +51,8 @@ struct CChatroom
     string chatroom_name;
 	WORD chatroom_id;
 	time_t creation_time;
+	bool is_protected;
+	string password;
 	BYTE nb_max;
 	vector<CPeople*> People_list;
 };
