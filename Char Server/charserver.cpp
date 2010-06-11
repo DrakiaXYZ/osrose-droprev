@@ -178,7 +178,6 @@ bool CCharServer::OnServerReady( )
                     {
                         //Deleting the guy from the chatroom list.
                         chatroom_list[thisclientwc->chatroom_id]->People_list.erase(chatroom_list[thisclientwc->chatroom_id]->People_list.begin()+k);
-                        //TODO: send a packet to other people to tell them this guy has deconnected from chatroom.
                         break;
                     }
 
@@ -187,6 +186,28 @@ bool CCharServer::OnServerReady( )
                 if (chatroom_list[thisclientwc->chatroom_id]->People_list.size()==0)
                 {
                     chatroom_list.erase(thisclientwc->chatroom_id);
+                }
+                else
+                {
+                    //TODO: send a packet to other people to tell them this guy has deconnected from chatroom.
+                    for (int k=0;k<chatroom_list[thisclientwc->chatroom_id]->People_list.size();k++)
+                    {
+                        CCharClient* otherclient=GetClientByID(chatroom_list[thisclientwc->chatroom_id]->People_list.at(k)->charid);
+                        if(otherclient==NULL)
+                        {
+                            continue;
+                        }
+
+                        BYTE test_packet=0x13;
+                        BEGINPACKET( pak, 0x7e3 );
+                        ADDBYTE    ( pak, test_packet );
+                        ADDWORD    ( pak, thisclientwc->userid );
+                        ADDDWORD   ( pak, thisclientwc->charid );
+                        ADDSTRING  ( pak, thisclientwc->charname );
+                        ADDBYTE    ( pak, 0x00 );
+                        otherclient->SendPacket( &pak );
+                    }
+
                 }
 
             }

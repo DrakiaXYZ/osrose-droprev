@@ -775,7 +775,7 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	            {
 	                Log(MSG_WARNING,"The chatroom has a password and the player %s didn't send one.",thisclient->charname);
                     BEGINPACKET( pak, 0x7e3 );
-                    ADDBYTE    ( pak, 0x22 );
+                    ADDBYTE    ( pak, 0x12 );
                     thisclient->SendPacket( &pak );
                     return true;
 	            }
@@ -785,7 +785,7 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
                 {
                     Log(MSG_WARNING,"Player %s tried to connect to chatroom %s with a wrong password %s != %s",thisclient->charname,chatroom_list[chatroom_id]->chatroom_name.c_str(),password.c_str(),chatroom_list[chatroom_id]->password.c_str());
                     BEGINPACKET( pak, 0x7e3 );
-                    ADDBYTE    ( pak, 0x22 );
+                    ADDBYTE    ( pak, 0x12 );
                     thisclient->SendPacket( &pak );
                     return true;
                 }
@@ -819,6 +819,14 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
             if(max_users<=mychatroom->nb_max)
             {
                 is_ok=true;
+            }
+            else
+            {
+                //chatroom is full
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x11 );
+                thisclient->SendPacket( &pak );
+                return true;
             }
 
 	        if(!is_ok)
@@ -892,13 +900,19 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	    case 0x04:
 	    {
 	        //Asking to leave the chatroom. It seems for now there's a bug in naRose and you just can't leave?
-            BEGINPACKET( pak, 0x7e3 );
+            /*BEGINPACKET( pak, 0x7e3 );
             ADDBYTE    ( pak, 0x22 );
-            thisclient->SendPacket( &pak );
+            thisclient->SendPacket( &pak );*/
 
             //LMA: resetting chatroom ID.
             //TODO: get how what kind of packet we have to send to others?
-            //DisconnectClientFromChat(thisclient);
+
+            BYTE test_packet=0x13;
+            BEGINPACKET( pak, 0x7e3 );
+            ADDBYTE    ( pak, test_packet );
+            thisclient->SendPacket( &pak );
+
+            DisconnectClientFromChat(thisclient);
 
 
             return true;
