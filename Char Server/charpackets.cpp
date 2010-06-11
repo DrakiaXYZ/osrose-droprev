@@ -535,6 +535,9 @@ bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
 
 	if(chatroom_list.find(thisclient->chatroom_id)==chatroom_list.end())
 	{
+        BEGINPACKET( pak, 0x7e3 );
+        ADDBYTE    ( pak, 0x13 );
+        thisclient->SendPacket( &pak );
         Log(MSG_WARNING,"Player %s tried to talk in chatroom %i but it doesn't exist...",thisclient->charname,thisclient->chatroom_id);
 	    return true;
 	}
@@ -668,17 +671,6 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	    case 0x02:
 	    {
 	        //Creating a chatroom.
-
-	        //chatrooms are full already.
-            //if (last_chatroom_id==0xffff)
-            if (last_chatroom_id==0xff)
-            {
-                BEGINPACKET( pak, 0x7e3 );
-                ADDBYTE    ( pak, 0x22 );
-                thisclient->SendPacket( &pak );
-                return true;
-            }
-
             BYTE protection_asked=GETBYTE((*P),1);
             BYTE max_people=GETBYTE((*P),2);
 	        string chatroom_name = (char*) &P->Buffer[3];
@@ -696,20 +688,46 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 
 	        }
 
-	        if (thisclient->chatroom_id!=0||max_people==0||chatroom_name.size()==0)
+	        if (thisclient->chatroom_id!=0)
 	        {
+	            //already in a chat room.
                 BEGINPACKET( pak, 0x7e3 );
                 ADDBYTE    ( pak, 0x22 );
                 thisclient->SendPacket( &pak );
 	            return true;
             }
 
+            if(max_people==0||chatroom_name.size()==0)
+            {
+                //bogus (but non blocking) error.
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x13 );
+                thisclient->SendPacket( &pak );
+	            return true;
+            }
+
+            //Checking if the chatroom name is already taken?
+            map<DWORD,CChatroom*>::iterator it;
+            for ( it=chatroom_list.begin() ; it != chatroom_list.end(); it++ )
+            {
+                if ((*it).second->chatroom_name==chatroom_name)
+                {
+                    //Name already taken, sorry ^_^
+                    BEGINPACKET( pak, 0x7e3 );
+                    ADDBYTE    ( pak, 0x18 );
+                    thisclient->SendPacket( &pak );
+                    return true;
+                }
+
+            }
+
             //getting a chatroom ID, like client Id, loop.
             last_chatroom_id=GetChatroomID ( last_chatroom_id );
             if (last_chatroom_id==0xffff)
             {
+                //bogus (but non blocking) error.
                 BEGINPACKET( pak, 0x7e3 );
-                ADDBYTE    ( pak, 0x22 );
+                ADDBYTE    ( pak, 0x13 );
                 thisclient->SendPacket( &pak );
                 return true;
             }
@@ -763,7 +781,7 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	            //LMA: chatroom not found.
 	            Log(MSG_WARNING,"Player %s asked to join chatroom %u but it didn't exist.",thisclient->charname,chatroom_id);
                 BEGINPACKET( pak, 0x7e3 );
-                ADDBYTE    ( pak, 0x22 );
+                ADDBYTE    ( pak, 0x13 );
                 thisclient->SendPacket( &pak );
 	            return true;
 	        }
@@ -900,21 +918,10 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	    case 0x04:
 	    {
 	        //Asking to leave the chatroom. It seems for now there's a bug in naRose and you just can't leave?
-            /*BEGINPACKET( pak, 0x7e3 );
-            ADDBYTE    ( pak, 0x22 );
-            thisclient->SendPacket( &pak );*/
-
-            //LMA: resetting chatroom ID.
-            //TODO: get how what kind of packet we have to send to others?
-
-            BYTE test_packet=0x13;
             BEGINPACKET( pak, 0x7e3 );
-            ADDBYTE    ( pak, test_packet );
+            ADDBYTE    ( pak, 0x15 );
             thisclient->SendPacket( &pak );
-
             DisconnectClientFromChat(thisclient);
-
-
             return true;
 	    }
 

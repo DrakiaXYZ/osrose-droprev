@@ -198,9 +198,8 @@ bool CCharServer::OnServerReady( )
                             continue;
                         }
 
-                        BYTE test_packet=0x13;
                         BEGINPACKET( pak, 0x7e3 );
-                        ADDBYTE    ( pak, test_packet );
+                        ADDBYTE    ( pak, 0x16 );
                         ADDWORD    ( pak, thisclientwc->userid );
                         ADDDWORD   ( pak, thisclientwc->charid );
                         ADDSTRING  ( pak, thisclientwc->charname );
