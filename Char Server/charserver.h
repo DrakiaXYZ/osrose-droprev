@@ -55,6 +55,7 @@ class CCharServer : public CServerSocket
         CCharClient* CreateClientSocket( );
     	void DeleteClientSocket( CClientSocket* thisclient );
     	void OnClientDisconnect( CClientSocket* thisclient );
+        bool DisconnectClientFromChat( CCharClient* thisclientwc ); //LMA: disconnection a client from chatroom.
     	bool OnServerReady( );
         void LoadConfigurations( char* );
     	bool OnReceivePacket( CClientSocket* thisclient, CPacket* P );

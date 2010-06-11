@@ -63,6 +63,10 @@ int main(int argc, char *argv[])
 	server->StartServer();
 	// Close server
     server->DB->Disconnect( );
+
+    //LMA: deleting stuff.
+    server->chatroom_list.clear();
+
 	delete server;
 	CloseWinSocket( );
 	StopSignal( );

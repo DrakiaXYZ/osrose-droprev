@@ -164,6 +164,41 @@ bool CCharServer::OnServerReady( )
     return true;
 }
 
+//LMA: disconnect a client from chatroom.
+ bool CCharServer::DisconnectClientFromChat( CCharClient* thisclientwc )
+ {
+        //LMA: resetting chatroom ID.
+        if(thisclientwc->chatroom_id!=0)
+        {
+            if(chatroom_list.find(thisclientwc->chatroom_id)!=chatroom_list.end())
+            {
+                for (int k=0;k<chatroom_list[thisclientwc->chatroom_id]->People_list.size();k++)
+                {
+                    if(chatroom_list[thisclientwc->chatroom_id]->People_list.at(k)->charid==thisclientwc->charid)
+                    {
+                        //Deleting the guy from the chatroom list.
+                        chatroom_list[thisclientwc->chatroom_id]->People_list.erase(chatroom_list[thisclientwc->chatroom_id]->People_list.begin()+k);
+                        //TODO: send a packet to other people to tell them this guy has deconnected from chatroom.
+                        break;
+                    }
+
+                }
+
+                if (chatroom_list[thisclientwc->chatroom_id]->People_list.size()==0)
+                {
+                    chatroom_list.erase(thisclientwc->chatroom_id);
+                }
+
+            }
+
+            thisclientwc->chatroom_id=0;
+        }
+
+
+    return true;
+ }
+
+
 // When a a client is disconnected
 void CCharServer::OnClientDisconnect( CClientSocket* thisclient )
 {
@@ -191,6 +226,9 @@ void CCharServer::OnClientDisconnect( CClientSocket* thisclient )
             if(otherclient!=NULL)
                 ChangeClanStatus (thisclientwc, otherclient, 0xff);
     	}
+
+    	//LMA: Disconnecting a client from chatroom.
+    	DisconnectClientFromChat(thisclientwc );
     }
 }
 

@@ -67,7 +67,7 @@ bool CCharServer::pakDoIdentify( CCharClient* thisclient, CPacket* P )
 	    Log(MSG_INFO,"Account ID %i (%s) is < 78, this is NOT advised to have ids too low (<10). You should change the id if it is the case.",thisclient->userid,thisclient->username);
 	}
 
-	//LMA: We try something here... We tell the worldserver to disconnect every characte
+	//LMA: We try something here... We tell the worldserver to disconnect every character
 	//from this account to avoid multi client on the same account (let's call this a preemptive strike).
     if(GetNbUserID(thisclient->userid)>1)
     {
@@ -487,6 +487,11 @@ bool CCharServer::pakWSCharSelect ( CCharClient* thisclient, CPacket* P )
     CChanels* thischannel = GetChannelByID( thisclient->channel );
     if(thischannel!=NULL)
         send( thischannel->sock, (char*)&pak, pak.Size, 0 );
+
+    //LMA: resetting chatroom ID.
+    DisconnectClientFromChat(thisclient);
+
+
 	return true;
 }
 
@@ -555,6 +560,8 @@ bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
         ADDBYTE    ( pak, 0x00 );
         otherclient->SendPacket(&pak);
     }
+
+    delete[] chat;
 
 
     return true;
@@ -646,9 +653,9 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
             }
 
             BYTE max_people=GETBYTE((*P),2);
-	        char* chatroom_name = new (nothrow) char[P->Size-3];
+	        string chatroom_name = (char*) &P[P->Size-3];
 
-	        if (thisclient->chatroom_id!=0||max_people==0||strlen(chatroom_name)==0)
+	        if (thisclient->chatroom_id!=0||max_people==0||chatroom_name.size()==0)
 	        {
                 BEGINPACKET( pak, 0x7e3 );
                 ADDBYTE    ( pak, 0x22 );
@@ -691,7 +698,7 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
             ADDWORD    ( pak, thisclient->userid );
             ADDWORD    ( pak, last_chatroom_id ); //TODO: check if chat ID?
             ADDWORD    ( pak, 0x2066 ); //????
-            ADDSTRING  ( pak, chatroom_name);
+            ADDSTRING  ( pak, chatroom_name.c_str());
             ADDBYTE    ( pak, 0x00);
             thisclient->SendPacket( &pak );
 	    }
@@ -791,7 +798,11 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
             ADDBYTE    ( pak, 0x22 );
             thisclient->SendPacket( &pak );
 
-            //thisclient->chatroom_id=0;
+            //LMA: resetting chatroom ID.
+            //TODO: get how what kind of packet we have to send to others?
+            //DisconnectClientFromChat(thisclient);
+
+
             return true;
 	    }
 
