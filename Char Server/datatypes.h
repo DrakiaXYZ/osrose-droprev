@@ -36,6 +36,25 @@ struct CCharacter {
 	unsigned long int DeleteTime;
 };
 
+//LMA: people in the chatroom.
+struct CPeople
+{
+    DWORD charid;
+    WORD account_id;
+    string charname;
+    bool is_active;
+};
+
+//LMA: Chatroom structure.
+struct CChatroom
+{
+    string chatroom_name;
+	WORD chatroom_id;
+	time_t creation_time;
+	BYTE nb_max;
+	vector<CPeople*> People_list;
+};
+
 // List of friends
 struct CFriendList
 {

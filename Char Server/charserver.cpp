@@ -26,6 +26,10 @@ CCharServer::CCharServer( string fn )
     LoadConfigurations( (char*)fn.c_str() );
     GServer = this;
     GServer->console_started=false;
+
+    //LMA: chatroom code.
+    chatroom_list.clear();
+    last_chatroom_id=0;
 }
 
 // Deconstructor
@@ -307,6 +311,7 @@ bool CCharServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
 	    case 0x07e1: return pakMessengerManager ( (CCharClient*)thisclient, P );
         case 0x07e2: return pakMessengerChat    ( (CCharClient*)thisclient, P );
         case 0x07e3: return pakChatrooms        ( (CCharClient*)thisclient, P );
+        case 0x07e4: return pakTalkChatroom     ( (CCharClient*)thisclient, P );
         case 0x07e5: return pak7e5              ( (CCharClient*)thisclient, P );
         case 0x07e6: return pakUploadCM         ( (CCharClient*)thisclient, P );
         case 0x07e7: return pakDownloadCM       ( (CCharClient*)thisclient, P );

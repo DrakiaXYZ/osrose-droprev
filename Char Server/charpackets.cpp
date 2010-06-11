@@ -509,10 +509,301 @@ bool CCharServer::pak7e5 ( CCharClient* thisclient, CPacket* P )
     return true;
 }
 
-// Create a chatroom?
+// Create a chatroom.
+//LMA: adding cases.
+bool CCharServer::pakTalkChatroom ( CCharClient* thisclient, CPacket* P )
+{
+	if(!thisclient->isLoggedIn) return false;
+	if(thisclient->chatroom_id==0)
+	{
+	    Log(MSG_WARNING,"Player %s tried to talk in a chatroom but he isn't in any...",thisclient->charname);
+	    return true;
+	}
+
+	if(chatroom_list.find(thisclient->chatroom_id)==chatroom_list.end())
+	{
+        Log(MSG_WARNING,"Player %s tried to talk in chatroom %i but it doesn't exist...",thisclient->charname,thisclient->chatroom_id);
+	    return true;
+	}
+
+	char* chat = new (nothrow) char[P->Size];
+	if (strlen(chat)==0)
+	{
+	    return true;
+	}
+
+	//looping and sending the message to other people.
+    CChatroom* mychatroom=chatroom_list[thisclient->chatroom_id];
+    int nb_users=mychatroom->People_list.size();
+
+    for (int k=0;k<nb_users;k++)
+    {
+        if (mychatroom->People_list.at(k)->charid==thisclient->charid||!mychatroom->People_list.at(k)->is_active)
+        {
+            continue;
+        }
+
+        CCharClient* otherclient=GetClientByID(mychatroom->People_list.at(k)->charid);
+        if (otherclient==NULL)
+        {
+            continue;
+        }
+
+        BEGINPACKET( pak, 0x7e4);
+        ADDWORD    ( pak, thisclient->charid );
+        ADDSTRING  (pak, chat);
+        ADDBYTE    ( pak, 0x00 );
+        otherclient->SendPacket(&pak);
+    }
+
+
+    return true;
+}
+
+
+//LMA: Getting a chatroom ID.
+DWORD CCharServer::GetChatroomID ( DWORD last_id )
+{
+    for (WORD k=last_id+1;k<0xffff;k++)
+    {
+        if(chatroom_list.find(k)==chatroom_list.end())
+        {
+            return k;
+        }
+
+    }
+
+    for (WORD k=1;k<=last_id;k++)
+    {
+        if(chatroom_list.find(k)==chatroom_list.end())
+        {
+            return k;
+        }
+
+    }
+
+    Log(MSG_WARNING,"Impossible to find a free chatroom ID!");
+
+
+    return 0xffff;
+}
+
+
+//LMA: Talking in a chatroom.
 bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 {
 	if(!thisclient->isLoggedIn) return false;
+
+	BYTE action = GETBYTE((*P),0);
+
+	switch(action)
+	{
+	    case 0x01:
+	    {
+	        //Asking for the chatroom list.
+	        if(thisclient->chatroom_id!=0)
+	        {
+	            //if already in a chatroom you can't ask for that.
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x22 );
+                thisclient->SendPacket( &pak );
+	            return true;
+	        }
+
+            BEGINPACKET( pak, 0x7e3);
+            ADDBYTE    ( pak, 0x21 );
+            ADDBYTE    ( pak, chatroom_list.size() );
+
+            if(chatroom_list.size()!=0)
+            {
+                map<DWORD,CChatroom*>::iterator it;
+                for ( it=chatroom_list.begin() ; it != chatroom_list.end(); it++ )
+                {
+                    ADDWORD    ( pak, (*it).second->chatroom_id);
+                    ADDBYTE    ( pak, 0x00);
+                    ADDBYTE    ( pak, (*it).second->People_list.size());  //Nb of people inside. It's useless for now, let's put 1
+                    ADDSTRING  ( pak, (*it).second->chatroom_name.c_str());
+                    ADDBYTE    ( pak, 0x00);
+                }
+
+            }
+
+            thisclient->SendPacket( &pak );
+	    }
+	    break;
+
+	    case 0x02:
+	    {
+	        //Creating a chatroom.
+
+	        //chatrooms are full already.
+            if (last_chatroom_id==0xffff)
+            {
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x22 );
+                thisclient->SendPacket( &pak );
+                return true;
+            }
+
+            BYTE max_people=GETBYTE((*P),2);
+	        char* chatroom_name = new (nothrow) char[P->Size-3];
+
+	        if (thisclient->chatroom_id!=0||max_people==0||strlen(chatroom_name)==0)
+	        {
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x22 );
+                thisclient->SendPacket( &pak );
+	            return true;
+            }
+
+            //getting a chatroom ID, like client Id, loop.
+            last_chatroom_id=GetChatroomID ( last_chatroom_id );
+            if (last_chatroom_id==0xffff)
+            {
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x22 );
+                thisclient->SendPacket( &pak );
+                return true;
+            }
+
+	        CChatroom* newchatroom=new (nothrow) CChatroom;
+	        newchatroom->chatroom_id=last_chatroom_id;
+	        newchatroom->chatroom_name=chatroom_name;
+	        newchatroom->creation_time=time(NULL);
+	        newchatroom->nb_max=max_people;
+	        newchatroom->People_list.clear();
+
+	        //adding the owner for now.
+            CPeople* mypeople=new (nothrow) CPeople;
+            mypeople->account_id=thisclient->userid;
+            mypeople->charid=thisclient->charid;
+            mypeople->charname=thisclient->charname;
+            mypeople->is_active=true;
+	        newchatroom->People_list.push_back(mypeople);
+
+	        //adding the new chatroom.
+	        chatroom_list[last_chatroom_id]=newchatroom;
+
+	        thisclient->chatroom_id=last_chatroom_id;
+
+            BEGINPACKET( pak, 0x7e3);
+            ADDBYTE    ( pak, 0x01 );
+            ADDWORD    ( pak, thisclient->userid );
+            ADDWORD    ( pak, last_chatroom_id ); //TODO: check if chat ID?
+            ADDWORD    ( pak, 0x2066 ); //????
+            ADDSTRING  ( pak, chatroom_name);
+            ADDBYTE    ( pak, 0x00);
+            thisclient->SendPacket( &pak );
+	    }
+	    break;
+
+	    case 0x03:
+	    {
+	        //joining a chatroom.
+	        WORD chatroom_id=GETWORD((*P),2);
+	        if (chatroom_list.find(chatroom_id)==chatroom_list.end())
+	        {
+	            //LMA: chatroom not found.
+	            Log(MSG_WARNING,"Player %s asked to join chatroom %u but it didn't exist.",thisclient->charname,chatroom_id);
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x22 );
+                thisclient->SendPacket( &pak );
+	            return true;
+	        }
+
+	        CChatroom* mychatroom=chatroom_list[chatroom_id];
+
+	        int nb_users=mychatroom->People_list.size();
+	        int max_users=0;
+	        bool is_ok=false;
+	        for (int k=0;k<nb_users;k++)
+	        {
+	            if (mychatroom->People_list.at(k)->charid==thisclient->charid)
+	            {
+	                if (!mychatroom->People_list.at(k)->is_active)
+	                {
+	                    //User leaved earlier?
+	                    is_ok=true;
+	                    mychatroom->People_list.at(k)->is_active=true;
+	                    break;
+	                }
+
+	                //player is already in the chatroom...
+	                break;
+	            }
+
+	            max_users++;
+	        }
+
+            if(max_users<=mychatroom->nb_max)
+            {
+                is_ok=true;
+            }
+
+	        if(!is_ok)
+	        {
+                BEGINPACKET( pak, 0x7e3 );
+                ADDBYTE    ( pak, 0x22 );
+                thisclient->SendPacket( &pak );
+	            return true;
+	        }
+
+	        //adding the player.
+            CPeople* mypeople=new (nothrow) CPeople;
+            mypeople->account_id=thisclient->userid;
+            mypeople->charid=thisclient->charid;
+            mypeople->charname=thisclient->charname;
+            mypeople->is_active=true;
+	        mychatroom->People_list.push_back(mypeople);
+
+            BEGINPACKET( pak, 0x7e3);
+            ADDBYTE    ( pak, 0x10 );
+            ADDWORD    ( pak, thisclient->userid );
+            ADDWORD    ( pak, 0x9031 ); //????
+            ADDWORD    ( pak, mychatroom->nb_max ); //Nb max people???
+            ADDSTRING  ( pak, mychatroom->chatroom_name.c_str());
+            ADDBYTE    ( pak, 0x00);
+
+            //looping through people list here.
+	        nb_users=mychatroom->People_list.size();
+	        for (int k=0;k<nb_users;k++)
+	        {
+	            if (mychatroom->People_list.at(k)->charid==thisclient->charid)
+	            {
+	                continue;
+	            }
+
+	            ADDWORD     ( pak, mychatroom->People_list.at(k)->account_id );
+	            ADDDWORD    ( pak, mychatroom->People_list.at(k)->charid );
+                ADDSTRING   ( pak, mychatroom->People_list.at(k)->charname.c_str());
+                ADDBYTE     ( pak, 0x00);
+	        }
+
+            thisclient->SendPacket( &pak );
+            thisclient->chatroom_id=mychatroom->chatroom_id;
+	    }
+	    break;
+
+	    case 0x04:
+	    {
+	        //Asking to leave the chatroom. It seems for now there's a bug in naRose and you just can't leave?
+            BEGINPACKET( pak, 0x7e3 );
+            ADDBYTE    ( pak, 0x22 );
+            thisclient->SendPacket( &pak );
+
+            //thisclient->chatroom_id=0;
+            return true;
+	    }
+
+	    default:
+	    {
+	        Log(MSG_WARNING,"Asking for an uncoded chatroom request %i",action);
+	    }
+	    break;
+
+	}
+
+
     return true;
 }
 

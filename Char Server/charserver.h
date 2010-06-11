@@ -9,6 +9,7 @@
 #include "../common/sockets.h"
 #include "datatypes.h"
 #define ClearItem(i) { i.durability=0; i.itemnum=0; i.itemtype=0; i.lifespan=0; i.refine=0; }
+using namespace std;
 
 // Clent class
 class CCharClient : public CClientSocket
@@ -24,6 +25,9 @@ class CCharClient : public CClientSocket
     	char password[33];
     	UINT accesslevel;
     	UINT channel;
+
+    	//LMA: chatroom information.
+    	UINT chatroom_id;
 
     	// Character information
     	char charname[17];
@@ -116,17 +120,24 @@ class CCharServer : public CServerSocket
         int GetNbUserID( UINT userid ); //LMA: Against same account hack.
     	bool pak7e5 ( CCharClient* thisclient, CPacket* P );
         bool pakChatrooms ( CCharClient* thisclient, CPacket* P );
+        DWORD GetChatroomID ( DWORD last_id );   //LMA: Getting a chatroom ID.
+        bool pakTalkChatroom ( CCharClient* thisclient, CPacket* P );   //LMA: talking into a chatroom.
 
         // Variables
         string filename;
         vector <CClans*> ClanList;
         vector <CChanels*> ChannelList;
 
-            //Login
-            SOCKET lsock;                // Socket to Login
-        	char*    lct;                // Encryption table for login server
+        //LMA: chatroom list.
+        map<DWORD,CChatroom*> chatroom_list;    //LMA: Chatroom list.
+        WORD last_chatroom_id;
+
+       //Login
+       SOCKET lsock;                // Socket to Login
+       char*    lct;                // Encryption table for login server
        CDatabase* DB;
 };
+
 void StartSignal( );
 void StopSignal( );
 void HandleSignal( int num );
