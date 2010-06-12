@@ -264,7 +264,7 @@ bool CCharServer::EscapeMySQL(const char* data,string & mystring,int nb_car_max,
     delete[] new_username;
 
     //Is data escaped the same as the non escaped? Useful for login for example.
-    if(strcmp(data,mystring.c_str()))
+    if(check_same&&strcmp(data,mystring.c_str())!=0)
     {
         Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
         return false;
@@ -298,7 +298,7 @@ bool CCharServer::CheckEscapeMySQL(const char* data,int nb_car_max,bool check_sa
     delete[] new_username;
 
     //Is data escaped the same as the non escaped? Useful for login for example.
-    if(strcmp(data,mystring.c_str())!=0)
+    if(check_same&&strcmp(data,mystring.c_str())!=0)
     {
         Log(MSG_WARNING,"Escape:: is different (%s != %s)",data,mystring.c_str());
         return false;

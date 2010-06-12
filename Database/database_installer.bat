@@ -66,6 +66,8 @@ echo Note: !!! THIS CAN BE VERY LONG !!!
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups.sql
 echo creating list_config table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% <list_config.sql
+echo creating mail_list table
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% <mail_list.sql
 
 :upgrade
 echo Installing new database content.

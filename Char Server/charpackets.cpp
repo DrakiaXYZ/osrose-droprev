@@ -485,6 +485,7 @@ bool CCharServer::pakWSCharSelect ( CCharClient* thisclient, CPacket* P )
         Log(MSG_WARNING, "Invalid userid: %i", userid );
 	    return true;
     }
+
 	BEGINPACKET( pak, 0x71c );
 	ADDBYTE    ( pak, 0x00 );
 	otherclient->SendPacket( &pak );
@@ -492,9 +493,12 @@ bool CCharServer::pakWSCharSelect ( CCharClient* thisclient, CPacket* P )
     RESETPACKET( pak, 0x505 );
     ADDDWORD( pak, thisclient->userid );
     cryptPacket( (char*)&pak, NULL );
+
     CChanels* thischannel = GetChannelByID( thisclient->channel );
     if(thischannel!=NULL)
+    {
         send( thischannel->sock, (char*)&pak, pak.Size, 0 );
+    }
 
     //LMA: resetting chatroom ID.
     DisconnectClientFromChat(thisclient);
@@ -503,22 +507,138 @@ bool CCharServer::pakWSCharSelect ( CCharClient* thisclient, CPacket* P )
 	return true;
 }
 
-// ???
+//LMA: mail system.
 bool CCharServer::pak7e5 ( CCharClient* thisclient, CPacket* P )
 {
 	if(!thisclient->isLoggedIn) return false;
+
     BYTE action = GETBYTE((*P),0);
     switch(action)
     {
-        case 0x03:
-                BEGINPACKET( pak, 0x7e5 );
-                ADDBYTE    ( pak, 0x01 );
-                ADDWORD    ( pak, 0x0000 );
+        case 0x01:
+        {
+            //Ok I got mails, send them to me please.
+            //Note: previous mails are saved clientside in the ".db" file near client (sqllite format).
+            MYSQL_RES *result;
+            MYSQL_ROW row;
+            result = DB->QStore( "SELECT mailfromname, message, dhsent FROM mail_list WHERE sendtocharid=%u", thisclient->charid);
+            if(result==NULL) return false;
+            DWORD nb_mails=mysql_num_rows( result );
+            if (nb_mails==0)
+            {
+                DB->QFree( );
+                return true;
+            }
+
+            BEGINPACKET( pak, 0x7e5 );
+            ADDBYTE    ( pak, 0x02 );
+
+            while(row = mysql_fetch_row( result ))
+            {
+                ADDDWORD (pak,atoi(row[2]));
+                ADDSTRING (pak,row[0]);
+                ADDBYTE (pak,0x00);
+                ADDSTRING (pak,row[1]);
+                ADDBYTE (pak,0x00);
+            }
+
+            DB->QFree( );
+
+            //let's delete them now.
+            if(!DB->QExecute( "DELETE FROM mail_list WHERE sendtocharid=%u", thisclient->charid))
+            {
+                Log(MSG_WARNING,"Can't delete previous mails from %s",thisclient->charname);
+
+                //sending the packet anyway.
                 thisclient->SendPacket( &pak );
+                return true;
+            }
+
+            thisclient->SendPacket( &pak );
+        }
+        break;
+
+        case 0x02:
+        {
+            //Send a new mail to someone.
+            string mailto = (char*) &P->Buffer[1];
+            if(mailto.size()==0)
+            {
+                Log(MSG_WARNING,"Error, %s tried to send a mail to an empty player name.",thisclient->charname);
+                return true;
+            }
+
+            string message = (char*) &P->Buffer[1+mailto.size()+1];
+            if(message.size()==0)
+            {
+                Log(MSG_WARNING,"Error, %s tried to send an empty mail to %s.",thisclient->charname,mailto.c_str());
+                return true;
+            }
+
+            //escaping
+            string escaped_to;
+            if(!EscapeMySQL(mailto.c_str(),escaped_to,-1,true))
+            {
+                Log(MSG_WARNING,"Error, %s tried to send a mail to %s and there was a problem escaping this name, result was %s",thisclient->charname,mailto.c_str(),escaped_to.c_str());
+                return true;
+            }
+
+            string escaped_message;
+            EscapeMySQL(message.c_str(),escaped_message,-1,false);
+
+            //Checking if the player actually exists...
+            MYSQL_RES *result;
+            MYSQL_ROW row;
+            result = DB->QStore( "SELECT id FROM characters WHERE char_name='%s'", escaped_to.c_str() );
+            if(result==NULL) return false;
+            if (mysql_num_rows( result ) == 0)
+            {
+                DB->QFree( );
+                Log(MSG_WARNING,"Error, %s tried to send a mail to %s (%s) and this player doesn't exist?",thisclient->charname,escaped_to.c_str(),escaped_message.c_str());
+                return true;
+            }
+
+            row = mysql_fetch_row( result );
+            DWORD other_charid=atoi(row[0]);
+            DB->QFree( );
+
+            if(!DB->QExecute("INSERT INTO mail_list (mailfromname, mailfromcharid, sendtoname, sendtocharid, message, dhsent) VALUES('%s',%u,'%s',%u,'%s',%u)",thisclient->charname,thisclient->charid,escaped_to.c_str(),other_charid,escaped_message.c_str(),GetServerTime( )))
+            {
+                Log(MSG_WARNING,"Error, %s tried to send a mail to %s (%s) and it failed to be saved in database.",thisclient->charname,escaped_to.c_str(),escaped_message.c_str());
+                return false;
+            }
+
+            //Mail sent and saved.
+            BEGINPACKET( pak, 0x7e5 );
+            ADDBYTE    ( pak, 0x03 );
+            thisclient->SendPacket( &pak );
+        }
+        break;
+
+        case 0x03:
+        {
+            //Have I got mail waiting, how many?
+            MYSQL_RES *result;
+            result = DB->QStore( "SELECT id FROM mail_list WHERE sendtocharid=%u", thisclient->charid);
+            if(result==NULL) return false;
+            DWORD nb_mails=mysql_num_rows( result );
+            DB->QFree( );
+
+            BEGINPACKET( pak, 0x7e5 );
+            ADDBYTE    ( pak, 0x01 );
+            ADDWORD    ( pak, nb_mails );
+            thisclient->SendPacket( &pak );
+        }
         break;
         default:
-            Log( MSG_WARNING,"Unknown 7e5 action %i",action);
+        {
+            Log( MSG_WARNING,"Unknown 0x07e5 mail action %i",action);
+        }
+        break;
+
     }
+
+
     return true;
 }
 

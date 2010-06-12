@@ -1,6 +1,6 @@
 
 -- Update script to update from "dev rev 360" to "dev rev II" --
--- version 1.0.1 --
+-- version 1.0.2 --
 -- osRose dev team. --
 -- http://forum.dev-osrose.com --
 
@@ -29,3 +29,16 @@ ALTER TABLE `wishlist` CHANGE `itemowner` `itemowner` INT( 11 ) NULL DEFAULT '0'
 ALTER TABLE `wishlist` CHANGE `itemhead` `itemhead` BIGINT( 11 ) NULL DEFAULT '0';
 ALTER TABLE `wishlist` CHANGE `itemdata` `itemhead` BIGINT( 11 ) NULL DEFAULT '0';
 ALTER TABLE `wishlist` ADD UNIQUE `ow_slot` ( `itemowner` , `slot` );
+
+
+-- Mail list --
+CREATE TABLE `mail_list` (
+  `id` int(11) NOT NULL auto_increment,
+  `mailfromname` varchar(20) NOT NULL,
+  `mailfromcharid` int(11) NOT NULL,
+  `sendtoname` varchar(20) NOT NULL,
+  `sendtocharid` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `dhsent` decimal(20,0) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
