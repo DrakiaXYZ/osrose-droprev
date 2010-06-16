@@ -857,6 +857,12 @@ void CWorldServer::pakClearUser( CPlayer* thisclient )
 // Drop items on map
 bool CWorldServer::pakDoDrop( CPlayer* thisclient, CPacket* P )
 {
+    //LMA: Can a user drop when he's in shop?
+    if(thisclient->Shop->open)
+    {
+        return true;
+    }
+
 	BYTE itemid = GETBYTE((*P), 0x0);
 	if(!CheckInventorySlot(thisclient, itemid ))
 	{
@@ -5583,8 +5589,52 @@ bool CWorldServer::pakBuyShop( CPlayer* thisclient, CPacket* P )
 
             thisclient->CharInfo->Zulies -= (otherclient->Shop->SellingList[slot].price*count);
             otherclient->CharInfo->Zulies += (otherclient->Shop->SellingList[slot].price*count);
-            if(otherclient->items[invslot].itemtype>9 &&
-                    otherclient->items[invslot].itemtype<14)
+
+            //LMA: hack check (number of items).
+            if(otherclient->items[invslot].count<count)
+            {
+                Log(MSG_WARNING,"Player %s tried to buy %u*(%u::%u) from %s but vendor had only %u in stock, Synch problem?",thisclient->CharInfo->charname,count,otherclient->items[invslot].itemtype,otherclient->items[invslot].itemnum,otherclient->CharInfo->charname,otherclient->items[invslot].count);
+
+                //update shop
+                BEGINPACKET( pak, 0x7c6 );
+                ADDWORD    ( pak, otherclient->clientid );
+                ADDBYTE    ( pak, 0x05 );
+                ADDBYTE    ( pak, 0x01 );
+                ADDBYTE    ( pak, slot );
+
+                //We update the quantity...
+                if(otherclient->items[invslot].count==0)
+                {
+                     otherclient->Shop->SellingList[slot].slot = 0;
+                     otherclient->Shop->SellingList[slot].count = 0;
+                     otherclient->Shop->SellingList[slot].price = 0;
+                }
+                else
+                {
+                    otherclient->Shop->SellingList[slot].count=otherclient->items[invslot].count;
+                }
+
+                if(otherclient->Shop->SellingList[slot].count<=0)
+                {
+                   ADDDWORD ( pak, 0x00000000 );
+                   ADDDWORD ( pak, 0x00000000 );
+                   ADDDWORD( pak, 0x00000000 );
+                   ADDWORD ( pak, 0x0000 );
+                }
+                else
+                {
+                   ADDDWORD ( pak, BuildItemHead( otherclient->items[invslot] ));
+                   ADDDWORD ( pak, BuildItemData( otherclient->items[invslot] ));
+                   ADDDWORD( pak, 0x00000000 );
+                   ADDWORD ( pak, 0x0000 );
+                }
+
+                SendToVisible( &pak, otherclient );
+
+                return true;
+            }
+
+            if(otherclient->items[invslot].itemtype>9&&otherclient->items[invslot].itemtype<14)
             {
                 if(otherclient->items[invslot].count<=count)
                 {
