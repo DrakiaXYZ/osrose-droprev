@@ -217,7 +217,7 @@ class CWorldServer : public CServerSocket
         char* GetSTLSkillByID(UINT idorg);  //LMA: to get a skill name :)
         char* GetSTLZoneNameByID(UINT idorg);   //LMA: get a zone name :)
         CNPC* GetNPCByType( UINT npctype );
-        CDrop* GetDrop( CMonster* thismon );
+        //CDrop* GetDrop( CMonster* thismon );
         CDrop* GetPYDrop( CMonster* thismon, UINT droptype );   //hidden
         CDrop* GetPYDropAnd( CMonster* thismon, UINT droptype );   //LMA: And system.
     	void SendToAll( CPacket* pak );

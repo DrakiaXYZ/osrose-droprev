@@ -258,6 +258,7 @@ bool CWorldServer::DoSkillScript( CCharacter* character, CSkills* thisskill )
 }
 
 // Build Drop (LMA: shouldn't be used anymore).
+/*
 CDrop* CWorldServer::GetDrop( CMonster* thismon )
 {
     CDrop* newdrop = new (nothrow) CDrop;
@@ -410,6 +411,7 @@ CDrop* CWorldServer::GetDrop( CMonster* thismon )
     newdrop->item.gem = 0;
     return newdrop;
 }
+*/
 
 //hidden
 // Build Drop the PY way

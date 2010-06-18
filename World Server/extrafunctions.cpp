@@ -2081,8 +2081,18 @@ UINT CWorldServer::GetFairyRange( UINT part )
 {
 	UINT Range1[] = { 5, 5, 4, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     UINT Range2[] = { 10, 7, 7, 6, 6, 6, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1 };
-	if (part == 0) return Range1[GServer->FairyList.size()];
-	if (part == 1) return Range2[GServer->FairyList.size()];
+
+    //LMA: possible problem if too many fairies...
+    int offset=GServer->FairyList.size();
+    if (offset>=20)
+    {
+        offset=19;
+    }
+
+	/*if (part == 0) return Range1[GServer->FairyList.size()];
+	if (part == 1) return Range2[GServer->FairyList.size()];*/
+    if (part == 0) return Range1[offset];
+	if (part == 1) return Range2[offset];
 }
 
 //LMA Grid
