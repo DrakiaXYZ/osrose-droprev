@@ -3090,6 +3090,15 @@ bool CWorldServer::LoadBreakChestBlueList()
                 itemnum=BreakData.rows[i][1] % 1000000;
             }
 
+            if (itemtype>1&&itemtype<10)
+            {
+                //blue craft
+                //In fact they are breaks?
+                //choice=3;
+                choice=1;
+                itemnum=BreakData.rows[i][1] % 1000000;
+            }
+
         }
 
         //LMA: for now a chest is also a break.

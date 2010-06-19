@@ -6778,6 +6778,271 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             //thisclient->SaveSlot41(item);
         }
         break;
+        case 0x08:
+        {
+            //LMA: NOT perfect separation drill for example (separate item from gem).
+            BYTE material = GETBYTE((*P), 1);
+            BYTE item = GETBYTE((*P), 3);
+            if(!CheckInventorySlot( thisclient, item))
+                return false;
+            if(!CheckInventorySlot( thisclient, material))
+                return false;
+
+            if( thisclient->items[material].count<=0 )
+            {
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x12 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+                return true;
+            }
+
+            if(thisclient->items[material].itemtype!=10)
+            {
+                Log(MSG_WARNING,"%s tried to degem with a wrong item %u::%u (not a useitem)",thisclient->CharInfo->charname,thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x12 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+                return true;
+            }
+
+            if (thisclient->items[material].itemnum>=UseList.max)
+            {
+                Log(MSG_WARNING,"%s trying to separate gem with useitem %u which is >= to %u (nb max of useitem)",thisclient->CharInfo->charname,thisclient->items[material].itemnum,UseList.max);
+                return true;
+            }
+
+            switch (UseList.Index[thisclient->items[material].itemnum]->type)
+            {
+                case 319:
+                {
+                    //it can fail.
+                }
+                break;
+                default:
+                {
+                    Log(MSG_WARNING,"%s tried to degem with a useitem %u::%u which has an unhandled type %u",thisclient->CharInfo->charname,thisclient->items[material].itemtype,thisclient->items[material].itemnum,UseList.Index[thisclient->items[material].itemnum]->type);
+                    return true;
+                }
+                break;
+            }
+
+            //LMA: no gem on this one.
+            if(thisclient->items[item].gem==0)
+            {
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x12 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+               return true;
+            }
+
+            if(thisclient->items[item].gem>=JemList.max)
+            {
+                Log(MSG_WARNING,"%s trying to separate gem %u which is >= to %u (nb max of jems)",thisclient->CharInfo->charname,thisclient->items[item].gem,JemList.max);
+                return true;
+            }
+
+            //Ok let's try to see how it's going.
+            bool failed=false;
+            //Let's get a % chance.
+            //if it suceeds, separation is still ok but the gem is destroyed.
+            if(RandNumber(0,100)>UseList.Index[thisclient->items[material].itemnum]->useeffect[1])
+            {
+                failed=true;
+            }
+
+            //Saving material.
+            thisclient->items[material].count--;
+            if( thisclient->items[material].count < 1)
+            {
+                ClearItem( thisclient->items[material] );
+            }
+
+            thisclient->UpdateInventory(material);
+
+            if(failed)
+            {
+                //same as drilling failed.
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x21 );
+                ADDBYTE    ( pak, 0x01 );
+                ADDBYTE    ( pak, material);
+                ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
+                ADDDWORD   ( pak, BuildItemData( thisclient->items[material] ) );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+                thisclient->client->SendPacket(&pak);
+                return true;
+            }
+
+            //let's unsocket and ungem.
+            thisclient->items[item].socketed=true;
+            thisclient->items[item].gem=0;
+            thisclient->UpdateInventory(item);
+
+
+            //packet time.
+            BEGINPACKET( pak, 0x7bc );
+            ADDBYTE    ( pak, 0x06 );
+            ADDBYTE    ( pak, 0x02 );
+            ADDBYTE    ( pak, material);
+            ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
+            ADDDWORD   ( pak, BuildItemData( thisclient->items[material] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+            ADDBYTE    ( pak, item );
+            ADDDWORD   ( pak, BuildItemHead( thisclient->items[item] ) );
+            ADDDWORD   ( pak, BuildItemData( thisclient->items[item] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+            thisclient->client->SendPacket(&pak);
+        }
+        break;
+        case 0x09:
+        {
+            //LMA: perfect separation drill for example (separate item from gem).
+            BYTE material = GETBYTE((*P), 1);
+            BYTE item = GETBYTE((*P), 3);
+            if(!CheckInventorySlot( thisclient, item))
+                return false;
+            if(!CheckInventorySlot( thisclient, material))
+                return false;
+
+            if( thisclient->items[material].count<=0 )
+            {
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x12 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+                return true;
+            }
+
+            if(thisclient->items[material].itemtype!=10)
+            {
+                Log(MSG_WARNING,"%s tried to degem with a wrong item %u::%u (not a useitem)",thisclient->CharInfo->charname,thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x12 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+                return true;
+            }
+
+            if (thisclient->items[material].itemnum>=UseList.max)
+            {
+                Log(MSG_WARNING,"%s trying to separate gem with useitem %u which is >= to %u (nb max of useitem)",thisclient->CharInfo->charname,thisclient->items[material].itemnum,UseList.max);
+                return true;
+            }
+
+            switch (UseList.Index[thisclient->items[material].itemnum]->type)
+            {
+                case 324:
+                {
+                    //perfect separation
+                }
+                break;
+
+                default:
+                {
+                    Log(MSG_WARNING,"%s tried to degem with a useitem %u::%u which has an unhandled type %u",thisclient->CharInfo->charname,thisclient->items[material].itemtype,thisclient->items[material].itemnum,UseList.Index[thisclient->items[material].itemnum]->type);
+                    return true;
+                }
+                break;
+            }
+
+            //LMA: no gem on this one.
+            if(thisclient->items[item].gem==0)
+            {
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x12 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+               return true;
+            }
+
+            if(thisclient->items[item].gem>=JemList.max)
+            {
+                Log(MSG_WARNING,"%s trying to separate gem %u which is >= to %u (nb max of jems)",thisclient->CharInfo->charname,thisclient->items[item].gem,JemList.max);
+                return true;
+            }
+
+            //Ok let's try to see how it's going.
+            CItem newgem;
+            ClearItem(newgem);
+            unsigned int tempslot=0;
+
+            newgem.count=1;
+            newgem.itemtype=11;
+            newgem.itemnum=thisclient->items[item].gem;
+            int grade_gem=newgem.itemnum%10;
+            bool degrade=false;
+
+            if(grade_gem>1)
+            {
+                newgem.itemnum--;
+                degrade=true;
+            }
+
+            tempslot = thisclient->AddItem(newgem);
+            if (tempslot == 0xffff)
+            {
+                //TODO: error message: no place in inventory.
+                /*BEGINPACKET( pak, 0x7bc );
+                ADDBYTE    ( pak, 0x23 );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );*/
+
+                BEGINPACKET( pak, 0x7a7);
+                ADDWORD(pak, 0x00);
+                ADDBYTE(pak, 0x03);
+                ADDBYTE(pak, 0x00);
+                thisclient->client->SendPacket(&pak);
+
+                return true;
+            }
+
+            //saving gem.
+            thisclient->UpdateInventory(tempslot);
+
+            //let's unsocket and ungem.
+            thisclient->items[item].socketed=true;
+            thisclient->items[item].gem=0;
+            thisclient->UpdateInventory(item);
+
+            //Saving material.
+            thisclient->items[material].count--;
+            if( thisclient->items[material].count < 1)
+            {
+                ClearItem( thisclient->items[material] );
+            }
+
+            thisclient->UpdateInventory(material);
+
+            //packet time.
+            //TODO: message if no degrade.
+            BEGINPACKET( pak, 0x7bc );
+            ADDBYTE    ( pak, 0x05 );
+            ADDBYTE    ( pak, 0x03 );
+            ADDBYTE    ( pak, material);
+            ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
+            ADDDWORD   ( pak, BuildItemData( thisclient->items[material] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+            ADDBYTE    ( pak, item );
+            ADDDWORD   ( pak, BuildItemHead( thisclient->items[item] ) );
+            ADDDWORD   ( pak, BuildItemData( thisclient->items[item] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+            ADDBYTE    ( pak, tempslot );
+            ADDDWORD   ( pak, BuildItemHead( thisclient->items[tempslot] ) );
+            ADDDWORD   ( pak, BuildItemData( thisclient->items[tempslot] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+
+            thisclient->client->SendPacket(&pak);
+        }
+        break;
         default:
             Log( MSG_WARNING,"Modified Item unknown action: %i", action);
     }
