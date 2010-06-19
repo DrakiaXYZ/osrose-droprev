@@ -6978,7 +6978,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             int grade_gem=newgem.itemnum%10;
             bool degrade=false;
 
-            if(grade_gem>1)
+            //we don't degrade the enchanted stones (itemnum>=500)
+            if(grade_gem>1&&newgem.itemnum<500)
             {
                 newgem.itemnum--;
                 degrade=true;
