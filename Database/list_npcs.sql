@@ -39,11 +39,11 @@ INSERT INTO `list_npcs` VALUES (0, '[Keenu''s Daughter] Arisa', 1020, 1, 275.985
 INSERT INTO `list_npcs` VALUES (0, '[Lena''s Sister] Shirley', 1019, 1, 322.406, 5504.69, 5274.08, 119,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'NPC1', 3040, 2, 0.000, 4829.88, 4645.83, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'NPC2', 3041, 2, 0.000, 4833.84, 4645.52, 0,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Ulverick Control NPC1', 1791, 2, 0.000, 4838.05, 4644.56, 0,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Ulverick Control NPC2', 1792, 2, 0.000, 4841.91, 4644.57, 0,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Ulverick Control NPC3', 1793, 2, 0.000, 4845.60, 4644.59, 0,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Ulverick Control NPC4', 1794, 2, 0.000, 4849.58, 4644.48, 0,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Ulverick Control NPC5', 1795, 2, 0.000, 4853.38, 4644.49, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 1', 1791, 2, 0.000, 4838.05, 4644.56, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 2', 1792, 2, 0.000, 4841.91, 4644.57, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 3', 1793, 2, 0.000, 4845.60, 4644.59, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 4', 1794, 2, 0.000, 4849.58, 4644.48, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 5', 1795, 2, 0.000, 4853.38, 4644.49, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gawain', 1090, 2, 84.016, 5334.58, 5353.91, 190,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Huffe', 1111, 2, 90.000, 5334.84, 5345.81, 211,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Owner] Burtland', 1115, 2, 90.000, 5289.10, 5264.10, 215,0,0,0);
