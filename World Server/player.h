@@ -162,6 +162,9 @@ class CPlayer: public CCharacter
     //LMA: % for dealer (when buying from NPC).
     int pc_rebate;
 
+    //LMA: %craft talent (when crafting)
+    int pc_craft_talent;
+
     //LMA: summon jauge.
     int summon_jauge;
     int cur_jauge;

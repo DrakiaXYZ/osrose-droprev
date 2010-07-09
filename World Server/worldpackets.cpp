@@ -4406,15 +4406,56 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	item.refine = 0;
 
 	// stats randomizer
+	//LMA: depends from level too now... (very basic formula).
 	int changeofstatslow = thisclient->GetSen() / 13 + 10;
-	int changeofstatshigh = thisclient->GetSen() / 13 + 50;
+	//int changeofstatshigh = thisclient->GetSen() / 13 + 50;
+	int changeofstatshigh = (thisclient->GetSen()+thisclient->Stats->Level) / 13 + 50;
 	int changeofstatsrange = (changeofstatshigh-changeofstatslow)+1;
+
 	if (changeofstatslow+int(changeofstatsrange*rand()/(RAND_MAX + 1.0)) > 50)
 	{
         int statslowget = 1;
-        int statshighget = 256;
+        int statshighget = 25;
+
+        //LMA: The more level and SEN the player has, the better stats he can have.
+        int myrange=(int)(thisclient->GetSen()/2)+thisclient->Stats->Level;
+        if (myrange<100)
+        {
+            statshighget = 50;
+        }
+        else if (myrange>=100&&myrange<150)
+        {
+            statshighget = 100;
+        }
+        else if (myrange>=150&&myrange<200)
+        {
+            statshighget = 150;
+        }
+        else if (myrange>=200&&myrange<250)
+        {
+            statshighget = 200;
+        }
+        else if (myrange>=250&&myrange<300)
+        {
+            statshighget = 250;
+        }
+        else if (myrange>=300&&myrange<350)
+        {
+            statshighget = 275;
+        }
+        else if (myrange>=350)
+        {
+            statshighget = 300;
+        }
+
         int setstatrange=(statshighget-statslowget)+1;
         item.stats = statslowget+int(setstatrange*rand()/(RAND_MAX + 1.0));
+
+        if(item.stats>300)
+        {
+            item.stats=300;
+        }
+
         Log(MSG_INFO,"Craft item has a stat %i",item.stats);
         item.appraised = 1;
 	}
@@ -4585,16 +4626,70 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 
         //end of search.
 
+        //LMA: we got now a formula according to player's lvl, con and sen...
+        //very basic one in the meantime...
+        //LMA: trying to smooth things for very hard items, hardened and so on which are like 600+...
+        if (failure>100)
+        {
+            //Adding an extra% depending on extra diff.
+            //like 816 will give: "8" and failure "116" and then 80% more of 116.
+            //116 will give: "1" and failure "116" and 10% of 116.
+            int extra_diff=(int)(failure/100);
+            failure=failure-100*(extra_diff-1);
+            failure+=(int)((failure*extra_diff*10)/100);
+        }
 
-        failure-=(int) (thisclient->Attr->Con/40);
+        failure-=(int) (thisclient->GetCon()/40);
+        failure-=(int) (thisclient->GetSen()/40);
+        failure-=(int) (thisclient->Stats->Level/40);
+        failure-=(int) (thisclient->pc_craft_talent);   //craft talent.
+
         if (failure<=0)
+        {
             failure=1;
+        }
+
+        //LMA: failure depends on level diff too (basic formula)...
+        int diff_level=thisclient->Stats->Level-failure;
+        if (diff_level<-20)
+        {
+            failure+=(int)((20*failure)/100);
+        }
+        else if(diff_level<-10)
+        {
+            failure+=(int)((10*failure)/100);
+        }
+        else if(diff_level<-5)
+        {
+            failure+=(int)((5*failure)/100);
+        }
+        else if(diff_level>5)
+        {
+            failure-=(int)((5*failure)/100);
+        }
+        else if(diff_level>10)
+        {
+            failure-=(int)((10*failure)/100);
+        }
+        else if(diff_level>20)
+        {
+            failure-=(int)((20*failure)/100);
+        }
+
+        if (failure<=0)
+        {
+            failure=1;
+        }
+
         if (failure>=100)
+        {
             failure=99;
+        }
 
         //LMA: Failure.
         bool test_fail=false;
         //test_fail=true;
+
         if((GServer->RandNumber(0,100)<=failure)||test_fail)
         {
             Log(MSG_INFO,"Craft has failed");
@@ -4932,7 +5027,9 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         //LMA: No Exp for painting.
         if(!painting)
         {
-            int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
+            //LMA: stat bonus according to item stat (basic formula)...
+            UINT crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
+            crafting_exp += (UINT)((100000*item.stats)/300);
             thisclient->CharInfo->Exp += crafting_exp;//  add exp
 
             //LMA: Only if not level up

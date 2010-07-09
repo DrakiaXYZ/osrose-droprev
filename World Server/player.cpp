@@ -151,6 +151,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 
     attack_fuel=0;
     pc_rebate=0;
+    pc_craft_talent=0;
     pc_up=0;
 
     // SESSION

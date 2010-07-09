@@ -486,9 +486,10 @@ bool CPlayer::loaddata( )
         saveskills();
     }
 
-    //LMA: % rebate and bonus union points
+    //LMA: % rebate and bonus union points and craft talent.
     pc_rebate=0;
     pc_up=0;
+    pc_craft_talent=0;
 
     //LMA: summon jauge:
     summon_jauge=50;
@@ -501,9 +502,32 @@ bool CPlayer::loaddata( )
             continue;
         }
 
-        if (cskills[i].thisskill->buff[0]==59)
+        for(int j=0;j<3;j++)
         {
-            pc_rebate+=cskills[i].thisskill->value2[0];
+            if(cskills[i].thisskill->buff[j]==0)
+            {
+                continue;
+            }
+
+            if (cskills[i].thisskill->buff[j]==59)
+            {
+                pc_rebate+=cskills[i].thisskill->value2[j];
+                continue;
+            }
+
+            if (cskills[i].thisskill->buff[j]==70)
+            {
+                pc_craft_talent+=cskills[i].thisskill->value1[j];
+                continue;
+            }
+
+            //LMA: summon jauge.
+            if (cskills[i].thisskill->buff[j]==62)
+            {
+                summon_jauge+=cskills[i].thisskill->value1[j];
+                continue;
+            }
+
         }
 
         //Union points (no stats?)
@@ -512,18 +536,13 @@ bool CPlayer::loaddata( )
             pc_up=50;
         }
 
-        //LMA: summon jauge.
-        if (cskills[i].thisskill->buff[0]==62)
-        {
-            summon_jauge+=cskills[i].thisskill->value1[0];
-        }
-
         //LMA: we reset the skills cooldown.
         cskills[i].cooldown_skill=0;
     }
 
-    Log(MSG_INFO,"%s:: summon jauge %i",CharInfo->charname,summon_jauge);
+    Log(MSG_INFO,"%s:: craft talent %%bonus is %i",pc_craft_talent);
 
+    //Log(MSG_INFO,"%s:: summon jauge %i",CharInfo->charname,summon_jauge);
 
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem,sp_value FROM items WHERE owner=%i", CharInfo->charid);
     if(result==NULL) return false;
@@ -941,6 +960,9 @@ void CPlayer::saveskills( )
     char mclass[1024];
     char mlevel[1024];
 
+
+    pc_craft_talent=0;
+
     //class skills and level.
     for(UINT i=0;i<MAX_CLASS_SKILL;i++)
     {
@@ -955,18 +977,35 @@ void CPlayer::saveskills( )
            sprintf(&slevel[strlen(slevel)], ",%i",cskills[i].level);
         }
 
-        //LMA: % dealer rebate and summon jauge.
+        //LMA: % dealer rebate and summon jauge and craft talent.
         if (cskills[i].thisskill!=NULL)
         {
-            if (cskills[i].thisskill->buff[0]==59)
+            for(int j=0;j<3;j++)
             {
-                pc_temp+=cskills[i].thisskill->value2[0];
-            }
+                if(cskills[i].thisskill->buff[j]==0)
+                {
+                    continue;
+                }
 
-            //LMA: summon jauge.
-            if (cskills[i].thisskill->buff[0]==62)
-            {
-                val_summon+=cskills[i].thisskill->value1[0];
+                if (cskills[i].thisskill->buff[j]==59)
+                {
+                    pc_temp+=cskills[i].thisskill->value2[j];
+                    continue;
+                }
+
+                if (cskills[i].thisskill->buff[j]==70)
+                {
+                    pc_craft_talent+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
+                //LMA: summon jauge.
+                if (cskills[i].thisskill->buff[j]==62)
+                {
+                    val_summon+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
             }
 
         }
@@ -987,18 +1026,35 @@ void CPlayer::saveskills( )
            sprintf(&ulevel[strlen(ulevel)], ",%i",cskills[i].level);
         }
 
-        //LMA: % dealer rebate.
+        //LMA: % dealer rebate and craft talent.
         if (cskills[i].thisskill!=NULL)
         {
-            if (cskills[i].thisskill->buff[0]==59)
+            for(int j=0;j<3;j++)
             {
-                pc_temp+=cskills[i].thisskill->value2[0];
-            }
+                if(cskills[i].thisskill->buff[j]==0)
+                {
+                    continue;
+                }
 
-            //LMA: summon jauge.
-            if (cskills[i].thisskill->buff[0]==62)
-            {
-                val_summon+=cskills[i].thisskill->value1[0];
+                if (cskills[i].thisskill->buff[j]==59)
+                {
+                    pc_temp+=cskills[i].thisskill->value2[j];
+                    continue;
+                }
+
+                if (cskills[i].thisskill->buff[j]==70)
+                {
+                    pc_craft_talent+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
+                //LMA: summon jauge.
+                if (cskills[i].thisskill->buff[j]==62)
+                {
+                    val_summon+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
             }
 
         }
@@ -1022,22 +1078,38 @@ void CPlayer::saveskills( )
         //LMA: % dealer rebate and other stuff.
         if (cskills[i].thisskill!=NULL)
         {
-            //Dealer
-            if (cskills[i].thisskill->buff[0]==59)
+            for(int j=0;j<3;j++)
             {
-                pc_temp+=cskills[i].thisskill->value2[0];
+                if(cskills[i].thisskill->buff[j]==0)
+                {
+                    continue;
+                }
+
+                if (cskills[i].thisskill->buff[j]==59)
+                {
+                    pc_temp+=cskills[i].thisskill->value2[j];
+                    continue;
+                }
+
+                if (cskills[i].thisskill->buff[j]==70)
+                {
+                    pc_craft_talent+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
+                //LMA: summon jauge.
+                if (cskills[i].thisskill->buff[j]==62)
+                {
+                    val_summon+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
             }
 
             //Union points (no stats?)
             if (cskills[i].thisskill->id==5500)
             {
                 pc_union=50;
-            }
-
-            //LMA: summon jauge.
-            if (cskills[i].thisskill->buff[0]==62)
-            {
-                val_summon+=cskills[i].thisskill->value1[0];
             }
 
         }
@@ -1052,18 +1124,35 @@ void CPlayer::saveskills( )
         else
             sprintf(&basic[strlen(basic)], ",%i",cskills[i].id);
 
-        //LMA: % dealer rebate.
+        //LMA: % dealer rebate and craft talent.
         if (cskills[i].thisskill!=NULL)
         {
-            if (cskills[i].thisskill->buff[0]==59)
+            for(int j=0;j<3;j++)
             {
-                pc_temp+=cskills[i].thisskill->value2[0];
-            }
+                if(cskills[i].thisskill->buff[j]==0)
+                {
+                    continue;
+                }
 
-            //LMA: summon jauge.
-            if (cskills[i].thisskill->buff[0]==62)
-            {
-                val_summon+=cskills[i].thisskill->value1[0];
+                if (cskills[i].thisskill->buff[j]==59)
+                {
+                    pc_temp+=cskills[i].thisskill->value2[j];
+                    continue;
+                }
+
+                if (cskills[i].thisskill->buff[j]==70)
+                {
+                    pc_craft_talent+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
+                //LMA: summon jauge.
+                if (cskills[i].thisskill->buff[j]==62)
+                {
+                    val_summon+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
             }
 
         }
@@ -1078,18 +1167,35 @@ void CPlayer::saveskills( )
         else
             sprintf(&drive[strlen(drive)], ",%i",cskills[i]);
 
-        //LMA: % dealer rebate.
+        //LMA: % dealer rebate and craft talent
         if (cskills[i].thisskill!=NULL)
         {
-            if (cskills[i].thisskill->buff[0]==59)
+            for(int j=0;j<3;j++)
             {
-                pc_temp+=cskills[i].thisskill->value2[0];
-            }
+                if(cskills[i].thisskill->buff[j]==0)
+                {
+                    continue;
+                }
 
-            //LMA: summon jauge.
-            if (cskills[i].thisskill->buff[0]==62)
-            {
-                val_summon+=cskills[i].thisskill->value1[0];
+                if (cskills[i].thisskill->buff[j]==59)
+                {
+                    pc_temp+=cskills[i].thisskill->value2[j];
+                    continue;
+                }
+
+                if (cskills[i].thisskill->buff[j]==70)
+                {
+                    pc_craft_talent+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
+                //LMA: summon jauge.
+                if (cskills[i].thisskill->buff[j]==62)
+                {
+                    val_summon+=cskills[i].thisskill->value1[j];
+                    continue;
+                }
+
             }
 
         }
