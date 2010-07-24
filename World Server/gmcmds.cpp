@@ -3699,7 +3699,6 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
      {
         GServer->SendPM(thisclient, "You have to be lvl 250 to reborn !");
      }
-
      else
      {
 

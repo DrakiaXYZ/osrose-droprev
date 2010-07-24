@@ -333,7 +333,6 @@ int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
 {
     //otherclient is "this" and we send the packet to "player".
 
-
     //impossible case???
     if(player!=NULL&&(!(otherclient->Party->party==NULL || otherclient->Party->party != player->Party->party || otherclient->Party->party == player->Party->party)))
     {

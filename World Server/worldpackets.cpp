@@ -5824,6 +5824,8 @@ bool CWorldServer::pakBuyShop( CPlayer* thisclient, CPacket* P )
 // Sell in Shop
 bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
 {
+    //LMA: otherclient is in a shop and this part is the wishlist (buying list).
+    //so thisclient sells an item to other client.
     WORD otherclientid = GETWORD((*P),0);
     BYTE action = GETBYTE((*P),2);
     switch(action)
@@ -5833,16 +5835,63 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
             CPlayer* otherclient = GetClientByID( otherclientid, thisclient->Position->Map );
             if( otherclient==NULL )
                 return true;
+
+            //LMA: checking if a player (the buyer) is in a shop (hack check).
+            if (!otherclient->Shop->open)
+            {
+                return true;
+            }
+
             unsigned int count = 0;
             BYTE invslot = GETBYTE((*P),3);
             BYTE slot = GETBYTE((*P),4);
             if(!CheckInventorySlot( thisclient, slot))
                 return false;
+
+            //LMA: checking buyer slot too.
+            if(slot<0||slot>=30)
+            {
+                Log(MSG_HACK,"%s tried to sell something to %s in wrong slot %i",thisclient->CharInfo->charname,otherclient->CharInfo->charname,slot);
+                return true;
+            }
+
             CItem newitem =  thisclient->items[invslot];
+
+            //LMA: some checks, is the item sent by seller is the one expected by buyer?
+            if(thisclient->items[invslot].itemtype==0||thisclient->items[invslot].itemtype==0||thisclient->items[invslot].count==0)
+            {
+                Log(MSG_HACK,"%s tried to sell wrong item %u::%u to %s",thisclient->CharInfo->charname,thisclient->items[invslot].itemtype,thisclient->items[invslot].itemnum,otherclient->CharInfo->charname);
+                return true;
+            }
+
+            if((thisclient->items[invslot].itemtype!=otherclient->Shop->BuyingList[slot].item.itemtype)||(thisclient->items[invslot].itemnum!=otherclient->Shop->BuyingList[slot].item.itemnum))
+            {
+                Log(MSG_HACK,"%s tried to sell %u::%u to %s who was expecting %u::%u",thisclient->CharInfo->charname,thisclient->items[invslot].itemtype,thisclient->items[invslot].itemnum,otherclient->CharInfo->charname,otherclient->Shop->BuyingList[slot].item.itemtype,otherclient->Shop->BuyingList[slot].item.itemnum);
+                return true;
+            }
+
             if(thisclient->items[invslot].itemtype>9 && thisclient->items[invslot].itemtype<14)
+            {
                 count = GETWORD((*P),9);
+            }
             else
+            {
                 count = 1;
+            }
+
+            //LMA: check on amount.
+            if(count>thisclient->items[invslot].count)
+            {
+                Log(MSG_HACK,"%s tried to sell too many items to %s, sells %u but has only %u",thisclient->CharInfo->charname,otherclient->CharInfo->charname,count,thisclient->items[invslot].count);
+                return true;
+            }
+
+            //LMA: checking count since we take money here...
+            if(count>otherclient->Shop->BuyingList[slot].count)
+            {
+                count=otherclient->Shop->BuyingList[slot].count;
+            }
+
             newitem.count = count;
             if( otherclient->CharInfo->Zulies<(otherclient->Shop->BuyingList[slot].price*count) )
                 return true;
@@ -5851,6 +5900,7 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
                 return true;
             if( thisclient->items[invslot].count<count )
                 return true;
+
             thisclient->CharInfo->Zulies += (otherclient->Shop->BuyingList[slot].price*count);
             otherclient->CharInfo->Zulies -= (otherclient->Shop->BuyingList[slot].price*count);
             if(thisclient->items[invslot].itemtype>9 &&
@@ -5907,8 +5957,8 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
             ADDBYTE    ( pak, invslot );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[invslot] ) );
             ADDDWORD   ( pak, BuildItemData( thisclient->items[invslot] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             thisclient->client->SendPacket( &pak );
 
             //update inventory (buyer)
@@ -5918,8 +5968,8 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
             ADDBYTE    ( pak, newslot );
             ADDDWORD   ( pak, BuildItemHead( otherclient->items[newslot] ) );
             ADDDWORD   ( pak, BuildItemData( otherclient->items[newslot] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             otherclient->client->SendPacket( &pak );
 
             //LMA: Saving slots
@@ -5935,8 +5985,8 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
             ADDBYTE    ( pak, slot );
             ADDDWORD   ( pak, BuildItemHead( thisitem ) );
             ADDDWORD   ( pak, BuildItemData( thisitem ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             SendToVisible( &pak, otherclient );
         }
         break;
