@@ -26,6 +26,7 @@ CWorldServer::CWorldServer( string fn )
     #ifdef STATICID
     //LMA: Client ID Static.
     last_cid=1;
+    last_pid=1;
     #endif
 
     filename = fn;

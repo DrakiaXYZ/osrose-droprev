@@ -22,8 +22,9 @@
 #include "worldserver.h"
 
 #ifdef STATICID
-//LMA: Static for CID.
+//LMA: Static for CID and PID.
 unsigned CWorldServer::last_cid=1;
+unsigned CWorldServer::last_pid=1;
 #endif
 
 CWorldServer* GServer;

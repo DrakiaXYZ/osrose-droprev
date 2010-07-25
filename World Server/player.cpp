@@ -329,7 +329,7 @@ bool CPlayer::UpdateValues( )
 
 
 //LMA: pvp code is here now, should be more clear...
-int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
+long int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
 {
     //otherclient is "this" and we send the packet to "player".
 
@@ -404,8 +404,20 @@ int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
             return otherclient->Party->party;*/
 
             //LMA: for the moment, party have no ID :(
-            Log(MSG_WARNING,"PVP: we don't have an ID for party...");
-            return 0x00;
+            //Log(MSG_WARNING,"PVP: we don't have an ID for party...");
+            //return 0x00;
+
+            //LMA: party have Ids now ;)
+            if(Party->party!=NULL)
+            {
+                return (Party->party->PartyId + 0x100);
+            }
+            else
+            {
+                Log(MSG_WARNING,"Player %s should send a party pvp but isn't in any party...",CharInfo->charname);
+                return (clientid + 0x100);
+            }
+
         }
 
         default:

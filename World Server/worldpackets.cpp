@@ -5646,7 +5646,7 @@ bool CWorldServer::pakShowShop( CPlayer* thisclient, CPacket* P )
     return true;
 }
 
-// Buy From Shop
+// Buy From player Shop
 //LMA: checking for Zuly hacks
 bool CWorldServer::pakBuyShop( CPlayer* thisclient, CPacket* P )
 {
@@ -5660,14 +5660,41 @@ bool CWorldServer::pakBuyShop( CPlayer* thisclient, CPacket* P )
             if( otherclient==NULL )
                 return true;
             BYTE slot = GETBYTE((*P),3);
+
+            //LMA: checking buyer slot too.
+            if(slot<0||slot>=30)
+            {
+                Log(MSG_HACK,"%s tried to buy something from %s in wrong slot %i",thisclient->CharInfo->charname,otherclient->CharInfo->charname,slot);
+                return true;
+            }
+
             unsigned int count = 0;
             unsigned int invslot = otherclient->Shop->SellingList[slot].slot;
             CItem newitem =  otherclient->items[invslot];
-            if(otherclient->items[invslot].itemtype>9 &&
-                    otherclient->items[invslot].itemtype<14)
+
+            //LMA: some checks on the item sold.
+            if(newitem.itemtype==0||newitem.itemtype==0||newitem.count==0)
+            {
+                Log(MSG_HACK,"%s tried to buy wrong item %u::%u from %s",thisclient->CharInfo->charname,newitem.itemtype,newitem.itemnum,otherclient->CharInfo->charname);
+                return true;
+            }
+
+            if(otherclient->items[invslot].itemtype>9&&otherclient->items[invslot].itemtype<14)
+            {
                 count = GETWORD((*P),8);
+            }
             else
+            {
                 count = 1;
+            }
+
+            //LMA: check on amount.
+            if(count>otherclient->Shop->SellingList[slot].count)
+            {
+                Log(MSG_HACK,"%s tried to buy too many items from %s, buys %u but seller sells only %u",thisclient->CharInfo->charname,otherclient->CharInfo->charname,count,otherclient->Shop->SellingList[slot].count);
+                return true;
+            }
+
             if( count > otherclient->Shop->SellingList[slot].count )
                 return true;
             newitem.count = count;

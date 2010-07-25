@@ -448,6 +448,77 @@ unsigned CWorldServer::GetNewClientID( )
 }
 #endif
 
+
+//LMA: same for Party Id.
+#ifdef STATICID
+// This function gets a new clientID for a partyID
+//LMA: serial version with a mutex as well...
+unsigned CWorldServer::GetNewPartyID( )
+{
+    //LMA: if the thread is already blocked, it should return EBUSY else 0
+    UINT res_blockP=pthread_mutex_trylock(&GServer->PlayerMutex);
+    UINT res_blockM=pthread_mutex_trylock(&GServer->MapMutex);
+
+	for (unsigned i=last_pid; i<0xffff; i++)
+    {
+		if (!PartyIDList[i])
+        {
+			PartyIDList[i] = true;
+			last_pid=i+1;
+            if (res_blockP==0)
+            {
+                pthread_mutex_unlock( &GServer->PlayerMutex );
+            }
+
+            if(res_blockM==0)
+            {
+                pthread_mutex_unlock( &GServer->MapMutex );
+            }
+
+			return i;
+		}
+
+	}
+
+	//Not found at the first pass, let's loop again.
+	for (unsigned i=1; i<=last_pid; i++)
+    {
+		if (!PartyIDList[i])
+        {
+			PartyIDList[i] = true;
+			last_pid=i+1;
+            if (res_blockP==0)
+            {
+                pthread_mutex_unlock( &GServer->PlayerMutex );
+            }
+
+            if(res_blockM==0)
+            {
+                pthread_mutex_unlock( &GServer->MapMutex );
+            }
+
+			return i;
+		}
+
+	}
+
+    //TODO: cleaning function there?
+    Log(MSG_INFO,"PCID ERR");
+
+    if (res_blockP==0)
+    {
+        pthread_mutex_unlock( &GServer->PlayerMutex );
+    }
+
+    if(res_blockM==0)
+    {
+        pthread_mutex_unlock( &GServer->MapMutex );
+    }
+
+
+	return 0;
+}
+#else
 //LMA: Getting a Party ID.
 unsigned CWorldServer::GetNewPartyID( )
 {
@@ -463,6 +534,7 @@ unsigned CWorldServer::GetNewPartyID( )
     Log(MSG_INFO,"PCID ERR");
 	return 0;
 }
+#endif
 
 /*
 //LMATESTCID: test function for CID's
@@ -2057,9 +2129,9 @@ bool CWorldServer::RemoveParty( CParty* thisparty )
     {
         if(PartyList.at(i)==thisparty)
         {
+            PartyList.erase(PartyList.begin( )+i );
             //LMA: freeing the ID as well.
             PartyIDList[thisparty->PartyId]=false;
-            PartyList.erase(PartyList.begin( )+i );
             return true;
         }
     }

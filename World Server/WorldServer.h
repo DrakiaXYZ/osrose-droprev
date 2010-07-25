@@ -95,9 +95,10 @@ extern UINT fskill;
 class CWorldServer : public CServerSocket
 {
     public:
-        //LMA: static client ID
+        //LMA: static client ID and party ID.
         #ifdef STATICID
         static unsigned last_cid;
+        static unsigned last_pid;
         #endif
     	//------------------ MAIN (worldserver.cpp)
     	CWorldServer ( string );

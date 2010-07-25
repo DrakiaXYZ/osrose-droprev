@@ -59,7 +59,7 @@ class CPlayer: public CCharacter
     bool isInvisibleMode;
 
     //LMA: Pvp flag
-    int pvp_id;
+    long int pvp_id;
 
     //LMA: Warp flag
     int map_warp_zone;
@@ -249,7 +249,7 @@ class CPlayer: public CCharacter
     bool VisiblityList( );
     bool ForceRefreshMonster(bool refresh_all, UINT monster_id);      //LMA: force refresh (20070621-211100)
     bool SpawnToPlayer( CPlayer* player, CPlayer* otherclient );
-    int ReturnPvp( CPlayer* player, CPlayer* otherclient );    //LMA: for PVP.
+    long int ReturnPvp( CPlayer* player, CPlayer* otherclient );    //LMA: for PVP.
     bool UpdateValues( );
     bool RefreshHPMP();  //LMA HP / MP Jumping
     void ReduceABC(int amount=1,bool do_packet=true);
