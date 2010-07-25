@@ -5659,6 +5659,13 @@ bool CWorldServer::pakBuyShop( CPlayer* thisclient, CPacket* P )
             CPlayer* otherclient = GetClientByID( otherclientid, thisclient->Position->Map );
             if( otherclient==NULL )
                 return true;
+
+            //LMA: checking if a player (the seller) is in a shop (hack check).
+            if (!otherclient->Shop->open)
+            {
+                return true;
+            }
+
             BYTE slot = GETBYTE((*P),3);
 
             //LMA: checking buyer slot too.
