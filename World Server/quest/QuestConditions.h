@@ -220,7 +220,8 @@ struct STR_COND_026 {
 };
 
 struct STR_COND_027 {
-	word nPOINT;
+    //LMA: dword...
+	dword nPOINT;
 	byte btOP;
 };
 
