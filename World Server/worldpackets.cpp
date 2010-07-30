@@ -5669,7 +5669,7 @@ bool CWorldServer::pakBuyShop( CPlayer* thisclient, CPacket* P )
             BYTE slot = GETBYTE((*P),3);
 
             //LMA: checking buyer slot too.
-            if(slot<0||slot>=30)
+            if(slot>=30)
             {
                 Log(MSG_HACK,"%s tried to buy something from %s in wrong slot %i",thisclient->CharInfo->charname,otherclient->CharInfo->charname,slot);
                 return true;
@@ -5883,7 +5883,7 @@ bool CWorldServer::pakSellShop( CPlayer* thisclient, CPacket* P )
                 return false;
 
             //LMA: checking buyer slot too.
-            if(slot<0||slot>=30)
+            if(slot>=30)
             {
                 Log(MSG_HACK,"%s tried to sell something to %s in wrong slot %i",thisclient->CharInfo->charname,otherclient->CharInfo->charname,slot);
                 return true;

@@ -540,7 +540,7 @@ bool CPlayer::loaddata( )
         cskills[i].cooldown_skill=0;
     }
 
-    Log(MSG_INFO,"%s:: craft talent %%bonus is %i",pc_craft_talent);
+    Log(MSG_INFO,"%s:: craft talent %%bonus is %i",CharInfo->charname,pc_craft_talent);
 
     //Log(MSG_INFO,"%s:: summon jauge %i",CharInfo->charname,summon_jauge);
 

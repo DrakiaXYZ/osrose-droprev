@@ -1048,6 +1048,12 @@ AICOND(024)
     LogDebug("AIC24 time h(%i>=%i>=%i)? m(%i>=%i>=%i)?",temph1,sTIME.wHour,temph,tempm1,sTIME.wMinute,tempm);
     if(wMin >= wFrom && wMin <= wTo)
     {
+        //LMA: debug for Leum.
+        if(AipId==1113)
+        {
+            Log(MSG_WARNING,"AIC24 LEUM time h(%i>=%i>=%i)? m(%i>=%i>=%i) SUCCESS",temph1,sTIME.wHour,temph,tempm1,sTIME.wMinute,tempm);
+        }
+
         LogDebug("Time check success");
     	return AI_SUCCESS;
     }

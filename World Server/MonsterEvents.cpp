@@ -302,9 +302,16 @@ void CMonster::DoAi(int ainumberorg,char type)
     int nb_turns=0;
 
 
-    if(ainumber==25||ainumber==499)
+    /*if(ainumber==25||ainumber==499)
     {
         Log(MSG_INFO,"a monster does AIP index %i, type %i",type);
+        lma_debug=true;
+        LogDebugPriority(3);
+    }*/
+
+    //NPC Leum and chelsie and gawain
+    if(ainumber==1113||ainumber==1090||ainumber==1091)
+    {
         lma_debug=true;
         LogDebugPriority(3);
     }

@@ -116,15 +116,20 @@ QUESTCONDC(011){
 
     //LMA: We force the nb players required for UW.
     orgvalue=data->iValue;
-    if(ObjvarIndex==2&&monster->thisnpc->refNPC>=1088&&monster->thisnpc->refNPC<=1091&&(orgvalue==30||orgvalue==33))
+
+    //LMA: 2010/07/30: naRose changed its requirements from 30/33 to 20/23.
+    //if(ObjvarIndex==2&&monster->thisnpc->refNPC>=1088&&monster->thisnpc->refNPC<=1091&&(orgvalue==30||orgvalue==33))
+    if(ObjvarIndex==2&&monster->thisnpc->refNPC>=1088&&monster->thisnpc->refNPC<=1091&&(orgvalue==20||orgvalue==23))
     {
-        if(orgvalue==30&&data->btOp==2)
+        //if(orgvalue==30&&data->btOp==2)
+        if(orgvalue==20&&data->btOp==2)
         {
             orgvalue=GServer->UWNbPlayers;
             LogDebug("QSDCC11::UW We trapped NPC %i[%i]>=%i (replaces >= %i)",monster->thisnpc->refNPC,ObjvarIndex,orgvalue,data->iValue);
         }
 
-        if(orgvalue==33&&data->btOp==4)
+        //if(orgvalue==232&data->btOp==4)
+        if(orgvalue==23&&data->btOp==4)
         {
             orgvalue=GServer->UWNbPlayers+3;
             LogDebug("QSDCC11::UW We trapped NPC %i[%i]<=%i (replaces <= %i)",monster->thisnpc->refNPC,ObjvarIndex,orgvalue,data->iValue);

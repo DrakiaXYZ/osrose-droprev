@@ -1703,6 +1703,144 @@ else if (strcmp(command, "itemstat")==0)
         Log( MSG_GMACTION, " %s : /levelup" , thisclient->CharInfo->charname);
 		thisclient->CharInfo->Exp += thisclient->GetLevelEXP();
 	}
+	else if(strcmp(command, "settestquests")==0)
+    {
+        //LMA: only for tests! Don't use it.
+        for (int k=0;k<10;k++)
+        {
+            if(thisclient->quest.quests[4].Variables[k]==0)
+            {
+                thisclient->quest.quests[4].Variables[k]=k+1;
+            }
+
+        }
+
+        for (int k=0;k<4;k++)
+        {
+            thisclient->quest.quests[4].Switches[k]=k+1;
+        }
+
+        thisclient->quest.quests[4].Items[0].refine=15;
+        thisclient->quest.quests[4].Items[0].lifespan=100;
+        thisclient->quest.quests[4].Items[0].durability=99;
+        thisclient->quest.quests[4].Items[0].socketed=true;
+        thisclient->quest.quests[4].Items[0].appraised=true;
+        thisclient->quest.quests[4].Items[0].stats=111;
+        thisclient->quest.quests[4].Items[0].gem=301;
+        thisclient->quest.quests[4].Items[0].durabLeft=98;
+        thisclient->quest.quests[4].Items[0].sig_head=1111;
+        thisclient->quest.quests[4].Items[0].sig_data=2222;
+        thisclient->quest.quests[4].Items[0].sig_gem=3333;
+        thisclient->quest.quests[4].Items[0].sp_value=444;
+        thisclient->quest.quests[4].Items[0].last_sp_value=555;
+
+
+        thisclient->quest.quests[4].Items[4].itemtype=2;
+        thisclient->quest.quests[4].Items[4].itemnum=222;
+        thisclient->quest.quests[4].Items[4].count=99;
+        thisclient->quest.quests[4].Items[4].refine=15;
+        thisclient->quest.quests[4].Items[4].lifespan=100;
+        thisclient->quest.quests[4].Items[4].durability=99;
+        thisclient->quest.quests[4].Items[4].socketed=true;
+        thisclient->quest.quests[4].Items[4].appraised=true;
+        thisclient->quest.quests[4].Items[4].stats=111;
+        thisclient->quest.quests[4].Items[4].gem=301;
+        thisclient->quest.quests[4].Items[4].durabLeft=98;
+        thisclient->quest.quests[4].Items[4].sig_head=1111;
+        thisclient->quest.quests[4].Items[4].sig_data=2222;
+        thisclient->quest.quests[4].Items[4].sig_gem=3333;
+        thisclient->quest.quests[4].Items[4].sp_value=444;
+        thisclient->quest.quests[4].Items[4].last_sp_value=555;
+
+        for (int k=0;k<6;k++)
+        {
+            thisclient->quest.quests[4].unknown[k]=k+1;
+        }
+
+
+        return true;
+    }
+   else if(strcmp(command, "dumpquests")==0)
+    {
+        //dump quest informations to server side;
+        if(Config.Command_Listqflag > thisclient->Session->accesslevel)
+           return true;
+
+        Log(MSG_INFO,"Quest data dump for player %u::%s",thisclient->CharInfo->charid,thisclient->CharInfo->charname);
+        for (int k=0;k<5;k++)
+        {
+            Log(MSG_INFO,"EpisodeVar[%i]=%u",k,thisclient->quest.EpisodeVar[k]);
+        }
+
+        for (int k=0;k<3;k++)
+        {
+            Log(MSG_INFO,"JobVar[%i]=%u",k,thisclient->quest.JobVar[k]);
+        }
+
+        for (int k=0;k<7;k++)
+        {
+            Log(MSG_INFO,"PlanetVar[%i]=%u",k,thisclient->quest.PlanetVar[k]);
+        }
+
+        for (int k=0;k<10;k++)
+        {
+            Log(MSG_INFO,"UnionVar[%i]=%u",k,thisclient->quest.UnionVar[k]);
+        }
+
+        //quests here.
+        for (int k=0;k<10;k++)
+        {
+            Log(MSG_INFO,"Quest %i::",k);
+            Log(MSG_INFO,"-> QuestID=%u",thisclient->quest.quests[k].QuestID);
+            Log(MSG_INFO,"-> StartTime=%u",thisclient->quest.quests[k].StartTime);
+
+            for(int j=0;j<10;j++)
+            {
+                Log(MSG_INFO,"-> Variables[%i]=%u",j,thisclient->quest.quests[k].Variables[j]);
+            }
+
+            for(int j=0;j<4;j++)
+            {
+                Log(MSG_INFO,"-> Switches[%i]=%u",j,thisclient->quest.quests[k].Switches[j]);
+            }
+
+            //items here!
+            for(int j=0;j<5;j++)
+            {
+                Log(MSG_INFO,"-> Item %i::",j);
+                Log(MSG_INFO,"--> %i * %u::%u",thisclient->quest.quests[k].Items[j].count,thisclient->quest.quests[k].Items[j].itemtype,thisclient->quest.quests[k].Items[j].itemnum);
+                Log(MSG_INFO,"--> ref=%u, life=%u, dur=%u, sock=%u, appr=%u",thisclient->quest.quests[k].Items[j].refine,thisclient->quest.quests[k].Items[j].lifespan,thisclient->quest.quests[k].Items[j].durability,thisclient->quest.quests[k].Items[j].socketed,thisclient->quest.quests[k].Items[j].appraised);
+                Log(MSG_INFO,"--> St=%u, gem=%u, duraL=%u",thisclient->quest.quests[k].Items[j].stats,thisclient->quest.quests[k].Items[j].gem,thisclient->quest.quests[k].Items[j].durabLeft);
+                Log(MSG_INFO,"--> sig_head=%u, sig_data=%u, sig_gem=%u",thisclient->quest.quests[k].Items[j].sig_head,thisclient->quest.quests[k].Items[j].sig_data,thisclient->quest.quests[k].Items[j].sig_gem);
+                Log(MSG_INFO,"--> sp=%u, lastsp=%u",thisclient->quest.quests[k].Items[j].sp_value,thisclient->quest.quests[k].Items[j].last_sp_value);
+            }
+            //end of items.
+
+            for(int j=0;j<6;j++)
+            {
+                Log(MSG_INFO,"-> unknown[%i]=%u",j,thisclient->quest.quests[k].unknown[j]);
+            }
+
+        }
+        //end of quests
+
+        for (int k=0;k<0x40;k++)
+        {
+            Log(MSG_INFO,"flags[%i]=%u",k,thisclient->quest.flags[k]);
+        }
+
+        for (int k=0;k<5;k++)
+        {
+            Log(MSG_INFO,"ClanVar[%i]=%u",k,thisclient->quest.ClanVar[k]);
+        }
+
+        Log(MSG_INFO,"RefNPC=%u",thisclient->quest.RefNPC);
+
+        Log(MSG_INFO,"END OF Quest data dump for player %u::%s",thisclient->CharInfo->charid,thisclient->CharInfo->charname);
+
+
+        return true;
+    }
    else if(strcmp(command, "listqflag")==0)
     {
         if(Config.Command_Listqflag > thisclient->Session->accesslevel)
@@ -2879,7 +3017,7 @@ else if (strcmp(command, "itemstat")==0)
         }
         else
         {
-            SendPM( thisclient, "%s: /setuw %i (UW will forced to start in %i minutes)",thisclient->CharInfo->charname,time);
+            SendPM( thisclient, "%s: /setuw %i (UW will forced to start in %i minutes)",thisclient->CharInfo->charname,time,time);
         }
 
 

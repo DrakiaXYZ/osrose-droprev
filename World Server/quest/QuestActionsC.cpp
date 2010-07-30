@@ -428,21 +428,39 @@ QUESTREWDC(012)
     if(thisMonster->thisnpc->refNPC!=0)
         good_npc=thisMonster->thisnpc->refNPC;
 
+    //LMA: sometimes another NPC/monster calls another NPC to shoot.
+    //we have to find the right one.
+    int good_map=thisMonster->Position->Map;
+    if (thisMonster->thisnpc->refNPC!=0&&thisMonster->thisnpc->refNPC!=thisMonster->aip_npctype)
+    {
+        CNPC* findNPC=GServer->GetNPCByType(thisMonster->thisnpc->refNPC);
+        if(findNPC!=NULL)
+        {
+            good_map=findNPC->posMap;
+            Log(MSG_WARNING,"QSDAC012:: map changed from %i to %i",thisMonster->Position->Map,good_map);
+        }
+
+    }
+
 	if(data->btMsgType == 1)
 	{
 	    //LogDebug("%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
         //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
         //LogDebug("%s (%i) shouts Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
         //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
+
         LogDebug("%s (%i) shouts Nb %i::%s",GServer->GetSTLMonsterNameByID(good_npc),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
-        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetSTLMonsterNameByID(good_npc));
+        //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetSTLMonsterNameByID(good_npc));
+        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetSTLMonsterNameByID(good_npc),good_map);
 	}
 	else if(data->btMsgType == 2)
 	{
 	    //LogDebug("%s (%i) announces Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
 	    //GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
+
 	    LogDebug("%s (%i) announces Nb %i::%s",GServer->GetSTLMonsterNameByID(good_npc),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
-	    GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetSTLMonsterNameByID(good_npc),thisMonster->Position->Map);
+	    //GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetSTLMonsterNameByID(good_npc),thisMonster->Position->Map);
+	    GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetSTLMonsterNameByID(good_npc),good_map);
 	}
 
 
