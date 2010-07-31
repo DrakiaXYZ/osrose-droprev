@@ -236,7 +236,10 @@ int CCharacter::ExecuteQuestTrigger(dword hash, UINT index)
     for (dword i = 0; i < trigger->ActionCount; i++)
     {
       int command = trigger->Actions[i]->opcode;
-      if ((command > 28 || command < 0) && command != 34)
+
+       //LMA: command 29 is ok.
+      //if ((command > 28 || command < 0) && command != 34)
+      if ((command > 29 || command < 0) && command != 34)
       {
           LogDebug( "EXTC::unknown Action command %i", command);
           continue;

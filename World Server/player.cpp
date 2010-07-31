@@ -357,7 +357,8 @@ long int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
         //should be 2, set by QSDzone from maps at warp most of the time.
         if(pvp_id==-1)
         {
-            Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1!",CharInfo->charname,map->id);
+            Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1! Forced to 2.",CharInfo->charname,map->id);
+            pvp_id=2;
         }
 
         //Log(MSG_WARNING,"%s, not pvp map (%i), we send pvp_id==%i",CharInfo->charname,map->id,pvp_id);
@@ -373,11 +374,12 @@ long int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
             //We rely on pvp_id
             if(pvp_id==-1)
             {
-                Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1 (2)!",CharInfo->charname,map->id);
+                Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1 (2)! Forced to pvp.",CharInfo->charname,map->id);
             }
 
             //Log(MSG_WARNING,"%s, pvp map (%i), we send pvp_id==%i (pvp_id)",CharInfo->charname,map->id,pvp_id);
-            return pvp_id;
+            //return pvp_id;
+            return (clientid + 0x100);
         }
         break;
         case 0:

@@ -310,8 +310,18 @@ void CMonster::DoAi(int ainumberorg,char type)
     }*/
 
     //NPC Leum and chelsie and gawain
-    if(ainumber==1113||ainumber==1090||ainumber==1091)
+    /*if(ainumber==1113||ainumber==1090||ainumber==1091)
     {
+        lma_debug=true;
+        LogDebugPriority(3);
+    }*/
+
+    //void NPCs used in Ulverick stuff (NPC 1791 to 1795 but aip is 471 to 475).
+    //Only for 471 / 1791 for now.
+    //if(ainumber>=471&&ainumber<=475)
+    if(ainumber==471)
+    {
+        //Log(MSG_INFO,"Doing AI for NPC %u",ainumber);
         lma_debug=true;
         LogDebugPriority(3);
     }

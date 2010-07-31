@@ -2043,7 +2043,10 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet, UINT index)
     for (dword i = 0; i < trigger->ActionCount; i++)
     {
       int command = trigger->Actions[i]->opcode;
-      if ((command > 28 || command < 0) && command != 34)
+
+      //LMA: command 29 is ok.
+      //if ((command > 28 || command < 0) && command != 34)
+      if ((command > 29 || command < 0) && command != 34)
       {
           LogDebug( "unknown Action command %i", command);
           Log(MSG_WARNING,"unknown Action command %i", command);

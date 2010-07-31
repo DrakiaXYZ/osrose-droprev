@@ -1824,9 +1824,10 @@ else if (strcmp(command, "itemstat")==0)
         }
         //end of quests
 
-        for (int k=0;k<0x40;k++)
+        //quest flags
+        for (int k=0;k<512;k++)
         {
-            Log(MSG_INFO,"flags[%i]=%u",k,thisclient->quest.flags[k]);
+            Log(MSG_INFO,"flags[%i]=%u",k,thisclient->quest.GetFlag(k));
         }
 
         for (int k=0;k<5;k++)
@@ -1847,16 +1848,20 @@ else if (strcmp(command, "itemstat")==0)
            return true;
         SendPM(thisclient, "Quest Flags");
         string buffer = "";
-        for (dword i = 0; i < 0x40; i++) {
+
+        for (dword i = 0; i < 512; i++)
+        {
           char buf2[5];
-          sprintf(buf2, "%i ", thisclient->quest.flags[i]);
+          sprintf(buf2, "%i ", thisclient->quest.GetFlag(i));
           buffer.append(buf2);
 //        if (i > 0 && i%10 == 0) {
-        if ((i + 1) % 10 == 0) {
+        if ((i + 1) % 10 == 0)
+        {
           SendPM(thisclient, (char*)buffer.c_str());
           buffer = "";
         }
       }
+
       SendPM(thisclient, (char*)buffer.c_str());
     }
    else if(strcmp(command, "listquest")==0)
