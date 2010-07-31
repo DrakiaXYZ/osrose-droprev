@@ -389,6 +389,7 @@ void CWorldServer::LoadQuestData()
 	qstRewdFunc[26] = &QUEST_REWD_026;
 	qstRewdFunc[27] = &QUEST_REWD_027;
 	qstRewdFunc[28] = &QUEST_REWD_028;
+	qstRewdFunc[29] = &QUEST_REWD_029;
 	qstRewdFunc[34] = &QUEST_REWD_034;
 
 
@@ -454,6 +455,7 @@ void CWorldServer::LoadQuestData()
 	qstRewdFuncC[26] = &QUEST_REWDC_026;
 	qstRewdFuncC[27] = &QUEST_REWDC_027;
 	qstRewdFuncC[28] = &QUEST_REWDC_028;
+	qstRewdFuncC[29] = &QUEST_REWDC_029;
 	qstRewdFuncC[34] = &QUEST_REWDC_034;
 
 
