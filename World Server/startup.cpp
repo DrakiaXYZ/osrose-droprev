@@ -2503,12 +2503,15 @@ bool CWorldServer::LoadProductItem( )
         newproduct->item_0_family=STB_PRODUCT.rows[i][1];
         newproduct->item[0]=STB_PRODUCT.rows[i][2];
         newproduct->amount[0]=STB_PRODUCT.rows[i][3];
-        newproduct->item[1]=STB_PRODUCT.rows[i][4];
-        newproduct->amount[1]=STB_PRODUCT.rows[i][5];
-        newproduct->item[2]=STB_PRODUCT.rows[i][6];
-        newproduct->amount[2]=STB_PRODUCT.rows[i][7];
-        newproduct->item[3]=STB_PRODUCT.rows[i][8];
-        newproduct->amount[3]=STB_PRODUCT.rows[i][9];
+        newproduct->item_1_family=STB_PRODUCT.rows[i][4];
+        newproduct->item[1]=STB_PRODUCT.rows[i][5];
+        newproduct->amount[1]=STB_PRODUCT.rows[i][6];
+        newproduct->item_2_family=STB_PRODUCT.rows[i][7];
+        newproduct->item[2]=STB_PRODUCT.rows[i][8];
+        newproduct->amount[2]=STB_PRODUCT.rows[i][9];
+        newproduct->item_3_family=STB_PRODUCT.rows[i][10];
+        newproduct->item[3]=STB_PRODUCT.rows[i][11];
+        newproduct->amount[3]=STB_PRODUCT.rows[i][12];
         //ProductList.Data.push_back( newproduct );
         ProductList.Index[newproduct->id] = newproduct;
     }

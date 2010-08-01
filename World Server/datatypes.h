@@ -517,6 +517,9 @@ struct CProductData
 {
     UINT id;
     UINT item_0_family;
+    UINT item_1_family;
+    UINT item_2_family;
+    UINT item_3_family;
     /*UINT item[50];
     UINT amount[50];*/
     UINT item[4];
