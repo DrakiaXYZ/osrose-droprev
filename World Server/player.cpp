@@ -375,11 +375,11 @@ long int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
             if(pvp_id==-1)
             {
                 Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1 (2)! Forced to pvp.",CharInfo->charname,map->id);
+                return (clientid + 0x100);
             }
 
             //Log(MSG_WARNING,"%s, pvp map (%i), we send pvp_id==%i (pvp_id)",CharInfo->charname,map->id,pvp_id);
-            //return pvp_id;
-            return (clientid + 0x100);
+            return pvp_id;
         }
         break;
         case 0:
