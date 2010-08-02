@@ -4750,6 +4750,13 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 nb_items++;
             }
 
+            //LMA: change in packet (2010/08/02), naRose client 290+
+            ADDWORD( pak, 0xcc);
+            ADDWORD( pak, 0xcc);
+            ADDWORD( pak, 0xcc);
+            ADDWORD( pak, 0xcc);
+            //LMA: end of change.
+
             ADDDWORD(pak, 0xCD48FB40);
             ADDDWORD(pak, 0x00CD01CD);
             ADDDWORD( pak, 0x00000000 );
@@ -5008,6 +5015,14 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         if ((GETWORD((*P),  7))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar2);}
         if ((GETWORD((*P),  9))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar3);}//progress bar3 0 is empty 0x0400 is full bar
         if ((GETWORD((*P), 11))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar4);}//progress bar4 0 is empty 0x0400 is full bar
+
+        //LMA: change in packet (2010/08/02), naRose client 290+
+        ADDWORD( pak, 0xcc);
+        ADDWORD( pak, 0xcc);
+        ADDWORD( pak, 0xcc);
+        ADDWORD( pak, 0xcc);
+        //LMA: end of change.
+
         ADDDWORD(pak, BuildItemHead(item));
 
          if (item.itemtype == 11)
