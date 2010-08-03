@@ -371,7 +371,7 @@ class CWorldServer : public CServerSocket
         bool pakGMEventName(CPlayer* thisclient, char* eventname, int is_on); //Event (by its name)
         bool pakGMEventIFO(CPlayer* thisclient, int ifoType,int eventID);   //LMA: for Ifo Objects
     	bool pakGMTele( CPlayer* thisclient, int map, float x, float y, int no_qsd=0);
-    	bool pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam=0 );
+    	bool pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam=0, int lma_aip=-1);
         //bool pakGMZulygive(CPlayer* thisclient, char* name, int zuly);
         bool pakGMZulygive(CPlayer* thisclient, char* name, long long zuly);
         bool pakGMFairyto(CPlayer* thisclient, char* name, int mode);

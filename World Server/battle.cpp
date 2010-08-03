@@ -723,7 +723,7 @@ bool CCharacter::ResumeNormalAttack( CCharacter* Enemy,bool was_aoe)
         }
 
         //he was already fighting the monster in normal_attack mode and did a skill, now he has to resume normal_attack.
-        if(Battle->skilltarget!=0&&(Battle->atktarget==Battle->skilltarget))
+        if(Battle->skilltarget!=0&&Battle->contatk&&(Battle->atktarget==Battle->skilltarget))
         {
             CCharacter* NAEnemy=NULL;
             if(Enemy!=NULL&&(Enemy->clientid==Battle->atktarget))
@@ -732,7 +732,7 @@ bool CCharacter::ResumeNormalAttack( CCharacter* Enemy,bool was_aoe)
             }
             else
             {
-                CCharacter* NAEnemy = GetCharTarget( );
+                NAEnemy = GetCharTarget( );
             }
 
             if (NAEnemy==NULL)
@@ -750,7 +750,44 @@ bool CCharacter::ResumeNormalAttack( CCharacter* Enemy,bool was_aoe)
                 return true;
             }
 
-            Log(MSG_INFO,"after skill, player is resuming normal_attack with %u",Battle->target);
+            Log(MSG_INFO,"after skill, player is resuming normal_attack with %u (%u)",Battle->target,NAEnemy->clientid);
+            Battle->atktype = NORMAL_ATTACK;
+            Battle->skilltarget = 0;
+            Battle->atktarget = Battle->target;
+            Battle->skillid = 0;
+
+            return true;
+        }
+
+        //LMA: this case is mostly after "buffs"
+        if(Battle->target!=0&&Battle->contatk&&(Battle->atktarget==Battle->target))
+        {
+            CCharacter* NAEnemy=NULL;
+            if(Enemy!=NULL&&(Enemy->clientid==Battle->atktarget))
+            {
+                NAEnemy=Enemy;
+            }
+            else
+            {
+                NAEnemy = GetCharTarget( );
+            }
+
+            if (NAEnemy==NULL)
+            {
+                Log(MSG_INFO,"2:: after skill, can't find previous target %u, stopping.",Battle->target);
+                ClearBattle(Battle);
+                return true;
+            }
+
+            //Is the foe dead?
+            if(NAEnemy->IsDead())
+            {
+                Log(MSG_INFO,"2:: after skill, player is stopping battle with %u because he's dead",Battle->target);
+                ClearBattle(Battle);
+                return true;
+            }
+
+            Log(MSG_INFO,"2:: after skill, player is resuming normal_attack with %u (%u)",Battle->target,NAEnemy->clientid);
             Battle->atktype = NORMAL_ATTACK;
             Battle->skilltarget = 0;
             Battle->atktarget = Battle->target;
@@ -852,6 +889,7 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
     //Log(MSG_INFO,"new stat MP %i",Stats->MP);
     //Log(MSG_INFO,"%i Really doing skill %i to %i",clientid,skill->id,Target->clientid);
 
+    Log(MSG_INFO,"Doing a simple buff BuffSkill");
     Battle->castTime = 0;
     UseBuffSkill( Target, skill );
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
@@ -869,12 +907,15 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
     GServer->DoSkillScript( this, skill );
     if(!IsMonster())
     {
+        //LMA: do we have to resume a Normal Attack?
+        ResumeNormalAttack(NULL,false);
+        /*
         //ClearBattle( Battle ); // clear battle for players when they use buff skills
         Battle->bufftarget = 0;
         Battle->skilltarget = 0;
         Battle->skillid = 0;
         //Battle->atktype = NORMAL_ATTACK;
-        Battle->atktype = 0;
+        Battle->atktype = 0;*/
     }
     else //Monsters need to be reset to normal attack and clear skill attacks.
     {
@@ -1135,8 +1176,12 @@ bool CCharacter::AoeBuff( CSkills* skill )
 
         Log(MSG_INFO,"AOEBuffs, buffing only myself");
         UseBuffSkill( this, skill );
-        ClearBattle( Battle );
-        Battle->lastAtkTime = clock( );
+
+        //LMA: do we have to resume a Normal Attack?
+        ResumeNormalAttack(NULL,false);
+        //ClearBattle( Battle );
+        //Battle->lastAtkTime = clock( );
+
         return true;
     }
 
@@ -1160,7 +1205,9 @@ bool CCharacter::AoeBuff( CSkills* skill )
                 {
                      //Log(MSG_INFO,"Applying AOE buff as long as I can find a close enough monster");
                      if(GServer->IsMonInCircle( Position->current,monster->Position->current,(float)skill->aoeradius + 1))
-                            UseBuffSkill( (CCharacter*)monster, skill );
+                     {
+                         UseBuffSkill( (CCharacter*)monster, skill );
+                     }
                 }
                 break;
                 case 5: //hostile.
@@ -1182,7 +1229,10 @@ bool CCharacter::AoeBuff( CSkills* skill )
                     if(player->Party->party==GetParty( ))
                     {
                         if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
+                        {
                             UseBuffSkill( (CCharacter*)player, skill );
+                        }
+
                     }
                 }
                 break;
@@ -1192,7 +1242,10 @@ bool CCharacter::AoeBuff( CSkills* skill )
                     {
                         //Log(MSG_INFO,"Applying AOE buff as long as I can find a close enough clan member");
                         if(GServer->IsMonInCircle( Position->current, player->Position->current, (float)skill->aoeradius + 1 ) )
+                        {
                             UseBuffSkill( (CCharacter*)player, skill );
+                        }
+
                     }
                 }
                 break;
@@ -1201,7 +1254,10 @@ bool CCharacter::AoeBuff( CSkills* skill )
                 case 8: //all characters
                 {
                     if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius + 1))
-                         UseBuffSkill( (CCharacter*)player, skill );
+                    {
+                        UseBuffSkill( (CCharacter*)player, skill );
+                    }
+
                 }
                 break;
                 case 5: //hostile
@@ -1229,6 +1285,11 @@ bool CCharacter::AoeBuff( CSkills* skill )
     //osprose end
 
     Battle->lastAtkTime = clock( );
+
+    //LMA: do we have to resume a Normal Attack?
+    ResumeNormalAttack(NULL,false);
+
+
     return true;
 }
 
@@ -1615,7 +1676,7 @@ void CCharacter::UseBuffSkill( CCharacter* Target, CSkills* skill )
 {
     bool bflag = false;
     bflag = GServer->AddBuffs( skill, Target, GetInt( ) );
-    Log(MSG_INFO,"In UseBuffSkills, skill %i, nbuffs %i, bflag %i",skill->id,skill->nbuffs,bflag);
+    Log(MSG_INFO,"In UseBuffSkills, skill %i, nbuffs %i, bflag %i to %u",skill->id,skill->nbuffs,bflag,Target->clientid);
     if(skill->nbuffs>0 && bflag == true)
     {
         BEGINPACKET( pak, 0x7b5 );

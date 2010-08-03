@@ -2077,9 +2077,11 @@ else if (strcmp(command, "itemstat")==0)
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned moncount=atoi(tmp);
 		unsigned monteam=0;
 		if ((tmp = strtok(NULL, " "))!=NULL) monteam=atoi(tmp);
+		int monaip=-1;
+		if ((tmp = strtok(NULL, " "))!=NULL) monaip=atoi(tmp);
         if (moncount > Config.monmax) moncount = Config.monmax; //max monsters from config
-		Log( MSG_GMACTION, " %s : /mon %i,%i,%i" , thisclient->CharInfo->charname, montype, moncount,monteam);
-		return pakGMMon( thisclient, montype, moncount,monteam );
+		Log( MSG_GMACTION, " %s : /mon %i,%i,%i,%i" , thisclient->CharInfo->charname, montype, moncount,monteam,monaip);
+		return pakGMMon( thisclient, montype, moncount,monteam,monaip);
 	}
    else if (strcmp(command, "mon2")==0)
     {    //Spawn "x" monsters
@@ -3636,7 +3638,7 @@ bool CWorldServer::pakGMAnn( CPlayer* thisclient, CPacket *P )
 }
 
 // GM: Spawn x mobs
-bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam)
+bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam, int lma_aip)
 {
     //thisclient->Position->current->x
     fPoint position=thisclient->Position->current;
@@ -3652,7 +3654,17 @@ bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount,int 
         if(thismonster!=NULL)
         {
             thismonster->team=monteam;
-            Log(MSG_INFO,"pakGMMon %s:: monster %i, cid %i",thisclient->CharInfo->charname,montype,thismonster->clientid);
+
+            if (lma_aip!=-1)
+            {
+                thismonster->sp_aip=lma_aip;
+                Log(MSG_INFO,"pakGMMon %s:: monster %i, cid %i, aip %i",thisclient->CharInfo->charname,montype,thismonster->clientid,lma_aip);
+            }
+            else
+            {
+                Log(MSG_INFO,"pakGMMon %s:: monster %i, cid %i",thisclient->CharInfo->charname,montype,thismonster->clientid);
+            }
+
         }
 
 	}
