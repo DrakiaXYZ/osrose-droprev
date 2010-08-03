@@ -709,6 +709,74 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     return;
 }
 
+//LMA: Resuming to NormalAttack on some occasions, mainly after skills (direct and AOEs)
+//when the player was in NormalAttack mode before skilling.
+bool CCharacter::ResumeNormalAttack( CCharacter* Enemy,bool was_aoe)
+{
+    //LMA: Special case. If the player does a first attack as a skill, he doesn't go to normal attack mode.
+    if (IsPlayer())
+    {
+        //On some AOE we don't have a skilltarget ?
+        if (Enemy==NULL&&was_aoe)
+        {
+            Log(MSG_INFO,"After AOE without specific target.");
+        }
+
+        //he was already fighting the monster in normal_attack mode and did a skill, now he has to resume normal_attack.
+        if(Battle->skilltarget!=0&&(Battle->atktarget==Battle->skilltarget))
+        {
+            CCharacter* NAEnemy=NULL;
+            if(Enemy!=NULL&&(Enemy->clientid==Battle->atktarget))
+            {
+                NAEnemy=Enemy;
+            }
+            else
+            {
+                CCharacter* NAEnemy = GetCharTarget( );
+            }
+
+            if (NAEnemy==NULL)
+            {
+                Log(MSG_INFO,"after skill, can't find previous target %u, stopping.",Battle->target);
+                ClearBattle(Battle);
+                return true;
+            }
+
+            //Is the foe dead?
+            if(NAEnemy->IsDead())
+            {
+                Log(MSG_INFO,"after skill, player is stopping battle with %u because he's dead",Battle->target);
+                ClearBattle(Battle);
+                return true;
+            }
+
+            Log(MSG_INFO,"after skill, player is resuming normal_attack with %u",Battle->target);
+            Battle->atktype = NORMAL_ATTACK;
+            Battle->skilltarget = 0;
+            Battle->atktarget = Battle->target;
+            Battle->skillid = 0;
+
+            return true;
+        }
+
+        //Stop...
+        Log(MSG_INFO,"after skill, player is doing nothing.");
+        ClearBattle(Battle);
+    }
+    else
+    {
+        Log(MSG_INFO,"after skill, monster is going to normal_attack %u",Battle->target);
+        Battle->atktype = NORMAL_ATTACK;
+        Battle->skilltarget = 0;
+        Battle->atktarget = Battle->target;
+        Battle->skillid = 0;
+    }
+
+
+    return true;
+}
+
+
 // do skill attack
 bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
 {
@@ -733,35 +801,8 @@ bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
     if(Stats->MP<0) Stats->MP=0;
     if(Battle->contatk)
     {
-        //LMA: Special case. If the player does a first attack as a skill, he doesn't go to normal attack mode.
-        if (IsPlayer())
-        {
-            //he was already fighting the monster in normal_attack mode and did a skill, now he has to resume normal_attack.
-            if(Battle->skilltarget!=0&&(Battle->atktarget==Battle->skilltarget))
-            {
-                Log(MSG_INFO,"after skill, player is resuming normal_attack with %u",Battle->target);
-                Battle->atktype = NORMAL_ATTACK;
-                Battle->skilltarget = 0;
-                Battle->atktarget = Battle->target;
-                Battle->skillid = 0;
-            }
-            else
-            {
-                //Stop...
-                Log(MSG_INFO,"after skill, player is doing nothing.");
-                ClearBattle(Battle);
-            }
-
-        }
-        else
-        {
-            Log(MSG_INFO,"after skill, monster is going to normal_attack %u",Battle->target);
-            Battle->atktype = NORMAL_ATTACK;
-            Battle->skilltarget = 0;
-            Battle->atktarget = Battle->target;
-            Battle->skillid = 0;
-        }
-
+        //LMA: Resuming on NormalAttack?
+        ResumeNormalAttack(Enemy);
     }
     else
     {
@@ -1054,7 +1095,8 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     }
     else
     {
-        ClearBattle( Battle );
+        ResumeNormalAttack(NULL,true);
+        //ClearBattle( Battle );
     }
 
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));

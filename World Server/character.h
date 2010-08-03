@@ -81,6 +81,7 @@ class CCharacter
        // Battle Functions
         void DoAttack( );
         void NormalAttack( CCharacter* Enemy );
+        bool ResumeNormalAttack( CCharacter* Enemy,bool was_aoe=false);    //LMA: Do we have to resume NormalAttack?
         bool SkillAttack( CCharacter* Enemy, CSkills* skill );
         bool BuffSkill( CCharacter* Target, CSkills* skill );
         bool DebuffSkill ( CCharacter* Enemy, CSkills* skill );//netwolf
