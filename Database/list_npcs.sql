@@ -152,15 +152,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Town Girl] Lithia', 1156, 29, 24.237, 5091.
 INSERT INTO `list_npcs` VALUES (0, '[Ghost] Harry', 1157, 29, 109.425, 5050.08, 5123.27, 257,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ranger] Paul', 1155, 29, 330.956, 5157.10, 5176.39, 255,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Beach Resident] Judith', 1204, 37, 358.499, 5115.68, 5324.15, 308,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Pick-A-Card] Alejandro', 1045, 37, 347.450, 5220.72, 5357.38, 92,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Clown Throw] Mildred', 1044, 37, 0.000, 5246.65, 5366.65, 91,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Junon RPS] Sherisse', 1043, 37, 0.000, 5259.34, 5367.26, 90,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Digging for Treasure] Augustus', 1048, 37, 293.031, 5227.87, 5324.44, 95,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Concession Stand] Lizzy', 1054, 37, 0.000, 5129.79, 5323.48, 98,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Festival Manager] Lero', 1050, 37, 31.693, 5182.50, 5340.08, 97,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Scavenger Hunt] Pirelli', 1049, 37, 198.637, 5334.27, 5289.01, 96,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Pie Crush] Tony', 1046, 37, 342.011, 5355.39, 5357.88, 93,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Chicken Races] Hig', 1047, 37, 347.450, 5297.48, 5362.05, 94,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Lilly', 1164, 39, 30.790, 5054.89, 5347.89, 77,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Cherry Berry Pie Crush] Anya', 1175, 39, 315.541, 5061.64, 5094.96, 76,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Cherry Berry Pie Crush] Anya', 1177, 39, 14.293, 5133.83, 5360.16, 73,0,0,0);
@@ -226,6 +218,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Raknu Resident] Netty', 1237, 61, 328.307, 
 INSERT INTO `list_npcs` VALUES (0, '[Chef] Peppie', 1224, 61, 190.865, 5626.88, 4435.97, 324,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Chief] Darka Khan', 1220, 61, 352.369, 5650.09, 4464.73, 320,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Resident] Jerrita', 1236, 61, 303.017, 5657.17, 4455.98, 336,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Cooking', 1271, 61, 12.550, 5630.54, 4429.22, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Kilie', 1257, 62, 333.435, 5647.96, 5126.88, 356,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Resident] Martie', 1258, 62, 16.102, 5638.21, 5127.42, 357,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Resident] Carl', 1259, 62, 95.984, 5714.45, 5121.83, 358,0,0,0);
