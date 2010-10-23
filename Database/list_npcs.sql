@@ -20,6 +20,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Lampa', 1016, 1, 173.934,
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Crow', 1004, 1, 6.067, 5094.38, 5259.90, 104,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Ulysses', 1012, 1, 84.014, 5071.26, 5206.92, 112,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Junon Order Co-Founder] Francis', 1003, 1, 157.957, 5080.30, 5066.28, 103,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1198, 1, 183.513, 5232.42, 5306.93, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Leonard', 1005, 1, 16.102, 5261.08, 5166.96, 105,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Designer] Keenu', 1010, 1, 343.898, 5273.50, 5256.83, 110,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Eccentric Inventor] Spero', 1011, 1, 14.293, 5212.36, 5254.66, 111,0,0,0);
@@ -30,7 +31,9 @@ INSERT INTO `list_npcs` VALUES (0, '[Event Info] Judy', 1201, 1, 162.011, 5261.8
 INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 1, 167.450, 5244.93, 5220.95, 219,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Kingdom Minister] Warren', 1002, 1, 178.499, 5208.78, 5112.94, 102,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Village Chief] Cornell', 1001, 1, 183.008, 5217.51, 5113.18, 101,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1198, 1, 0.000, 5265.19, 5069.61, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 1, 22.043, 5435.30, 5492.26, 118,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Woopie King', 3019, 1, 325.465, 5421.83, 5315.92, 121,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Tryteh', 1006, 1, 258.128, 5313.26, 5153.74, 106,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Mina', 1007, 1, 197.989, 5292.56, 5127.66, 107,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Weapon Seller] Raffle', 1008, 1, 322.406, 5302.32, 5232.34, 108,0,0,0);
@@ -46,15 +49,19 @@ INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 4', 1794, 2, 0.000, 4849.58,
 INSERT INTO `list_npcs` VALUES (0, '[Ulverick] Room 5', 1795, 2, 0.000, 4853.38, 4644.49, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gawain', 1090, 2, 84.016, 5334.58, 5353.91, 190,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Huffe', 1111, 2, 90.000, 5334.84, 5345.81, 211,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Norg', 3023, 2, 88.001, 5326.17, 5349.93, 229,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Owner] Burtland', 1115, 2, 90.000, 5289.10, 5264.10, 215,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan War Manager] Regina', 1751, 2, 90.000, 5290.17, 5244.25, 751,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Merchant] Aliche Patt', 1752, 2, 90.000, 5288.35, 5260.53, 224,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 2, 283.797, 5344.59, 5176.35, 219,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Knight of Junon Order] Sammodell', 3021, 2, 271.999, 5328.55, 5131.42, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Founder of Junon Order] Raw', 1088, 2, 181.501, 5319.27, 5095.36, 188,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Junon Order Elder] Gorthein', 1109, 2, 181.501, 5325.54, 5095.31, 209,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Eva', 1082, 2, 153.435, 5505.78, 5346.09, 182,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Soldier] Odelo', 1116, 2, 0.000, 5507.31, 5397.40, 216,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Soldier] Winters', 1117, 2, 0.000, 5522.99, 5397.75, 217,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1198, 2, 0.000, 5515.00, 5389.70, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1198, 2, 180.000, 5515.67, 5418.25, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mayor] Darren', 1081, 2, 178.499, 5514.48, 5238.20, 181,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Felice Fete', 1202, 2, 206.565, 5562.00, 5164.83, 306,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Adalric', 1108, 2, 150.956, 5461.70, 5167.42, 226,0,0,0);
@@ -64,6 +71,8 @@ INSERT INTO `list_npcs` VALUES (0, '[Vicious Captain] Ruven', 1125, 2, 270.000, 
 INSERT INTO `list_npcs` VALUES (0, '[Manager of Ferrell] Arothel', 1089, 2, 270.000, 5713.43, 5360.16, 189,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Armor Merchant] Saki', 1094, 2, 258.129, 5721.80, 5290.79, 194,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Charrs', 1110, 2, 270.000, 5713.38, 5368.71, 210,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ferrell Bank Guard] Arnold', 3024, 2, 271.999, 5719.55, 5364.48, 230,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1198, 2, 29.044, 5677.23, 5342.73, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Bellia', 1092, 2, 217.594, 5725.11, 5199.04, 192,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Weapon Merchant] Crune', 1093, 2, 335.763, 5728.67, 5224.89, 193,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Designer] Lisa', 1095, 2, 220.893, 5729.06, 5136.33, 195,0,0,0);
@@ -74,6 +83,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Kiroth', 1098, 2, 275.
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Hayen', 1099, 2, 258.129, 5603.77, 5046.12, 199,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Itz', 1100, 2, 270.000, 5603.69, 5034.52, 200,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Carasia', 1112, 2, 197.989, 5730.57, 5094.06, 212,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Arumic Mercenary] Turenth', 3022, 2, 204.237, 5730.12, 5088.24, 228,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Sicru', 1107, 2, 187.631, 5818.02, 5487.59, 207,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Rooen', 1513, 3, 0.000, 5104.48, 5019.71, 303,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Rodath', 1086, 5, 90.000, 5155.07, 5279.92, 186,0,0,0);
@@ -117,6 +127,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Lutis', 1051, 21, 160.03
 INSERT INTO `list_npcs` VALUES (0, '[Cleric] Karitte', 1053, 21, 95.984, 5112.44, 5385.08, 153,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Shannon', 1052, 21, 353.933, 5357.27, 5282.19, 152,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Melendino', 1473, 22, 212.618, 5095.21, 5312.66, 16,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Mysterious Traveler] Edeline', 1200, 22, 65.215, 5246.01, 5471.44, 144,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Boy in the Hut]Huey', 1021, 22, 283.797, 5357.55, 5394.47, 142,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Little Street Vendor] Pony', 1035, 22, 165.707, 5751.58, 5189.86, 135,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Peron', 1511, 22, 9.228, 5832.20, 5315.54, 301,0,0,0);
@@ -138,8 +149,10 @@ INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant] Lina', 1071, 24, 29
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Methio', 1072, 24, 192.550, 5563.13, 4895.45, 172,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ikaness Staff] Orias', 1073, 24, 95.984, 5515.26, 4925.14, 173,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ikaness Staff] Shroon', 1121, 25, 9.228, 5375.78, 5188.33, 221,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ghost] Harry', 1157, 25, 350.772, 5506.81, 5555.03, 257,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Pein', 1122, 25, 307.514, 5503.22, 5350.93, 222,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Edone', 1123, 25, 187.631, 5448.14, 4976.37, 223,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1199, 25, 322.406, 5714.62, 5405.40, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Kay', 1131, 26, 22.043, 5669.16, 5105.24, 231,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant ] Bith', 1143, 27, 197.989, 5259.72, 5147.64, 243,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Robin', 1512, 27, 264.016, 5239.23, 5040.74, 302,0,0,0);
@@ -149,7 +162,6 @@ INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Luce', 1142, 27, 101.871, 5
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant] Med', 1151, 28, 127.514, 5587.09, 4732.29, 251,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Dead Priest] Lantore', 1154, 29, 241.813, 5114.61, 5131.16, 254,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Town Girl] Lithia', 1156, 29, 24.237, 5091.98, 5181.81, 256,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Ghost] Harry', 1157, 29, 109.425, 5050.08, 5123.27, 257,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ranger] Paul', 1155, 29, 330.956, 5157.10, 5176.39, 255,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Beach Resident] Judith', 1204, 37, 358.499, 5115.68, 5324.15, 308,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Festival Manager] Lero', 1050, 37, 31.693, 5182.50, 5340.08, 97,0,0,0);
