@@ -7390,6 +7390,11 @@ bool CWorldServer::pakRideRequest( CPlayer* thisclient, CPacket* P )
 {
     if(thisclient->Shop->open)
         return true;
+
+    //fix by Choseal.
+    if (thisclient->Ride->Drive)
+        return true;
+
     BYTE action = GETBYTE((*P),0);
     switch(action)
     {
