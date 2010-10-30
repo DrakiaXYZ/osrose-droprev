@@ -1390,6 +1390,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
     useitem->usetype = 0;
     useitem->usevalue = 0;
     useitem->use_buff=0;
+    useitem->cooldown_type=0;   //LMA: cooldown handling for food.
+    useitem->cooldown=0;   //LMA: cooldown handling for food.
     unsigned int type = 0;
     useitem->itemnum = thisclient->items[slot].itemnum;
     useitem->itemtype = thisclient->items[slot].itemtype;
@@ -1414,6 +1416,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             useitem->usescript = 1;
             useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
             useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
+            useitem->cooldown_type=UseList.Index[useitem->itemnum]->cooldown_type;
+            useitem->cooldown=UseList.Index[useitem->itemnum]->cooldown;
         }
         break;
         case 313://Magic Item [scrolls/summons/fireworks/etc]

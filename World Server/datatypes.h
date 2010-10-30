@@ -549,6 +549,8 @@ struct CUseData
     UINT usecondition[2];
     UINT useeffect[2];
     UINT pricevalue;
+    UINT cooldown_type;  //LMA: cooldown type.
+    UINT cooldown;  //LMA: cooldown.
     UINT STLId;
 };
 
@@ -1133,6 +1135,8 @@ struct CUseInfo
     int usetype;
     int usevalue;
     int use_buff;
+    int cooldown_type;  //LMA: cooldown.
+    int cooldown;   //LMA: cooldown.
 };
 
 struct CItemType

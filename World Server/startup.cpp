@@ -509,6 +509,8 @@ bool CWorldServer::InitDefaultValues()
     nulluse->craftlevel=0;
     nulluse->craft_difficult=0;
     nulluse->material=0;
+    nulluse->cooldown_type = 0;
+    nulluse->cooldown = 0;
 
     for(int i=0;i<2;i++)
     {
@@ -2577,6 +2579,10 @@ bool CWorldServer::LoadConsItem( )
         newuse->usecondition[1]= STB_ITEM[9].rows[i][18];
         newuse->useeffect[0]= STB_ITEM[9].rows[i][19];
         newuse->useeffect[1]= STB_ITEM[9].rows[i][20];
+
+        //LMA: adding cooldown.
+        newuse->cooldown_type = STB_ITEM[9].rows[i][25];
+        newuse->cooldown = STB_ITEM[9].rows[i][25];
         newuse->is_mileage=0;
 
         //STL

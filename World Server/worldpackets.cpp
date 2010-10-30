@@ -3886,6 +3886,14 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             thisclient->UsedItem->usetype = thisuse->usetype;
             thisclient->UsedItem->userate = 15;
             thisclient->UsedItem->used = 0;
+            thisclient->UsedItem->lastRegTime=0;
+
+            //LMA: handling cooldown for food.
+            if(thisuse->cooldown_type>0&&thisuse->cooldown>0)
+            {
+                thisclient->UsedItem->userate=thisuse->usevalue/thisuse->cooldown;
+            }
+
             BEGINPACKET( pak,0x7a3 );
             ADDWORD    ( pak, thisclient->clientid );
             ADDWORD    ( pak, thisuse->itemnum );

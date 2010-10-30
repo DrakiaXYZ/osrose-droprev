@@ -1076,6 +1076,9 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
            return true;
         }
 
+        Log(MSG_INFO,"gmskills: %s:: config_smskills=%u, player access level=%u, is he GM? %u",thisclient->CharInfo->charname,Config.Command_GMSkills,thisclient->Session->accesslevel,thisclient->CharInfo->isGM);
+
+
            /*
            char buffer[200];
            sprintf ( buffer, "gmskills NOT ALLOWED");
