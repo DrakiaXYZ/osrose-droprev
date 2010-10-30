@@ -4986,6 +4986,12 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 
         }
 
+        //LMA: Stackable fix.
+        if (item.itemtype>=10&&item.itemtype<=12)
+        {
+            item.count+=thisclient->items[newslot].count;
+        }
+
 		thisclient->items[newslot] = item;
 
         BEGINPACKET( pak, 0x07d8);
