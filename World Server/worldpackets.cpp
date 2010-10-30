@@ -6328,11 +6328,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     powder=true;
                     pc_offset+=NaturalList.Index[thisclient->items[material_list[1]].itemnum]->quality*nb_material_list[1];    //we work on 1000 so we don't /10.
 
-                    if(511>thisclient->items[material_list[1]].itemnum||521<thisclient->items[material_list[1]].itemnum)
+                    //LMA: useless check.
+                    /*if(511>thisclient->items[material_list[1]].itemnum||521<thisclient->items[material_list[1]].itemnum)
                     {
                         Log(MSG_WARNING,"Player %s uses wrong item (%u::%u instead of 12::(511-521)) to refine %u::%u",thisclient->CharInfo->charname,thisclient->items[material_list[1]].itemtype,thisclient->items[material_list[1]].itemnum,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
                         return false;
-                    }
+                    }*/
 
                 }
 
@@ -6355,11 +6356,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                         venurune=true;
                         pc_offset+=(50*nb_material_list[2]);    //we work on 1000 so not 5.
 
-                        if(445!=thisclient->items[material_list[2]].itemnum)
+                        //LMA: useless check.
+                        /*if(445!=thisclient->items[material_list[2]].itemnum)
                         {
                             Log(MSG_WARNING,"Player %s uses wrong item (%u::%u instead of 12::445) to refine %u::%u",thisclient->CharInfo->charname,thisclient->items[material_list[2]].itemtype,thisclient->items[material_list[2]].itemnum,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
                             return false;
-                        }
+                        }*/
 
                     }
 
