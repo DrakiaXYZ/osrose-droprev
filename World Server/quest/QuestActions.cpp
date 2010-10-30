@@ -193,6 +193,8 @@ QUESTREWD(001)
 	tmpItem.itemnum = GServer->gi(data->uiItemSN,1);
 	tmpItem.count = data->nDupCNT;
 
+	//Log(MSG_INFO,"QSD ACT1:: (%s) stuff on item %u*(%u::%u), %u",client->CharInfo->charname,tmpItem.count,tmpItem.itemtype,tmpItem.itemnum,data->btOp);
+
 	SQuest* curQuest = client->GetActiveQuest();
 	if(curQuest == NULL)
 	{

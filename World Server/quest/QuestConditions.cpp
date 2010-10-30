@@ -216,6 +216,8 @@ QUESTCOND(004){
         int ch_itemtype=GServer->gi(curItem->uiItemSN,0);
         int ch_itemnum=GServer->gi(curItem->uiItemSN,1);
 
+        //Log(MSG_INFO,"QSD CDT4:: (%s) Checking item (%u::%u)",client->CharInfo->charname,ch_itemtype,ch_itemnum);
+
         //LMA: where not reliable.
 		//if (curItem->iWhere==13)
 		if(ch_itemtype==13)
@@ -266,12 +268,15 @@ QUESTCOND(004){
             //int ch_itemtype=GServer->gi(curItem->uiItemSN,0);
             //int ch_itemnum=GServer->gi(curItem->uiItemSN,1);
             int ch_nb_items=0;
+            bool player_has_item=false;
             for (int k=0;k<140;k++)
             {
                 if(client->items[k].itemtype!=ch_itemtype||client->items[k].itemnum!=ch_itemnum)
                 {
                     continue;
                 }
+
+                player_has_item=true;
 
                 ch_nb_items=client->items[k].count;
                 if(OperateValues<int>(curItem->btOp, &ch_nb_items, curItem->iRequestCnt))
@@ -280,6 +285,14 @@ QUESTCOND(004){
                 }
 
             }
+
+            //LMA: Special case where they test if the player has less than "x" items.
+            //It can be where the player does NOT have any...
+            if(!player_has_item&&curItem->btOp==3)
+            {
+                return QUEST_SUCCESS;
+            }
+
 
             return QUEST_FAILURE;
         }
