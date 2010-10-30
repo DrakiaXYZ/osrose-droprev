@@ -620,34 +620,36 @@ bool CPlayer::Regeneration()
         nb_sec_stance=(float) 8;  //LMA: on your feet soldier.
         bonus_sitted=1;
 
-        if(nb_hp>0)
-           nb_sec_stance=(float) 3;
-
-        if (Status->Stance==1)
+        //LMA: added Planetary_Myth check, should be a bit faster and a bit cleaner :)
+        if(nb_hp>0 || Status->Stance==1 || Fairy)
         {
-           bonus_hp++;
-           //bonus_sitted=GServer->RandNumber(150,250);
-           bonus_sitted=GServer->RandNumber(150,100);
-           nb_sec_stance=(float) 3;    //LMA: be sitted.
+            nb_sec_stance=(float) 3;
         }
-        if(Fairy)
-        {
-           bonus_hp++;
-           nb_sec_stance=(float) 3;
-           //bonus_sitted+=GServer->RandNumber(150,250);
-           bonus_sitted+=GServer->RandNumber(150,100);
-        }
-
-        bonus_hp+=nb_hp;
-        if(bonus_hp!=0)
-           nb_sec_stance=nb_sec_stance/((float)bonus_hp);    //LMA: salamender-bonfire?
-        //Log(MSG_INFO,"HP info: sp_hp=%i, nb_hp=%i, bonus=%i, nb_bonus=%i, nb_sec=%.2f",sp_hp,nb_hp,bonus_sitted,bonus_hp,nb_sec_stance);
-
-        //Log(MSG_INFO,"SIP2 %i,%i,%i,%i",nb_mp,nb_hp,sp_hp,sp_mp);
 
     	clock_t etime = clock() - lastRegenTime_hp;
         if( etime >= nb_sec_stance * CLOCKS_PER_SEC && Stats->HP > 0 )
         {
+            if (Status->Stance==1)
+            {
+               bonus_hp++;
+               //bonus_sitted=GServer->RandNumber(150,250);
+               bonus_sitted=GServer->RandNumber(150,100);
+            }
+
+            if(Fairy)
+            {
+               bonus_hp++;
+               //bonus_sitted+=GServer->RandNumber(150,250);
+               bonus_sitted+=GServer->RandNumber(150,100);
+            }
+
+            bonus_hp+=nb_hp;
+            if(bonus_hp!=0)
+               nb_sec_stance=nb_sec_stance/((float)bonus_hp);    //LMA: salamender-bonfire?
+            //Log(MSG_INFO,"HP info: sp_hp=%i, nb_hp=%i, bonus=%i, nb_bonus=%i, nb_sec=%.2f",sp_hp,nb_hp,bonus_sitted,bonus_hp,nb_sec_stance);
+
+            //Log(MSG_INFO,"SIP2 %i,%i,%i,%i",nb_mp,nb_hp,sp_hp,sp_mp);
+
             unsigned int hpamount = GetHPRegenAmount( );
 
             if (bonus_hp!=0)
