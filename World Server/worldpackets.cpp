@@ -2175,6 +2175,95 @@ bool CWorldServer::pakWhisper ( CPlayer* thisclient, CPacket* P )
 	return true;
 }
 
+
+// LMA: Union Chat.
+bool CWorldServer::pakChatUnion ( CPlayer* thisclient, CPacket* P )
+{
+    if (thisclient->CharInfo->unionid<=0||thisclient->CharInfo->unionid==2||thisclient->CharInfo->unionid>5)
+    {
+        return true;
+    }
+
+    int union_back=0;
+    //union_back=thisclient->CharInfo->unionid+8;
+
+    //LMA: to avoid chat spamming (1 second between each reset and 5 chat per second max).
+    time_t etime=time(NULL);
+    if (etime<thisclient->next_chat_union)
+    {
+        if (!thisclient->spam_chat_union)
+        {
+            thisclient->nb_chat_union++;
+        }
+
+        //A player can chat 5 times a second... Should be enough :)
+        if (thisclient->nb_chat_union>5)
+        {
+            //Only one hack message...
+            if (!thisclient->spam_chat_union)
+            {
+                Log(MSG_HACK,"Possible chat union hack by player %s",thisclient->CharInfo->charname);
+            }
+
+            thisclient->spam_chat_union=true;
+        }
+
+        return true;
+    }
+    else
+    {
+        thisclient->nb_chat_union=0;
+        thisclient->next_chat_union=time(NULL)+1;   //Next second check.
+        thisclient->spam_chat_union=false;
+    }
+
+    //LMA: seems to be working with team ID.
+    union_back=thisclient->pvp_id;
+
+	BEGINPACKET(pak, 0x0789);
+	ADDDWORD    ( pak, union_back );
+	ADDSTRING  ( pak, thisclient->CharInfo->charname );
+	ADDBYTE    ( pak, 0 );
+	ADDSTRING  ( pak, &P->Buffer[0] );
+	ADDBYTE    ( pak, 0 );
+	SendToMap   (&pak, thisclient->Position->Map);
+	//SendToUnionInMap  ( &pak, thisclient->Position->Map,thisclient->CharInfo->unionid);
+
+
+	return true;
+}
+
+// LMA: Trade Chat.
+bool CWorldServer::pakChatTrade ( CPlayer* thisclient, CPacket* P )
+{
+    //LMA: to avoid shout spamming (5 seconds between each shout).
+    time_t etime=time(NULL);
+    if (etime<thisclient->next_chat_trade)
+    {
+        //Only one hack message...
+        if (!thisclient->spam_chat_trade)
+        {
+            Log(MSG_HACK,"Possible trade chat hack by player %s",thisclient->CharInfo->charname);
+            thisclient->spam_chat_trade=true;
+        }
+
+        return true;
+    }
+
+    thisclient->next_chat_trade=time(NULL)+4;   //Can shout at this time.
+    thisclient->spam_chat_trade=false;
+
+	BEGINPACKET(pak, 0x07ed);
+	ADDSTRING  ( pak, thisclient->CharInfo->charname );
+	ADDBYTE    ( pak, 0 );
+	ADDSTRING  ( pak, &P->Buffer[0] );
+	ADDBYTE    ( pak, 0 );
+	SendToMap  ( &pak, thisclient->Position->Map );
+
+
+	return true;
+}
+
 // Return to Char Select
 bool CWorldServer::pakCharSelect ( CPlayer* thisclient, CPacket* P )
 {

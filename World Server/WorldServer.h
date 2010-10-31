@@ -201,6 +201,8 @@ class CWorldServer : public CServerSocket
         bool DeleteSpawn( CSpawnArea* spawn );
         CNPCData* GetNPCDataByID( UINT id );
     	void SendToMap( CPacket* pak, int mapid );
+    	bool IsUnionAlly( int union_player, int union_other_player);    //LMA: check if two players are in the same alliance.
+    	void SendToUnionInMap( CPacket* pak, int mapid, int union_player);  //LMA: Send to ally (union) in a map.
         unsigned BuildItemRefine(CItem thisitem );
         CMDrops* GetDropData( UINT id );
     	CRespawnPoint* GetRespawnByMap( int id );
@@ -299,6 +301,8 @@ class CWorldServer : public CServerSocket
     	bool pakDoIdentify( CPlayer *thisclient, CPacket *P );
     	bool pakNormalChat( CPlayer* thisclient, CPacket* P );
     	bool pakCharSelect( CPlayer* thisclient, CPacket* P );
+    	bool pakChatUnion ( CPlayer* thisclient, CPacket* P );  //LMA: chat union.
+        bool pakChatTrade ( CPlayer* thisclient, CPacket* P );  //LMA: chat trade.
     	bool pakStartSkill( CPlayer* thisclient, CPacket* P );
         bool pakPvp796( CPlayer* thisclient, CPacket* P );   //LMA: test for packet 0x796
         bool pakRepairItem( CPlayer* thisclient, CPacket* P,int packet_type);

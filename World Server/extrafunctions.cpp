@@ -306,6 +306,56 @@ void CWorldServer::SendToMap( CPacket* pak, int mapid )
     }
 }
 
+//LMA: Returns if someone is your ally (union)
+bool CWorldServer::IsUnionAlly( int union_player, int union_other_player)
+{
+    if(union_other_player==0||union_player==0)
+    {
+        return false;
+    }
+
+    if (union_other_player==union_player)
+    {
+        return true;
+    }
+
+    if ((union_player==1||union_player==4)&&((union_other_player==1||union_other_player==4)))
+    {
+        return true;
+    }
+
+    if ((union_player==3||union_player==5)&&((union_other_player==3||union_other_player==5)))
+    {
+        return true;
+    }
+
+
+    return false;
+}
+
+//LMA: Send a packet to all union allies on the specified map
+void CWorldServer::SendToUnionInMap( CPacket* pak, int mapid, int union_player)
+{
+    CMap* map = MapList.Index[mapid];
+    if(map==NULL) return;
+    for(UINT i=0;i<map->PlayerList.size();i++)
+    {
+        CPlayer* otherclient = map->PlayerList.at(i);
+        if (otherclient->client == NULL) continue;
+        if (!otherclient->client->isActive) continue;
+
+        //LMA: special for unions.
+        if(!IsUnionAlly(union_player,otherclient->CharInfo->unionid))
+        {
+            continue;
+        }
+
+        if( otherclient->Session->inGame )
+            otherclient->client->SendPacket( pak );
+    }
+
+}
+
 // -----------------------------------------------------------------------------------------
 // Check if an object is visible to a client
 // -----------------------------------------------------------------------------------------

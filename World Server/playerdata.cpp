@@ -102,6 +102,12 @@ bool CPlayer::loaddata( )
     next_whisper=0;
     nb_chats=0;
     nb_whispers=0;
+    nb_chat_union=0;
+    next_chat_union=0;
+    spam_chat_union=false;
+    //nb_chat_trade=0;
+    next_chat_trade=0;
+    spam_chat_trade=false;
 
     Shop->ShopType=atoi(row[37]);
     Shop->mil_shop_time=atoi(row[38]);

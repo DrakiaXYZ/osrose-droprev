@@ -84,6 +84,16 @@ class CPlayer: public CCharacter
     int nb_chats;
     int nb_whispers;
 
+    //LMA: for union chat spam
+    bool spam_chat_union;
+    time_t next_chat_union;
+    int nb_chat_union;
+
+    //LMA: for chat trade
+    bool spam_chat_trade;
+    time_t next_chat_trade;
+    //int nb_chat_trade;
+
     // Fairy
     bool Fairy;
     UINT FairyListIndex;

@@ -772,6 +772,7 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
     	case 0x0783: return pakNormalChat       ( (CPlayer*)thisclient->player, P );
     	case 0x0784: return pakWhisper          ( (CPlayer*)thisclient->player, P );
     	case 0x0785: return pakShout            ( (CPlayer*)thisclient->player, P );
+    	case 0x0789: return pakChatUnion        ( (CPlayer*)thisclient->player, P );    //LMA: Union Chat
     	case 0x0786: return pakPartyChat        ( (CPlayer*)thisclient->player, P );
     	case 0x0798: return pakStartAttack      ( (CPlayer*)thisclient->player, P );
       	case 0x079f: return pakShowHeal         ( (CPlayer*)thisclient->player, P );
@@ -816,6 +817,7 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
     	case 0x07e0: return pakCreateClan       ( (CPlayer*)thisclient->player, P );
     	case 0x07e1: return pakClanManager      ( (CPlayer*)thisclient->player, P );
     	case 0x07eb: return pakPrintscreen      ( (CPlayer*)thisclient->player, P );
+    	case 0x07ed: return pakChatTrade        ( (CPlayer*)thisclient->player, P );    //LMA: Trade Chat
     	case 0x0808: return pakGameGuard        ( (CPlayer*)thisclient->player, P );
     	case 0x0821: return pakExpTC        ( (CPlayer*)thisclient->player, P );  //LMA: Bonus Time Coupon
     	case 0x0796: return pakPvp796        ( (CPlayer*)thisclient->player, P );  //LMA: PVP?
