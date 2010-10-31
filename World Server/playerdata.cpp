@@ -105,7 +105,7 @@ bool CPlayer::loaddata( )
     nb_chat_union=0;
     next_chat_union=0;
     spam_chat_union=false;
-    //nb_chat_trade=0;
+    nb_chat_trade=0;
     next_chat_trade=0;
     spam_chat_trade=false;
 

@@ -92,7 +92,7 @@ class CPlayer: public CCharacter
     //LMA: for chat trade
     bool spam_chat_trade;
     time_t next_chat_trade;
-    //int nb_chat_trade;
+    int nb_chat_trade;
 
     // Fairy
     bool Fairy;

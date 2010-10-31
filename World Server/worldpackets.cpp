@@ -2236,22 +2236,35 @@ bool CWorldServer::pakChatUnion ( CPlayer* thisclient, CPacket* P )
 // LMA: Trade Chat.
 bool CWorldServer::pakChatTrade ( CPlayer* thisclient, CPacket* P )
 {
-    //LMA: to avoid shout spamming (5 seconds between each shout).
+    //LMA: to avoid chat trade spamming (1 second between each reset and 5 chat per second max).
     time_t etime=time(NULL);
     if (etime<thisclient->next_chat_trade)
     {
-        //Only one hack message...
         if (!thisclient->spam_chat_trade)
         {
-            Log(MSG_HACK,"Possible trade chat hack by player %s",thisclient->CharInfo->charname);
+            thisclient->nb_chat_trade++;
+        }
+
+        //A player can chat 5 times a second... Should be enough :)
+        if (thisclient->nb_chat_trade>5)
+        {
+            //Only one hack message...
+            if (!thisclient->spam_chat_trade)
+            {
+                Log(MSG_HACK,"Possible chat trade hack by player %s",thisclient->CharInfo->charname);
+            }
+
             thisclient->spam_chat_trade=true;
         }
 
         return true;
     }
-
-    thisclient->next_chat_trade=time(NULL)+4;   //Can shout at this time.
-    thisclient->spam_chat_trade=false;
+    else
+    {
+        thisclient->nb_chat_trade=0;
+        thisclient->next_chat_trade=time(NULL)+1;   //Next second check.
+        thisclient->spam_chat_trade=false;
+    }
 
 	BEGINPACKET(pak, 0x07ed);
 	ADDSTRING  ( pak, thisclient->CharInfo->charname );
