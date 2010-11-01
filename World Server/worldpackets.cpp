@@ -7509,10 +7509,6 @@ bool CWorldServer::pakRideRequest( CPlayer* thisclient, CPacket* P )
     if(thisclient->Shop->open)
         return true;
 
-    //fix by Choseal.
-    if (thisclient->Ride->Drive)
-        return true;
-
     BYTE action = GETBYTE((*P),0);
     switch(action)
     {
@@ -7525,6 +7521,13 @@ bool CWorldServer::pakRideRequest( CPlayer* thisclient, CPacket* P )
             CPlayer* otherclient = GetClientByID( oclientid, thisclient->Position->Map );
             if(otherclient==NULL)
                 return true;
+
+            //LMA: check if both aren't already driving.
+            if (thisclient->Ride->Drive&&otherclient->Ride->Drive)
+            {
+                return true;
+            }
+
             BEGINPACKET( pak, 0x7dd );
             ADDBYTE    ( pak, 0x01 );
             ADDWORD    ( pak, thisclient->clientid );
