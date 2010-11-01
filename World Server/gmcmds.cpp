@@ -2561,7 +2561,7 @@ else if (strcmp(command, "itemstat")==0)
         if ((tmp = strtok(NULL, " "))==NULL)
             itemrefine =0;
         else
-            itemrefine = atoi(tmp)<10?atoi(tmp)*16:9*16;
+            itemrefine = atoi(tmp)<16?atoi(tmp)*16:15*16;
         thisclient->items[slot].refine = itemrefine;
 
         BEGINPACKET( pak, 0x7a5);
