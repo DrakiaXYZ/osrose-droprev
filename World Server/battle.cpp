@@ -1386,7 +1386,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     long int skillpower=0;
     long int level_diff = Stats->Level - Enemy->Stats->Level;
 
-    if(Enemy->IsMonster() && skill->formula !=0)
+    //LMA: fix by will1023631
+    /*if(Enemy->IsMonster() && skill->formula !=0)
     {
         if(level_diff >= 1)
         {
@@ -1397,6 +1398,22 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             skillpower += Stats->Attack_Power - (level_diff / 2);
         }
 
+    }*/
+
+    if(Enemy->IsMonster() && skill->formula !=0)
+    {
+        if(level_diff >= 5)
+        {
+            skillpower += Stats->Attack_Power * (level_diff / 5) + (level_diff*2);
+        }
+        else if (level_diff < 5 && level_diff > 0)
+        {
+            skillpower += Stats->Attack_Power - Stats->Attack_Power*(level_diff / 5);
+        }
+        else if (level_diff <= 0)
+        {
+            skillpower += Stats->Attack_Power - (level_diff / 2);
+        }
     }
     else if(Enemy->IsPlayer())
     {

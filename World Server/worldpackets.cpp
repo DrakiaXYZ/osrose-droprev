@@ -7546,6 +7546,13 @@ bool CWorldServer::pakRideRequest( CPlayer* thisclient, CPacket* P )
             CPlayer* otherclient = GetClientByID( oclientid, thisclient->Position->Map );
             if(otherclient==NULL)
                 return true;
+
+            //LMA: check if both aren't already driving.
+            if (thisclient->Ride->Drive&&otherclient->Ride->Drive)
+            {
+                return true;
+            }
+
             BEGINPACKET( pak, 0x796 );
             ADDWORD    ( pak, tclientid );
             ADDFLOAT   ( pak, thisclient->Position->current.x*100 );
