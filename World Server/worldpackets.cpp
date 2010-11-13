@@ -6406,9 +6406,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 }
 
                 //Checking talis/bind/apotrope.
-                if(NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type!=427)
+                //LMA: fix by choseal
+                //if(NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type!=427)
+                int type = NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type;
+                if(type != 427 && type != 410 && type != 440 && type != 439 && type != 409)
                 {
-                    Log(MSG_WARNING,"%s (refine):: Talis/bind/apo incorrect type (%u::%u, type %u!=427).",thisclient->CharInfo->charname,needed_itemtype,thisclient->items[material_list[0]].itemnum,NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type);
+                    //Log(MSG_WARNING,"%s (refine):: Talis/bind/apo incorrect type (%u::%u, type %u!=427).",thisclient->CharInfo->charname,needed_itemtype,thisclient->items[material_list[0]].itemnum,NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type);
+                    Log(MSG_WARNING,"%s (refine):: Talis/bind/apo incorrect type (%u::%u, type %u).",thisclient->CharInfo->charname,needed_itemtype,thisclient->items[material_list[0]].itemnum,NaturalList.Index[thisclient->items[material_list[0]].itemnum]->type);
                     return true;
                 }
                 else
