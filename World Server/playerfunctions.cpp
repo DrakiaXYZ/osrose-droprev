@@ -597,7 +597,7 @@ bool CPlayer::RefreshHPMP()
 
 
 // HP/MP Regeneration Function
-bool CPlayer::Regeneration()
+/*bool CPlayer::Regeneration()
 {
     //LMA: New version, takes bonfire, salamender, sit, fairy in account.
     if (Stats->MaxHP==Stats->HP)
@@ -724,6 +724,97 @@ bool CPlayer::Regeneration()
     }
 
 
+    return true;
+}
+*/
+
+//LMA: new version from Planetary_Myth
+// HP/MP Regeneration Function
+bool CPlayer::Regeneration()
+{
+    if (Stats->MaxHP==Stats->HP)
+       lastRegenTime_hp = clock();
+
+    if (Stats->MaxMP==Stats->MP)
+      lastRegenTime_mp = clock();
+
+    if ((Stats->MaxHP==Stats->HP)&&(Stats->MaxMP==Stats->MP))
+       return true;
+
+     UINT bonus_sitted=1;
+     UINT bonus_fairy=1;
+     int bonus_hp=0;
+     int bonus_mp=0;
+     int nb_sec_stance=8;   //Original setting was 5
+
+     if(Fairy)
+     {
+         nb_sec_stance= 8;      //Original setting was 3
+         bonus_mp++;
+         bonus_hp++;
+         bonus_fairy=3;
+     }
+     if (Status->Stance==1)
+     {
+         nb_sec_stance= 5;      //Original setting was 3
+         bonus_mp++;
+         bonus_hp++;
+         bonus_sitted=3;
+     }
+
+     int TimeDiff=nb_sec_stance*CLOCKS_PER_SEC;
+
+    //LMA: HP
+    if (Stats->HP<Stats->MaxHP)
+    {
+        clock_t etimeHP = clock() - lastRegenTime_hp;
+
+        if( etimeHP >= TimeDiff && Stats->HP > 0 )
+        {
+            unsigned int hpamount = GetHPRegenAmount( );
+
+            if (bonus_hp!=0)
+            {
+               Stats->HP += (long int) (hpamount*bonus_sitted)*bonus_fairy;
+               //Log(MSG_INFO,"REGEN HP %i(%i*%i)*%i",(long int) (hpamount*bonus_sitted)*bonus_fairy,hpamount,bonus_sitted,bonus_fairy);
+            }
+            else
+            {
+                Stats->HP += hpamount;
+            }
+            if( Stats->HP > Stats->MaxHP)
+                Stats->HP = Stats->MaxHP;
+
+            if (Stats->HP < Stats->MaxHP)
+                lastRegenTime_hp = clock();
+        }
+    }
+
+    //LMA: MP
+    if(Stats->MP<Stats->MaxMP)
+    {
+        clock_t etimeMP = clock() - lastRegenTime_mp;
+
+        if( etimeMP >= TimeDiff && Stats->HP > 0 )
+        {
+            unsigned int mpamount = GetMPRegenAmount( );
+
+            if (bonus_mp!=0)
+            {
+               Stats->MP += (long int) (mpamount * bonus_sitted)* bonus_fairy;
+               //Log(MSG_INFO,"RegenMP %i(%i*%i)*%i",(long int) (mpamount*bonus_sitted)*bonus_fairy,mpamount,bonus_sitted,bonus_fairy);
+            }
+            else
+            {
+                Stats->MP += mpamount;
+            }
+            if( Stats->MP > Stats->MaxMP )
+                Stats->MP = Stats->MaxMP;
+
+            if (Stats->HP < Stats->MaxHP)
+                lastRegenTime_mp = clock();
+        }
+    }
     return true;
 }
 

@@ -3806,7 +3806,10 @@ unsigned int CPlayer::GetMaxMP( )
 // Get HP Regeneration Amount                   //A_HP_REC_RATE(27) / HP_REC_AMONT5(56)
 unsigned int CPlayer::GetHPRegenAmount( )
 {
-    UINT amount = (UINT)ceil ( Stats->MaxHP * 0.02 );
+    //LMA: fix from Planetary_Myth
+    //UINT amount = (UINT)ceil ( Stats->MaxHP * 0.02 );
+    UINT amount = (UINT)ceil ( Stats->MaxHP * 0.022 );
+
     UINT pamount = 0;//Passive Skill % Value
     UINT vamount = 0;//Passive Skill Value
 
@@ -3918,7 +3921,10 @@ unsigned int CPlayer::GetHPRegenAmount( )
 // Get MP Regeneration Amount                   //A_MP_REC_RATE(28) / MP_REC_RATE(57)
 unsigned int CPlayer::GetMPRegenAmount( )
 {
-    UINT amount = (UINT)ceil ( Stats->MaxMP * 0.02 );
+    //LMA: fix from Planetary_Myth
+    //UINT amount = (UINT)ceil ( Stats->MaxMP * 0.02 );
+    UINT amount = (UINT)ceil ( Stats->MaxMP * 0.03 );
+
     UINT pamount = 0;//Passive Skill % Value
     UINT vamount = 0;//Passive Skill Value
 
