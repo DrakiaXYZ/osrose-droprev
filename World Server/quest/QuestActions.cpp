@@ -783,10 +783,17 @@ QUESTREWD(010){
 	client->Attr->Cha = 10;
 	client->Attr->Sen = 10;
 
-	for(int i = 2; i <= client->Stats->Level; i++) {
+	/*for(int i = 2; i <= client->Stats->Level; i++) {
 		client->CharInfo->StatPoints += 10;
 		client->CharInfo->StatPoints += i / 2;
-	}
+	}*/
+
+	//LMA: new formula from Sousie
+    for(int i = 2; i <= client->Stats->Level; i++)
+    {
+        client->CharInfo->StatPoints += 9;
+        client->CharInfo->StatPoints += i - ((i - 1) / 5);
+    }
 
 	return QUEST_SUCCESS;
 }
