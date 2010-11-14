@@ -758,6 +758,41 @@ bool CCharServer::pakChatrooms ( CCharClient* thisclient, CPacket* P )
 	            return true;
 	        }
 
+            //LMA: we have to clean the chatrooms if needed
+            if(chatroom_list.size()!=0)
+            {
+                map<DWORD,CChatroom*>::iterator it;
+                for ( it=chatroom_list.begin() ; it != chatroom_list.end(); it++ )
+                {
+                    if((*it).second->People_list.size()==0)
+                    {
+                        chatroom_list.erase((*it).second->chatroom_id);
+                        continue;
+                    }
+
+                    //checking members now.
+                    for (int k=0;k<(*it).second->People_list.size();k++)
+                    {
+                        CCharClient* otherclient=GetClientByID((*it).second->People_list.at(k)->charid);
+                        if(otherclient==NULL)
+                        {
+                            (*it).second->People_list.erase((*it).second->People_list.begin()+k);
+                            k=0;
+                            continue;
+                        }
+
+                    }
+
+                    if((*it).second->People_list.size()==0)
+                    {
+                        chatroom_list.erase((*it).second->chatroom_id);
+                        continue;
+                    }
+
+                }
+
+            }
+
             BEGINPACKET( pak, 0x7e3);
             ADDBYTE    ( pak, 0x21 );
             ADDBYTE    ( pak, chatroom_list.size() );
