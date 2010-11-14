@@ -1150,7 +1150,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
            delete []nick;
         }
         break;
-        case 0x0d://invitation no accepted
+        case 0x0d://invitation not accepted
         {
             char* nick = new (nothrow) char[P->Size-7];
             if(nick==NULL)
@@ -1226,6 +1226,8 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             //member info
             CClanMembers* newmember = new CClanMembers;
             newmember->id = otherclient->charid;
+            //LMA: since it's clan creator, it's the master ;)
+            newmember->clan_rank=6;
             strcpy(newmember->name,otherclient->charname);
             newclan->ClanMembers.push_back( newmember );
         	ClanList.push_back( newclan );
