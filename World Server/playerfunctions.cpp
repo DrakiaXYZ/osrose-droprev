@@ -2077,7 +2077,7 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet, UINT index)
         }
         else
         {
-            Log(MSG_WARNING,"EXTP %u for %s:: next trigger %u, %s",hash,CharInfo->charname,nexttrigger->TriggerHash,nexttrigger->TriggerName);
+            Log(MSG_WARNING,"EXTP %u for %s:: next trigger is NULL!",hash,CharInfo->charname);
         }
 
         break;
