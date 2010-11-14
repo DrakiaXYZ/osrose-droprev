@@ -72,7 +72,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
             /*int charid = GETWORD((*P),1);
             int clanid = GETWORD((*P),3);*/
             DWORD charid = GETDWORD((*P),1);
-            int clanid = GETWORD((*P),3);
+            int clanid = GETWORD((*P),5);
 
             CPlayer* otherclient = GetClientByCID ( charid );
             if(otherclient==NULL)
@@ -85,6 +85,7 @@ bool CWorldServer::pakClanManager ( CPlayer* thisclient, CPacket* P )
                 DB->QFree( );
           	    return true;
             }
+
             row = mysql_fetch_row(result);
         	otherclient->Clan->logo = atoi(row[0]);
     	    otherclient->Clan->back = atoi(row[1]);
