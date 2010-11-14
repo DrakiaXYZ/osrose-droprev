@@ -1211,7 +1211,7 @@ void CPlayer::saveskills( )
     pc_rebate=pc_temp;
     pc_up=pc_union;
     summon_jauge=50+val_summon;
-    Log(MSG_INFO,"%s:: New jauge is %i",summon_jauge,CharInfo->charname);
+    Log(MSG_INFO,"%s:: New jauge is %i",CharInfo->charname,summon_jauge);
 
     //LMA: Saving Skills Data for a player.
     GServer->DB->QExecute("UPDATE characters SET class_skills='%s',class_skills_level='%s',basic_skills='%s',driving_skills='%s',unique_skills='%s',mileage_skills='%s',unique_skills_level='%s',mileage_skills_level='%s' WHERE id=%i",
