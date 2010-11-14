@@ -488,6 +488,7 @@ bool CWorldServer::InitDefaultValues()
     nullzone->MapTime = 0;
     nullzone->LastUpdate = 0;
     nullzone->CurrentTime = 0;
+    nullzone->nb_summons=0;
     for(UINT i=0;i<MapList.max;i++)
     {
         MapList.Index[i] = nullzone;

@@ -66,6 +66,9 @@ class CMap
     void RespawnMonster( );
     bool IsNight( );
 
+    //LMA: nb_summons
+    UINT nb_summons;
+
     UINT id;           // id from map
     UINT dayperiod;    // duration of 1 day
     UINT morningtime;  // morning start time

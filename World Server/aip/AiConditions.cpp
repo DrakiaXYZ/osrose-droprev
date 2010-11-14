@@ -756,12 +756,13 @@ AICOND(020)
 }
 
 //Do I have a caller
+//LMA: actually the question is, "am I an orphan?").
 AICOND(021)
 {
 	//Do i have a "CALLER" ??Possibly the one who summoned the monster??
 	// more like Am I an orphan
 	GETAICONDDATA(021);
-    LogDebug( "AICOND(021) Do i have a 'CALLER'");
+    LogDebug( "AICOND(021) Do i have a 'CALLER'?");
 
 	if(!entity->IsMonster())return AI_SUCCESS;
     CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
@@ -770,7 +771,27 @@ AICOND(021)
     //CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
     //CWorldEntity* caller = thisMonster->thisZone->GetEntity(thisMonster->_CallerID);
 	if(thisMonster->owner == 0) return AI_SUCCESS;
-    LogDebug( "AICOND(021) Yes I am an orphan");
+
+	//LMA: checking if the player is in the same map (should handle warp and if player died).
+	CMap* map = GServer->MapList.Index[thisMonster->Position->Map];
+    CCharacter* caller = map->GetCharInMap( thisMonster->owner );
+	if(caller == NULL)
+	{
+        thisMonster->owner = 0;
+        return AI_SUCCESS;
+	}
+	else
+	{
+	    if (caller->IsDead())
+	    {
+	        thisMonster->owner = 0;
+            return AI_SUCCESS;
+	    }
+
+	}
+
+
+    LogDebug( "AICOND(021) Yes I have a caller");
 	return AI_FAILURE;
 }
 

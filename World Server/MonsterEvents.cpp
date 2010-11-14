@@ -151,10 +151,11 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
 {
     UINT die_amount=0;
  	clock_t etime = clock() - lastDegenTime;
-    CPlayer* ownerclient = monster->GetOwner( );
 
     if( etime >= 4 * CLOCKS_PER_SEC && Stats->HP > 0 )
     {
+        CPlayer* ownerclient = monster->GetOwner( );
+
         if(monster->life_time>0)
         {
             die_amount=(UINT)(monster->Stats->MaxHP/monster->life_time);
@@ -218,7 +219,7 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
             if(Stats->HP >0)
             {
                 //LMA: Trying to update real HP amount.
-                Log(MSG_INFO,"Summon is alive");
+                //Log(MSG_INFO,"Summon is alive");
                 BEGINPACKET( pak, 0x79f );
                 ADDWORD    ( pak, monster->clientid );
                 ADDDWORD   ( pak, Stats->HP );
@@ -230,6 +231,8 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
     }
     else if (Stats->HP < 1)
     {
+        CPlayer* ownerclient = monster->GetOwner( );
+
         //LMA: We update the jauge (only for skill summons)
         if(ownerclient != NULL&&monster->owner_user_id>0)
         {

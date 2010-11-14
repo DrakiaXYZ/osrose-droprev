@@ -183,6 +183,14 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
             monster->Stats->Level = ownerlevel;
             Log(MSG_INFO,"Summon %i, got lvl %i by this owner",thisnpc->id,ownerlevel);
         }
+
+        //LMA: adding a summon :)
+        if (monster->IsSummon())
+        {
+            nb_summons++;
+            Log(MSG_INFO,"Adding a summon in map %i (now %u)",id,nb_summons);
+        }
+
     }
 
     if(spawnid!=0)
@@ -292,6 +300,17 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
 bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
 {
     if(monster==NULL) return false;
+
+    //LMA: deleting a summon :)
+    if (monster->IsSummon())
+    {
+        if (nb_summons>0)
+        {
+            nb_summons--;
+        }
+
+        Log(MSG_INFO,"Deleting a summon in map %i (now %u)",id,nb_summons);
+    }
 
     //LMA TEST
     bool lma_debug=false;

@@ -27,6 +27,8 @@ PVOID MapProcess( PVOID TS )
     UINT loopcount=0;
     clock_t time_skill=0;
     bool only_npc=false;    //LMA: AIP is done by NPC even when no player in map.
+    bool only_summon=false;  //LMA: test for summons when no one's around (sad is a summon's life ^_^).
+    UINT nb_summons_map=0;  //LMA: test for summons when no one's around (sad is a summon's life ^_^).
 
     //LMA: temp monster used for NPCs.
     fPoint tempPos;
@@ -54,13 +56,21 @@ PVOID MapProcess( PVOID TS )
 
             //LMA: test for Union.
             only_npc=false;
+            only_summon=false;  //LMA: test for summons when no one's around (sad is a summon's life ^_^).
+            nb_summons_map=0;
             if( map->PlayerList.size()<1 )
             {
                 only_npc=true;    //LMA: AIP is done by NPC even when no player in map.
+
+                //LMA: doing summons too if there are any in map.
+                if(map->nb_summons>0)
+                {
+                    only_summon=true;
+                }
                 //continue;
             }
 
-            if (!only_npc)
+            if (!only_npc||only_summon)
             {
                 // Player update //------------------------
                 for(UINT j=0;j<map->PlayerList.size();j++)
@@ -277,12 +287,23 @@ PVOID MapProcess( PVOID TS )
                     }
 
                 }
+
                 // Monster update //------------------------
                 pthread_mutex_lock( &map->MonsterMutex );
 
                 for(UINT j=0;j<map->MonsterList.size();j++)
                 {
                     CMonster* monster = map->MonsterList.at(j);
+
+                    //LMA: only summon ?
+                    if (only_summon&&!monster->IsSummon())
+                    {
+                        continue;
+                    }
+                    else if(only_summon)
+                    {
+                        nb_summons_map++;
+                    }
 
                     /*//LMA: Was for log purposes.
                     if(monster->Stats->HP<0)
@@ -519,9 +540,15 @@ PVOID MapProcess( PVOID TS )
 
                 }
 
+                //LMA: was there any summons in this map?
+                if(only_summon&&nb_summons_map==0)
+                {
+                    map->nb_summons=0;
+                }
+
             }
 
-            if(only_npc)
+            if(only_npc&&!only_summon)
             {
                 pthread_mutex_lock( &map->MonsterMutex );
             }
