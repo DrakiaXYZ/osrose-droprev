@@ -285,10 +285,14 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
             }
             */
             //So let's go back to the old way.
-            if(!IsTargetReached( Target ))
+            //LMA: done in DoAttack...
+            //Can be "dangerous" since it checks range for normal attack
+            //and if we're with skills the range isn't the same so player changes
+            //its destiny all the time from skill range to weapon range.
+            /*if(!IsTargetReached( Target ))
             {
                 Position->destiny=Target->Position->current;
-            }
+            }*/
 
         }
 
