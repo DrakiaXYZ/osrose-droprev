@@ -383,6 +383,8 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
     {
         if(distance<=Stats->Attack_Distance)
         {
+            //LMA: PY's fix.
+            Position->destiny = Position->current;
             return true;
         }
         else
@@ -395,6 +397,8 @@ bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
     {
         if(distance<=skill->range)
         {
+            //LMA: PY's fix.
+            Position->destiny = Position->current;
             return true;
         }
         else

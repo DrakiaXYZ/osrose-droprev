@@ -1353,8 +1353,13 @@ bool CCharacter::AoeDebuff( CSkills* skill, CCharacter* Enemy )
 
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
     if(Stats->MP<0) Stats->MP=0;
-    ClearBattle( Battle );
+    //ClearBattle( Battle );
     Battle->lastAtkTime = clock( );
+
+    //LMA: do we have to resume a Normal Attack?
+    ResumeNormalAttack(NULL,false);
+
+
     return true;
 }
 
