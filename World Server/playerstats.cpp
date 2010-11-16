@@ -31,7 +31,8 @@ unsigned int CPlayer::GetDodge( )
     UINT pDodge = 0;//Passive Skill % Value
     UINT vDodge = 0;//Passive Skill Value
 
-    Dodge = (UINT)floor((((Stats->Level * 0.3) + ((Attr->Dex + Attr->Edex) * 1.9)) + 10 ) * 0.4);
+    //Dodge = (UINT)floor((((Stats->Level * 0.3) + ((Attr->Dex + Attr->Edex) * 1.9)) + 10 ) * 0.4);//Tomiz: Old Formula
+    Dodge = (UINT)floor((Stats->Level * 0.3) + ((Attr->Dex + Attr->Edex) * 1.25));//Tomiz:Base Stats FIXED
 
     for(UINT i=1;i<9;i++)               //Dodge from Item Refine
     {
@@ -231,7 +232,8 @@ unsigned int CPlayer::GetAccury( )
     {
         if(items[7].count == 0)
         {
-            Accury = (UINT)floor((((Attr->Con + Attr->Econ )+10)*0.5) + 15 );
+            //Accury = (UINT)floor((((Attr->Con + Attr->Econ )+10)*0.5) + 15 );//Tomiz: Old Formula
+            Accury = (UINT)floor(Stats->Level + (Attr->Con + Attr->Econ));//Tomiz:Naked Stats FIXED  TODO : Fix acc With weapon
         }
         else if(items[7].count !=0)
         {
