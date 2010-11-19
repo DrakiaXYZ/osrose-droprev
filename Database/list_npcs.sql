@@ -146,7 +146,11 @@ INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Robin', 1512, 27, 264.
 INSERT INTO `list_npcs` VALUES (0, '[Resident] Hotch', 1144, 27, 189.228, 5384.23, 5180.10, 244,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gallahad', 1141, 27, 178.499, 5345.20, 5047.71, 241,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Luce', 1142, 27, 101.871, 5320.52, 5081.27, 242,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant] Med', 1151, 28, 127.514, 5587.09, 4732.29, 251,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Tobar', 1130, 28, 118.187, 5587.22, 4732.54, 250,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Shop Waitress] Betty', 1127, 28, 271.999, 5688.74, 4802.46, 247,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Storage Keeper] Marcus', 1128, 28, 34.535, 5625.19, 4853.54, 248,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant] Med', 1151, 28, 345.707, 5686.58, 4902.11, 251,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Blacksmith] Brock', 1129, 28, 182.002, 5667.78, 4701.27, 249,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Dead Priest] Lantore', 1154, 29, 241.813, 5114.61, 5131.16, 254,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Town Girl] Lithia', 1156, 29, 24.237, 5091.98, 5181.81, 256,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ghost] Harry', 1157, 29, 109.425, 5050.08, 5123.27, 257,0,0,0);
