@@ -147,7 +147,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Resident] Hotch', 1144, 27, 189.228, 5384.2
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gallahad', 1141, 27, 178.499, 5345.20, 5047.71, 241,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Luce', 1142, 27, 101.871, 5320.52, 5081.27, 242,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Tobar', 1130, 28, 118.187, 5587.22, 4732.54, 250,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Shop Waitress] Betty', 1127, 28, 271.999, 5688.74, 4802.46, 247,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Shop Waitress] Betty', 1127, 28, 272.000, 5688.74, 4802.46, 247,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Storage Keeper] Marcus', 1128, 28, 34.535, 5625.19, 4853.54, 248,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant] Med', 1151, 28, 345.707, 5686.58, 4902.11, 251,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Blacksmith] Brock', 1129, 28, 182.002, 5667.78, 4701.27, 249,0,0,0);
