@@ -53,8 +53,8 @@
 #define SHUTDOWN_THREAD 2
 
 //LMA: Grids
-#define NB_MAPS 122        //Nb maps (120 maps, including bad and non existant).
-#define NB_GRIDS 93        //nb active grids (active maps)
+#define NB_MAPS 124        //Nb maps (122 maps, including bad and non existant).
+#define NB_GRIDS 96        //nb active grids (active maps)
 
 //LMA: LTB.
 #define LTBINDEX 0
