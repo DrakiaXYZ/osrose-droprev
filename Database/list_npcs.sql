@@ -78,7 +78,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Sicru', 1107, 2, 187.631,
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Rooen', 1513, 3, 0.000, 5104.48, 5019.71, 303,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Rodath', 1086, 5, 90.000, 5155.07, 5279.92, 186,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Mel', 1087, 5, 270.000, 5247.07, 5279.96, 187,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Gamp', 1084, 6, 270.000, 5248.14, 5279.20, 187,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Gamp', 1084, 6, 271.999, 5248.14, 5279.20, 185,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Referee] Leum', 1113, 9, 0.000, 5199.99, 5390.04, 213,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Referee] Pirre', 1114, 9, 180.500, 5200.09, 4704.69, 214,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Nell', 1085, 11, 84.016, 4953.37, 4992.35, 184,0,0,0);
@@ -258,7 +258,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Orlean Ambassador] Solara', 2141, 71, 60.16
 INSERT INTO `list_npcs` VALUES (0, '[Manager of Ferrell] Ishmat', 2126, 71, 0.000, 5231.05, 5285.76, 417,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Weapon Merchant] Huzam', 2122, 71, 0.000, 5129.25, 5289.15, 429,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Armor Merchant] Azim', 2124, 71, 0.000, 5156.39, 5289.25, 428,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Mechanic] Kreinto', 2128, 71, 170.772, 5275.06, 5286.73, 424,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Mechanic] Kreinto', 2128, 71, 150.956, 5272.06, 5290.73, 424,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mechanic''s Dog] Chopper', 2151, 71, 351.841, 5273.30, 5272.75, 425,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Hebarn''s Vassal] Tama', 2157, 71, 226.997, 5218.91, 5310.57, 484,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Hebarn''s Vassal] Nysaa', 2158, 71, 320.235, 5213.26, 5349.05, 485,0,0,0);
@@ -272,6 +272,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Arua''s Servant] Lugus', 2170, 71, 133.003,
 INSERT INTO `list_npcs` VALUES (0, '[Arua''s Servant] Ohad', 2171, 71, 200.645, 5186.24, 5350.61, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Hebarn''s Vassal] Uros', 2161, 71, 0.000, 5201.08, 5302.63, 488,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arua''s Servant] Henda', 2167, 71, 17.989, 5190.57, 5327.00, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Invention] CG-3', 2120, 71, 344.509, 5279.40, 5284.65, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Junon Order Elder] Hameed', 2133, 71, 90.000, 5186.94, 5155.04, 442,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Kareem', 2136, 71, 88.001, 5181.34, 5132.40, 439,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Guide] Jalilla', 2137, 71, 194.293, 5190.86, 5259.98, 432,0,0,0);
@@ -286,6 +287,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Hafis', 2132, 71, 330.956
 INSERT INTO `list_npcs` VALUES (0, '[Orlean Ambassador] Lynd', 2142, 71, 0.000, 5166.80, 5069.03, 426,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gunsmith] Rahd', 2123, 71, 252.423, 5203.26, 5051.36, 436,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Stargazer] Nubo', 2129, 71, 351.841, 5299.85, 5434.61, 418,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 71, 324.470, 5324.24, 5420.35, 219,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Interplanetary Guide] Nova', 2101, 73, 0.000, 5241.30, 5225.49, 453,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Wandering Rifter] Nimbo', 2102, 73, 0.000, 5328.58, 5233.29, 454,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Dread Captain] Bruise', 2103, 74, 22.043, 5090.25, 5293.49, 455,0,0,0);
