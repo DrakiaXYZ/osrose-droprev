@@ -1089,7 +1089,58 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
         return pakGMGMSkills(thisclient, name);
     }
-   else if (strcmp(command, "go")==0) // AtCommandGo
+else if (strcmp(command, "go")==0) // Use SQL by Likol
+    {
+        if(Config.Command_go > thisclient->Session->accesslevel) return true;
+        if ((tmp = strtok(NULL, " ")) == NULL) tmp = 0;
+        int loc = atoi(tmp);
+        int x = 0;
+        int y = 0;
+        int map = 0;
+        MYSQL_ROW row;
+        MYSQL_RES *result = NULL;
+        result = DB->QStore("SELECT lvlmin,map,locx,locy,mapname,lvlmax FROM list_golist WHERE isactive=1 AND loc=%i",loc);
+        row = mysql_fetch_row(result);
+        if (row==NULL)
+        {
+            SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
+            DB->QFree( );
+            result = DB->QStore("SELECT loc,mapname FROM list_golist WHERE isactive=1");
+            while(row = mysql_fetch_row(result)) SendPM(thisclient, "%i = %s",atoi(row[0]),row[1]);
+            SendPM(thisclient, "Example; /go 1");
+            DB->QFree( );
+            return true;
+        }
+        else
+        {
+            if (thisclient->Stats->Level<atoi(row[0]))
+            {
+                SendPM(thisclient, "You need to be a least Level %i to visit %s!",atoi(row[0]),row[4]);
+                DB->QFree( );
+                return true;
+            }
+            if (thisclient->Stats->Level>atoi(row[5]))
+            {
+                SendPM(thisclient, "You need to be between Level %i and %i to visit %s !",atoi(row[0]),atoi(row[5]),row[4]);
+                DB->QFree( );
+                return true;
+            }
+            if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Stats->HP < 1 || thisclient->Session->inGame == false )
+            {
+                    SendPM(thisclient, "You need at least 50% HP in order to warp");
+                    return true;
+            }
+                int map = atoi(row[1]);
+                int x = atoi(row[2]);
+                int y = atoi(row[3]);
+                int noqsd = 1;
+                SendPM(thisclient, "Teleport to %s .",row[4]);
+                DB->QFree( );
+                return pakGMTele(thisclient, map, x, y,noqsd);
+        }
+    }
+ /*
+  else if (strcmp(command, "go")==0) // AtCommandGo
     {
         if(Config.Command_go > thisclient->Session->accesslevel)
 	       return true;
@@ -1179,13 +1230,13 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
             x = 5093;
             y = 5144;
         }
-/*        else if (loc == 10) // Oblivion Temple
+        else if (loc == 10) // Oblivion Temple
         {
             map = 41;
             x = 5105;
             y = 5246;
         }
-*/        else if (loc == 11) // Sikuku Underground Prison
+        else if (loc == 11) // Sikuku Underground Prison
         {
              if (thisclient->Stats->Level<160) // by Terr0risT
              {
@@ -1213,8 +1264,7 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
                 y = 5278;
              }
         }
-
-/*        else if (loc == 13) // Union Wars - Attack
+       else if (loc == 13) // Union Wars - Attack
         {
              if (thisclient->Stats->Level<100)
              {
@@ -1228,8 +1278,7 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
                 y = 4784.5;
              }
         }
-*/
-/*        else if (loc == 14) // Union Wars - Defense
+        else if (loc == 14) // Union Wars - Defense
         {
              if (thisclient->Stats->Level<100)
              {
@@ -1243,7 +1292,6 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
                 y = 5365.37;
              }
         }
-*/
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
@@ -1280,6 +1328,7 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         }
         return true;
     }
+    */
    else if (strcmp(command, "goto")==0)
     {
         if(Config.Command_Goto > thisclient->Session->accesslevel)
