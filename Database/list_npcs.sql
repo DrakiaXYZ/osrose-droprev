@@ -28,6 +28,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Resident] Luth', 1015, 1, 270.003, 5130.61,
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Lena', 1014, 1, 169.135, 5240.40, 5124.57, 114,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Judy', 1201, 1, 162.011, 5261.88, 5212.97, 305,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 1, 167.450, 5244.93, 5220.95, 219,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Monster Coin Trader] Dahved', 1492, 1, 0.000, 5245.10, 5164.56, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Kingdom Minister] Warren', 1002, 1, 178.499, 5208.78, 5112.94, 102,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Village Chief] Cornell', 1001, 1, 183.008, 5217.51, 5113.18, 101,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 1, 22.043, 5435.30, 5492.26, 118,0,0,0);
@@ -58,6 +59,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Soldier] Winters', 1117, 2, 0.000, 5522.99,
 INSERT INTO `list_npcs` VALUES (0, '[Mayor] Darren', 1081, 2, 178.499, 5514.48, 5238.20, 181,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Felice Fete', 1202, 2, 206.565, 5562.00, 5164.83, 306,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Adalric', 1108, 2, 150.956, 5461.70, 5167.42, 226,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Monster Coin Trader] Vedad', 1493, 2, 335.763, 5559.95, 5254.14, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Interplanetary Guide] Alphonso', 1118, 2, 178.499, 5520.56, 5063.66, 218,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Historian] Jones', 1104, 2, 162.011, 5578.19, 4890.44, 204,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Vicious Captain] Ruven', 1125, 2, 270.000, 5597.76, 4918.87, 220,0,0,0);
@@ -201,6 +203,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Banker] Andre', 1180, 51, 0.0
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Pabel', 1185, 51, 3.008, 5298.98, 5105.03, 285,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Prophet] Olleck Basilasi', 1173, 51, 178.499, 5359.62, 5085.72, 273,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 51, 345.707, 5363.40, 5000.41, 219,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Monster Coin Trader] Dedev', 1494, 51, 22.043, 5350.81, 5000.70, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Eliot', 1172, 51, 157.957, 5285.69, 4940.95, 272,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Eucar Judge] Ishtal', 1171, 51, 206.565, 5430.09, 4937.96, 271,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Pavrick', 1181, 51, 335.763, 5440.45, 5103.41, 281,0,0,0);
@@ -217,6 +220,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Jacklyn Cooper', 1215, 61
 INSERT INTO `list_npcs` VALUES (0, '[Patrol Dog] Stephen', 1244, 61, 180.000, 5427.52, 4482.43, 317,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Jeffrey Lloyd', 1221, 61, 180.000, 5434.01, 4595.87, 321,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 61, 0.000, 5436.17, 4544.15, 219,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Monster Coin Trader] Dyv''d', 1495, 61, 39.765, 5382.18, 4611.80, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Catherine Clara', 1212, 61, 330.956, 5473.37, 4618.79, 312,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Gilbert', 1213, 61, 217.594, 5474.35, 4513.74, 313,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Storage Keeper] Dustin Leta', 1222, 61, 197.989, 5489.63, 4553.05, 322,0,0,0);
@@ -279,6 +283,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Event Guide] Jalilla', 2137, 71, 194.293, 5
 INSERT INTO `list_npcs` VALUES (0, '[Lojala Blackbear Leader] Tondro', 2138, 71, 293.031, 5270.76, 5187.31, 420,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Mahyr', 2127, 71, 275.984, 5268.82, 5142.06, 438,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Oro Bar Owner] Sahrazod', 2125, 71, 76.203, 5235.65, 5162.88, 434,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Monster Coin Trader] Daih''vyd', 1496, 71, 0.000, 5209.00, 5209.90, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ikaness Staff] Galiya', 2130, 71, 264.016, 5278.29, 5109.64, 416,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Rahnan', 2135, 71, 131.684, 5181.24, 5104.91, 437,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Fahimah', 2134, 71, 82.038, 5183.66, 5086.18, 443,0,0,0);
