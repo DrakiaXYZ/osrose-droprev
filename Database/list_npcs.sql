@@ -38,13 +38,14 @@ INSERT INTO `list_npcs` VALUES (0, '[Weapon Seller] Raffle', 1008, 1, 322.406, 5
 INSERT INTO `list_npcs` VALUES (0, '[Armor Seller] Carrion', 1009, 1, 275.986, 5313.53, 5198.14, 109,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Keenu''s Daughter] Arisa', 1020, 1, 275.985, 5428.17, 5082.68, 120,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Lena''s Sister] Shirley', 1019, 1, 322.406, 5504.69, 5274.08, 119,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '(10) Christmas Event 2008', 3040, 2, 0.000, 4829.88, 4645.83, 0,0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '(10) NPC2', 3041, 2, 0.000, 4833.84, 4645.52, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Event Spawn Control 1 (NPC)', 3040, 2, 0.000, 4829.88, 4645.83, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Event Spawn Control 2 (NPC)', 3041, 2, 0.000, 4832.84, 4645.52, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '(200) NPC1791', 1791, 2, 0.000, 4838.05, 4644.56, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '(200) NPC1792', 1792, 2, 0.000, 4841.91, 4644.57, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '(200) NPC1793', 1793, 2, 0.000, 4845.60, 4644.59, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '(200) NPC1794', 1794, 2, 0.000, 4849.58, 4644.48, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '(200) NPC1795', 1795, 2, 0.000, 4853.38, 4644.49, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Event Spawn Control 3 (NPC)', 3042, 2, 0.000, 4835.08, 4645.67, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gawain', 1090, 2, 84.016, 5334.58, 5353.91, 190,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Huffe', 1111, 2, 90.000, 5334.84, 5345.81, 211,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Owner] Burtland', 1115, 2, 90.000, 5289.10, 5264.10, 215,0,0,0);
