@@ -1,0 +1,27 @@
+Updates for osRose still needed for DevRev
+------------------------------------------
+
+
+
+1 - Cannot connect to server with current trose.exe (encryption or ??)
+
+2 - Storage changes 4 normal storages and 4 item mall storages.  You need a item mall storage coupon for each of the 4 item mall storages.  Coupon are for 7 days (old one) and 30 days, current one.
+ Normal storage is not restricted to filling the one before it, you can place into any of the normal storages till full
+
+3 - Toolbars in client.  There is a ALT bar 1-12 and 3 normal bars (not 4) of 1-12
+
+4 - Costume system now, stats from all armors do not carry to the character, BUT, if a item mall item that has with a complete set like exp, drops, etc those carry to the character, no matter if in costume slow or normal slot.  NO stats carry over from the armors in costumes.
+
+5 - Trade chat now works.  It will cover the entire map, not like shout or normal chat
+
+6 - Check new GO command (which is now SQL) to make sure it works correctly
+
+7 - Item Mall is now directly in client, need a sql file to allow it to work with client??  Item list, how to purchase points, etc.
+
+8 - New Lucky spin is also tied with the new Item Mall in the client.  Need to see how to add as well, SQL file? Etc! 3 new STB's for this one - LIST_LUCKYSPIN.STB, LIST_LUCKYSPIN_CATEGORY.STB, LIST_LUCKYSPIN_KNOCKOUT.STB
+
+9 - New STB (LIST_ZONE_BLOCKUSEITEM.STB) for blocking certain useitems in certain zones.  Scrolls aren't used in PVP zones, other things might be as well
+
+
+
+MORE TO ADD as we remember what has changed since last version that was worked on.

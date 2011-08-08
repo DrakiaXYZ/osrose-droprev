@@ -1089,9 +1089,14 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
         return pakGMGMSkills(thisclient, name);
     }
-else if (strcmp(command, "go")==0) // Use SQL by Likol
+    else if (strcmp(command, "go")==0) // Use SQL by Likol
     {
-        if(Config.Command_go > thisclient->Session->accesslevel) return true;
+
+        if(Config.Command_Go > thisclient->Session->accesslevel)
+        {
+        DB->QFree( );
+        return true;
+        }        
         if ((tmp = strtok(NULL, " ")) == NULL) tmp = 0;
         int loc = atoi(tmp);
         int x = 0;
@@ -1128,6 +1133,7 @@ else if (strcmp(command, "go")==0) // Use SQL by Likol
             if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Stats->HP < 1 || thisclient->Session->inGame == false )
             {
                     SendPM(thisclient, "You need at least 50% HP in order to warp");
+                    DB->QFree( );
                     return true;
             }
                 int map = atoi(row[1]);
