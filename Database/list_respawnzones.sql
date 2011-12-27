@@ -38,6 +38,8 @@ INSERT INTO `list_respawnzones` VALUES (0, 5, 5200.79, 5059.89, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 6, 5155.11, 5105.19, 10, 1);
 INSERT INTO `list_respawnzones` VALUES (0, 6, 5201.83, 5498.40, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 6, 5200.79, 5059.89, 10, 0);
+INSERT INTO `list_respawnzones` VALUES (0, 7, 5742.59, 5095.05, 10, 1);
+INSERT INTO `list_respawnzones` VALUES (0, 7, 5742.29, 5094.52, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 8, 5525.87, 4546.56, 10, 1);
 INSERT INTO `list_respawnzones` VALUES (0, 8, 5520.16, 4558.11, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 9, 5199.74, 4748.62, 10, 1);

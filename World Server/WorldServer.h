@@ -54,7 +54,7 @@
 
 //LMA: Grids
 #define NB_MAPS 124        //Nb maps (122 maps, including bad and non existant).
-#define NB_GRIDS 96        //nb active grids (active maps)
+#define NB_GRIDS 97        //nb active grids (active maps)
 
 //LMA: LTB.
 #define LTBINDEX 0

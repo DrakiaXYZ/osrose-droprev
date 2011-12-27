@@ -579,6 +579,8 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 Log(MSG_ERROR, "Error allocing memory" );
                 return false;
             }
+
+            
             memcpy( nick, &P->Buffer[1], P->Size-7 );
             Log(MSG_INFO,"[CS] clan, %s is trying to up %s",thisclient->charname,nick);
 
@@ -652,6 +654,20 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 delete []nick;
                 return false;
             }
+            
+            // http://forum.dev-osrose.com/viewtopic.php?f=30&t=5111
+             CClans* thisclan = (CClans*) GetClanByID(thisclient->clanid);
+            for(UINT i=0;i<thisclan->ClanMembers.size();i++)
+            {
+                CClanMembers* ClanMember = thisclan->ClanMembers.at( i );
+                if(stricmp(ClanMember->name,nick)==0)
+                {
+                    ClanMember->clan_rank = clan_rank;
+                    break;
+                }
+            }
+ 
+          
             BEGINPACKET( pak, 0x7e0 );
             ADDBYTE    ( pak, 0x75 );//
             ADDBYTE    ( pak, clan_rank );
@@ -759,6 +775,19 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 delete []nick;
                 return false;
             }
+            // http://forum.dev-osrose.com/viewtopic.php?f=30&t=5111
+           CClans* thisclan = (CClans*) GetClanByID(thisclient->clanid);
+            for(UINT i=0;i<thisclan->ClanMembers.size();i++)
+            {
+                CClanMembers* ClanMember = thisclan->ClanMembers.at( i );
+                if(stricmp(ClanMember->name,nick)==0)
+                {
+                    ClanMember->clan_rank = clan_rank;
+                    break;
+                }
+            }
+ 
+            
             BEGINPACKET( pak, 0x7e0 );
             ADDBYTE    ( pak, 0x75 );
             ADDBYTE    ( pak, clan_rank );
@@ -892,7 +921,7 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
         break;
         case 0x09://Give Master
         {
-            int clan_rank=0;
+            int clan_rank=6;
             int level=0;
             int job=0;
             int channel=0xff;
@@ -958,6 +987,18 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 delete []nick;
                 return false;
             }
+            // http://forum.dev-osrose.com/viewtopic.php?f=30&t=5111
+           CClans* thisclan = (CClans*) GetClanByID(thisclient->clanid);
+            for(UINT i=0;i<thisclan->ClanMembers.size();i++)
+            {
+                CClanMembers* ClanMember = thisclan->ClanMembers.at( i );
+                if(stricmp(ClanMember->name,nick)==0)
+                {
+                    ClanMember->clan_rank = clan_rank;
+                    break;
+                }
+            }
+            
             BEGINPACKET( pak, 0x7e0 );
             ADDBYTE    ( pak, 0x75 );
             ADDBYTE    ( pak, clan_rank );
@@ -1000,6 +1041,17 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 delete []nick;
                 return false;
             }
+            // http://forum.dev-osrose.com/viewtopic.php?f=30&t=5111
+           for(UINT i=0;i<thisclan->ClanMembers.size();i++)
+            {
+                CClanMembers* ClanMember = thisclan->ClanMembers.at( i );
+                if(stricmp(ClanMember->name,thisclient->charname)==0)
+                {
+                    ClanMember->clan_rank = clan_rank;
+                    break;
+                }
+            }
+            
             RESETPACKET( pak, 0x7e0 );
             ADDBYTE    ( pak, 0x75 );
             ADDBYTE    ( pak, clan_rank );

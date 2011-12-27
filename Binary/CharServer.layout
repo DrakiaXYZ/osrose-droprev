@@ -15,7 +15,8 @@
 	</File>
 </CodeBlocks_layout_file>
 [Editors]
-Order=
+Order=-1
+Focused=-1
 [Editor_0]
 Open=0
 Top=0
@@ -65,8 +66,12 @@ Top=0
 Open=0
 Top=0
 [Editor_16]
-Open=0
-Top=0
+Open=1
+Top=1
+CursorCol=1
+CursorRow=670
+TopLine=648
+LeftChar=1
 [Editor_17]
 Open=0
 Top=0

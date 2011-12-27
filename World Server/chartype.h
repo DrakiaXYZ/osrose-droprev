@@ -20,8 +20,10 @@
 */
 #ifndef _CHARACTER_TYPE_
 #define _CHARACTER_TYPE_
-#define MAX_STORAGE 160
-#define MAX_ITEMMALL 48
+#define MAX_STORAGE 192
+#define MAX_ITEMMALL 192
+//#define MAX_STORAGE 160 //original
+//#define MAX_ITEMMALL 48 // original
 #define MAX_WISHLIST 30
 #define MAX_INVENTORY 140
 #define MAX_BASIC_SKILL 42

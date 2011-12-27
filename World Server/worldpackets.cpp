@@ -4773,18 +4773,13 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         {
             failure+=(int)((5*failure)/100);
         }
-        else if(diff_level>5)
-        {
-            failure-=(int)((5*failure)/100);
-        }
-        else if(diff_level>10)
-        {
-            failure-=(int)((10*failure)/100);
-        }
-        else if(diff_level>20)
-        {
-            failure-=(int)((20*failure)/100);
-        }
+        // http://forum.dev-osrose.com/viewtopic.php?f=30&t=5104
+else if(diff_level>20) {
+    failure-=(int)((20*failure)/100);
+} else if(diff_level>10) {
+    failure-=(int)((10*failure)/100);
+} else if(diff_level>5) {
+   failure-=(int)((5*failure)/100); }
 
         if (failure<=0)
         {
