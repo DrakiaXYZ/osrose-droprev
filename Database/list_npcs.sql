@@ -285,6 +285,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Lojala Blackbear Leader] Tondro', 2138, 71,
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Mahyr', 2127, 71, 275.984, 5268.82, 5142.06, 438,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Oro Bar Owner] Sahrazod', 2125, 71, 76.203, 5235.65, 5162.88, 434,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Monster Coin Trader] Daih''vyd', 1496, 71, 0.000, 5209.00, 5209.90, 0,0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Valor Quest Giver] Roen', 1497, 71, 342.011, 5215.88, 5139.86, 0,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ikaness Staff] Galiya', 2130, 71, 264.016, 5278.29, 5109.64, 416,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Rahnan', 2135, 71, 131.684, 5181.24, 5104.91, 437,0,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Fahimah', 2134, 71, 82.038, 5183.66, 5086.18, 443,0,0,0);

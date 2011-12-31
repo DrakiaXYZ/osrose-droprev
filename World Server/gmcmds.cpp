@@ -1136,6 +1136,7 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
                     DB->QFree( );
                     return true;
             }
+/*
                 int map = atoi(row[1]);
                 int x = atoi(row[2]);
                 int y = atoi(row[3]);
@@ -1143,6 +1144,19 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
                 SendPM(thisclient, "Teleport to %s .",row[4]);
                 DB->QFree( );
                 return pakGMTele(thisclient, map, x, y,noqsd);
+*/
+// used from this part of forum  http://forum.dev-osrose.com/viewtopic.php?f=30&t=4979&sid=70b68ede9849e27bff937c504179206d
+
+fPoint coord;
+            int map = atoi(row[1]);
+            coord.x = atoi(row[2]);
+            coord.y = atoi(row[3]);
+            SendPM(thisclient, "teleport to map: %i",map);
+            MapList.Index[map]->TeleportPlayer( thisclient, coord, false );
+            Log( MSG_GMACTION, " %s : /go %i" , thisclient->CharInfo->charname, loc);
+            DB->QFree( );
+            return true;
+
         }
     }
  /*

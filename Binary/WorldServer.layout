@@ -246,11 +246,11 @@ CursorRow=1269
 TopLine=1254
 LeftChar=1
 [Editor_36]
-Open=0
-Top=0
-CursorCol=36
-CursorRow=2572
-TopLine=2533
+Open=1
+Top=1
+CursorCol=1
+CursorRow=1159
+TopLine=1137
 LeftChar=1
 [Editor_37]
 Open=0
@@ -288,8 +288,8 @@ CursorRow=2523
 TopLine=2501
 LeftChar=1
 [Editor_46]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=10
 CursorRow=4784
 TopLine=4777

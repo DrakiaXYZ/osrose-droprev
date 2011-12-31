@@ -188,12 +188,21 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
         {
             //WORD id = GETWORD ((*P),1);
             DWORD id = GETDWORD ((*P),1);
-            if(!DB->QExecute("DELETE FROM list_friend WHERE id=%i and idfriend=%i",thisclient->charid,id))
+           
+/*            if(!DB->QExecute("DELETE FROM list_friend WHERE id=%i and idfriend=%i",thisclient->charid,id))
             {
                 Log(MSG_INFO,"user failed to delete friend slot %i",thisclient->charname,id);
                 return false;
             }
+*/
+// Change from this add on forum -  http://forum.dev-osrose.com/viewtopic.php?f=30&t=5121&sid=1a047da91997d7102cc0986bd568eb27 
 
+           if(!DB->QExecute("DELETE FROM list_friend WHERE (id=%i and idfriend=%i) OR (id=%i and idfriend=%i)",thisclient->charid,id, id,thisclient->charid))
+            {
+                Log(MSG_INFO,"user %s failed to delete friend slot %i",thisclient->charname,id);
+                return false;
+            }
+ 
             Log(MSG_INFO,"user %s deletes friend slot %i",thisclient->charname,id);
 
             CCharClient* otherclient = (CCharClient*) GetClientByID(id);
