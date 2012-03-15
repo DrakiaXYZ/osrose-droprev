@@ -246,11 +246,19 @@ CursorRow=1269
 TopLine=1254
 LeftChar=1
 [Editor_36]
+<<<<<<< .mine
+Open=0
+Top=0
+CursorCol=1
+CursorRow=1159
+TopLine=1137
+=======
 Open=1
 Top=1
 CursorCol=1
 CursorRow=1159
 TopLine=1137
+>>>>>>> .r332
 LeftChar=1
 [Editor_37]
 Open=0

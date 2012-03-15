@@ -17,6 +17,7 @@
 [Editors]
 Order=-1
 Focused=-1
+Focused=-1
 [Editor_0]
 Open=0
 Top=0
@@ -59,6 +60,10 @@ Top=0
 [Editor_13]
 Open=0
 Top=0
+CursorCol=36
+CursorRow=301
+TopLine=266
+LeftChar=1
 [Editor_14]
 Open=0
 Top=0
@@ -78,6 +83,10 @@ Top=1
 CursorCol=1
 CursorRow=206
 TopLine=187
+LeftChar=1
+CursorCol=1
+CursorRow=235
+TopLine=198
 LeftChar=1
 [Editor_18]
 Open=0

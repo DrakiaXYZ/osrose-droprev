@@ -1339,7 +1339,8 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         }
         else if(data->btMsgType == 2)
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> NPC Announces LTB string %i, %s",data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+// Below caused the server to crash upon execution, commented out on 3/13/12 and world server came up ok
+//            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> NPC Announces LTB string %i, %s",data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
         }
         else
         {

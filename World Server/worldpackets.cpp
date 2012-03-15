@@ -687,6 +687,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 // Changes stance
 bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
 {
+    if(thisclient->IsDead()) return true;     
     if(thisclient->Shop->open)
         return true;
 	BYTE stancenum = GETBYTE((*P),0x00);

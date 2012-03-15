@@ -626,7 +626,6 @@ void CWorldServer::LoadCommandLevels( void )
 {
     Config.Command_Addquest = ConfigGetInt ( "commands.ini", "addquest", 299 );
     Config.Command_AllSkill = ConfigGetInt ( "commands.ini", "allskill", 299 );
-    Config.Command_GMSkills = ConfigGetInt ( "commands.ini", "gmskills", 299 );
     Config.Command_Ani = ConfigGetInt    ( "commands.ini", "ani", 299 );
     Config.Command_Ann = ConfigGetInt    ( "commands.ini", "ann", 299 );
     Config.Command_AtkModif = ConfigGetInt    ( "commands.ini", "atkmodif", 299 );
@@ -666,6 +665,9 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_GlobalTime  = ConfigGetInt    ( "commands.ini", "globaldelay", 30 );
     Config.Command_GlobalPrefix = ConfigGetString    ( "commands.ini", "globalprefix", "[Broadcast]" );
     Config.Command_GmList = ConfigGetInt ( "commands.ini", "gmlist", 299 );
+    Config.Command_gmrules = ConfigGetInt ( "commands.ini", "gmrules", 299 );
+    Config.Command_GMSkills = ConfigGetInt ( "commands.ini", "gmskills", 299 );
+    Config.Command_gmtag = ConfigGetInt ( "commands.ini", "gmtag", 299 );
     Config.Command_Go = ConfigGetInt    ( "commands.ini", "go", 299 );
     Config.Command_Goto = ConfigGetInt    ( "commands.ini", "goto", 299 );
     Config.Command_GoToMap = ConfigGetInt    ( "commands.ini", "gotomap", 299 );

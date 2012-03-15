@@ -216,7 +216,6 @@ struct CROSEServerConfig
     int Command_Addquest; // by Drakia
     int Command_AllSkill; // by crashinside
     int Command_Ani;
-    int Command_GMSkills;
     int Command_Ann;
     int Command_AtkModif;
     int Command_Ban;
@@ -254,6 +253,9 @@ struct CROSEServerConfig
     int Command_GiveZuly;
     int Command_GlobalTime;
     int Command_GmList;
+    int Command_gmrules;
+    int Command_GMSkills;
+    int Command_gmtag;
     int Command_Go;
     int Command_go;
     int Command_Goto;

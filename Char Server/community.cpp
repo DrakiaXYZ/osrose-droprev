@@ -54,6 +54,35 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
             CCharClient* otherclient = (CCharClient*) GetClientByName (nick);
             if(otherclient!=NULL)
             {//Send friend invitation  (check this one)
+            if(thisclient->FriendList.size() > 30){ //Check if the sender don't pass the max
+//Send him an private PM ingame. Same code has the SendPM used in the worldserver
+                     BEGINPACKET( pak, 0x0784 );
+                     ADDSTRING( pak, "Server" );
+                     ADDBYTE( pak, 0 );
+                     ADDSTRING( pak, "Your friendlist is full. Delete friends before adding new ones." );
+                     ADDBYTE( pak, 0 );
+                     thisclient->SendPacket(&pak);
+                     return false;
+                }
+                if(otherclient->FriendList.size() > 30) //Check if the receiver isn't at his max too
+                {
+//Send an PM to the receiver that his list is full
+                    BEGINPACKET( pak, 0x0784 );
+                    ADDSTRING( pak, "Server" );
+                     ADDBYTE( pak, 0 );
+                    ADDSTRING( pak, "Your friendlist is full. Delete friends before adding new ones." );
+                    ADDBYTE( pak, 0 );
+                     otherclient->SendPacket(&pak);
+ //Send an PM to the sender, and tell that the list of his friend is full, and that the invitation is canceled
+                    RESETPACKET( pak, 0x0784 );
+                    ADDSTRING( pak, "Server" );
+                     ADDBYTE( pak, 0 );
+                     ADDSTRING( pak, "The list of your friend is full. Invitation canceled" );
+                     ADDBYTE( pak, 0 );
+                     thisclient->SendPacket(&pak);
+                    return false;
+                }
+
                 BEGINPACKET( pak, 0x7e1 );
                 ADDBYTE    ( pak, 0x01 );
                 ADDWORD    ( pak, 0x0000 );
@@ -197,12 +226,22 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
 */
 // Change from this add on forum -  http://forum.dev-osrose.com/viewtopic.php?f=30&t=5121&sid=1a047da91997d7102cc0986bd568eb27 
 
+<<<<<<< .mine
+//This code is basically a fix. When you delete a friend of your list, your name will be deleted from the list of that friend too to avoid multiple rows in the table.  
+if(!DB->QExecute("DELETE FROM list_friend WHERE (id=%i and idfriend=%i) OR (id=%i and idfriend=%i)",thisclient->charid,id, id,thisclient->charid))
+            {
+                Log(MSG_INFO,"user %s failed to delete friend slot %i",thisclient->charname,id);
+                return false;
+            }
+ 
+=======
            if(!DB->QExecute("DELETE FROM list_friend WHERE (id=%i and idfriend=%i) OR (id=%i and idfriend=%i)",thisclient->charid,id, id,thisclient->charid))
             {
                 Log(MSG_INFO,"user %s failed to delete friend slot %i",thisclient->charname,id);
                 return false;
             }
  
+>>>>>>> .r332
             Log(MSG_INFO,"user %s deletes friend slot %i",thisclient->charname,id);
 
             CCharClient* otherclient = (CCharClient*) GetClientByID(id);

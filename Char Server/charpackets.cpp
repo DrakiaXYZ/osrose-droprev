@@ -298,6 +298,7 @@ bool CCharServer::pakRequestWorld( CCharClient* thisclient, CPacket* P )
 //              //          0        1
 	result = DB->QStore("SELECT idfriend,namefriend FROM list_friend WHERE id=%i", thisclient->charid);
 	if(result==NULL) return false;
+    thisclient->FriendList.clear();	
 	BYTE nfriends = mysql_num_rows(result) & 0xff;
 
 	RESETPACKET( pak, 0x7e1 );// Friend list command

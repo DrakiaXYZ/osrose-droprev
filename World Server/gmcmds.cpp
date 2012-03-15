@@ -1025,7 +1025,8 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
 	    Log( MSG_GMACTION, " %s : /givefairy %s, %i" , thisclient->CharInfo->charname, name, mode);
 	    return pakGMFairyto(thisclient, name, mode);
 	}
-   else if(strcmp(command, "givezuly")==0)
+    
+    else if(strcmp(command, "givezuly")==0)
     {
         if(Config.Command_GiveZuly > thisclient->Session->accesslevel)
            return true;
@@ -1035,9 +1036,10 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
         Log( MSG_GMACTION, " %s : /givezuly %s, %I64i" , thisclient->CharInfo->charname, name, zuly);
 		  return pakGMZulygive(thisclient, name, zuly);
 	}
-else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
+    
+    else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
     {
-        if(Config.Command_GmList > thisclient->Session->accesslevel)
+        if(Config.Command_GmList > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)        
            return true;
         SendPM(thisclient, "Currently connected GMs:");
         int count=1;
@@ -1068,6 +1070,20 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         SendPM(thisclient, line0 );
         return true;
     }
+    
+    else if (strcmp(command, "gmrules")==0)  //Main code by Matt, edited by FransH.
+    {
+        if(Config.Command_gmrules > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+            return true;
+            SendPM(thisclient, "Follow these rules or you might lose your acceslevel!"); //Change these if you like
+            SendPM(thisclient, "Rule 1: Do not give items to other (normal) players");
+            SendPM(thisclient, "Rule 2: Don't abuse your powers");
+            SendPM(thisclient, "Rule 3: Respect the administrators");
+            SendPM(thisclient, "Rule 4: No spawning of any monsters in any towns");
+            SendPM(thisclient, "Rule 5: Don't teleport people for fun");
+            SendPM(thisclient, "~ADMINS CAN DECIDE IF IT IS OKAY AT ALL TIME~.");
+    }  
+     
     else if (strcmp(command, "gmskills")==0)
     {
         if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -1089,9 +1105,19 @@ else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
         Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
         return pakGMGMSkills(thisclient, name);
     }
+
+    else if (strcmp(command,"gmtag")==0) /*  - Made by FransH - adds a gm tag - Relog needed*/
+    {
+        if(Config.Command_gmtag > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           return true;
+                 char newcharname[65];
+                 strcpy (newcharname,"[GM]");  //Change this value if you want
+                 strcat (newcharname, thisclient->CharInfo->charname);
+                  GServer->DB->QExecute(" UPDATE characters SET char_name = '%s' WHERE id = '%i' ",newcharname, thisclient->CharInfo->charid); 
+    }     
+
     else if (strcmp(command, "go")==0) // Use SQL by Likol
     {
-
         if(Config.Command_Go > thisclient->Session->accesslevel)
         {
         DB->QFree( );
