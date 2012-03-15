@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    depeloped with Main erose/hrose source server + some change from the original eich source 
 */
 #include "worldserver.h"
 
@@ -2943,15 +2943,16 @@ UINT CWorldServer::gi(UINT itemvalue, short type)
     return 0;
 }
 
+// http://forum.dev-osrose.com/viewtopic.php?f=30&t=5206 - 3/15/12
 //LMA: We get the exact Clan Points amount through mysql database
 UINT CWorldServer::getClanPoints(int clanid)
 {
     UINT nb_points=0;
- 
+
     MYSQL_RES *result = GServer->DB->QStore("SELECT cp FROM list_clan where id=%i", clanid);
     if(result==NULL){
         GServer->DB->QFree();
-       return 0;
+        return 0;
     }
     if(mysql_num_rows(result)!=1)
     {
@@ -2963,10 +2964,10 @@ UINT CWorldServer::getClanPoints(int clanid)
         MYSQL_ROW row = mysql_fetch_row(result);
         nb_points= atoi(row[0]);
     }
- 
+
     GServer->DB->QFree( );
- 
- 
+
+
     return nb_points;
 }
 

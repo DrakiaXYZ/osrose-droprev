@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    depeloped with Main erose/hrose source server + some change from the original eich source 
 */
 #include "worldserver.h"
 
@@ -687,7 +687,11 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 // Changes stance
 bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
 {
-    if(thisclient->IsDead()) return true;     
+// http://forum.dev-osrose.com/viewtopic.php?f=30&t=5176 - 3/15/12     
+
+   if(thisclient->IsDead()) return true;
+
+// end of add
     if(thisclient->Shop->open)
         return true;
 	BYTE stancenum = GETBYTE((*P),0x00);

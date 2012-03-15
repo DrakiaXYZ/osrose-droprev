@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    developed with Main erose/hrose source server + some change from the original eich source
+    developed with Main erose/hrose source server + some change from the original eich source 
 */
 #include "worldserver.h"
 
@@ -1025,8 +1025,7 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
 	    Log( MSG_GMACTION, " %s : /givefairy %s, %i" , thisclient->CharInfo->charname, name, mode);
 	    return pakGMFairyto(thisclient, name, mode);
 	}
-    
-    else if(strcmp(command, "givezuly")==0)
+   else if(strcmp(command, "givezuly")==0)
     {
         if(Config.Command_GiveZuly > thisclient->Session->accesslevel)
            return true;
@@ -1036,10 +1035,9 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
         Log( MSG_GMACTION, " %s : /givezuly %s, %I64i" , thisclient->CharInfo->charname, name, zuly);
 		  return pakGMZulygive(thisclient, name, zuly);
 	}
-    
-    else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
+else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
     {
-        if(Config.Command_GmList > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)        
+        if(Config.Command_GmList > thisclient->Session->accesslevel)
            return true;
         SendPM(thisclient, "Currently connected GMs:");
         int count=1;
@@ -1070,10 +1068,11 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
         SendPM(thisclient, line0 );
         return true;
     }
-    
+
+// from http://forum.dev-osrose.com/viewtopic.php?f=27&t=4777 added - 3/15/12    
     else if (strcmp(command, "gmrules")==0)  //Main code by Matt, edited by FransH.
     {
-        if(Config.Command_gmrules > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+       if(Config.Command_gmrules > thisclient->Session->accesslevel)
             return true;
             SendPM(thisclient, "Follow these rules or you might lose your acceslevel!"); //Change these if you like
             SendPM(thisclient, "Rule 1: Do not give items to other (normal) players");
@@ -1083,7 +1082,7 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
             SendPM(thisclient, "Rule 5: Don't teleport people for fun");
             SendPM(thisclient, "~ADMINS CAN DECIDE IF IT IS OKAY AT ALL TIME~.");
     }  
-     
+  
     else if (strcmp(command, "gmskills")==0)
     {
         if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -1106,9 +1105,10 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
         return pakGMGMSkills(thisclient, name);
     }
 
-    else if (strcmp(command,"gmtag")==0) /*  - Made by FransH - adds a gm tag - Relog needed*/
+// from http://forum.dev-osrose.com/viewtopic.php?f=27&t=4777 added - 3/15/12 
+    else if (strcmp(command,"gmtag")==0) // - Made by FransH - adds a gm tag - Relog needed
     {
-        if(Config.Command_gmtag > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+        if(Config.Command_gmtag > thisclient->Session->accesslevel)
            return true;
                  char newcharname[65];
                  strcpy (newcharname,"[GM]");  //Change this value if you want
@@ -1118,6 +1118,7 @@ else if (strcmp(command, "eventname")==0) //==== Trigger Events (credit Welson)
 
     else if (strcmp(command, "go")==0) // Use SQL by Likol
     {
+
         if(Config.Command_Go > thisclient->Session->accesslevel)
         {
         DB->QFree( );
