@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    depeloped with Main erose/hrose source server + some change from the original each source
 */
 
 #ifndef __ROSE_SOCKETS__
@@ -255,7 +255,7 @@ struct CROSEServerConfig
     int Command_GmList;
     int Command_gmrules;
     int Command_GMSkills;
-    int Command_gmtag;
+    int Command_gmtag;        
     int Command_Go;
     int Command_go;
     int Command_Goto;
