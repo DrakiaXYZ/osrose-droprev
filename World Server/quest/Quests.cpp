@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    depeloped with Main erose/hrose source server + some change from the original each source
 */
 
 // Props to ExJam for this code :D
@@ -1339,7 +1339,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
         }
         else if(data->btMsgType == 2)
         {
-// Below caused the server to crash upon execution, commented out on 3/13/12 and world server came up ok
+// commented out - 3/15/12 due to a error
 //            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> NPC Announces LTB string %i, %s",data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
         }
         else
