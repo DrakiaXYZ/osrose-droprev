@@ -24,6 +24,8 @@ PRIMARY KEY  (`id`)
 -- ----------------------------
 INSERT INTO `list_respawnzones` VALUES (2, 1, 5240.72, 5189.85, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 1, 5210.47, 5136.67, 10, 1);
+INSERT INTO `list_respawnzones` VALUES (0, 1, 5277.17, 5499.94, 10, 0);
+INSERT INTO `list_respawnzones` VALUES (0, 1, 5275.68, 5427.39, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 2, 5655.32, 5238.22, 10, 1);
 INSERT INTO `list_respawnzones` VALUES (4, 2, 5654.79, 5216.30, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (9, 2, 5334.14, 5177.97, 10, 0);
@@ -89,10 +91,9 @@ INSERT INTO `list_respawnzones` VALUES (0, 22, 5303.76, 5106.87, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 22, 5742.29, 5094.52, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 22, 5530.07, 5216.46, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 23, 5036.32, 5085.89, 10, 0);
-INSERT INTO `list_respawnzones` VALUES (0, 23, 5096.35, 4905.92, 10, 1);
 INSERT INTO `list_respawnzones` VALUES (0, 23, 5348.23, 5061.66, 10, 0);
-INSERT INTO `list_respawnzones` VALUES (0, 23, 5327.19, 5400.28, 10, 0);
-INSERT INTO `list_respawnzones` VALUES (0, 23, 5138.80, 5523.91, 10, 0);
+INSERT INTO `list_respawnzones` VALUES (0, 23, 5345.55, 5056.65, 10, 1);
+INSERT INTO `list_respawnzones` VALUES (0, 23, 5480.84, 5502.46, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 24, 5527.76, 5246.70, 10, 1);
 INSERT INTO `list_respawnzones` VALUES (0, 24, 5525.30, 5376.16, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 24, 5027.82, 5099.68, 10, 0);
